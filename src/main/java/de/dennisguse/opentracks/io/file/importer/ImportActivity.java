@@ -25,13 +25,12 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.databinding.ImportActivityBinding;
@@ -43,7 +42,7 @@ import de.dennisguse.opentracks.util.IntentUtils;
  *
  * @author Rodrigo Damazio
  */
-public class ImportActivity extends FragmentActivity {
+public class ImportActivity extends AbstractActivity {
 
     private static final String TAG = ImportActivity.class.getSimpleName();
 
@@ -57,14 +56,11 @@ public class ImportActivity extends FragmentActivity {
     private ArrayList<Uri> documentUris = new ArrayList<>();
     private boolean isDirectory;
 
-    private ImportViewModel viewModel;
-    private ImportViewModel.Summary summary;
+    private Importer importer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewBinding = ImportActivityBinding.inflate(getLayoutInflater());
-        setContentView(viewBinding.getRoot());
 
         final Intent intent = getIntent();
         final ClipData intentClipData = intent.getClipData();
@@ -99,14 +95,34 @@ public class ImportActivity extends FragmentActivity {
             documentFiles = documentUris.stream().map(it -> DocumentFile.fromSingleUri(this, it)).collect(Collectors.toList());
         }
 
-        viewModel = new ViewModelProvider(this).get(ImportViewModel.class);
-        viewModel.getImportData(documentFiles).observe(this, data -> {
-            summary = data;
-            setProgress();
-        });
+        importer = new Importer(this, documentFiles);
+        importer.getLiveData()
+                .observe(this, summary -> {
+                    setProgress(summary);
+                });
+        importer.startImport();
 
         //Works for a directory, but we might have received multiple files via SEND_MULTIPLE.
         viewBinding.importActivityToolbar.setTitle(getString(R.string.import_progress_message, documentFiles.get(0).getName()));
+    }
+
+    @NonNull
+    @Override
+    protected View createRootView() {
+        viewBinding = ImportActivityBinding.inflate(getLayoutInflater());
+        return viewBinding.getRoot();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewBinding = null;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        importer.cancel();
+        return super.onSupportNavigateUp();
     }
 
     @Override
@@ -116,7 +132,7 @@ public class ImportActivity extends FragmentActivity {
         outState.putBoolean(BUNDLE_IS_DIRECTORY, isDirectory);
     }
 
-    private void setProgress() {
+    private void setProgress(Importer.Summary summary) {
         int done = summary.getCount();
         viewBinding.importProgressDone.setText("" + done);
         viewBinding.importProgressTotal.setText("" + summary.getTotalCount());
@@ -130,11 +146,11 @@ public class ImportActivity extends FragmentActivity {
         viewBinding.importProgressSummaryErrorsGroup.setVisibility(summary.getErrorCount() > 0 ? View.VISIBLE : View.GONE);
 
         if (summary.isDone()) {
-            onImportEnded();
+            onImportEnded(summary);
         }
     }
 
-    private void onImportEnded() {
+    private void onImportEnded(Importer.Summary summary) {
         viewBinding.importProgressAlertMsg.setVisibility(View.VISIBLE);
         viewBinding.importProgressAlertIcon.setVisibility(View.VISIBLE);
 
@@ -146,13 +162,13 @@ public class ImportActivity extends FragmentActivity {
         });
 
         if (summary.getErrorCount() > 0) {
-            toggleUIEndWithErrors();
+            toggleUIEndWithErrors(summary);
         } else {
-            toggleUIEndOk();
+            toggleUIEndOk(summary);
         }
     }
 
-    private void toggleUIEndWithErrors() {
+    private void toggleUIEndWithErrors(Importer.Summary summary) {
         viewBinding.importProgressLeftButton.setVisibility(View.VISIBLE);
         viewBinding.importProgressLeftButton.setText(getString(R.string.generic_show_errors));
         viewBinding.importProgressLeftButton.setOnClickListener((view) -> ErrorListDialog.showDialog(getSupportFragmentManager(), getString(R.string.import_error_list_dialog_title), summary.getFileErrors()));
@@ -160,7 +176,7 @@ public class ImportActivity extends FragmentActivity {
         viewBinding.importProgressAlertMsg.setText(getResources().getQuantityString(R.plurals.generic_completed_with_errors, summary.getErrorCount(), summary.getErrorCount()));
     }
 
-    private void toggleUIEndOk() {
+    private void toggleUIEndOk(Importer.Summary summary) {
         viewBinding.importProgressAlertIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_dialog_success_24dp));
         viewBinding.importProgressAlertMsg.setText(getString(R.string.generic_completed));
 
