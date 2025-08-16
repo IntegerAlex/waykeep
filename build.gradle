@@ -104,7 +104,7 @@ android {
             versionNameSuffix 'irreproducible'
         }
         reproducible {
-            // Developer Binaries: https://github.com/OpenTracksApp/OSMDashboard/releases/download/v%v/de.dennisguse.opentracks.playstore_%v.apk
+            // Developer Binaries: https://codeberg.org/OpenTracksApp/OSMDashboard/releases/download/v%v/de.dennisguse.opentracks.playstore_%v.apk
             // FDroid: https://f-droid.org/de/packages/de.dennisguse.opentracks.playstore
             // PlayStore: https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore
             dimension 'version'

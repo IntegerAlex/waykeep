@@ -48,4 +48,4 @@ read
 git add -u
 git commit -m "$COMMIT_MESSAGE"
 
-echo -e "Next steps:\n1. Push to Github\n2. Create release on Github: https://github.com/OpenTracksApp/OpenTracks/releases"
+echo -e "Next steps:\n1. Push to Codeberg\n2. Create release on Codeberg: https://codeberg.org/OpenTracksApp/OpenTracks/releases"

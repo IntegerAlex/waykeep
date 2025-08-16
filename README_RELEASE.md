@@ -3,10 +3,10 @@
 ## Craft new releases
 
 1. Execute use `RELEASE.sh`.
-2. Push to Github
-3. Create release on Github (incl. changelog)
+2. Push to Codeberg
+3. Create release on Codeberg (incl. changelog)
    This actually creates a tag that is later used by F-Droid
-4. Pull from Github
+4. Pull from Codeberg
 5. Build reproducible release and attach to release
 6. ... wait until reproducibility is verified by F-Droid
 
