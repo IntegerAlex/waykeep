@@ -2,11 +2,11 @@
 
 set -e
 
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64/
 
 JAVA_VERSION=`java --version`
-if [[ $JAVA_VERSION != "openjdk 17."* ]]; then
-  echo "OpenJDK version should be 17.X"
+if [[ $JAVA_VERSION != "openjdk 21."* ]]; then
+  echo "OpenJDK version should be 21.X"
   exit -1;
 fi
 
