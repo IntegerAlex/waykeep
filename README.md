@@ -40,10 +40,10 @@ _OpenTracks_ is a sport tracking application that completely respects your priva
     </tr>
 </table>
 
-Translations are hosted on <a href="https://hosted.weblate.org/engage/opentracks/">
-hosted.weblate.org</a>.
-<a href="https://hosted.weblate.org/engage/opentracks/">
-<img src="https://hosted.weblate.org/widgets/opentracks/-/horizontal-auto.svg" alt="Translation status" />
+Translations are hosted on <a href="https://translate.codeberg.org/engage/opentracks/">
+translate.codeberg.org/projects/opentracks/</a>.
+<a href="https://translate.codeberg.org/engage/opentracks/">
+<img src="https://translate.codeberg.org/widget/opentracks/opentracks-src-main-res-values-strings-xml-main/horizontal-auto.svg" alt="Translation status" />
 </a>
 
 ## Screenshots
