@@ -366,6 +366,7 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="export_track_already_exists_msg">Il file %1$s esiste già nella cartella di salvataggio.</string>
     <plurals name="generic_completed_with_errors">
         <item quantity="one">Completato con un errore</item>
+        <item quantity="many">Completato con %1$d errori</item>
         <item quantity="other">Completato con %1$d errori</item>
     </plurals>
     <string name="generic_click_twice_cancel">Premi il tasto indietro di nuovo per annullare</string>
@@ -606,4 +607,18 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="lap_heart_rate">Frequenza cardiaca del giro</string>
     <string name="empty">vuoto</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Durante la registrazione, mostra un avviso se il GPS è disabilitato.</string>
+    <string name="settings_night_mode_option_day_dynamic">Giorno (colore dinamico)</string>
+    <string name="track_edit_time_offset">Compensazione fuso orario</string>
+    <string name="marker_detail_title">%1$d di %2$d: %3$s</string>
+    <string name="activity_type_workout">allenamento</string>
+    <string name="settings_charts_title">Grafici</string>
+    <string name="settings_chart_display_elevation_title">Visualizza l\'elevazione</string>
+    <string name="settings_chart_display_pace_or_speed_title">Visualizza il ritmo o la velocità</string>
+    <string name="settings_chart_display_heart_rate_title">Visualizza la frequenza cardiaca</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Avviso di GPS disabilitato</string>
+    <string name="settings_night_mode_option_system_dynamic">Sistema (colore dinamico)</string>
+    <string name="settings_night_mode_option_night_dynamic">Notte (colore dinamico)</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Adatto per OLED (colore dinamico)</string>
+    <string name="voiceIdle">Passaggio a inattivo.</string>
 </resources>
