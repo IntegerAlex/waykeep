@@ -553,4 +553,56 @@ limitations under the License.
     <string name="gps_recording_without_signal">OpenTracks optager uden GPS-data</string>
     <string name="value_int_seconds">%1$d s (anbefalet)</string>
     <string name="settings_sensor_bluetooth_service_filter_title">Filtrer Bluetooth-enheder</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Viser en advarsel under registrering hvis GPS er deaktiveret.</string>
+    <string name="settings_locale_title">Sprog</string>
+    <string name="stats_gain_loss">Vundet &amp; Tabt</string>
+    <string name="voiceHoursPlural">{n, plural, =1 {1 time} other {{n,number} timer} }</string>
+    <string name="show_on_dashboard_not_installed">Ingen applikation der understøtter OpenTracks Dashboard API installeret.</string>
+    <string name="permission_recording_failed">OpenTracks kræver adgang til din lokation såvel som enheder i nærheden.</string>
+    <string name="create_marker_error">Markør kan ikke oprettes. Prøv igen.</string>
+    <string name="settings_recording_min_sampling_interval_title">Tidsinterval mellem samplinger</string>
+    <string name="settings_night_mode_option_day_dynamic">Dag (DynamicColor)</string>
+    <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 kilometer i timen} other {{n,number,#.0} kilometre i timen} }</string>
+    <string name="empty">tom</string>
+    <string name="settings_chart_display_elevation_title">Vis højde</string>
+    <string name="settings_chart_display_pace_or_speed_title">Vis tempo eller hastighed</string>
+    <string name="settings_chart_display_heart_rate_title">Vis puls</string>
+    <string name="settings_charts_title">Grafer</string>
+    <string name="settings_theme_switch_restart">Tema-ændringer kræver muligvis en manuel genstart.</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Advar om deaktiveret GPS</string>
+    <string name="settings_locale_system_default">Systemstandard</string>
+    <string name="settings_night_mode_option_night_dynamic">Nat (DynamicColor)</string>
+    <string name="settings_night_mode_option_night_oled">OLED-venlig</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">OLED-venlig (DynamicColor)</string>
+    <string name="settings_announcements_unit">Distance/hastigheds-enhed</string>
+    <string name="track_edit_time_offset">Tidszone-forskydning</string>
+    <string name="value_internal_sensor">Intern sensor</string>
+    <string name="voiceMinutesPlural">{n, plural, =1 {1 minut} other {{n,number} minutter} }</string>
+    <string name="voiceSecondsPlural">{n, plural, =1 {1 sekund} other {{n,number} sekunder} }</string>
+    <string name="voiceSpeedMilesPerHourPlural">{n, plural, =1 {1 mil i timer} other {{n,number,#.0} mil i timen} }</string>
+    <string name="voiceSpeedMKnotsPlural">{n, plural, =1 {1 knob} other {{n,number,#.0} knob} }</string>
+    <string name="voice_on_device_speaker_title">Brug enhedens højttaler</string>
+    <string name="voice_per_mile">per mil</string>
+    <string name="voice_per_nautical_mile">per sømil</string>
+    <string name="lap_time">Omgangstid</string>
+    <string name="pace">Tempo</string>
+    <string name="lap_speed">Omgangshastighed</string>
+    <string name="speed">Gennemsnitlig bevægelseshastighed</string>
+    <string name="total_distance">Samlet distance</string>
+    <string name="voiceDistanceMilesPlural">{n, plural, =1 {1 mil} other {{n,number,#.0} mil} }</string>
+    <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 sømil} other {{n,number,#.0} sømil} }</string>
+    <string name="average_heart_rate">Gennemsnitspuls</string>
+    <string name="current_heart_rate">Aktuel puls</string>
+    <string name="lap_heart_rate">Omgangspuls</string>
+    <string name="no_compatible_camera_installed">Ingen kompatibel kameraapplikation installeret</string>
+    <string name="no_compatible_gallery_installed">Ingen kompatibel billedgalleriapplikation installeret</string>
+    <string name="error_crash_title">%1$s gik ned</string>
+    <string name="share_crash_report">Del fejlrapport</string>
+    <string name="report_bug">Rapporter fejl</string>
+    <string name="always">Altid</string>
+    <string name="introduction_osm_dashboard">OpenTracks indeholder ikke selv et kort. Installer venligst OSMDashboard for at se registreringer på et kort.</string>
+    <string name="settings_recording_location_distance_summary">%1$s mellem registrerede lokationer</string>
+    <string name="settings_announcements_lap_power">Omgangseffekt</string>
+    <string name="power_x_watt">Power {x, plural, =1 {1 watt} other {# watt} }</string>
+    <string name="power">Effekt</string>
 </resources>
