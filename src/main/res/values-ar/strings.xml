@@ -351,7 +351,6 @@ limitations under the License.
     <string name="field_set_primary">أساسي</string>
     <string name="field_set_secondary">ثانوي</string>
     <string name="field_remove_from_layout">إزالة</string>
-    <string name="empty">فارغ</string>
     <string name="description_altitude_loss">فقدان الارتفاع: %1$d م (%2$d قدم)</string>
     <string name="export_error_post_workout">فشل التصدير بعد التمرين، يرجى التحقق من دليل التصدير.</string>
     <string name="gps_fixed_and_ready">GPS جاهز وثابت</string>

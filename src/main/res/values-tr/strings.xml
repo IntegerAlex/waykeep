@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 --><resources>
-    <string name="empty">boş</string>
     <string name="about_preference_title">Hakkında</string>
     <string name="about_description"><i>OpenTracks</i>, gizliliğinize tamamen saygı duyan bir spor takip uygulamasıdır.</string>
     <string name="about_url">Proje web sayfası: <a href="%1$s">%1$s</a></string>

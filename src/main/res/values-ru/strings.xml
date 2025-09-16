@@ -594,7 +594,6 @@ limitations under the License.
     <string name="settings_chart_display_pace_or_speed_title">Показать темп или скорость</string>
     <string name="settings_chart_display_heart_rate_title">Показать пульс</string>
     <string name="settings_recording_location_distance_summary">%1$s между записанными местоположениями</string>
-    <string name="empty">пусто</string>
     <string name="sensor_state_pressure">Барометр</string>
     <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
     <string name="voiceSpeed">{n, plural, =1 {1} few {{n,number,#.0}} other {{n,number,#.0}} }</string>

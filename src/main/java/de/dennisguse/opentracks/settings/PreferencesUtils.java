@@ -351,7 +351,7 @@ public class PreferencesUtils {
     }
 
     public static boolean shouldVoiceAnnounceTime() {
-        return getBoolean(R.string.voice_announce_unit_key, true);
+        return getBoolean(R.string.voice_announce_time_key, true);
     }
 
     public static boolean shouldVoiceAnnounceUnit() {

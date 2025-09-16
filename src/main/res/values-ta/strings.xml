@@ -533,7 +533,6 @@
     <string name="activity_type_kayaking">கயாக்கிங்</string>
     <string name="settings_recording_show_gps_disabled_warning_title">சி.பி.எச் முடக்கப்பட்ட முன்னறிவிப்பு</string>
     <string name="settings_recording_show_gps_disabled_warning_summary">பதிவு செய்யும் போது, சி.பி.எச் முடக்கப்பட்டிருந்தால் ஒரு எச்சரிக்கையைக் காட்டுங்கள்.</string>
-    <string name="empty">காலி</string>
     <string name="settings_charts_title">விளக்கப்படங்கள்</string>
     <string name="settings_chart_display_elevation_title">றிந்த உயரத்தைக் காண்பி</string>
     <string name="settings_chart_display_pace_or_speed_title">விரைவு அல்லது வேகத்தைக் காண்பி</string>

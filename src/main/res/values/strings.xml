@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 --><resources>
-    <string name="empty">empty</string>
     <string name="about_preference_title">About</string>
     <string name="about_description"><i>OpenTracks</i> is a sport tracking application that completely respects your privacy.</string>
     <string name="about_url">Project webpage: <a href="%1$s">%1$s</a></string>
