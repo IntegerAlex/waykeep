@@ -55,7 +55,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private static final Duration RECORDING_DATA_UPDATE_INTERVAL = Duration.ofSeconds(1);
 
     public static final RecordingStatus STATUS_DEFAULT = RecordingStatus.notRecording();
-    public static final RecordingData NOT_RECORDING = new RecordingData(null, null, null);
+    public static final RecordingData NOT_RECORDING = new RecordingData(null, null, null, null);
     public static final GpsStatusValue STATUS_GPS_DEFAULT = GpsStatusValue.GPS_NONE;
 
     public TrackPoint getLastStoredTrackPointWithLocation() {
@@ -315,11 +315,11 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
 
         // Compute temporary track statistics using sensorData and update time.
-        Pair<Track, Pair<TrackPoint, SensorDataSet>> data = trackRecordingManager.getDataForUI();
+        RecordingData data = trackRecordingManager.getDataForUI();
 
-        voiceAnnouncementManager.announceStatisticsIfNeeded(data.first, data.second.second);
+        voiceAnnouncementManager.announceStatisticsIfNeeded(data.track(), data.sensorDataSet());
 
-        recordingDataObservable.postValue(new RecordingData(data.first, data.second.first, data.second.second));
+        recordingDataObservable.postValue(data);
     }
 
     public void onIdle() {

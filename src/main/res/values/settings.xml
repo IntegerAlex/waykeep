@@ -355,6 +355,7 @@
     <string name="stats_custom_layout_pace_key" translatable="false">pace</string>
     <string name="stats_custom_layout_average_moving_pace_key" translatable="false">average_moving_pace</string>
     <string name="stats_custom_layout_average_pace_key" translatable="false">average_pace</string>
+    <string name="stats_custom_layout_average_segment_pace_key" translatable="false">average_segment_pace</string>
     <string name="stats_custom_layout_fastest_pace_key" translatable="false">fastest_pace</string>
     <string name="stats_custom_layout_coordinates_key" translatable="false">coordinates</string>
     <string name="stats_custom_layout_heart_rate_key" translatable="false">heart_rate</string>
@@ -422,26 +423,30 @@
         <item>0,0,0</item>
     </string-array>
     <string-array name="stats_custom_layout_fields_default_value_13">
-        <item>@string/stats_custom_layout_fastest_pace_key</item>
+        <item>@string/stats_custom_layout_average_segment_pace_key</item>
         <item>0,0,0</item>
     </string-array>
     <string-array name="stats_custom_layout_fields_default_value_14">
+        <item>@string/stats_custom_layout_fastest_pace_key</item>
+        <item>0,0,0</item>
+    </string-array>
+    <string-array name="stats_custom_layout_fields_default_value_15">
         <item>@string/stats_custom_layout_coordinates_key</item>
         <item>0,0,1</item>
     </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_15">
+    <string-array name="stats_custom_layout_fields_default_value_16">
         <item>@string/stats_custom_layout_heart_rate_key</item>
         <item>0,0,0</item>
     </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_16">
+    <string-array name="stats_custom_layout_fields_default_value_17">
         <item>@string/stats_custom_layout_cadence_key</item>
         <item>0,0,0</item>
     </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_17">
+    <string-array name="stats_custom_layout_fields_default_value_18">
         <item>@string/stats_custom_layout_power_key</item>
         <item>0,0,0</item>
     </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_18">
+    <string-array name="stats_custom_layout_fields_default_value_19">
         <item>@string/stats_custom_layout_clock_key</item>
         <item>0,0,0</item>
     </string-array>

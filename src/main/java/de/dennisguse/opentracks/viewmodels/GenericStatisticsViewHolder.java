@@ -34,7 +34,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
             Pair<String, String> valueAndUnit = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
-                    .build(getContext()).getDistanceParts(data.getTrackStatistics().getTotalDistance());
+                    .build(getContext()).getDistanceParts(data.getStatisticsTrack().getTotalDistance());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -46,7 +46,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.getTrackStatistics().getTotalTime()), null);
+            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.getStatisticsTrack().getTotalTime()), null);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -58,7 +58,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            String value = StringUtils.formatElapsedTime(data.getTrackStatistics().getMovingTime());
+            String value = StringUtils.formatElapsedTime(data.getStatisticsTrack().getMovingTime());
 
             getBinding().statsValue.setText(value);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_moving_time));
@@ -123,7 +123,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -140,7 +140,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getAverageSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -157,7 +157,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getMaxSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getMaxSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -174,7 +174,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -191,11 +191,28 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_average_pace));
+        }
+    }
+
+    public static class AverageSegmentPace extends GenericStatisticsViewHolder {
+
+        @Override
+        public void onChanged(UnitSystem unitSystem, RecordingData data) {
+            SpeedFormatter speedFormatterSpeed = SpeedFormatter.Builder()
+                    .setUnit(unitSystem)
+                    .setReportSpeedOrPace(false)
+                    .build(getContext());
+
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsCurrentSegment().getAverageMovingSpeed());
+
+            getBinding().statsValue.setText(valueAndUnit.first);
+            getBinding().statsUnit.setText(valueAndUnit.second);
+            getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_average_segment_pace));
         }
     }
 
@@ -208,7 +225,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getTrackStatistics().getMaxSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getMaxSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -237,7 +254,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
 
-            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), data.getTrackStatistics().getTotalAltitudeGain(), unitSystem);
+            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), data.getStatisticsTrack().getTotalAltitudeGain(), unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -250,7 +267,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
 
-            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), data.getTrackStatistics().getTotalAltitudeLoss(), unitSystem);
+            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), data.getStatisticsTrack().getTotalAltitudeLoss(), unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);

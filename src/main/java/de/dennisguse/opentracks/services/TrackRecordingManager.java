@@ -116,7 +116,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         reset();
     }
 
-    Pair<Track, Pair<TrackPoint, SensorDataSet>> getDataForUI() {
+    RecordingData getDataForUI() {
         TrackStatisticsUpdater tmpTrackStatisticsUpdater = new TrackStatisticsUpdater(trackStatisticsUpdater);
         Pair<TrackPoint, SensorDataSet> current = trackPointCreator.createCurrentTrackPoint(lastTrackPointUIWithSpeed, lastTrackPointUIWithAltitude, lastStoredTrackPointWithLocation);
 
@@ -131,8 +131,9 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         track.setTrackStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
+        TrackStatistics currentSegment = tmpTrackStatisticsUpdater.getCurrentSegment();
 
-        return new Pair<>(track, current);
+        return new RecordingData(track, current.first, current.second, currentSegment);
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)

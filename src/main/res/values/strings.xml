@@ -391,6 +391,7 @@ limitations under the License.
     <string name="settings_announcements_average_heart_rate">Average heart rate</string>
     <string name="settings_announcements_lap_heart_rate">Lap heart rate</string>
     <string name="settings_announcements_average_speed_pace">Average speed/pace</string>
+    <string name="settings_announcements_segment_average_speed_pace">Average speed/pace (Segment)</string>
     <string name="settings_announcements_lap_speed_pace">Lap speed/pace</string>
     <string name="settings_announcements_unit">Distance/speed unit</string>
     <!-- Custom Layout -->
@@ -453,6 +454,7 @@ limitations under the License.
     <string name="stats_average_moving_pace">Avg moving pace</string>
     <string name="stats_average_moving_speed">Avg moving speed</string>
     <string name="stats_average_pace">Avg pace</string>
+    <string name="stats_average_segment_pace">Avg Segment pace</string>
     <string name="stats_average_speed">Avg speed</string>
     <string name="stats_altitude">Elevation</string>
     <string name="stats_fastest_pace">Fastest pace</string>

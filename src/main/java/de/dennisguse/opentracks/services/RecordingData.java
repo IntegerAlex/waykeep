@@ -10,8 +10,7 @@ import de.dennisguse.opentracks.stats.TrackStatistics;
 /**
  * {@link Track} and {@link TrackPoint} must be immutable (i.e., their content does not change).
  */
-public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet) {
-
+public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet, TrackStatistics currentSegment) {
     public String getTrackCategory() {
         if (track == null) {
             return "";
@@ -20,11 +19,21 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
     }
 
     @NonNull
-    public TrackStatistics getTrackStatistics() {
+    public TrackStatistics getStatisticsTrack() {
         if (track == null) {
             return new TrackStatistics();
         }
 
         return track.getTrackStatistics();
     }
+
+    @NonNull
+    public TrackStatistics getStatisticsCurrentSegment() {
+        if (currentSegment == null) {
+            return new TrackStatistics();
+        }
+
+        return currentSegment;
+    }
+
 }

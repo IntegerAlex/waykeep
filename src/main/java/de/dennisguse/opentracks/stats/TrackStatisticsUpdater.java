@@ -78,6 +78,10 @@ public class TrackStatisticsUpdater {
         stats.merge(currentSegment);
         return stats;
     }
+    public TrackStatistics getCurrentSegment() {
+        // Take a snapshot - we don't want anyone messing with our currentSegment
+        return new TrackStatistics(currentSegment);
+    }
 
     public void addTrackPoints(List<TrackPoint> trackPoints) {
         trackPoints.forEach(this::addTrackPoint);

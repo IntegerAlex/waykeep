@@ -828,7 +828,8 @@ public class PreferencesUtils {
                 R.array.stats_custom_layout_fields_default_value_15,
                 R.array.stats_custom_layout_fields_default_value_16,
                 R.array.stats_custom_layout_fields_default_value_17,
-                R.array.stats_custom_layout_fields_default_value_18
+                R.array.stats_custom_layout_fields_default_value_18,
+                R.array.stats_custom_layout_fields_default_value_19
                 ).map(id -> resources.obtainTypedArray(id))
                 .toList();
     }
