@@ -3,7 +3,7 @@
 Modifiche:
 -
 
-Correzioni di bug:
+Correzioni di errori:
 -
 
 Sviluppatore:
