@@ -24,7 +24,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.work.Data;
@@ -38,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
+import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
@@ -52,7 +52,6 @@ import de.dennisguse.opentracks.util.FileUtils;
  * An activity for saving tracks to the external storage.
  *
  * @author Rodrigo Damazio
- * TODO: This class needs some refactoring.
  * * It pushes each export job (usually one Track) for export; although export could be run in parallel.
  *   Also this requires that the ExportActivity stays in foreground, so the user has to activily wait.
  *   It would be better to let the ExportService handle this and let it report progress / conflicts to ExportActivity
@@ -60,8 +59,9 @@ import de.dennisguse.opentracks.util.FileUtils;
  *    So, for this check actually a different file name might be used than in the ExportService.
  * * Saved state as an object instead of individual values.
  */
-//TODO Make an AbstractActivity
-public class ExportActivity extends AppCompatActivity {
+//TODO Show progress per exported track (currently per exported file)
+//TODO export tracks in parallel (for multiple files)
+public class ExportActivity extends AbstractActivity {
 
     private static final String TAG = ExportActivity.class.getSimpleName();
 
@@ -150,8 +150,6 @@ public class ExportActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewBinding = ExportActivityBinding.inflate(getLayoutInflater());
-        setContentView(viewBinding.getRoot());
 
         setSupportActionBar(viewBinding.bottomAppBarLayout.bottomAppBar);
 
@@ -191,6 +189,13 @@ public class ExportActivity extends AppCompatActivity {
         viewBinding.exportActivityToolbar.setTitle(getString(R.string.export_progress_message, directoryDisplayName));
     }
 
+    @NonNull
+    @Override
+    protected View createRootView() {
+        viewBinding = ExportActivityBinding.inflate(getLayoutInflater());
+        return viewBinding.getRoot();
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -208,6 +213,7 @@ public class ExportActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        viewBinding = null;
         conflictsQueue.clear();
         exportTasks.clear();
     }
