@@ -51,7 +51,7 @@ public class IntervalsFragment extends Fragment {
     private IntervalListViewBinding viewBinding;
 
     protected final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> {
-        if (PreferencesUtils.isKey(R.string.stats_units_key, key) || PreferencesUtils.isKey(R.string.stats_rate_key, key)) {
+        if (PreferencesUtils.isKey(List.of(R.string.stats_units_key, R.string.stats_rate_key), key)) {
             updateIntervals(PreferencesUtils.getUnitSystem(), selectedInterval);
             if (intervalsAdapter != null) {
                 intervalsAdapter.notifyDataSetChanged();

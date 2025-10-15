@@ -26,6 +26,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.mediarouter.media.MediaRouter;
 
 import java.time.Duration;
+import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
@@ -219,7 +220,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             setFrequency(PreferencesUtils.getVoiceAnnouncementFrequency());
         }
 
-        if (PreferencesUtils.isKey(new int[]{R.string.voice_announcement_distance_key, R.string.stats_units_key}, key)) {
+        if (PreferencesUtils.isKey(List.of(R.string.voice_announcement_distance_key, R.string.stats_units_key), key)) {
             setFrequency(PreferencesUtils.getVoiceAnnouncementDistance());
         }
     }

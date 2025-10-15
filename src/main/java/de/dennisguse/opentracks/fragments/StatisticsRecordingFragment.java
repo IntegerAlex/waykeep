@@ -62,7 +62,7 @@ public class StatisticsRecordingFragment extends Fragment {
             updateDataOnUI();
         }
 
-        if (PreferencesUtils.isKey(R.string.stats_custom_layouts_key, key) || PreferencesUtils.isKey(R.string.stats_custom_layout_selected_layout_key, key)) {
+        if (PreferencesUtils.isKey(List.of(R.string.stats_custom_layouts_key, R.string.stats_custom_layout_selected_layout_key), key)) {
             onLayoutChanged(PreferencesUtils.getCustomLayout());
         }
     };

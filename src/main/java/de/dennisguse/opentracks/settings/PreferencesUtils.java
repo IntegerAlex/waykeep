@@ -125,7 +125,7 @@ public class PreferencesUtils {
         return key == null || key.equals(getKey(keyId));
     }
 
-    public static boolean isKey(int[] keyIds, String key) {
+    public static boolean isKey(List<Integer> keyIds, String key) {
         for (int keyId : keyIds) {
             if (isKey(keyId, key)) {
                 return true;
