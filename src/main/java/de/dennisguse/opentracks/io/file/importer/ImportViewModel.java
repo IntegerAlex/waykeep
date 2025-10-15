@@ -126,5 +126,13 @@ public class ImportViewModel extends AndroidViewModel implements ImportServiceRe
         public ArrayList<String> getFileErrors() {
             return fileErrors;
         }
+
+        public int getCount() {
+            return getSuccessCount() + getExistsCount() + getErrorCount();
+        }
+
+        public boolean isDone() {
+            return getTotalCount() == getCount();
+        }
     }
 }

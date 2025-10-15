@@ -99,8 +99,6 @@ public class ImportActivity extends FragmentActivity {
             documentFiles = documentUris.stream().map(it -> DocumentFile.fromSingleUri(this, it)).collect(Collectors.toList());
         }
 
-        initViews();
-
         viewModel = new ViewModelProvider(this).get(ImportViewModel.class);
         viewModel.getImportData(documentFiles).observe(this, data -> {
             summary = data;
@@ -118,21 +116,8 @@ public class ImportActivity extends FragmentActivity {
         outState.putBoolean(BUNDLE_IS_DIRECTORY, isDirectory);
     }
 
-    private void initViews() {
-        viewBinding.importProgressDone.setText("0");
-        viewBinding.importProgressTotal.setText("0");
-        viewBinding.importProgressSummaryOk.setText("0");
-        viewBinding.importProgressSummaryExists.setText("0");
-        viewBinding.importProgressSummaryErrors.setText("0");
-    }
-
-    private int getTotalDone() {
-        return summary != null ? summary.getSuccessCount() + summary.getExistsCount() + summary.getErrorCount() : 0;
-    }
-
     private void setProgress() {
-        int done = getTotalDone();
-
+        int done = summary.getCount();
         viewBinding.importProgressDone.setText("" + done);
         viewBinding.importProgressTotal.setText("" + summary.getTotalCount());
 
@@ -144,7 +129,7 @@ public class ImportActivity extends FragmentActivity {
         viewBinding.importProgressSummaryExistsGroup.setVisibility(summary.getExistsCount() > 0 ? View.VISIBLE : View.GONE);
         viewBinding.importProgressSummaryErrorsGroup.setVisibility(summary.getErrorCount() > 0 ? View.VISIBLE : View.GONE);
 
-        if (done == summary.getTotalCount()) {
+        if (summary.isDone()) {
             onImportEnded();
         }
     }

@@ -17,22 +17,22 @@
             app:navigationIcon="@drawable/ic_baseline_import_export_24" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
         android:layout_marginBottom="@dimen/m3_bottom_nav_min_height"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.core.widget.NestedScrollView
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline_vertical_half"
@@ -43,22 +43,22 @@
 
                 <TextView
                     android:id="@+id/import_progress_done"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="48dp"
+                    android:text="@string/value_unknown"
                     app:layout_constraintEnd_toStartOf="@id/import_progress_slash"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="1" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/import_progress_slash"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:text="@string/generic_separator_done_total"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_done"
                     app:layout_constraintEnd_toStartOf="@id/import_progress_total"
@@ -67,15 +67,15 @@
 
                 <TextView
                     android:id="@+id/import_progress_total"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:layout_marginEnd="24dp"
+                    android:text="@string/value_unknown"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_slash"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/import_progress_slash"
-                    app:layout_constraintTop_toTopOf="@id/import_progress_slash"
-                    tools:text="10" />
+                    app:layout_constraintTop_toTopOf="@id/import_progress_slash" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/import_progress_bar"
@@ -93,11 +93,11 @@
                 <!-- Files imported correctly -->
                 <TextView
                     android:id="@+id/import_progress_summary_ok_msg"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
-                    android:gravity="end"
                     android:layout_margin="16dp"
+                    android:gravity="end"
                     android:text="@string/import_progress_summary_ok_msg"
                     app:layout_constraintEnd_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintStart_toStartOf="parent"
@@ -105,14 +105,14 @@
 
                 <TextView
                     android:id="@+id/import_progress_summary_ok"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_summary_ok_msg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintTop_toTopOf="@id/import_progress_summary_ok_msg"
-                    tools:text="10" />
+                    android:text="@string/value_unknown" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/import_progress_summary_ok_barrier"
@@ -126,17 +126,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:constraint_referenced_ids="import_progress_summary_ok_msg,import_progress_summary_ok" />
+                    app:constraint_referenced_ids="import_progress_summary_ok_msg,import_progress_summary_ok"
+                    tools:visibility="visible" />
 
                 <!-- Already exists files -->
                 <TextView
                     android:id="@+id/import_progress_summary_exists_msg"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
-                    android:gravity="end"
                     android:layout_margin="16dp"
+                    android:gravity="end"
                     android:text="@string/import_progress_summary_exists_msg"
                     app:layout_constraintEnd_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintStart_toStartOf="parent"
@@ -144,14 +144,14 @@
 
                 <TextView
                     android:id="@+id/import_progress_summary_exists"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_summary_exists_msg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintTop_toTopOf="@id/import_progress_summary_exists_msg"
-                    tools:text="10" />
+                    android:text="@string/value_unknown" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/import_progress_summary_exists_barrier"
@@ -165,17 +165,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:constraint_referenced_ids="import_progress_summary_exists_msg,import_progress_summary_exists" />
+                    app:constraint_referenced_ids="import_progress_summary_exists_msg,import_progress_summary_exists"
+                    tools:visibility="visible" />
 
                 <!-- Importing error files -->
                 <TextView
                     android:id="@+id/import_progress_summary_errors_msg"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
-                    android:gravity="end"
                     android:layout_margin="16dp"
+                    android:gravity="end"
                     android:text="@string/import_progress_summary_errors_msg"
                     app:layout_constraintEnd_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintStart_toStartOf="parent"
@@ -183,14 +183,14 @@
 
                 <TextView
                     android:id="@+id/import_progress_summary_errors"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_summary_errors_msg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/guideline_vertical_half"
                     app:layout_constraintTop_toTopOf="@id/import_progress_summary_errors_msg"
-                    tools:text="10" />
+                    android:text="@string/value_unknown" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/import_progress_summary_errors_barrier"
@@ -204,8 +204,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:constraint_referenced_ids="import_progress_summary_errors_msg,import_progress_summary_errors" />
+                    app:constraint_referenced_ids="import_progress_summary_errors_msg,import_progress_summary_errors"
+                    tools:visibility="visible" />
                 <!-- End Summary -->
 
                 <ImageView
@@ -214,18 +214,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="8dp"
-                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintBottom_toBottomOf="@id/import_progress_alert_msg"
                     app:layout_constraintEnd_toStartOf="@id/import_progress_alert_msg"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/import_progress_alert_msg"
                     app:srcCompat="@drawable/ic_report_problem_24" />
 
                 <TextView
                     android:id="@+id/import_progress_alert_msg"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:layout_marginTop="48dp"
                     android:layout_marginEnd="24dp"
                     android:layout_marginBottom="24dp"
@@ -258,7 +258,7 @@
                 android:layout_gravity="end"
                 android:text="@android:string/ok"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
         </LinearLayout>
 
     </LinearLayout>
