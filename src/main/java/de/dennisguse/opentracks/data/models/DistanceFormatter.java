@@ -14,15 +14,15 @@ public class DistanceFormatter {
 
     private final Resources resources;
 
-    private final int decimalCount;
+    private final int decimalPlaces;
 
     private final double threshold;
 
     private final UnitSystem unitSystem;
 
-    private DistanceFormatter(Resources resources, int decimalCount, double threshold, UnitSystem unitSystem) {
+    private DistanceFormatter(Resources resources, int decimalPlaces, double threshold, UnitSystem unitSystem) {
         this.resources = resources;
-        this.decimalCount = decimalCount;
+        this.decimalPlaces = decimalPlaces;
         this.threshold = threshold;
         this.unitSystem = unitSystem;
         assert unitSystem != null;
@@ -57,30 +57,30 @@ public class DistanceFormatter {
         switch (unitSystem) {
             case METRIC -> {
                 if (distance.greaterThan(Distance.ofKilometer(threshold))) {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toKM(), decimalCount), resources.getString(R.string.unit_kilometer));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toKM(), decimalPlaces), resources.getString(R.string.unit_kilometer));
                 } else {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toM(), decimalCount), resources.getString(R.string.unit_meter));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toM(), decimalPlaces), resources.getString(R.string.unit_meter));
                 }
             }
             case IMPERIAL_FEET -> {
                 if (distance.greaterThan(Distance.ofMile(threshold))) {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toMI(), decimalCount), resources.getString(R.string.unit_mile));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toMI(), decimalPlaces), resources.getString(R.string.unit_mile));
                 } else {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toFT(), decimalCount), resources.getString(R.string.unit_feet));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toFT(), decimalPlaces), resources.getString(R.string.unit_feet));
                 }
             }
             case IMPERIAL_METER -> {
                 if (distance.greaterThan(Distance.ofMile(threshold))) {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toMI(), decimalCount), resources.getString(R.string.unit_mile));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toMI(), decimalPlaces), resources.getString(R.string.unit_mile));
                 } else {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toM(), decimalCount), resources.getString(R.string.unit_meter));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toM(), decimalPlaces), resources.getString(R.string.unit_meter));
                 }
             }
             case NAUTICAL_IMPERIAL -> {
                 if (distance.greaterThan(Distance.ofNauticalMile(threshold))) {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toNauticalMiles(), decimalCount), resources.getString(R.string.unit_nautical_mile));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toNauticalMiles(), decimalPlaces), resources.getString(R.string.unit_nautical_mile));
                 } else {
-                    return new Pair<>(StringUtils.formatDecimal(distance.toFT(), decimalCount), resources.getString(R.string.unit_feet));
+                    return new Pair<>(StringUtils.formatDecimal(distance.toFT(), decimalPlaces), resources.getString(R.string.unit_feet));
                 }
             }
             default -> throw new RuntimeException("Not implemented");
@@ -93,19 +93,19 @@ public class DistanceFormatter {
 
     public static class Builder {
 
-        private int decimalCount;
+        private int decimalPlaces;
 
         private UnitSystem unitSystem;
 
         private double threshold;
 
         public Builder() {
-            decimalCount = 2;
+            decimalPlaces = 2;
             threshold = 0.5;
         }
 
-        public Builder setDecimalCount(int decimalCount) {
-            this.decimalCount = decimalCount;
+        public Builder setDecimalPlaces(int decimalPlaces) {
+            this.decimalPlaces = decimalPlaces;
             return this;
         }
 
@@ -120,7 +120,7 @@ public class DistanceFormatter {
         }
 
         public DistanceFormatter build(Resources resource) {
-            return new DistanceFormatter(resource, decimalCount, threshold, unitSystem);
+            return new DistanceFormatter(resource, decimalPlaces, threshold, unitSystem);
         }
 
         public DistanceFormatter build(Context context) {

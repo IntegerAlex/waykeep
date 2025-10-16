@@ -21,7 +21,7 @@ public class DistanceFormatterTest {
     @Test
     public void testFormatDistance_metric() {
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(2)
+                .setDecimalPlaces(2)
                 .setUnit(UnitSystem.METRIC)
                 .build(context);
 
@@ -34,7 +34,7 @@ public class DistanceFormatterTest {
     @Test
     public void testFormatDistance_imperial() {
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(2)
+                .setDecimalPlaces(2)
                 .setUnit(UnitSystem.IMPERIAL_FEET)
                 .build(context);
 
@@ -47,7 +47,7 @@ public class DistanceFormatterTest {
     @Test
     public void testFormatDistance_nautical() {
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(2)
+                .setDecimalPlaces(2)
                 .setUnit(UnitSystem.NAUTICAL_IMPERIAL)
                 .build(context);
 

@@ -114,7 +114,7 @@ public class IntervalsFragment extends Fragment {
                 TextView v = (TextView) super.getView(position, convertView, parent);
 
                 DistanceFormatter formatter = DistanceFormatter.Builder()
-                        .setDecimalCount(0)
+                        .setDecimalPlaces(0)
                         .setUnit(unitSystem)
                         .build(getContext());
 
@@ -200,7 +200,7 @@ public class IntervalsFragment extends Fragment {
 
     private void setIntervalsDropdownText() {
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setUnit(unitSystem)
                 .build(getContext());
 
