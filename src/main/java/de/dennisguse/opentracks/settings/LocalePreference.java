@@ -29,7 +29,7 @@ import de.dennisguse.opentracks.R;
 
 public class LocalePreference extends ListPreference {
 
-    private String TAG = LocalePreference.class.getSimpleName();
+    private final String TAG = LocalePreference.class.getSimpleName();
 
     public LocalePreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
