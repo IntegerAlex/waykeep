@@ -81,7 +81,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAbsoluteAdapterPosition();
                 final RecordingLayout item = adapter.getLayouts().get(position);
 
                 adapter.removeLayout(position);
