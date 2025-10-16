@@ -897,7 +897,7 @@ public class ChartView extends View {
      */
     private void updateSeries() {
         synchronized (chartPoints) {
-            seriesList.stream().forEach(this::updateSerie);
+            seriesList.forEach(this::updateSerie);
         }
     }
 

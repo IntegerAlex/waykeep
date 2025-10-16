@@ -2,7 +2,6 @@ package de.dennisguse.opentracks.settings;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.ui.customRecordingLayout.CsvLayoutUtils;
@@ -59,7 +58,7 @@ class PreferencesOpenHelper {
         if (!parts.get(1).matches("\\d+")) {
             parts.add(1, String.valueOf(PreferencesUtils.getLayoutColumnsByDefault()));
         }
-        PreferencesUtils.setString(R.string.stats_custom_layouts_key, parts.stream().collect(Collectors.joining(CsvLayoutUtils.ITEM_SEPARATOR)));
+        PreferencesUtils.setString(R.string.stats_custom_layouts_key, String.join(CsvLayoutUtils.ITEM_SEPARATOR, parts));
     }
 
     private void onDowngrade() {

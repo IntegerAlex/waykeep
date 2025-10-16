@@ -80,7 +80,7 @@ public class TrackStatisticsUpdater {
     }
 
     public void addTrackPoints(List<TrackPoint> trackPoints) {
-        trackPoints.stream().forEachOrdered(this::addTrackPoint);
+        trackPoints.forEach(this::addTrackPoint);
     }
 
     public void addTrackPoint(TrackPoint trackPoint) {
