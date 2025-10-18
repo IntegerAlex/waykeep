@@ -32,9 +32,9 @@ public class RecordingLayoutTest extends TestCase {
         List<DataField> dataFieldList = recordingLayout.getFields();
 
         // then layout and data fields are built correctly
-        assertEquals(recordingLayout.getName(), "running");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
-        assertEquals(dataFieldList.size(), 4);
+        assertEquals("running", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
+        assertEquals(4, dataFieldList.size());
         assertEquals(dataFieldList.get(0).getKey(), context.getString(R.string.stats_custom_layout_speed_key));
         assertEquals(dataFieldList.get(1).getKey(), context.getString(R.string.stats_custom_layout_distance_key));
         assertEquals(dataFieldList.get(2).getKey(), context.getString(R.string.stats_custom_layout_altitude_key));
@@ -66,7 +66,7 @@ public class RecordingLayoutTest extends TestCase {
         // then layout and data fields are built correctly
         assertEquals(recordingLayout.getName(), PreferencesUtils.getDefaultLayoutName());
         assertEquals(recordingLayout.getColumnsPerRow(), PreferencesUtils.getLayoutColumnsByDefault());
-        assertEquals(recordingLayout.getFields().size(), 0);
+        assertEquals(0, recordingLayout.getFields().size());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class RecordingLayoutTest extends TestCase {
         // then layout and data fields are built correctly
         assertEquals(recordingLayout.getName(), PreferencesUtils.getDefaultLayoutName());
         assertEquals(recordingLayout.getColumnsPerRow(), PreferencesUtils.getLayoutColumnsByDefault());
-        assertEquals(recordingLayout.getFields().size(), 0);
+        assertEquals(0, recordingLayout.getFields().size());
     }
 
     @Test
@@ -94,9 +94,9 @@ public class RecordingLayoutTest extends TestCase {
         List<DataField> dataFieldList = recordingLayout.getFields();
 
         // then layout and data fields are built correctly
-        assertEquals(recordingLayout.getName(), "Layout Name");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
-        assertEquals(recordingLayout.getFields().size(), 0);
+        assertEquals("Layout Name", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
+        assertEquals(0, recordingLayout.getFields().size());
     }
 
     @Test
@@ -109,9 +109,9 @@ public class RecordingLayoutTest extends TestCase {
         List<DataField> dataFieldList = recordingLayout.getFields();
 
         // then layout and data fields are built correctly
-        assertEquals(recordingLayout.getName(), "Layout Name");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
-        assertEquals(recordingLayout.getFields().size(), 1);
+        assertEquals("Layout Name", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
+        assertEquals(1, recordingLayout.getFields().size());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class RecordingLayoutTest extends TestCase {
         String csv = recordingLayout.toCsv();
 
         // then csv is well built
-        assertEquals(csv, "Test Layout;2;key1,0,0,0;key2,0,1,0;key3,1,0,0;key4,1,1,0;key5,1,1,1;");
+        assertEquals("Test Layout;2;key1,0,0,0;key2,0,1,0;key3,1,0,0;key4,1,1,0;key5,1,1,1;", csv);
     }
 
     @Test

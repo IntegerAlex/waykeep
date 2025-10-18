@@ -37,9 +37,9 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "_id IN (?)");
-        assertEquals(selection.selectionArgs().length, 1);
-        assertEquals(selection.selectionArgs()[0], "1");
+        assertEquals("_id IN (?)", selection.selection());
+        assertEquals(1, selection.selectionArgs().length);
+        assertEquals("1", selection.selectionArgs()[0]);
     }
 
     @Test
@@ -57,11 +57,11 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "_id IN (?,?,?)");
-        assertEquals(selection.selectionArgs().length, 3);
-        assertEquals(selection.selectionArgs()[0], "1");
-        assertEquals(selection.selectionArgs()[1], "2");
-        assertEquals(selection.selectionArgs()[2], "3");
+        assertEquals("_id IN (?,?,?)", selection.selection());
+        assertEquals(3, selection.selectionArgs().length);
+        assertEquals("1", selection.selectionArgs()[0]);
+        assertEquals("2", selection.selectionArgs()[1]);
+        assertEquals("3", selection.selectionArgs()[2]);
     }
 
     @Test
@@ -73,9 +73,9 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "category IN (?)");
-        assertEquals(selection.selectionArgs().length, 1);
-        assertEquals(selection.selectionArgs()[0], "running");
+        assertEquals("category IN (?)", selection.selection());
+        assertEquals(1, selection.selectionArgs().length);
+        assertEquals("running", selection.selectionArgs()[0]);
     }
 
     @Test
@@ -91,12 +91,12 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "category IN (?,?,?,?)");
-        assertEquals(selection.selectionArgs().length, 4);
-        assertEquals(selection.selectionArgs()[0], "running");
-        assertEquals(selection.selectionArgs()[1], "road biking");
-        assertEquals(selection.selectionArgs()[2], "mountain biking");
-        assertEquals(selection.selectionArgs()[3], "trail walking");
+        assertEquals("category IN (?,?,?,?)", selection.selection());
+        assertEquals(4, selection.selectionArgs().length);
+        assertEquals("running", selection.selectionArgs()[0]);
+        assertEquals("road biking", selection.selectionArgs()[1]);
+        assertEquals("mountain biking", selection.selectionArgs()[2]);
+        assertEquals("trail walking", selection.selectionArgs()[3]);
     }
 
     @Test
@@ -120,8 +120,8 @@ public class TrackSelectionTest extends TestCase {
         assertNull(selectionWrong2.selection());
         assertNull(selectionWrong2.selectionArgs());
 
-        assertEquals(selectionOk.selection(), "starttime BETWEEN ? AND ?");
-        assertEquals(selectionOk.selectionArgs().length, 2);
+        assertEquals("starttime BETWEEN ? AND ?", selectionOk.selection());
+        assertEquals(2, selectionOk.selectionArgs().length);
         assertEquals(selectionOk.selectionArgs()[0], Long.toString(instant.toEpochMilli()));
         assertEquals(selectionOk.selectionArgs()[1], Long.toString(instant.toEpochMilli() + oneDay));
     }
@@ -143,13 +143,13 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "_id IN (?,?,?) AND category IN (?,?)");
-        assertEquals(selection.selectionArgs().length, 5);
-        assertEquals(selection.selectionArgs()[0], "1");
-        assertEquals(selection.selectionArgs()[1], "2");
-        assertEquals(selection.selectionArgs()[2], "3");
-        assertEquals(selection.selectionArgs()[3], "running");
-        assertEquals(selection.selectionArgs()[4], "road biking");
+        assertEquals("_id IN (?,?,?) AND category IN (?,?)", selection.selection());
+        assertEquals(5, selection.selectionArgs().length);
+        assertEquals("1", selection.selectionArgs()[0]);
+        assertEquals("2", selection.selectionArgs()[1]);
+        assertEquals("3", selection.selectionArgs()[2]);
+        assertEquals("running", selection.selectionArgs()[3]);
+        assertEquals("road biking", selection.selectionArgs()[4]);
     }
 
     @Test
@@ -172,11 +172,11 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "_id IN (?,?,?) AND starttime BETWEEN ? AND ?");
-        assertEquals(selection.selectionArgs().length, 5);
-        assertEquals(selection.selectionArgs()[0], "1");
-        assertEquals(selection.selectionArgs()[1], "2");
-        assertEquals(selection.selectionArgs()[2], "3");
+        assertEquals("_id IN (?,?,?) AND starttime BETWEEN ? AND ?", selection.selection());
+        assertEquals(5, selection.selectionArgs().length);
+        assertEquals("1", selection.selectionArgs()[0]);
+        assertEquals("2", selection.selectionArgs()[1]);
+        assertEquals("3", selection.selectionArgs()[2]);
         assertEquals(selection.selectionArgs()[3], Long.toString(instant.toEpochMilli()));
         assertEquals(selection.selectionArgs()[4], Long.toString(instant.toEpochMilli() + oneDay));
     }
@@ -196,10 +196,10 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals(selection.selection(), "category IN (?,?) AND starttime BETWEEN ? AND ?");
-        assertEquals(selection.selectionArgs().length, 4);
-        assertEquals(selection.selectionArgs()[0], "running");
-        assertEquals(selection.selectionArgs()[1], "road biking");
+        assertEquals("category IN (?,?) AND starttime BETWEEN ? AND ?", selection.selection());
+        assertEquals(4, selection.selectionArgs().length);
+        assertEquals("running", selection.selectionArgs()[0]);
+        assertEquals("road biking", selection.selectionArgs()[1]);
         assertEquals(selection.selectionArgs()[2], Long.toString(instant.toEpochMilli()));
         assertEquals(selection.selectionArgs()[3], Long.toString(instant.toEpochMilli() + oneDay));
     }

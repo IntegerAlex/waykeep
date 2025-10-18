@@ -26,11 +26,11 @@ public class CsvRecordingLayoutUtilsTest extends TestCase {
 
         // then
         assertNotNull(partsOk);
-        assertEquals(partsOk.size(), 4);
-        assertEquals(partsOk.get(0), "Layout Name");
-        assertEquals(partsOk.get(1), "2");
-        assertEquals(partsOk.get(2), "distance,1,1");
-        assertEquals(partsOk.get(3), "speed,1,1");
+        assertEquals(4, partsOk.size());
+        assertEquals("Layout Name", partsOk.get(0));
+        assertEquals("2", partsOk.get(1));
+        assertEquals("distance,1,1", partsOk.get(2));
+        assertEquals("speed,1,1", partsOk.get(3));
         assertNull(partsWrong1);
         assertNull(partsWrong2);
     }
