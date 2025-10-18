@@ -149,12 +149,12 @@ public class CSVTrackExporter implements TrackExporter {
         printWriter = null;
     }
 
-    public void writeHeader(List<Column> columns) {
+    private void writeHeader(List<Column> columns) {
         String columnNames = columns.stream().map(c -> c.columnName).reduce((s, s2) -> s + "," + s2).orElseThrow(() -> new RuntimeException("No columns defined"));
         printWriter.println("#" + columnNames);
     }
 
-    public void writeTrackPoint(List<Column> columns, TrackPoint trackPoint) {
+    private void writeTrackPoint(List<Column> columns, TrackPoint trackPoint) {
         String columnNames = columns.stream().map(c -> c.extractor.apply(trackPoint)).reduce((s, s2) -> s + "," + s2).orElseThrow(() -> new RuntimeException("No columns defined"));
         printWriter.println(columnNames);
     }
