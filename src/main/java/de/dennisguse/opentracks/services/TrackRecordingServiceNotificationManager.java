@@ -105,8 +105,7 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
     Notification setGPSonlyStarted(Context context) {
         Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
 
-        int pendingIntentFlags = 0;
-        pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        int pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
                 .addParentStack(TrackListActivity.class)
                 .addNextIntent(intent)

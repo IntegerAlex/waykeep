@@ -97,7 +97,7 @@ public class ImportActivity extends AbstractActivity {
 
         importer = new Importer(this, documentFiles);
         importer.getLiveData()
-                .observe(this, summary -> setProgress(summary));
+                .observe(this, this::setProgress);
         importer.startImport();
 
         //Works for a directory, but we might have received multiple files via SEND_MULTIPLE.

@@ -17,7 +17,6 @@
 package de.dennisguse.opentracks.chart;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -49,10 +48,8 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.ExtremityMonitor;
-import de.dennisguse.opentracks.ui.markers.MarkerDetailActivity;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.ui.util.ThemeUtils;
-import de.dennisguse.opentracks.util.IntentUtils;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -857,7 +854,7 @@ public class ChartView extends View {
      * @param chartValueSeries the chart value series
      * @param canvas           the canvas
      * @param xPosition        the right most x position
-     * @parm yOffset           offset to apply to y position
+     * @param yOffset           offset to apply to y position
      * @param yValue           the y value
      * @return the marker width.
      */
