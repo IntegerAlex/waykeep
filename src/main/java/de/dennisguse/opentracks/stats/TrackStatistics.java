@@ -37,7 +37,6 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
  *
  * @author Rodrigo Damazio
  */
-//TODO Use null instead of Double.isInfinite
 //TODO Check that data ranges are valid (not less than zero etc.)
 //TODO Should be a Java record
 public class TrackStatistics {
@@ -321,8 +320,8 @@ public class TrackStatistics {
         this.maxSpeed = maxSpeed;
     }
 
-    public boolean hasAltitudeMin() {
-        return !Double.isInfinite(getMinAltitude());
+    public boolean hasAltitudeExtremities() {
+        return altitudeExtremities.hasData();
     }
 
     public double getMinAltitude() {
@@ -331,10 +330,6 @@ public class TrackStatistics {
 
     public void setMinAltitude(double altitude_m) {
         altitudeExtremities.setMin(altitude_m);
-    }
-
-    public boolean hasAltitudeMax() {
-        return !Double.isInfinite(getMaxAltitude());
     }
 
     /**

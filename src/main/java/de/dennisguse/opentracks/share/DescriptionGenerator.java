@@ -132,13 +132,9 @@ public class DescriptionGenerator {
         // Fastest pace
         writePace(stats.getMaxSpeed(), builder, R.string.description_fastest_pace_in_minute, lineBreak);
 
-        // Max altitude
-        if (stats.hasAltitudeMax()) {
+        // Min and Max altitude
+        if (stats.hasAltitudeExtremities()) {
             writeAltitude(stats.getMaxAltitude(), builder, R.string.description_max_altitude, lineBreak);
-        }
-
-        // Min altitude
-        if (stats.hasAltitudeMin()) {
             writeAltitude(stats.getMinAltitude(), builder, R.string.description_min_altitude, lineBreak);
         }
 
