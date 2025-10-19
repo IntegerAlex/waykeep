@@ -49,13 +49,13 @@ public class ListItemUtils {
      */
     private static String getTimeDistance(String totalTime, String totalDistance) {
         StringBuilder builder = new StringBuilder();
-        if (totalTime != null && totalTime.length() != 0) {
+        if (totalTime != null && !totalTime.isEmpty()) {
             if (builder.length() != 0) {
                 builder.append(" ‧ ");
             }
             builder.append(totalTime);
         }
-        if (totalDistance != null && totalDistance.length() != 0) {
+        if (totalDistance != null && !totalDistance.isEmpty()) {
             if (builder.length() != 0) {
                 builder.append(" ");
             }

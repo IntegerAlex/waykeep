@@ -90,7 +90,7 @@ public class PreferencesUtilsTest {
 
         // then
         assertEquals(1, recordingLayouts.size());
-        assertTrue(recordingLayouts.get(0).getFields().size() > 0);
+        assertFalse(recordingLayouts.get(0).getFields().isEmpty());
         assertEquals(recordingLayouts.get(0).getName(), context.getString(R.string.stats_custom_layout_default_layout));
         assertTrue(recordingLayouts.get(0).getFields().stream().anyMatch(DataField::isVisible));
     }
@@ -107,7 +107,7 @@ public class PreferencesUtilsTest {
         RecordingLayout recordingLayout = PreferencesUtils.getCustomLayout();
 
         // then
-        assertTrue(recordingLayout.getFields().size() > 0);
+        assertFalse(recordingLayout.getFields().isEmpty());
         assertEquals(recordingLayout.getName(), context.getString(R.string.stats_custom_layout_default_layout));
         assertTrue(recordingLayout.getFields().stream().anyMatch(DataField::isVisible));
     }
