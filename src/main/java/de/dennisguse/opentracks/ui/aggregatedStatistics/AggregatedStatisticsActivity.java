@@ -45,7 +45,7 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
 
         List<Track.Id> trackIds = getIntent().getParcelableArrayListExtra(EXTRA_TRACK_IDS);
         if (trackIds != null && !trackIds.isEmpty()) {
-            trackIds.stream().forEach(selection::addTrackId);
+            trackIds.forEach(selection::addTrackId);
         }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -103,7 +103,7 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.aggregated_statistics_filter) {
             ArrayList<FilterDialogFragment.FilterItem> filterItems = new ArrayList<>();
-            adapter.getCategories().stream().forEach(activityType -> filterItems.add(new FilterDialogFragment.FilterItem(activityType, activityType, true)));
+            adapter.getCategories().forEach(activityType -> filterItems.add(new FilterDialogFragment.FilterItem(activityType, activityType, true)));
             FilterDialogFragment.showDialog(getSupportFragmentManager(), filterItems);
             return true;
         }

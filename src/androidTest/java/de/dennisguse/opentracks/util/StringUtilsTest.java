@@ -38,11 +38,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.LocaleRule;
 import de.dennisguse.opentracks.TimezoneRule;
@@ -133,8 +132,10 @@ public class StringUtilsTest {
     @Test
     public void testFormatDateTodayRelative() {
         // given
-        ArrayList<String> shortDays = Arrays.stream(DayOfWeek.values()).map(d -> d.getDisplayName(TextStyle.FULL, Locale.getDefault())).collect(Collectors.toCollection(ArrayList::new));
-        ArrayList<String> shortMonths = Arrays.stream(Month.values()).map(m -> m.getDisplayName(TextStyle.SHORT, Locale.getDefault())).collect(Collectors.toCollection(ArrayList::new));
+        List<String> shortDays = Arrays.stream(DayOfWeek.values()).map(d -> d.getDisplayName(TextStyle.FULL, Locale.getDefault()))
+                .toList();
+        List<String> shortMonths = Arrays.stream(Month.values()).map(m -> m.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                .toList();
 
         LocalDate today = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()).toLocalDate();
         LocalDate yesterday = today.minusDays(1);

@@ -43,14 +43,12 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
 
     TrackRecordingServiceNotificationManager(Context context) {
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                notificationChannel.setAllowBubbles(true);
-            }
-
-            notificationManager.createNotificationChannel(notificationChannel);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            notificationChannel.setAllowBubbles(true);
         }
+
+        notificationManager.createNotificationChannel(notificationChannel);
 
         notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
         notificationBuilder
@@ -105,8 +103,7 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
     Notification setGPSonlyStarted(Context context) {
         Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
 
-        int pendingIntentFlags = 0;
-        pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        int pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
                 .addParentStack(TrackListActivity.class)
                 .addNextIntent(intent)

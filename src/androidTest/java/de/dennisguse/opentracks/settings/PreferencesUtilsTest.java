@@ -89,8 +89,8 @@ public class PreferencesUtilsTest {
         List<RecordingLayout> recordingLayouts = PreferencesUtils.getAllCustomLayouts();
 
         // then
-        assertEquals(recordingLayouts.size(), 1);
-        assertTrue(recordingLayouts.get(0).getFields().size() > 0);
+        assertEquals(1, recordingLayouts.size());
+        assertFalse(recordingLayouts.get(0).getFields().isEmpty());
         assertEquals(recordingLayouts.get(0).getName(), context.getString(R.string.stats_custom_layout_default_layout));
         assertTrue(recordingLayouts.get(0).getFields().stream().anyMatch(DataField::isVisible));
     }
@@ -107,7 +107,7 @@ public class PreferencesUtilsTest {
         RecordingLayout recordingLayout = PreferencesUtils.getCustomLayout();
 
         // then
-        assertTrue(recordingLayout.getFields().size() > 0);
+        assertFalse(recordingLayout.getFields().isEmpty());
         assertEquals(recordingLayout.getName(), context.getString(R.string.stats_custom_layout_default_layout));
         assertTrue(recordingLayout.getFields().stream().anyMatch(DataField::isVisible));
     }
@@ -130,9 +130,9 @@ public class PreferencesUtilsTest {
         RecordingLayout recordingLayout = PreferencesUtils.getCustomLayout();
 
         // then
-        assertEquals(recordingLayout.getFields().size(), 4);
-        assertEquals(recordingLayout.getName(), "run");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
+        assertEquals(4, recordingLayout.getFields().size());
+        assertEquals("run", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
 
         assertEquals(recordingLayout.getFields().get(0).getKey(), context.getString(R.string.stats_custom_layout_moving_time_key));
         assertTrue(recordingLayout.getFields().get(0).isVisible());
@@ -169,9 +169,9 @@ public class PreferencesUtilsTest {
         RecordingLayout recordingLayout = PreferencesUtils.getCustomLayout();
 
         // then
-        assertEquals(recordingLayout.getFields().size(), 4);
-        assertEquals(recordingLayout.getName(), "walking");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
+        assertEquals(4, recordingLayout.getFields().size());
+        assertEquals("walking", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
 
         assertEquals(recordingLayout.getFields().get(0).getKey(), context.getString(R.string.stats_custom_layout_moving_time_key));
         assertTrue(recordingLayout.getFields().get(0).isVisible());
@@ -266,11 +266,11 @@ public class PreferencesUtilsTest {
         // then only updated profile is modified in the custom layouts
         List<RecordingLayout> layoutsAfter = PreferencesUtils.getAllCustomLayouts();
 
-        assertEquals(layoutsBefore.size(), 2);
-        assertEquals(layoutsAfter.size(), 2);
+        assertEquals(2, layoutsBefore.size());
+        assertEquals(2, layoutsAfter.size());
 
-        assertEquals(layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count(), 4);
-        assertEquals(layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count(), 1);
+        assertEquals(4, layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count());
+        assertEquals(1, layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count());
     }
 
     @Test
@@ -309,11 +309,11 @@ public class PreferencesUtilsTest {
         // then only updated profile is modified in the custom layouts
         List<RecordingLayout> layoutsAfter = PreferencesUtils.getAllCustomLayouts();
 
-        assertEquals(layoutsBefore.size(), 2);
-        assertEquals(layoutsAfter.size(), 2);
+        assertEquals(2, layoutsBefore.size());
+        assertEquals(2, layoutsAfter.size());
 
-        assertEquals(layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count(), 4);
-        assertEquals(layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count(), 1);
+        assertEquals(4, layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count());
+        assertEquals(1, layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count());
     }
 
     @Test
@@ -341,6 +341,6 @@ public class PreferencesUtilsTest {
         RecordingLayout recordingLayout = PreferencesUtils.getCustomLayout();
 
         // then the first one was returned
-        assertEquals(recordingLayout.getName(), "cycling");
+        assertEquals("cycling", recordingLayout.getName());
     }
 }

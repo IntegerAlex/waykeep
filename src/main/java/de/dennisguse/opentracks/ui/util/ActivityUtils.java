@@ -3,7 +3,6 @@ package de.dennisguse.opentracks.ui.util;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.Menu;
@@ -18,11 +17,7 @@ public class ActivityUtils {
 
     public static void vibrate(@NonNull Context context, Duration duration) {
         final Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(duration.toMillis(), VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            vibrator.vibrate(duration.toMillis());
-        }
+        vibrator.vibrate(VibrationEffect.createOneShot(duration.toMillis(), VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     /**

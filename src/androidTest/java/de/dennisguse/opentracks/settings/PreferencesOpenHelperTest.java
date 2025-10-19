@@ -41,7 +41,7 @@ public class PreferencesOpenHelperTest {
         // then there should be one layout with old custom layout that has the new CSV value.
         List<RecordingLayout> recordingLayouts = PreferencesUtils.getAllCustomLayouts();
         assertNotNull(recordingLayouts);
-        assertEquals(recordingLayouts.size(), 1);
+        assertEquals(1, recordingLayouts.size());
         assertEquals(recordingLayouts.get(0).toCsv(), PreferencesUtils.getCustomLayout().toCsv());
     }
 
@@ -66,7 +66,7 @@ public class PreferencesOpenHelperTest {
         // then there should be one layout with old custom layout that has the new CSV value.
         List<RecordingLayout> recordingLayouts = PreferencesUtils.getAllCustomLayouts();
         assertNotNull(recordingLayouts);
-        assertEquals(recordingLayouts.size(), 1);
+        assertEquals(1, recordingLayouts.size());
         assertEquals(recordingLayouts.get(0).toCsv(), updatedOldCustomLayoutCsv);
     }
 
@@ -90,8 +90,8 @@ public class PreferencesOpenHelperTest {
         // then there should be one layout with old custom layout that has the new CSV value.
         List<RecordingLayout> recordingLayouts = PreferencesUtils.getAllCustomLayouts();
         assertNotNull(recordingLayouts);
-        assertEquals(recordingLayouts.size(), 1);
-        assertEquals(recordingLayouts.get(0).toCsv(), updatedOldCustomLayoutCsv);
+        assertEquals(1, recordingLayouts.size());
+        assertEquals(updatedOldCustomLayoutCsv, recordingLayouts.get(0).toCsv());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class PreferencesOpenHelperTest {
         RecordingLayout defaultRecordingLayout = RecordingLayoutIO.fromCsv(PreferencesUtils.buildDefaultLayout(), resources);
         List<RecordingLayout> customRecordingLayout = PreferencesUtils.getAllCustomLayouts();
 
-        assertEquals(customRecordingLayout.size(), 1);
+        assertEquals(1, customRecordingLayout.size());
         assertEquals(defaultRecordingLayout.toCsv(), customRecordingLayout.get(0).toCsv());
     }
 }

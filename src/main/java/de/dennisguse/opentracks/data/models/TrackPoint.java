@@ -35,7 +35,7 @@ import java.util.Optional;
 public class TrackPoint {
 
     @Nullable
-    private TrackPoint.Id id;
+    private final TrackPoint.Id id;
 
     //Requires: position.time must be non-null
     @NonNull

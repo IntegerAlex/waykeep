@@ -12,17 +12,16 @@ import de.dennisguse.opentracks.util.StringUtils;
 
 public class SpeedFormatter {
 
-    private final Resources resources;
+    private final int DECIMAL_PLACES = 1;
 
-    private final int decimalCount;
+    private final Resources resources;
 
     private final UnitSystem unitSystem;
 
     private final boolean reportSpeedOrPace;
 
-    private SpeedFormatter(Resources resources, int decimalCount, UnitSystem unitSystem, boolean reportSpeedOrPace) {
+    private SpeedFormatter(Resources resources, UnitSystem unitSystem, boolean reportSpeedOrPace) {
         this.resources = resources;
-        this.decimalCount = decimalCount;
         this.unitSystem = unitSystem;
         this.reportSpeedOrPace = reportSpeedOrPace;
     }
@@ -55,7 +54,7 @@ public class SpeedFormatter {
         }
 
         if (reportSpeedOrPace) {
-            return new Pair<>(StringUtils.formatDecimal(speed.to(unitSystem), 1), unitString);
+            return new Pair<>(StringUtils.formatDecimal(speed.to(unitSystem), DECIMAL_PLACES), unitString);
         }
 
         int pace = (int) speed.toPace(unitSystem).getSeconds();
@@ -71,20 +70,12 @@ public class SpeedFormatter {
 
     public static class Builder {
 
-        private int decimalCount;
-
         private UnitSystem unitSystem;
 
         private boolean reportSpeedOrPace;
 
         public Builder() {
-            decimalCount = 2;
             reportSpeedOrPace = true;
-        }
-
-        public Builder setDecimalCount(int decimalCount) {
-            this.decimalCount = decimalCount;
-            return this;
         }
 
         public Builder setUnit(@NonNull UnitSystem unitSystem) {
@@ -98,7 +89,7 @@ public class SpeedFormatter {
         }
 
         public SpeedFormatter build(Resources resource) {
-            return new SpeedFormatter(resource, decimalCount, unitSystem, reportSpeedOrPace);
+            return new SpeedFormatter(resource, unitSystem, reportSpeedOrPace);
         }
 
         public SpeedFormatter build(Context context) {

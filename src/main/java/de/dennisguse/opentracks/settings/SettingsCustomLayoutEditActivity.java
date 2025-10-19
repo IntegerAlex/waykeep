@@ -62,8 +62,8 @@ public class SettingsCustomLayoutEditActivity extends AbstractActivity implement
                 ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, 0) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                int fromPosition = viewHolder.getAdapterPosition();
-                int toPosition = target.getAdapterPosition();
+                int fromPosition = viewHolder.getAbsoluteAdapterPosition();
+                int toPosition = target.getAbsoluteAdapterPosition();
                 recordingLayoutFieldsVisible = adapterFieldsVisible.move(fromPosition, toPosition);
                 return true;
             }

@@ -88,7 +88,7 @@ public class DescriptionGenerator {
      * @param lineBreak the line break
      */
     private void writeString(String text, StringBuilder builder, int resId, String lineBreak) {
-        if (text == null || text.length() == 0) {
+        if (text == null || text.isEmpty()) {
             text = context.getString(R.string.value_unknown);
         }
         builder.append(context.getString(resId, text));

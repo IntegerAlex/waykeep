@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -25,8 +23,7 @@ public class TrackFilenameGenerator {
     public static final String STARTTIME_DATE_KEY = "{date}";
 
     public static String getAllOptions() {
-        return Stream.of(UUID_KEY, TRACKNAME_KEY, ACTIVITY_TYPE_KEY, STARTTIME_TIME_KEY, STARTTIME_DATE_KEY)
-                .collect(Collectors.joining(", "));
+        return String.join(", ", UUID_KEY, TRACKNAME_KEY, ACTIVITY_TYPE_KEY, STARTTIME_TIME_KEY, STARTTIME_DATE_KEY);
     }
 
     public static String format(@NonNull String name, @NonNull TrackFileFormat trackFileFormat) {

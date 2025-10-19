@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.content.data.TestSensorDataUtil;
@@ -451,7 +450,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(marker1);
 
         // Check insert was done.
-        assertEquals(contentProviderUtils.getMarkers(trackId).size(), 1);
+        assertEquals(1, contentProviderUtils.getMarkers(trackId).size());
 
         // Get marker id that needs to delete.
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
@@ -478,7 +477,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(marker1);
 
         // Check insert was done.
-        assertEquals(contentProviderUtils.getMarkers(trackId).size(), 1);
+        assertEquals(1, contentProviderUtils.getMarkers(trackId).size());
 
         // Get marker id that needs to delete.
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
@@ -832,7 +831,7 @@ public class CustomContentProviderUtilsTest {
 
         List<TrackPoint.Id> trackpointIds = track.second.stream()
                 .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.getId())))
-                .map(TrackPoint.Id::new).collect(Collectors.toList());
+                .map(TrackPoint.Id::new).toList();
 
         // when
         try (Cursor cursor = contentProviderUtils.getTrackPointCursor(trackId, trackpointIds.get(8))) {
@@ -850,7 +849,7 @@ public class CustomContentProviderUtilsTest {
 
         List<TrackPoint.Id> trackpointIds = track.second.stream()
                 .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.getId())))
-                .map(TrackPoint.Id::new).collect(Collectors.toList());
+                .map(TrackPoint.Id::new).toList();
 
         TrackPoint.Id startTrackPointId = trackpointIds.get(0);
 

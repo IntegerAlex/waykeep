@@ -12,7 +12,6 @@ import androidx.work.WorkRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Track;
@@ -38,7 +37,7 @@ public class Importer {
 
         List<ArrayList<DocumentFile>> nestedFileList = documentFiles.stream()
                 .map(FileUtils::getFiles)
-                .collect(Collectors.toList());
+                .toList();
 
         List<DocumentFile> fileList = new ArrayList<>();
         nestedFileList.forEach(fileList::addAll);

@@ -48,10 +48,8 @@ public class CustomSQLiteOpenHelperTest {
     public static Map<String, String> getSQL(SQLiteDatabase db, String type) {
         HashMap<String, String> sqlMap = new HashMap<>();
         try (Cursor cursor = db.query("sqlite_master", new String[]{"name", "SQL"}, "type=?", new String[]{type}, null, null, "name")) {
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    sqlMap.put(cursor.getString(0), cursor.getString(1));
-                }
+            while (cursor.moveToNext()) {
+                sqlMap.put(cursor.getString(0), cursor.getString(1));
             }
         }
         return sqlMap;
@@ -64,12 +62,10 @@ public class CustomSQLiteOpenHelperTest {
      */
     private static boolean hasSqlCreate(SQLiteDatabase db, String sqlCreate) {
         try (Cursor cursor = db.rawQuery("SELECT SQL FROM sqlite_master", null)) {
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    String sql = cursor.getString(0);
-                    if (sqlCreate.equals(sql)) {
-                        return true;
-                    }
+            while (cursor.moveToNext()) {
+                String sql = cursor.getString(0);
+                if (sqlCreate.equals(sql)) {
+                    return true;
                 }
             }
         }

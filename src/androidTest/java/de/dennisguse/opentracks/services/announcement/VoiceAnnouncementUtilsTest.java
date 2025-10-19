@@ -165,7 +165,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -216,7 +216,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -330,7 +330,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -381,7 +381,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -411,7 +411,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -449,7 +449,7 @@ public class VoiceAnnouncementUtilsTest {
         TrackStatistics stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
+            assertEquals(numberOfPoints, trackPointIterator.getCount());
             IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);

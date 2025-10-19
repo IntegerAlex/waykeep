@@ -396,7 +396,7 @@ public class PreferencesUtils {
         UnitSystem unitSystem = getUnitSystem();
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setUnit(unitSystem)
                 .build(resources);
         for (int i = 0; i < entryValues.length; i++) {
@@ -503,7 +503,7 @@ public class PreferencesUtils {
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
                 .setUnit(unitSystem)
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setThreshold(Double.MAX_VALUE)
                 .build(resources);
         for (int i = 0; i < entryValues.length; i++) {
@@ -546,7 +546,7 @@ public class PreferencesUtils {
         UnitSystem unitSystem = getUnitSystem();
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setThreshold(Double.MAX_VALUE)
                 .setUnit(unitSystem)
                 .build(resources);
@@ -619,7 +619,7 @@ public class PreferencesUtils {
         UnitSystem unitSystem = getUnitSystem();
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setThreshold(Double.MAX_VALUE)
                 .setUnit(unitSystem)
                 .build(resources);
@@ -829,7 +829,8 @@ public class PreferencesUtils {
                 R.array.stats_custom_layout_fields_default_value_16,
                 R.array.stats_custom_layout_fields_default_value_17,
                 R.array.stats_custom_layout_fields_default_value_18
-        ).map(id -> resources.obtainTypedArray(id)).collect(Collectors.toList());
+                ).map(id -> resources.obtainTypedArray(id))
+                .toList();
     }
 
     @SuppressLint("ResourceType")
@@ -904,7 +905,9 @@ public class PreferencesUtils {
     }
 
     public static List<String> getAllCustomLayoutNames() {
-        return getAllCustomLayouts().stream().map(RecordingLayout::getName).collect(Collectors.toList());
+        return getAllCustomLayouts().stream()
+                .map(RecordingLayout::getName)
+                .toList();
     }
 
     public static void resetCustomLayoutPreferences() {

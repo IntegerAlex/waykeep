@@ -386,7 +386,7 @@ public class TrackDataHub {
             lastSeenTrackPointId = localLastSeenTrackPointIdId;
         }
 
-        listeners.stream().forEach(Listener::onNewTrackPointsDone);
+        listeners.forEach(Listener::onNewTrackPointsDone);
     }
 
 

@@ -31,7 +31,7 @@ public class SensorsSettingsFragment extends PreferenceFragmentCompat {
         UnitSystem unitSystem = PreferencesUtils.getUnitSystem();
 
         final DistanceFormatter formatter = DistanceFormatter.Builder()
-                .setDecimalCount(0)
+                .setDecimalPlaces(0)
                 .setUnit(unitSystem)
                 .build(getContext());
 

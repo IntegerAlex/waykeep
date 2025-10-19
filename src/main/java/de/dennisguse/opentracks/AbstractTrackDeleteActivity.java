@@ -23,9 +23,8 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.services.TrackDeletionWorker;
@@ -50,8 +49,8 @@ public abstract class AbstractTrackDeleteActivity extends AbstractActivity imple
     //TODO A callback is better.
     @Override
     public void onConfirmDeleteDone(Track.Id... trackIds) {
-        ArrayList<Track.Id> trackIdList = Arrays.stream(trackIds)
-                .filter(trackId -> !trackId.equals(getRecordingTrackId())).collect(Collectors.toCollection(ArrayList::new));
+        List<Track.Id> trackIdList = Arrays.stream(trackIds)
+                .filter(trackId -> !trackId.equals(getRecordingTrackId())).toList();
 
         onDeleteConfirmed();
 
