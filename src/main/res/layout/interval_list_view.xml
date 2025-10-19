@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/intervals_input_layout"
@@ -29,26 +29,26 @@
 
         <TextView
             android:id="@+id/interval_distance"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/stats_distance" />
 
         <TextView
             android:id="@+id/interval_rate"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             tools:text="Speed" />
 
         <TextView
             android:id="@+id/interval_altitude"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/stats_gain_loss" />
 
     </LinearLayout>
@@ -64,13 +64,14 @@
         android:id="@+id/interval_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp" />
+        android:layout_margin="8dp"
+        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/interval_list_empty_view"
+        style="?attr/textAppearanceHeadline4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="?attr/textAppearanceHeadline4"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/interval_list_empty_message" />
 

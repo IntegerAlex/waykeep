@@ -40,6 +40,7 @@
                     android:id="@+id/recycler_view_visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
                     app:layout_constraintBottom_toTopOf="@id/recycler_view_not_visible"
                     app:layout_constraintTop_toTopOf="parent" />
 
