@@ -24,7 +24,6 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.sensors.BluetoothUtils;
@@ -126,7 +125,7 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
 
             @Override
             public void onBatchScanResults(List<ScanResult> results) {
-                listAdapter.addAll(results.stream().map(ScanResult::getDevice).collect(Collectors.toList()));
+                listAdapter.addAll(results.stream().map(ScanResult::getDevice).toList());
             }
 
             @Override
@@ -149,7 +148,7 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
             b.putParcelableArrayList(ARG_BLE_SERVICE_UUIDS, new ArrayList<>(sensorUUIDs.stream()
                     .map(ServiceMeasurementUUID::serviceUUID)
                     .map(ParcelUuid::new)
-                    .collect(Collectors.toList())));
+                    .toList()));
             b.putBoolean(ARG_INCLUDE_INTERNAL, includeInternalSensor);
 
             fragment.setArguments(b);
@@ -224,7 +223,7 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
             if (PreferencesUtils.getBluetoothFilterEnabled()) {
                 scanFilter = serviceUUIDs.stream()
                         .map(it -> new ScanFilter.Builder().setServiceUuid(it).build())
-                        .collect(Collectors.toList());
+                        .toList();
             }
 
             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();

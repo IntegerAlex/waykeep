@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
@@ -67,7 +66,8 @@ public class TrackSelection implements ContentProviderUtils.ContentProviderSelec
         }
 
         // Builds selection arguments.
-        ArrayList<String> args = trackIds.stream().map(id -> Long.toString(id.id())).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> args = new ArrayList<>();
+        args.addAll(trackIds.stream().map(id -> Long.toString(id.id())).toList());
         args.addAll(categories);
         args.addAll(fromToArgs);
         selectionArgs = args.toArray(String[]::new);

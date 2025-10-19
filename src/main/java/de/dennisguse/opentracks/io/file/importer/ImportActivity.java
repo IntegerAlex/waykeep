@@ -28,7 +28,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
@@ -92,7 +91,9 @@ public class ImportActivity extends AbstractActivity {
             documentFiles = new ArrayList<>();
             documentFiles.add(DocumentFile.fromTreeUri(this, documentUris.get(0)));
         } else {
-            documentFiles = documentUris.stream().map(it -> DocumentFile.fromSingleUri(this, it)).collect(Collectors.toList());
+            documentFiles = documentUris.stream()
+                    .map(it -> DocumentFile.fromSingleUri(this, it))
+                    .toList();
         }
 
         importer = new Importer(this, documentFiles);
