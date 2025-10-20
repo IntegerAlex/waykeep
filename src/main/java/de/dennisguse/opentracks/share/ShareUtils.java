@@ -42,7 +42,7 @@ public class ShareUtils {
         String trackDescription = "";
         if (trackIds.length == 1) {
             Track track = contentProviderUtils.getTrack(trackIds[0]);
-            trackDescription = track == null ? "" : new DescriptionGenerator(context).generateTrackDescription(track, false);
+            trackDescription = track == null ? "" : new TrackShareSummaryGenerator(context).generateTrackDescription(track);
         }
 
         String mime = "";
