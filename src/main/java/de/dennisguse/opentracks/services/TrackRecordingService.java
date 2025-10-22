@@ -195,6 +195,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         startSensors();
 
         voiceAnnouncementManager.start(trackRecordingManager.getTrackStatistics());
+
+        notificationManager.onRecordingStarted(this, recordingStatus.trackId());
     }
 
     public void tryStartSensors() {
@@ -265,6 +267,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
 
         boolean stored = trackRecordingManager.onNewTrackPoint(trackPoint);
+        //TODO Should be done during updateRecordingDataWhileRecording()
         notificationManager.updateTrackPoint(this, trackRecordingManager.getTrackStatistics(), trackPoint, thresholdHorizontalAccuracy);
         return stored;
     }

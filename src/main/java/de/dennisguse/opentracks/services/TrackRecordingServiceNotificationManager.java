@@ -9,15 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TrackListActivity;
+import de.dennisguse.opentracks.TrackRecordingActivity;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
+import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
@@ -69,11 +72,10 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
     Notification onSensorsStarted(Context context) {
         Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
 
-        int pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
                 .addParentStack(TrackListActivity.class)
                 .addNextIntent(intent)
-                .getPendingIntent(0, pendingIntentFlags);
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         updateGPSStatus(context.getString(R.string.gps_starting));
 
@@ -85,6 +87,19 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
 
     void updateGPSStatus(String content) {
         notificationBuilder.setSubText(content);
+        updateNotification();
+    }
+
+    public void onRecordingStarted(Context context, @NonNull Track.Id trackId) {
+        Intent intent = IntentUtils.newIntent(context, TrackRecordingActivity.class)
+                .putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
+
+        PendingIntent pendingIntent = TaskStackBuilder.create(context)
+                .addParentStack(TrackListActivity.class)
+                .addNextIntent(intent)
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationBuilder.setContentIntent(pendingIntent);
         updateNotification();
     }
 
