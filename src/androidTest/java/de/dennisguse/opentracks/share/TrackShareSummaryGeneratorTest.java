@@ -105,14 +105,14 @@ public class TrackShareSummaryGeneratorTest {
     public void testWriteDistance() {
         StringBuilder builder = new StringBuilder();
         descriptionGenerator.writeDistance(Distance.of(1100), builder, R.string.description_total_distance);
-        assertEquals("Total distance: 1.10 km (0.7 mi)<br>", builder.toString());
+        assertEquals("Total distance: 1.10 km (0.7 mi)\n", builder.toString());
     }
 
     @Test
     public void testWriteTime() {
         StringBuilder builder = new StringBuilder();
         descriptionGenerator.writeTime(Duration.ofMillis(1000), builder, R.string.description_total_time);
-        assertEquals("Total time: 00:01<br>", builder.toString());
+        assertEquals("Total time: 00:01\n", builder.toString());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class TrackShareSummaryGeneratorTest {
     public void testWriteAltitude() {
         StringBuilder builder = new StringBuilder();
         descriptionGenerator.writeAltitude(4.2, builder, R.string.description_min_altitude);
-        assertEquals("Min elevation: 4 m (14 ft)<br>", builder.toString());
+        assertEquals("Min elevation: 4 m (14 ft)\n", builder.toString());
     }
 
     @Test
