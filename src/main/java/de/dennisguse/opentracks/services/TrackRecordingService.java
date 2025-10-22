@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -42,7 +41,6 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
-import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.announcement.VoiceAnnouncementManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
@@ -216,7 +214,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         wakeLock = SystemUtils.acquireWakeLock(this, wakeLock);
         trackPointCreator.start(this, handler);
 
-        ServiceCompat.startForeground(this, TrackRecordingServiceNotificationManager.NOTIFICATION_ID, notificationManager.setGPSonlyStarted(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION + ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
+        ServiceCompat.startForeground(this, TrackRecordingServiceNotificationManager.NOTIFICATION_ID, notificationManager.onSensorsStarted(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION + ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
     }
 
     public void endCurrentTrack() {
@@ -240,7 +238,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     void stopSensors() {
         trackPointCreator.stop();
         stopForeground(true);
-        notificationManager.cancelNotification();
+        notificationManager.stop();
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
         gpsStatusObservable.postValue(STATUS_GPS_DEFAULT);
     }
@@ -284,7 +282,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             Log.e(TAG, e.getMessage() + " " + writer);
             return;
         }
-        notificationManager.updateContent(getString(gpsStatusValue.message));
+        notificationManager.updateGPSStatus(getString(gpsStatusValue.message));
         gpsStatusObservable.postValue(gpsStatusValue);
     }
 

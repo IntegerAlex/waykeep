@@ -60,22 +60,35 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
                 .setSmallIcon(R.drawable.ic_logo_color_24dp);
     }
 
-    void stop() {
-        cancelNotification();
-    }
-
     @VisibleForTesting
     TrackRecordingServiceNotificationManager(NotificationManager notificationManager, NotificationCompat.Builder notificationBuilder) {
         this.notificationManager = notificationManager;
         this.notificationBuilder = notificationBuilder;
     }
 
-    void updateContent(String content) {
+    Notification onSensorsStarted(Context context) {
+        Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
+
+        int pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        PendingIntent pendingIntent = TaskStackBuilder.create(context)
+                .addParentStack(TrackListActivity.class)
+                .addNextIntent(intent)
+                .getPendingIntent(0, pendingIntentFlags);
+
+        updateGPSStatus(context.getString(R.string.gps_starting));
+
+        notificationBuilder.setContentIntent(pendingIntent);
+        updateNotification();
+
+        return getNotification();
+    }
+
+    void updateGPSStatus(String content) {
         notificationBuilder.setSubText(content);
         updateNotification();
     }
 
-    void updateTrackPoint(Context context, TrackStatistics trackStatistics, TrackPoint trackPoint, Distance recordingGpsAccuracy) {
+    void updateTrackPoint(Context context, TrackStatistics trackStatistics, TrackPoint trackPoint, Distance thresholdHorizontalAccuracy) {
         String formattedAccuracy = context.getString(R.string.value_none);
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
@@ -85,7 +98,7 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         if (trackPoint.hasHorizontalAccuracy()) {
             formattedAccuracy = formatter.formatDistance(trackPoint.getHorizontalAccuracy());
 
-            boolean currentLocationWasAccurate = trackPoint.getHorizontalAccuracy().lessThan(recordingGpsAccuracy);
+            boolean currentLocationWasAccurate = trackPoint.getHorizontalAccuracy().lessThan(thresholdHorizontalAccuracy);
             boolean shouldAlert = !currentLocationWasAccurate && previousLocationWasAccurate;
             notificationBuilder.setOnlyAlertOnce(!shouldAlert);
             previousLocationWasAccurate = currentLocationWasAccurate;
@@ -100,29 +113,8 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         notificationBuilder.setOnlyAlertOnce(true);
     }
 
-    Notification setGPSonlyStarted(Context context) {
-        Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
-
-        int pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
-        PendingIntent pendingIntent = TaskStackBuilder.create(context)
-                .addParentStack(TrackListActivity.class)
-                .addNextIntent(intent)
-                .getPendingIntent(0, pendingIntentFlags);
-
-        updateContent(context.getString(R.string.gps_starting));
-
-        notificationBuilder.setContentIntent(pendingIntent);
-        updateNotification();
-
-        return getNotification();
-    }
-
-    void cancelNotification() {
+    void stop() {
         notificationManager.cancel(NOTIFICATION_ID);
-    }
-
-    void setUnitSystem(UnitSystem unitSystem) {
-        this.unitSystem = unitSystem;
     }
 
     private void updateNotification() {
@@ -131,6 +123,11 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
 
     private Notification getNotification() {
         return notificationBuilder.build();
+    }
+
+    @VisibleForTesting
+    void setUnitSystem(UnitSystem unitSystem) {
+        this.unitSystem = unitSystem;
     }
 
     @Override
