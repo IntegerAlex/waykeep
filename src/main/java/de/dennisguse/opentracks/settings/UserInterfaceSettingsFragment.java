@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -53,7 +54,7 @@ public class UserInterfaceSettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
+    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
         DialogFragment dialogFragment = null;
 
         if (preference instanceof ResetDialogPreference) {

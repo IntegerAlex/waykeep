@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.EditTextPreference;
@@ -71,7 +72,7 @@ public class SensorsSettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
+    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
         if (preference instanceof BluetoothLeSensorPreference) {
             if(!PermissionRequester.BLUETOOTH.hasPermission(preference.getContext())) {
                 // TODO: maybe use requestPermissionsIfNeeded here or disable preferences at all
@@ -81,6 +82,8 @@ public class SensorsSettingsFragment extends PreferenceFragmentCompat {
             }
 
             DialogFragment dialogFragment = ((BluetoothLeSensorPreference) preference).createInstance();
+
+            // Deprecation not fixed upstream: https://issuetracker.google.com/issues/181793702
             dialogFragment.setTargetFragment(this, 0);
             dialogFragment.show(getParentFragmentManager(), getClass().getSimpleName());
             return;
