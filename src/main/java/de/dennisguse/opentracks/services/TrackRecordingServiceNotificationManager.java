@@ -21,10 +21,8 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.util.IntentUtils;
 
 /**
@@ -103,24 +101,25 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         updateNotification();
     }
 
-    void updateTrackPoint(Context context, TrackStatistics trackStatistics, TrackPoint trackPoint, Distance thresholdHorizontalAccuracy) {
+    void updateTrackPoint(Context context, RecordingData recordingData, Distance thresholdHorizontalAccuracy) {
         String formattedAccuracy = context.getString(R.string.value_none);
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
                 .setUnit(unitSystem)
                 .build(context);
-        // The decision if a trackpoint is not accurate enough should happen in the sensor subsystem.
-        if (trackPoint.hasHorizontalAccuracy()) {
-            formattedAccuracy = formatter.formatDistance(trackPoint.getHorizontalAccuracy());
 
-            boolean currentLocationWasAccurate = trackPoint.getHorizontalAccuracy().lessThan(thresholdHorizontalAccuracy);
+        //TODO The decision if a trackpoint is not accurate enough should happen in the TrackRecordingManager (via RecordingData).
+        if (recordingData.latestTrackPoint().hasHorizontalAccuracy()) {
+            formattedAccuracy = formatter.formatDistance(recordingData.latestTrackPoint().getHorizontalAccuracy());
+
+            boolean currentLocationWasAccurate = recordingData.latestTrackPoint().getHorizontalAccuracy().lessThan(thresholdHorizontalAccuracy);
             boolean shouldAlert = !currentLocationWasAccurate && previousLocationWasAccurate;
             notificationBuilder.setOnlyAlertOnce(!shouldAlert);
             previousLocationWasAccurate = currentLocationWasAccurate;
         }
 
-        notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(trackStatistics.getTotalDistance())));
-        String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(trackPoint.getSpeed());
+        notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(recordingData.getStatisticsTrack().getTotalDistance())));
+        String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(recordingData.latestTrackPoint().getSpeed());
         notificationBuilder.setContentText(context.getString(R.string.track_speed_notification, formattedSpeed));
         notificationBuilder.setSubText(context.getString(R.string.track_recording_notification_accuracy, formattedAccuracy));
         updateNotification();

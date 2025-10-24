@@ -18,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.TrackStatistics;
@@ -51,11 +52,15 @@ public class TrackRecordingServiceNotificationManagerTest {
         TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationCompatBuilder);
         subject.setUnitSystem(UnitSystem.METRIC);
 
+        Track track = new Track();
+        track.setTrackStatistics(trackStatisticsMock);
+        RecordingData data = new RecordingData(track, trackPointMock, null, null);
+
         // when
-        subject.updateTrackPoint(context, trackStatisticsMock, trackPointMock, Distance.of(100));
-        subject.updateTrackPoint(context, trackStatisticsMock, trackPointMock, Distance.of(100));
-        subject.updateTrackPoint(context, trackStatisticsMock, trackPointMock, Distance.of(1000));
-        subject.updateTrackPoint(context, trackStatisticsMock, trackPointMock, Distance.of(100));
+        subject.updateTrackPoint(context, data, Distance.of(100));
+        subject.updateTrackPoint(context, data, Distance.of(100));
+        subject.updateTrackPoint(context, data, Distance.of(1000));
+        subject.updateTrackPoint(context, data, Distance.of(100));
 
         // then
         verify(notificationCompatBuilder, times(6)).setOnlyAlertOnce(true);
