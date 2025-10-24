@@ -34,7 +34,6 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +60,7 @@ import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayoutIO;
  *
  * @author Jimmy Shih
  */
+//TODO Separate layout-related preferences into a class
 public class PreferencesUtils {
 
     private final static String TAG = PreferencesUtils.class.getSimpleName();
@@ -808,7 +808,7 @@ public class PreferencesUtils {
         return resources.getInteger(R.integer.stats_custom_layout_columns_default);
     }
 
-    private static List<TypedArray> getMultiTypedArray() {
+    private static List<TypedArray> getLayoutDataFields() {
         return Stream.of(
                 R.array.stats_custom_layout_fields_default_value_0,
                 R.array.stats_custom_layout_fields_default_value_1,
@@ -836,7 +836,7 @@ public class PreferencesUtils {
 
     @SuppressLint("ResourceType")
     private static String buildDefaultFields() {
-        List<TypedArray> fieldsArrays = getMultiTypedArray();
+        List<TypedArray> fieldsArrays = getLayoutDataFields();
         return fieldsArrays.stream().map(i -> i.getString(0) + CsvLayoutUtils.PROPERTY_SEPARATOR + i.getString(1)).collect(Collectors.joining(CsvLayoutUtils.ITEM_SEPARATOR))
                 + CsvLayoutUtils.ITEM_SEPARATOR;
     }
@@ -895,14 +895,10 @@ public class PreferencesUtils {
     }
 
     public static List<RecordingLayout> getAllCustomLayouts() {
-        List<RecordingLayout> recordingLayouts = new ArrayList<>();
         String csvCustomLayout = getString(R.string.stats_custom_layouts_key, buildDefaultLayout());
         String[] csvLines = csvCustomLayout.split(CsvLayoutUtils.LINE_SEPARATOR);
-        for (String line : csvLines) {
-            recordingLayouts.add(RecordingLayoutIO.fromCsv(line, resources));
-        }
 
-        return recordingLayouts;
+        return Arrays.stream(csvLines).map(line -> RecordingLayoutIO.fromCsv(line, resources)).toList();
     }
 
     public static List<String> getAllCustomLayoutNames() {
@@ -917,13 +913,6 @@ public class PreferencesUtils {
             editor.remove(resources.getString(R.string.stats_custom_layouts_key));
             editor.commit();
         }
-    }
-
-    //TODO Check if resetPreferences can be used instead.
-    @Deprecated
-    @VisibleForTesting
-    public static void clear() {
-        sharedPreferences.edit().clear().commit();
     }
 
     public static int getTotalRowsDeleted() {
