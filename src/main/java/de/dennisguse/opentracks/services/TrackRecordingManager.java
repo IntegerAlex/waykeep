@@ -131,9 +131,8 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         track.setTrackStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
-        SegmentStatisticUpdater currentSegment = tmpTrackStatisticsUpdater.getCurrentSegment();
 
-        return new RecordingData(track, current.first, current.second, currentSegment);
+        return new RecordingData(track, current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)

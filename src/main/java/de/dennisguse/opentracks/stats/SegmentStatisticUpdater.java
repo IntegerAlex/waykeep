@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
@@ -196,6 +197,24 @@ public class SegmentStatisticUpdater {
     public void reset(Instant startTime) {
         reset();
         setStartTime(startTime);
+    }
+
+    public Statistics getStatistics() {
+        return new Statistics(
+                startTime,
+                stopTime,
+                totalTime,
+                movingTime,
+
+                totalDistance,
+                isIdle,
+                getMaxSpeed(),
+                altitudeExtremities.hasData() ? altitudeExtremities.getMin() : null,
+                altitudeExtremities.hasData() ? altitudeExtremities.getMax() : null,
+                totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m) : null,
+                avgHeartRate,
+                avgPower
+        );
     }
 
     public Instant getStartTime() {

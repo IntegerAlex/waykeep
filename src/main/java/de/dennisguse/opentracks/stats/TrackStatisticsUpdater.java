@@ -78,9 +78,9 @@ public class TrackStatisticsUpdater {
         stats.merge(currentSegment);
         return stats;
     }
-    public SegmentStatisticUpdater getCurrentSegment() {
-        // Take a snapshot - we don't want anyone messing with our currentSegment
-        return new SegmentStatisticUpdater(currentSegment);
+
+    public Statistics getCurrentSegment() {
+        return currentSegment.getStatistics();
     }
 
     public void addTrackPoints(List<TrackPoint> trackPoints) {

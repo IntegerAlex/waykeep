@@ -208,7 +208,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsCurrentSegment().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.currentSegment().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -220,7 +220,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            String value = StringUtils.formatElapsedTime(data.getStatisticsCurrentSegment().getTotalTime());
+            String value = StringUtils.formatElapsedTime(data.currentSegment().totalTime());
 
             getBinding().statsValue.setText(value);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_elapsed_segment_time));

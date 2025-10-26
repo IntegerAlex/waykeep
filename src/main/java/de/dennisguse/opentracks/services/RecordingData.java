@@ -6,11 +6,13 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * {@link Track} and {@link TrackPoint} must be immutable (i.e., their content does not change).
  */
-public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet, SegmentStatisticUpdater currentSegment) {
+public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet,
+                            Statistics currentSegment) {
     public String getTrackCategory() {
         if (track == null) {
             return "";
@@ -26,14 +28,4 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
 
         return track.getTrackStatistics();
     }
-
-    @NonNull
-    public SegmentStatisticUpdater getStatisticsCurrentSegment() {
-        if (currentSegment == null) {
-            return new SegmentStatisticUpdater();
-        }
-
-        return currentSegment;
-    }
-
 }

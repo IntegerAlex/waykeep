@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
@@ -27,7 +28,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.CustomStatsItemBinding;
 import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.viewmodels.Mapping;
 import de.dennisguse.opentracks.viewmodels.StatisticViewHolder;
 
@@ -38,17 +39,24 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
     private static final RecordingData demoData;
 
     static {
-        SegmentStatisticUpdater trackStatistics = new SegmentStatisticUpdater();
-        trackStatistics.setStartTime(Instant.ofEpochMilli(0));
-        trackStatistics.setMovingTime(Duration.ofMinutes(0));
-        trackStatistics.setTotalTime(Duration.ofMinutes(0));
+        Statistics statistics = new Statistics(
+                Instant.ofEpochMilli(0),
+                Instant.ofEpochMilli(0),
+                Duration.ofMinutes(0),
+                Duration.ofMinutes(0),
 
-        trackStatistics.setTotalDistance(Distance.of(0));
+                Distance.of(0),
+                false,
+                Speed.of(0),
+                null,
+                null,
 
-        trackStatistics.setTotalAltitudeGain(0f);
-        trackStatistics.setTotalAltitudeLoss(0f);
-        Track track = new Track(ZoneOffset.UTC);
-        track.setTrackStatistics(trackStatistics);
+                new AltitudeGainLoss(0f, 0f),
+
+                null,
+                null
+        );
+        Track track = new Track(ZoneOffset.UTC); //TODO Pass statistics as well
 
         Position position = new Position(
                 Instant.ofEpochMilli(0),
@@ -61,7 +69,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 Speed.zero()
         );
 
-        demoData = new RecordingData(track, new TrackPoint(TrackPoint.Type.TRACKPOINT, position), null, trackStatistics) ;
+        demoData = new RecordingData(track, new TrackPoint(TrackPoint.Type.TRACKPOINT, position), null, statistics);
     }
 
     private RecordingLayout recordingLayout;

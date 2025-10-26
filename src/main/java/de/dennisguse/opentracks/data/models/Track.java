@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * A track.
@@ -51,6 +52,7 @@ public class Track {
 
     private ZoneOffset zoneOffset;
 
+    @Deprecated // TODO Replace with Statistic
     private SegmentStatisticUpdater trackStatistics = new SegmentStatisticUpdater();
 
     @VisibleForTesting
@@ -137,15 +139,26 @@ public class Track {
                 .getStopTime().atOffset(zoneOffset);
     }
 
+    public Statistics getStatistics() {
+        return trackStatistics.getStatistics();
+    }
+
+    public Statistics setStatistics() {
+        throw new RuntimeException("TODO");
+    }
+
+    @Deprecated
     @NonNull
     public SegmentStatisticUpdater getTrackStatistics() {
         return trackStatistics;
     }
 
+    @Deprecated
     public void setTrackStatistics(@NonNull SegmentStatisticUpdater trackStatistics) {
         this.trackStatistics = trackStatistics;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Track{" +
@@ -156,6 +169,7 @@ public class Track {
                 '}';
     }
 
+    @Deprecated //TODO Remove: should not be used.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -164,6 +178,7 @@ public class Track {
         return id.equals(track.id);
     }
 
+    @Deprecated //TODO Remove: should not be used.
     @Override
     public int hashCode() {
         return Objects.hash(id);
