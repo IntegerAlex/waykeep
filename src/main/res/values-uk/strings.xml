@@ -375,7 +375,7 @@ limitations under the License.
     <string name="permission_gps_failed">OpenTracks потребує дозволу на використання GPS.</string>
     <string name="settings_night_mode_option_system">Системна</string>
     <string name="about_description"><i>OpenTracks</i> — застосунок для відстеження спортивної діяльності, який поважає вашу конфіденційність.</string>
-    <string name="about_history">OpenTracks — це відгалуження застосунку <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (закритого в 2016 р.).</string>
+    <string name="about_history">OpenTracks — це відгалуження застосунку <a href="https://code.google.com/archive/p/mytracks/"><i>Google My Tracks</i></a>, закритого в 2016 р.</string>
     <string name="help_feature_content">* створення GPS-треків\n* використання датчика серцевого ритму (тільки Bluetooth LE)\n* голосові сповіщення (за часом або відстанню)\n* створення маркерів (у т.ч. із зображеннями)\n* повноцінний автономний режим\n* відображення треків на мапі (див. нижче)</string>
     <string name="help_track_export_content">Треки можна експортувати з Налаштувань у форматах KMZ, KML або GPX (KMZ/KML — усі дані, а GPX — тільки розташування). При використанні <i>значка «Поділитися»</i> треки експортуються у форматі KMZ.</string>
     <string name="help_recording_content">OpenTracks використовує GPS-датчик пристрою для безперервного запису місцезнаходження. Якщо GPS-пристрій повідомляє неточні дані (наприклад, місцезнаходження, швидкість, висоту), OpenTracks нічого не може з цим вдіяти.</string>
