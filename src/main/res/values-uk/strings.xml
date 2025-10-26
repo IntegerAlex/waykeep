@@ -580,4 +580,5 @@ limitations under the License.
     <string name="share_crash_report">Надіcлати звіт про збій</string>
     <string name="lap_heart_rate">Пульс за коло</string>
     <string name="settings_announcements_lap_power">Потужність за коло</string>
+    <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
 </resources>
