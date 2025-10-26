@@ -40,7 +40,7 @@ import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 /**
@@ -428,7 +428,7 @@ public class TrackDataHub {
          *
          * @param trackPoint the trackPoint
          */
-        default void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull TrackStatistics trackStatistics) {
+        default void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull SegmentStatisticUpdater trackStatistics) {
         }
 
         /**
@@ -436,7 +436,7 @@ public class TrackDataHub {
          *
          * @param trackPoint the trackPoint
          */
-        default void onSampledOutTrackPoint(@NonNull TrackPoint trackPoint, @NonNull TrackStatistics trackStatistics) {
+        default void onSampledOutTrackPoint(@NonNull TrackPoint trackPoint, @NonNull SegmentStatisticUpdater trackStatistics) {
         }
 
         /**

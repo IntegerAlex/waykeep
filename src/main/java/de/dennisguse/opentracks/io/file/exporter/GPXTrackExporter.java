@@ -39,7 +39,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -279,7 +279,7 @@ public class GPXTrackExporter implements TrackExporter {
             printWriter.println("<opentracks:typeTranslated>" + StringUtils.formatCData(track.getActivityTypeLocalized()) + "</opentracks:typeTranslated>");
         }
 
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
         printWriter.println("<gpxtrkx:Distance>" + trackStatistics.getTotalDistance().toM() + "</gpxtrkx:Distance>");
         printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.getTotalTime().getSeconds() + "</gpxtrkx:TimerTime>");

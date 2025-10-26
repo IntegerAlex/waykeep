@@ -39,7 +39,7 @@ import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -171,7 +171,7 @@ public class StatisticsRecordedFragment extends Fragment {
     }
 
     private void updateUI() {
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
         // Set total distance
         {
             Pair<String, String> parts = DistanceFormatter.Builder()

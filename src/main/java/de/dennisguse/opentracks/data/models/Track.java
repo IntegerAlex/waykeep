@@ -29,7 +29,7 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 /**
  * A track.
@@ -51,7 +51,7 @@ public class Track {
 
     private ZoneOffset zoneOffset;
 
-    private TrackStatistics trackStatistics = new TrackStatistics();
+    private SegmentStatisticUpdater trackStatistics = new SegmentStatisticUpdater();
 
     @VisibleForTesting
     public Track() {
@@ -138,11 +138,11 @@ public class Track {
     }
 
     @NonNull
-    public TrackStatistics getTrackStatistics() {
+    public SegmentStatisticUpdater getTrackStatistics() {
         return trackStatistics;
     }
 
-    public void setTrackStatistics(@NonNull TrackStatistics trackStatistics) {
+    public void setTrackStatistics(@NonNull SegmentStatisticUpdater trackStatistics) {
         this.trackStatistics = trackStatistics;
     }
 

@@ -39,7 +39,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -66,7 +66,7 @@ public class TrackShareSummaryGeneratorTest {
     @Test
     public void testGenerateTrackDescription() {
         Track track = new Track();
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofMillis(600000));
         stats.setMovingTime(Duration.ofMillis(300000));

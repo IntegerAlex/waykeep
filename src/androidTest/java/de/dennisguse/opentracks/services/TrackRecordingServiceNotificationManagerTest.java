@@ -21,7 +21,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRecordingServiceNotificationManagerTest {
@@ -32,7 +32,7 @@ public class TrackRecordingServiceNotificationManagerTest {
     private TrackPoint trackPointMock;
 
     @Mock
-    private TrackStatistics trackStatisticsMock;
+    private SegmentStatisticUpdater trackStatisticsMock;
 
     @Mock
     private NotificationCompat.Builder notificationCompatBuilder;

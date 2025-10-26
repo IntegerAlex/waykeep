@@ -12,7 +12,7 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 public class IntervalStatistics {
@@ -172,7 +172,7 @@ public class IntervalStatistics {
             return avgPower;
         }
 
-        private void add(TrackStatistics trackStatistics, @Nullable TrackPoint lastTrackPoint) {
+        private void add(SegmentStatisticUpdater trackStatistics, @Nullable TrackPoint lastTrackPoint) {
             distance = distance.plus(trackStatistics.getTotalDistance());
             time = time.plus(trackStatistics.getTotalTime());
             gain_m = trackStatistics.hasTotalAltitudeGain() ? trackStatistics.getTotalAltitudeGain() : gain_m;
@@ -190,7 +190,7 @@ public class IntervalStatistics {
             }
         }
 
-        private void set(TrackStatistics trackStatistics) {
+        private void set(SegmentStatisticUpdater trackStatistics) {
             distance = trackStatistics.getTotalDistance();
             time = trackStatistics.getTotalTime();
             gain_m = trackStatistics.hasTotalAltitudeGain() ? trackStatistics.getTotalAltitudeGain() : gain_m;

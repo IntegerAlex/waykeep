@@ -54,7 +54,7 @@ import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
 
@@ -116,7 +116,7 @@ public class ContentProviderUtils {
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_LOSS);
 
         Track track = new Track(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)));
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
         if (!cursor.isNull(idIndex)) {
             track.setId(new Track.Id(cursor.getLong(idIndex)));
         }
@@ -314,7 +314,7 @@ public class ContentProviderUtils {
 
     private ContentValues createContentValues(Track track) {
         ContentValues values = new ContentValues();
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
 
         if (track.getId() != null) {
             values.put(TracksColumns._ID, track.getId().id());
@@ -345,11 +345,11 @@ public class ContentProviderUtils {
         return values;
     }
 
-    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull TrackStatistics trackStatistics) {
+    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull SegmentStatisticUpdater trackStatistics) {
         contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(trackStatistics), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
     }
 
-    private ContentValues createContentValues(TrackStatistics trackStatistics) {
+    private ContentValues createContentValues(SegmentStatisticUpdater trackStatistics) {
         ContentValues values = new ContentValues();
         if (trackStatistics.getStartTime() != null) {
             values.put(TracksColumns.STARTTIME, trackStatistics.getStartTime().toEpochMilli());

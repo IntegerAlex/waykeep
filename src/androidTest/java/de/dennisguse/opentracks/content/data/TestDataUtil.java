@@ -20,7 +20,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -86,7 +86,7 @@ public class TestDataUtil {
         );
 
         //TODO Use TrackStatisticsUpdater
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setTotalDistance(Distance.of(0));
         stats.setTotalTime(Duration.ofMillis(0));
         List<Marker> markers = List.of(
@@ -154,7 +154,7 @@ public class TestDataUtil {
         Uri photoUri = FileUtils.getUriForFile(context, dstFile);
 
         //TODO Use TrackStatisticsUpdater
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setTotalDistance(Distance.of(0));
         stats.setTotalTime(Duration.ofMillis(0));
 
@@ -171,7 +171,7 @@ public class TestDataUtil {
         }
     }
 
-    public static Pair<Track.Id, TrackStatistics> buildTrackWithTrackPoints(ContentProviderUtils contentProviderUtils, int numberOfPoints) {
+    public static Pair<Track.Id, SegmentStatisticUpdater> buildTrackWithTrackPoints(ContentProviderUtils contentProviderUtils, int numberOfPoints) {
         Track dummyTrack = new Track();
         dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
         dummyTrack.setName("Dummy Track");

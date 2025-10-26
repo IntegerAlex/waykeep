@@ -62,7 +62,7 @@ import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -406,7 +406,7 @@ public class CustomContentProviderUtilsTest {
         Pair<Track, List<TrackPoint>> track = TestDataUtil.createTrack(trackId, 10);
 
         // AverageSpeed
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setStartTime(Instant.ofEpochMilli(1000));
         statistics.setStopTime(Instant.ofEpochMilli(2500));
         statistics.setTotalTime(Duration.ofMillis(1500));

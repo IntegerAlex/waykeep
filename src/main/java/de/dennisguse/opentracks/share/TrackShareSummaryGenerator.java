@@ -31,7 +31,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -78,7 +78,7 @@ public class TrackShareSummaryGenerator {
         builder.append(TrackShareSummaryGenerator.TEXT_LINE_BREAK);
     }
 
-    private String generateTrackStatisticsDescription(TrackStatistics stats) {
+    private String generateTrackStatisticsDescription(SegmentStatisticUpdater stats) {
         StringBuilder builder = new StringBuilder();
 
         // Total distance

@@ -20,7 +20,7 @@ import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(JUnit4.class)
 public class AggregatedStatisticsTest {
@@ -28,7 +28,7 @@ public class AggregatedStatisticsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     private static Track createTrack(Context context, Distance totalDistance, Duration totalTime, String activityTypeLocalized) {
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setStartTime(Instant.ofEpochMilli(1000L));  // Resulting start time
         statistics.setStopTime(statistics.getStartTime().plus(totalTime));
         statistics.setTotalTime(totalTime);
@@ -63,7 +63,7 @@ public class AggregatedStatisticsTest {
         assertNotNull(aggregatedStatistics.get(biking));
         assertEquals(1, aggregatedStatistics.get(biking).getCountTracks());
 
-        TrackStatistics statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
+        SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
         assertEquals(totalDistance, statistics2.getTotalDistance());
         assertEquals(totalTime, statistics2.getMovingTime());
     }
@@ -117,7 +117,7 @@ public class AggregatedStatisticsTest {
         assertNotNull(aggregatedStatistics.get(biking));
         assertEquals(2, aggregatedStatistics.get(biking).getCountTracks());
 
-        TrackStatistics statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
+        SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
         assertEquals(totalDistance.multipliedBy(2), statistics2.getTotalDistance());
         assertEquals(totalTime.multipliedBy(2), statistics2.getMovingTime());
     }
@@ -151,19 +151,19 @@ public class AggregatedStatisticsTest {
         assertEquals(1, aggregatedStatistics.get(walking).getCountTracks());
 
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
             assertEquals(totalDistance, statistics2.getTotalDistance());
             assertEquals(totalTime, statistics2.getMovingTime());
         }
 
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(running).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(running).getTrackStatistics();
             assertEquals(totalDistance, statistics2.getTotalDistance());
             assertEquals(totalTime, statistics2.getMovingTime());
         }
 
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(walking).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(walking).getTrackStatistics();
             assertEquals(totalDistance, statistics2.getTotalDistance());
             assertEquals(totalTime, statistics2.getMovingTime());
         }
@@ -214,28 +214,28 @@ public class AggregatedStatisticsTest {
 
         // Biking.
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(biking).getTrackStatistics();
             assertEquals(totalDistance.multipliedBy(5), statistics2.getTotalDistance());
             assertEquals(totalTime.multipliedBy(5), statistics2.getMovingTime());
         }
 
         // Running.
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(running).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(running).getTrackStatistics();
             assertEquals(totalDistance.multipliedBy(2), statistics2.getTotalDistance());
             assertEquals(totalTime.multipliedBy(2), statistics2.getMovingTime());
         }
 
         // Walking.
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(walking).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(walking).getTrackStatistics();
             assertEquals(totalDistance.multipliedBy(2), statistics2.getTotalDistance());
             assertEquals(totalTime.multipliedBy(2), statistics2.getMovingTime());
         }
 
         // Driving.
         {
-            TrackStatistics statistics2 = aggregatedStatistics.get(driving).getTrackStatistics();
+            SegmentStatisticUpdater statistics2 = aggregatedStatistics.get(driving).getTrackStatistics();
             assertEquals(totalDistance, statistics2.getTotalDistance());
             assertEquals(totalTime, statistics2.getMovingTime());
         }

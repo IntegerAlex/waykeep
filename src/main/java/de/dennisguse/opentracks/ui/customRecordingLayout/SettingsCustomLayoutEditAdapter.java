@@ -27,7 +27,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.CustomStatsItemBinding;
 import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.viewmodels.Mapping;
 import de.dennisguse.opentracks.viewmodels.StatisticViewHolder;
 
@@ -38,7 +38,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
     private static final RecordingData demoData;
 
     static {
-        TrackStatistics trackStatistics = new TrackStatistics();
+        SegmentStatisticUpdater trackStatistics = new SegmentStatisticUpdater();
         trackStatistics.setStartTime(Instant.ofEpochMilli(0));
         trackStatistics.setMovingTime(Duration.ofMinutes(0));
         trackStatistics.setTotalTime(Duration.ofMinutes(0));

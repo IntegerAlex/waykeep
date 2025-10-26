@@ -21,7 +21,7 @@ import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 @RunWith(JUnit4.class)
@@ -37,7 +37,7 @@ public class IntervalStatisticsTest {
         contentProviderUtils = new ContentProviderUtils(context);
     }
 
-    private TrackStatistics buildTrackStatistics(List<TrackPoint> trackPoints) {
+    private SegmentStatisticUpdater buildTrackStatistics(List<TrackPoint> trackPoints) {
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
         for (TrackPoint tp : trackPoints) {
             trackStatisticsUpdater.addTrackPoint(tp);
@@ -135,22 +135,22 @@ public class IntervalStatisticsTest {
         }
         dummyTrack.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
         contentProviderUtils.updateTrack(dummyTrack);
-        Pair<Track.Id, TrackStatistics> trackWithStats = new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getTrackStatistics());
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getTrackStatistics());
 
         // when and then
         whenAndThen(trackWithStats, numberOfPoints, distanceInterval);
     }
 
     private void whenAndThen(int numberOfPoints, float distanceInterval) {
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         whenAndThen(trackWithStats, numberOfPoints, distanceInterval);
 
     }
 
-    private void whenAndThen(Pair<Track.Id, TrackStatistics> trackWithStats, int numberOfPoints, float distanceInterval) {
+    private void whenAndThen(Pair<Track.Id, SegmentStatisticUpdater> trackWithStats, int numberOfPoints, float distanceInterval) {
         IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(distanceInterval));
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics trackStatistics = trackWithStats.second;
+        SegmentStatisticUpdater trackStatistics = trackWithStats.second;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(trackPointIterator.getCount(), numberOfPoints);
             intervalStatistics.addTrackPoints(trackPointIterator);

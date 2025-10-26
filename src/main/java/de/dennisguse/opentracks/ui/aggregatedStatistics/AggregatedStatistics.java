@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 public class AggregatedStatistics {
 
@@ -55,10 +55,10 @@ public class AggregatedStatistics {
 
     public static class AggregatedStatistic {
         private final String activityTypeLocalized;
-        private final TrackStatistics trackStatistics;
+        private final SegmentStatisticUpdater trackStatistics;
         private int countTracks = 1;
 
-        public AggregatedStatistic(String activityTypeLocalized, TrackStatistics trackStatistics) {
+        public AggregatedStatistic(String activityTypeLocalized, SegmentStatisticUpdater trackStatistics) {
             this.activityTypeLocalized = activityTypeLocalized;
             this.trackStatistics = trackStatistics;
         }
@@ -67,7 +67,7 @@ public class AggregatedStatistics {
             return activityTypeLocalized;
         }
 
-        public TrackStatistics getTrackStatistics() {
+        public SegmentStatisticUpdater getTrackStatistics() {
             return trackStatistics;
         }
 
@@ -75,7 +75,7 @@ public class AggregatedStatistics {
             return countTracks;
         }
 
-        void add(TrackStatistics statistics) {
+        void add(SegmentStatisticUpdater statistics) {
             trackStatistics.merge(statistics);
             countTracks++;
         }

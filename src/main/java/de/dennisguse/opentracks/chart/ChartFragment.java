@@ -38,12 +38,12 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.ChartBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 /**
  * A fragment to display track chart to the user.
- * ChartFragment uses a {@link TrackStatisticsUpdater} internally and recomputes the {@link TrackStatistics} from the beginning.
+ * ChartFragment uses a {@link TrackStatisticsUpdater} internally and recomputes the {@link SegmentStatisticUpdater} from the beginning.
  *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
@@ -202,7 +202,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         }
     }
 
-    public void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull TrackStatistics trackStatistics) {
+    public void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull SegmentStatisticUpdater trackStatistics) {
         if (isResumed()) {
             ChartPoint point = ChartPoint.create(trackStatistics, trackPoint, trackPoint.getSpeed(), chartByDistance, viewBinding.chartView.getUnitSystem());
             pendingPoints.add(point);

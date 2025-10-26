@@ -39,7 +39,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
  */
 //TODO Check that data ranges are valid (not less than zero etc.)
 //TODO Should be a Java record
-public class TrackStatistics {
+public class SegmentStatisticUpdater {
 
     // The min and max altitude (meters) seen on this track.
     private final ExtremityMonitor altitudeExtremities = new ExtremityMonitor();
@@ -64,7 +64,7 @@ public class TrackStatistics {
 
     private boolean isIdle;
 
-    public TrackStatistics() {
+    public SegmentStatisticUpdater() {
         reset();
     }
 
@@ -73,7 +73,7 @@ public class TrackStatistics {
      *
      * @param other another statistics data object to copy from
      */
-    public TrackStatistics(TrackStatistics other) {
+    public SegmentStatisticUpdater(SegmentStatisticUpdater other) {
         startTime = other.startTime;
         stopTime = other.stopTime;
         totalDistance = other.totalDistance;
@@ -89,7 +89,7 @@ public class TrackStatistics {
     }
 
     @VisibleForTesting
-    public TrackStatistics(String startTime, String stopTime, double totalDistance_m, int totalTime_s, int movingTime_s, float maxSpeed_mps, Float totalAltitudeGain_m, Float totalAltitudeLoss_m) {
+    public SegmentStatisticUpdater(String startTime, String stopTime, double totalDistance_m, int totalTime_s, int movingTime_s, float maxSpeed_mps, Float totalAltitudeGain_m, Float totalAltitudeLoss_m) {
         this.startTime = Instant.parse(startTime);
         this.stopTime = Instant.parse(stopTime);
         this.totalDistance = Distance.of(totalDistance_m);
@@ -107,7 +107,7 @@ public class TrackStatistics {
      * @param other another statistics data object
      */
     //TODO Should be refactored to append only [mainly due to isIdle] (NOTE: This requires to use a custom value object for AggregatedStatistics; this is anyhow recommended).
-    public void merge(TrackStatistics other) {
+    public void merge(SegmentStatisticUpdater other) {
         if (startTime == null) {
             startTime = other.startTime;
         } else {
@@ -407,7 +407,7 @@ public class TrackStatistics {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TrackStatistics)) return false;
+        if (!(o instanceof SegmentStatisticUpdater)) return false;
 
         return toString().equals(o.toString());
     }

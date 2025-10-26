@@ -29,8 +29,8 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
- * Updater for {@link TrackStatistics}.
- * For updating track {@link TrackStatistics} as new {@link TrackPoint}s are added.
+ * Updater for {@link SegmentStatisticUpdater}.
+ * For updating track {@link SegmentStatisticUpdater} as new {@link TrackPoint}s are added.
  * NOTE: Some of the locations represent pause/resume separator.
  * NOTE: Has still support for segments (at the moment unused).
  *
@@ -41,7 +41,7 @@ public class TrackStatisticsUpdater {
 
     private static final String TAG = TrackStatisticsUpdater.class.getSimpleName();
 
-    private final TrackStatistics trackStatistics;
+    private final SegmentStatisticUpdater segmentStatisticUpdater;
 
     private float averageHeartRateBPM;
     private Duration totalHeartRateDuration = Duration.ZERO;
@@ -49,38 +49,38 @@ public class TrackStatisticsUpdater {
     private Duration totalPowerDuration = Duration.ZERO;
 
     // The current segment's statistics
-    private final TrackStatistics currentSegment;
+    private final SegmentStatisticUpdater currentSegment;
     // Current segment's last trackPoint
     private TrackPoint lastTrackPoint;
 
     public TrackStatisticsUpdater() {
-        this(new TrackStatistics());
+        this(new SegmentStatisticUpdater());
     }
 
-    public TrackStatisticsUpdater(TrackStatistics trackStatistics) {
-        this.trackStatistics = trackStatistics;
-        this.currentSegment = new TrackStatistics();
+    public TrackStatisticsUpdater(SegmentStatisticUpdater segmentStatisticUpdater) {
+        this.segmentStatisticUpdater = segmentStatisticUpdater;
+        this.currentSegment = new SegmentStatisticUpdater();
 
         resetAverageHeartRate();
     }
 
     public TrackStatisticsUpdater(TrackStatisticsUpdater toCopy) {
-        this.currentSegment = new TrackStatistics(toCopy.currentSegment);
-        this.trackStatistics = new TrackStatistics(toCopy.trackStatistics);
+        this.currentSegment = new SegmentStatisticUpdater(toCopy.currentSegment);
+        this.segmentStatisticUpdater = new SegmentStatisticUpdater(toCopy.segmentStatisticUpdater);
 
         this.lastTrackPoint = toCopy.lastTrackPoint;
         resetAverageHeartRate();
     }
 
-    public TrackStatistics getTrackStatistics() {
+    public SegmentStatisticUpdater getTrackStatistics() {
         // Take a snapshot - we don't want anyone messing with our trackStatistics
-        TrackStatistics stats = new TrackStatistics(trackStatistics);
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater(segmentStatisticUpdater);
         stats.merge(currentSegment);
         return stats;
     }
-    public TrackStatistics getCurrentSegment() {
+    public SegmentStatisticUpdater getCurrentSegment() {
         // Take a snapshot - we don't want anyone messing with our currentSegment
-        return new TrackStatistics(currentSegment);
+        return new SegmentStatisticUpdater(currentSegment);
     }
 
     public void addTrackPoints(List<TrackPoint> trackPoints) {
@@ -182,7 +182,7 @@ public class TrackStatisticsUpdater {
 
     private void reset(TrackPoint trackPoint) {
         if (currentSegment.isInitialized()) {
-            trackStatistics.merge(currentSegment);
+            segmentStatisticUpdater.merge(currentSegment);
         }
         currentSegment.reset(trackPoint.getTime());
 
@@ -209,7 +209,7 @@ public class TrackStatisticsUpdater {
     @Override
     public String toString() {
         return "TrackStatisticsUpdater{" +
-                "trackStatistics=" + trackStatistics +
+                "trackStatistics=" + segmentStatisticUpdater +
                 '}';
     }
 }

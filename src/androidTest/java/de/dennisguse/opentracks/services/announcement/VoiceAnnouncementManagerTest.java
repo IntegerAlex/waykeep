@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.services.TrackRecordingService;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementManagerTest {
@@ -54,7 +54,7 @@ public class VoiceAnnouncementManagerTest {
         voiceAnnouncementManager.setFrequency(Distance.ofKilometer(5));
 
         // when
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalDistance(Distance.ofKilometer(13));
         voiceAnnouncementManager.start(statistics);
         assertEquals(Distance.of(15000), voiceAnnouncementManager.getNextTotalDistance());
@@ -74,7 +74,7 @@ public class VoiceAnnouncementManagerTest {
         voiceAnnouncementManager.setFrequency(Duration.ofSeconds(5));
 
         // when
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalTime(Duration.ofSeconds(91));
         voiceAnnouncementManager.start(statistics);
         assertEquals(Duration.ofSeconds(95), voiceAnnouncementManager.getNextTotalTime());

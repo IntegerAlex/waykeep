@@ -34,7 +34,7 @@ import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 
 @RunWith(AndroidJUnit4.class)
@@ -66,7 +66,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -89,7 +89,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed_rounding_check() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofHours(1).plusMinutes(5).plusSeconds(10));
@@ -112,7 +112,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_distance_rounding_check() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(19999));
         stats.setTotalTime(Duration.ofHours(1).plusMinutes(5).plusSeconds(10));
@@ -135,7 +135,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_distance_rounding_check_two() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(19900));
         stats.setTotalTime(Duration.ofHours(1).plusMinutes(5).plusSeconds(10));
@@ -160,9 +160,9 @@ public class VoiceAnnouncementUtilsTest {
     public void getAnnouncement_withInterval_metric_speed() {
         // given
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());
@@ -186,7 +186,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_pace() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -211,9 +211,9 @@ public class VoiceAnnouncementUtilsTest {
     public void getAnnouncement_withInterval_metric_pace() {
         // given
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());
@@ -237,7 +237,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_speed() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -260,7 +260,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_speed_1() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.ofMile(1.1));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -281,7 +281,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_meter_speed_1() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.ofMile(1.1));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -302,7 +302,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed_1() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.ofKilometer(1.1));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -325,9 +325,9 @@ public class VoiceAnnouncementUtilsTest {
     public void getAnnouncement_withInterval_imperial_speed() {
         // given
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());
@@ -351,7 +351,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_pace() {
-        TrackStatistics stats = new TrackStatistics();
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
         stats.setStartTime(Instant.EPOCH);
         stats.setTotalDistance(Distance.of(20000));
         stats.setTotalTime(Duration.ofHours(2).plusMinutes(5).plusSeconds(10));
@@ -376,9 +376,9 @@ public class VoiceAnnouncementUtilsTest {
     public void getAnnouncement_withInterval_imperial_pace() {
         // given
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());
@@ -406,9 +406,9 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceLapHeartRate(true);
 
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());
@@ -444,9 +444,9 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceLapSpeedPace(false);
 
         int numberOfPoints = 1000;
-        Pair<Track.Id, TrackStatistics> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        TrackStatistics stats = trackWithStats.second;
+        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatistics.Interval lastInterval;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(numberOfPoints, trackPointIterator.getCount());

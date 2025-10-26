@@ -31,7 +31,7 @@ public class TrackStatisticsUpdaterTest {
         TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
 
         // then
-        TrackStatistics statistics = subject.getTrackStatistics();
+        SegmentStatisticUpdater statistics = subject.getTrackStatistics();
         assertNull(statistics.getStartTime());
         assertNull(statistics.getStopTime());
         assertEquals(Duration.ZERO, statistics.getTotalTime());
@@ -58,7 +58,7 @@ public class TrackStatisticsUpdaterTest {
         subject.addTrackPoint(tp);
 
         // then
-        TrackStatistics statistics = subject.getTrackStatistics();
+        SegmentStatisticUpdater statistics = subject.getTrackStatistics();
         assertEquals(startTime, statistics.getStartTime());
         assertEquals(startTime, statistics.getStopTime());
         assertEquals(Duration.ZERO, statistics.getTotalTime());
@@ -83,7 +83,7 @@ public class TrackStatisticsUpdaterTest {
         data.trackPoints().forEach(subject::addTrackPoint);
 
         // then
-        TrackStatistics statistics = subject.getTrackStatistics();
+        SegmentStatisticUpdater statistics = subject.getTrackStatistics();
         assertEquals(142.26, statistics.getTotalDistance().toM(), 0.01);
         assertEquals(Duration.ofSeconds(12), statistics.getTotalTime());
         assertEquals(Duration.ofSeconds(12), statistics.getMovingTime());

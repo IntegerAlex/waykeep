@@ -75,7 +75,7 @@ import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 /**
  * Export a track to {@link TrackFileFormat} and verify that the import is identical.
@@ -203,7 +203,7 @@ public class ExportImportTest {
         setUp();
 
         Track track = contentProviderUtils.getTrack(trackId);
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
 
         assertEquals(ZoneOffset.of("+01:00"), track.getZoneOffset());
         assertEquals(Instant.parse("2020-02-02T02:02:02Z"), trackStatistics.getStartTime());
@@ -334,7 +334,7 @@ public class ExportImportTest {
         a.assertEquals(trackPoints, actual);
 
         // 3. trackstatistics
-        TrackStatistics importedTrackStatistics = importedTrack.getTrackStatistics();
+        SegmentStatisticUpdater importedTrackStatistics = importedTrack.getTrackStatistics();
 
         // Time
         assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());
@@ -479,7 +479,7 @@ public class ExportImportTest {
         ), actual);
 
         // 3. trackstatistics
-        TrackStatistics importedTrackStatistics = importedTrack.getTrackStatistics();
+        SegmentStatisticUpdater importedTrackStatistics = importedTrack.getTrackStatistics();
 
         // Time
         assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());

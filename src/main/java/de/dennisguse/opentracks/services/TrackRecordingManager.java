@@ -23,7 +23,7 @@ import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.util.TrackNameUtils;
 
@@ -131,7 +131,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         track.setTrackStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
-        TrackStatistics currentSegment = tmpTrackStatisticsUpdater.getCurrentSegment();
+        SegmentStatisticUpdater currentSegment = tmpTrackStatisticsUpdater.getCurrentSegment();
 
         return new RecordingData(track, current.first, current.second, currentSegment);
     }
@@ -225,7 +225,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         handler.postDelayed(ON_IDLE, idleDuration.toMillis());
     }
 
-    TrackStatistics getTrackStatistics() {
+    SegmentStatisticUpdater getTrackStatistics() {
         return trackStatisticsUpdater == null ? null : trackStatisticsUpdater.getTrackStatistics();
     }
 

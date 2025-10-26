@@ -15,7 +15,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(AndroidJUnit4.class)
 public class ChartPointTest {
@@ -23,7 +23,7 @@ public class ChartPointTest {
     @Test
     public void create_by_time() {
         // given
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalTime(Duration.ofSeconds(1000));
 
         // when
@@ -36,7 +36,7 @@ public class ChartPointTest {
     @Test
     public void create_by_distance() {
         // given
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalDistance(Distance.of(1000));
 
         // when
@@ -49,7 +49,7 @@ public class ChartPointTest {
     @Test
     public void create_get_altitude_speed_and_pace() {
         // given
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         TrackPoint trackPoint = TrackStubUtils.createDefaultTrackPoint()
                 .setAltitude(Altitude.EGM2008.of(50));
 
@@ -65,7 +65,7 @@ public class ChartPointTest {
     @Test
     public void create_sensorNotAvailable() {
         // given
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         TrackPoint trackPoint = TrackStubUtils.createDefaultTrackPoint()
                 .setAltitude(Altitude.EGM2008.of(50));
         // when
@@ -86,7 +86,7 @@ public class ChartPointTest {
                 .setCadence(101f)
                 .setPower(102f);
 
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
 
         // when
         ChartPoint point = ChartPoint.create(statistics, trackPoint, Speed.of(10), false, UnitSystem.METRIC);

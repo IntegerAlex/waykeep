@@ -37,7 +37,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 
 /**
@@ -53,7 +53,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
 
     private TTSManager voiceAnnouncement;
 
-    private TrackStatistics trackStatistics;
+    private SegmentStatisticUpdater trackStatistics;
 
     private static final Distance DISTANCE_OFF = Distance.of(Double.MAX_VALUE);
     private Distance distanceFrequency = DISTANCE_OFF;
@@ -79,13 +79,13 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         intervalStatistics = new IntervalStatistics(intervalDistance);
     }
 
-    public void start(@Nullable TrackStatistics trackStatistics) {
+    public void start(@Nullable SegmentStatisticUpdater trackStatistics) {
         voiceAnnouncement = new TTSManager(context);
         voiceAnnouncement.start();
         update(trackStatistics);
     }
 
-    void update(@Nullable TrackStatistics trackStatistics) {
+    void update(@Nullable SegmentStatisticUpdater trackStatistics) {
         this.trackStatistics = trackStatistics;
         updateNextDuration();
         updateNextTaskDistance();

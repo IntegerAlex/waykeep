@@ -6,7 +6,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 public record ChartPoint(
         //X-axis
@@ -22,7 +22,7 @@ public record ChartPoint(
 ) {
 
 
-    public static ChartPoint create(@NonNull TrackStatistics trackStatistics, @NonNull TrackPoint trackPoint, Speed smoothedSpeed, boolean chartByDistance, UnitSystem unitSystem) {
+    public static ChartPoint create(@NonNull SegmentStatisticUpdater trackStatistics, @NonNull TrackPoint trackPoint, Speed smoothedSpeed, boolean chartByDistance, UnitSystem unitSystem) {
         return new ChartPoint(
                 chartByDistance
                         ? trackStatistics.getTotalDistance().toKM_Miles(unitSystem)
