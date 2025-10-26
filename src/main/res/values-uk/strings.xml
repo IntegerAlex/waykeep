@@ -122,8 +122,8 @@ limitations under the License.
     <string name="generic_tracks">Шляхи</string>
     <!-- Gps -->
     <string name="gps_starting">Запуск GPS</string>
-    <string name="gps_wait_for_better_signal">Очікується кращий GPS-сигналу</string>
-    <string name="gps_wait_for_signal">Очікується GPS-сигнал</string>
+    <string name="gps_wait_for_better_signal">Очікування кращого сигналу GPS</string>
+    <string name="gps_wait_for_signal">Очікування сигналу GPS</string>
     <!-- Image -->
     <string name="image_arrow">Стрілка</string>
     <string name="image_marker_count">Кількість маркерів</string>
@@ -136,7 +136,7 @@ limitations under the License.
     <!-- Marker -->
     <string name="marker_add_error">Неможливо вставити маркер, оскільки відсутній сигнал GPS. Повторіть спробу.</string>
     <string name="marker_add_success">Маркер вставлено</string>
-    <string name="marker_add_canceled">Скасовано, не додано маркер</string>
+    <string name="marker_add_canceled">Скасовано, маркер не додано</string>
     <string name="marker_delete_one_confirm_message">Маркер буде назавжди видалено з пам’яті пристрою</string>
     <string name="marker_delete_one_confirm_title">Видалити маркер?</string>
     <string name="marker_delete_multiple_confirm_message">Вибрані маркери буде назавжди видалено з пам’яті пристрою</string>
@@ -195,9 +195,7 @@ limitations under the License.
     <string name="settings_stats_units_metric">Метрична (км, м)</string>
     <string name="settings_stats_units_title">Одиниці вимірювання</string>
     <!-- Share Track -->
-    <string name="share_track_share_file_body">Цей шлях може вас зацікавити.
-\n
-\n%1$s</string>
+    <string name="share_track_share_file_body">Гадаю, цей маршрут може вас зацікавити. \n \n%1$s</string>
     <string name="share_track_subject">Я хочу поділитися з вами інформацією про шлях</string>
     <!-- Stats -->
     <string name="stats_average_moving_pace">Середній темп руху</string>
@@ -215,7 +213,7 @@ limitations under the License.
     <string name="stats_total_time">Загальний час</string>
     <!-- Track -->
     <string name="track_name_format">Шлях %1$d</string>
-    <string name="track_markers">Маркери шляху \"%1$s\"</string>
+    <string name="track_markers">Маркери треку «%1$s»</string>
     <!-- Track Delete -->
     <string name="track_delete_one_confirm_message">Шлях і його маркери буде остаточно видалено з пристрою.</string>
     <string name="track_delete_one_confirm_title">Видалити шлях?</string>
@@ -292,9 +290,9 @@ limitations under the License.
     <string name="waypoint_type_railway_crossing">залізничний переїзд</string>
     <string name="waypoint_type_restaurant">ресторан</string>
     <string name="waypoint_type_shopping">покупки</string>
-    <string name="waypoint_type_sight">місце</string>
+    <string name="waypoint_type_sight">пам’ятка</string>
     <string name="waypoint_type_store">магазин</string>
-    <string name="waypoint_type_swimming_pool">плавальний басейн</string>
+    <string name="waypoint_type_swimming_pool">басейн</string>
     <string name="waypoint_type_telephone">телефон</string>
     <string name="waypoint_type_theater">театр</string>
     <string name="waypoint_type_toilet">туалет</string>
@@ -313,7 +311,7 @@ limitations under the License.
     <string name="track_recording_notification_accuracy">Точність місцеположення: %1$s</string>
     <string name="track_detail_intervals_tab">Інтервали</string>
     <string name="interval_list_empty_message">Ще немає інтервалу</string>
-    <string name="share_image_body">Думаю, вам може бути цікаво це зображення.</string>
+    <string name="share_image_body">Гадаю, це зображення може вас зацікавити.</string>
     <string name="instant_export_enabled_summary">Експорт треку в сховище після завершення запису</string>
     <string name="instant_export_enabled_title">Миттєвий експорт після тренування</string>
     <string name="help_gps_troubleshooting_content"> Що ви можете зробити:
@@ -323,19 +321,19 @@ limitations under the License.
 \n d) вимкніть енергоощадження.
 \n
 \n Якщо нічого не допомагає, будь ласка, повідомте нам про помилку. </string>
-    <string name="about_preference_title">Про</string>
-    <string name="about_url">Веб-сторінка проекту: <a href="%1$s">%1$s</a></string>
+    <string name="about_preference_title">Про OpenTracks</string>
+    <string name="about_url">Вебсторінка проєкту: <a href="%1$s">%1$s</a></string>
     <string name="about_version_name">Версія: %1$s</string>
     <string name="about_version_code">Код версії: %1$d</string>
     <string name="about_libraries">Бібліотеки</string>
-    <string name="help_feature_title">OpenTracks має такі особливості:</string>
-    <string name="help_storage_pictures_title">Як OpenTracks зберігає зображення зроблені за допомогою маркувань\?</string>
-    <string name="help_storage_pictures_content">Вони зберігаються у внутрішній пам\'яті застосунку (тобто, доступні тільки для OpenTracks).</string>
-    <string name="help_data_google_play_services_title">Чи потрібен/використовує OpenTrack Google Play Service\?</string>
+    <string name="help_feature_title">OpenTracks забезпечує такі можливості:</string>
+    <string name="help_storage_pictures_title">Як OpenTracks зберігає зображення, використані в якості маркерів?</string>
+    <string name="help_storage_pictures_content">Вони зберігаються у внутрішній пам’яті застосунку (тобто, доступні тільки для OpenTracks).</string>
+    <string name="help_data_google_play_services_title">Чи потребує/використовує OpenTracks службу Google Play?</string>
     <string name="help_track_map_title">Як показати трек на мапі\?</string>
     <string name="help_data_storage_title">Як OpenTracks зберігає дані з датчиків\?</string>
     <string name="help_recording_title">Як OpenTracks записує дані\?</string>
-    <string name="help_track_export_title">Як я можу експортувати/поширювати записані треки\?</string>
+    <string name="help_track_export_title">Як я можу експортувати записані треки і ділитися ними?</string>
     <string name="settings_night_mode_title">Тема UI</string>
     <string name="help_gps_troubleshooting_title">OpenTracks не записує моє місцеположення\?</string>
     <string name="help_support_title">Як я можу підтримати OpenTracks\?</string>
@@ -371,21 +369,16 @@ limitations under the License.
     <string name="import_no_kml_file_found">Файл kml не знайдено в KMZ</string>
     <string name="import_error_list_dialog_title">Файли не імпортовано</string>
     <string name="import_error_info">%1$s:%2$s</string>
-    <string name="marker_add_photo_canceled">Скасовано, фото-маркування не додано</string>
+    <string name="marker_add_photo_canceled">Скасовано, фотомаркер не додано</string>
     <string name="menu_insert_gallery_img">Додати зображення з галереї</string>
     <string name="menu_resume_track">Відновити трек</string>
     <string name="permission_gps_failed">OpenTracks потребує дозволу на використання GPS.</string>
     <string name="settings_night_mode_option_system">Системна</string>
-    <string name="about_description"><i>OpenTracks</i> - це застосунок для відстеження спортивної діяльності, який поважає вашу приватність.</string>
-    <string name="about_history">OpenTracks це відгалуження застосунку <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (закритого в 2016р).</string>
-    <string name="help_feature_content">* створення GPS треків
-\n* використання датчика серцевого ритму (тільки Bluetooth LE)
-\n* голосовий путівник (за часом або відстанню)
-\n* створення маркувань (включаючи зображення)
-\n* повноцінний автономний режим
-\n* відображення треків на мапі (див. нижче)</string>
-    <string name="help_track_export_content"> Треки можна експортувати з налаштувань у форматах KMZ, KML або GPX. KMZ/KML всі дані, а GPX тільки розташування. Треки, опубліковані за допомогою <i>значка поширення</i>, експортуються як KMZ. </string>
-    <string name="help_recording_content">OpenTracks використовує GPS датчик пристрою для безперервного запису місцезнаходження. Якщо GPS пристрій повідомляє неточні дані (наприклад, місцеперебування, швидкість, висота), OpenTracks нічого не може з цим вдіяти.</string>
+    <string name="about_description"><i>OpenTracks</i> — застосунок для відстеження спортивної діяльності, який поважає вашу конфіденційність.</string>
+    <string name="about_history">OpenTracks — це відгалуження застосунку <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (закритого в 2016 р.).</string>
+    <string name="help_feature_content">* створення GPS-треків\n* використання датчика серцевого ритму (тільки Bluetooth LE)\n* голосові сповіщення (за часом або відстанню)\n* створення маркерів (у т.ч. із зображеннями)\n* повноцінний автономний режим\n* відображення треків на мапі (див. нижче)</string>
+    <string name="help_track_export_content">Треки можна експортувати з Налаштувань у форматах KMZ, KML або GPX (KMZ/KML — усі дані, а GPX — тільки розташування). При використанні <i>значка «Поділитися»</i> треки експортуються у форматі KMZ.</string>
+    <string name="help_recording_content">OpenTracks використовує GPS-датчик пристрою для безперервного запису місцезнаходження. Якщо GPS-пристрій повідомляє неточні дані (наприклад, місцезнаходження, швидкість, висоту), OpenTracks нічого не може з цим вдіяти.</string>
     <string name="help_data_storage_content"> Дані датчика зиписуються в кожному зареєстрованому місці. Що стосується датчика частоти серцевих скорочень для кожного місцезнаходження зберігається тільки <i>одне</i> вимірювання частоти. Якщо ви зупинилися або перебуваєте в приміщенні, дані датчика не будуть записані (але будуть відображатися). </string>
     <string name="help_support_content"> Ви можете:
 \n а) поширювати інформацію про OpenTracks,
@@ -407,7 +400,7 @@ limitations under the License.
     <string name="settings_default_trackfileformat">Формат файла експорту/обміну</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Під час запису показувати статистику без розблокування пристрою.</string>
     <string name="stats_loss">Втрачено</string>
-    <string name="share_image_subject">Я хотів би поділитися з вами зображенням</string>
+    <string name="share_image_subject">Я хочу поділитися з вами зображенням</string>
     <string name="settings_default_export_uri_title">Каталог експорту треків</string>
     <string name="help_track_map_content"> Використовуйте маленьку піктограму мапи.
 \n a) (оновлення в реальному часі) Встановіть застосунок <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Він дозволяє дивитися карти онлайн чи офлайн завдяки <a href="https://www.openstreetmap.org">OpenStreetMap</a>.
@@ -461,8 +454,8 @@ limitations under the License.
     <string name="stats_custom_layout_default_layout">Макет за замовчуванням</string>
     <string name="custom_layout_select_layout">Виберіть макет</string>
     <string name="custom_layout_list_layout_removed">Макет видалено</string>
-    <string name="custom_layout_list_edit_already_exists">Ім\'я макета вже існує</string>
-    <string name="custom_layout_list_edit_name">Введіть ім\'я макета для додавання</string>
+    <string name="custom_layout_list_edit_already_exists">Назва макета вже існує</string>
+    <string name="custom_layout_list_edit_name">Уведіть назву макета для додавання</string>
     <string name="settings_announcements_distance_frequency">Довжина кола</string>
     <string name="settings_announcements_totaltime_frequency">Часовий інтервал</string>
     <string name="settings_running_sensor">Біг</string>
@@ -582,4 +575,9 @@ limitations under the License.
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="power_x_watt">Потужність {x, plural, =1 {1 ват} few {# вати} other {# ват} }</string>
     <string name="error_crash_title">%1$s аварійно завершив роботу</string>
+    <string name="settings_announcements_segment_average_speed_pace">Середня швидкість/темп (відрізок)</string>
+    <string name="stats_average_segment_pace">Середній темп відрізка</string>
+    <string name="share_crash_report">Надіcлати звіт про збій</string>
+    <string name="lap_heart_rate">Пульс за коло</string>
+    <string name="settings_announcements_lap_power">Потужність за коло</string>
 </resources>
