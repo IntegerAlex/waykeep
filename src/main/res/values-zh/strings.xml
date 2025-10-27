@@ -589,8 +589,8 @@ limitations under the License.
     <string name="settings_recording_min_required_accuracy_summary">精度不足 %1$s 的位置会被忽略</string>
     <string name="settings_sensor_heart_rate_max">心率区间：最大心率（bpm）</string>
     <string name="settings_api_summary">给其他应用使用的远程控制和统计 API</string>
-    <string name="sensor_state_cadence_unit">rpm</string>
-    <string name="sensor_state_heart_rate_unit">bpm</string>
+    <string name="sensor_state_cadence_unit">RPM</string>
+    <string name="sensor_state_heart_rate_unit">BPM</string>
     <string name="sensor_state_power_unit">瓦</string>
     <string name="settings_sensor_bluetooth_service_filter_off">显示所有可发现的蓝牙设备</string>
     <string name="help_data_google_play_services_content">不使用</string>
@@ -636,4 +636,6 @@ limitations under the License.
     <string name="settings_night_mode_option_night_dynamic">‌夜间模式（动态配色）</string>
     <string name="settings_night_mode_option_night_oled_dynamic">OLED 优化模式（动态配色）</string>
     <string name="track_edit_time_offset">时区偏移</string>
+    <string name="settings_announcements_segment_average_speed_pace">平均速度/配速（路段）</string>
+    <string name="stats_average_segment_pace">平均路段配速</string>
 </resources>
