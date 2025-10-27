@@ -44,7 +44,7 @@ public class ExportUtils {
             WorkRequest exportRequest = new OneTimeWorkRequest.Builder(ExportWorker.class)
                     .setInputData(new Data.Builder()
                             .putLongArray(ExportWorker.TRACKIDS_KEY, new long[]{trackId.id()})
-                            .putString(ExportWorker.DIRECTORY_URI_KEY, directory.toString())
+                            .putString(ExportWorker.DIRECTORY_URI_KEY, directory.getUri().toString())
                             .putString(ExportWorker.TRACKFILEFORMAT_KEY, trackFileFormat.toString())
                             .putString(ExportWorker.FILENAME_KEY, null)
                             .build())
