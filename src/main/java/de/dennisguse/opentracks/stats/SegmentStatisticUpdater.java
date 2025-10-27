@@ -40,7 +40,6 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
  * @author Rodrigo Damazio
  */
 //TODO Check that data ranges are valid (not less than zero etc.)
-//TODO Should be a Java record
 public class SegmentStatisticUpdater {
 
     // The min and max altitude (meters) seen on this track.
@@ -76,18 +75,24 @@ public class SegmentStatisticUpdater {
      * @param other another statistics data object to copy from
      */
     public SegmentStatisticUpdater(SegmentStatisticUpdater other) {
-        startTime = other.startTime;
-        stopTime = other.stopTime;
-        totalDistance = other.totalDistance;
-        totalTime = other.totalTime;
-        movingTime = other.movingTime;
-        maxSpeed = other.maxSpeed;
-        altitudeExtremities.set(other.altitudeExtremities.getMin(), other.altitudeExtremities.getMax());
-        totalAltitudeGain_m = other.totalAltitudeGain_m;
-        totalAltitudeLoss_m = other.totalAltitudeLoss_m;
-        avgHeartRate = other.avgHeartRate;
-        avgPower = other.avgPower;
-        isIdle = other.isIdle;
+        this(other.getStatistics());
+    }
+
+    public SegmentStatisticUpdater(Statistics statistics) {
+        startTime = statistics.startTime();
+        stopTime = statistics.stopTime();
+        totalDistance = statistics.totalDistance();
+        totalTime = statistics.totalTime();
+        movingTime = statistics.movingTime();
+        maxSpeed = statistics.maxSpeed();
+        altitudeExtremities.set(statistics.altitudeMin_m(), statistics.altitudeMax_m());
+        if (statistics.altitudeGainLoss() != null) {
+            totalAltitudeGain_m = statistics.altitudeGainLoss().gain_m();
+            totalAltitudeLoss_m = statistics.altitudeGainLoss().loss_m();
+        }
+        avgHeartRate = statistics.avgHeartRate();
+        avgPower = statistics.avgPower();
+        isIdle = statistics.isIdle();
     }
 
     @Deprecated //TODO Remove
@@ -101,6 +106,7 @@ public class SegmentStatisticUpdater {
         this.maxSpeed = Speed.of(maxSpeed_mps);
         this.totalAltitudeGain_m = totalAltitudeGain_m;
         this.totalAltitudeLoss_m = totalAltitudeLoss_m;
+        altitudeExtremities.set(0.0, 0.0);
     }
 
     /**

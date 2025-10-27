@@ -27,6 +27,6 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
             return new SegmentStatisticUpdater().getStatistics();
         }
 
-        return track.getTrackStatistics().getStatistics();
+        return track.getStatistics();
     }
 }

@@ -352,30 +352,30 @@ public class ContentProviderUtils {
         return values;
     }
 
-    //TODO Use Statistics
-    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull SegmentStatisticUpdater trackStatistics) {
+    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull Statistics trackStatistics) {
         contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(trackStatistics), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
     }
 
-    //TODO Use Statistics
-    private ContentValues createContentValues(SegmentStatisticUpdater trackStatistics) {
+    private ContentValues createContentValues(Statistics trackStatistics) {
         ContentValues values = new ContentValues();
-        if (trackStatistics.getStartTime() != null) {
-            values.put(TracksColumns.STARTTIME, trackStatistics.getStartTime().toEpochMilli());
+        if (trackStatistics.startTime() != null) {
+            values.put(TracksColumns.STARTTIME, trackStatistics.startTime().toEpochMilli());
         }
-        if (trackStatistics.getStopTime() != null) {
-            values.put(TracksColumns.STOPTIME, trackStatistics.getStopTime().toEpochMilli());
+        if (trackStatistics.stopTime() != null) {
+            values.put(TracksColumns.STOPTIME, trackStatistics.stopTime().toEpochMilli());
         }
-        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.getTotalDistance().toM());
-        values.put(TracksColumns.TOTALTIME, trackStatistics.getTotalTime().toMillis());
-        values.put(TracksColumns.MOVINGTIME, trackStatistics.getMovingTime().toMillis());
+        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
+        values.put(TracksColumns.TOTALTIME, trackStatistics.totalTime().toMillis());
+        values.put(TracksColumns.MOVINGTIME, trackStatistics.movingTime().toMillis());
         values.put(TracksColumns.AVGSPEED, trackStatistics.getAverageSpeed().toMPS());
         values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
-        values.put(TracksColumns.MAXSPEED, trackStatistics.getMaxSpeed().toMPS());
+        values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
         values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
         values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
-        values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.getTotalAltitudeGain());
-        values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.getTotalAltitudeLoss());
+        if (trackStatistics.altitudeGainLoss() != null) {
+            values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
+            values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());
+        }
         return values;
     }
 

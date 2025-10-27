@@ -100,14 +100,15 @@ public class ExtremityMonitor {
      * @param min the minimum value
      * @param max the maximum value
      */
-    public void set(double min, double max) {
+    public void set(Double min, Double max) {
+        if (min == null || max == null) {
+            reset();
+            return;
+        }
         this.min = min;
         this.max = max;
     }
 
-    /**
-     * Returns true if has data.
-     */
     public boolean hasData() {
         return min != Double.POSITIVE_INFINITY && max != Double.NEGATIVE_INFINITY;
     }

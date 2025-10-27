@@ -249,7 +249,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             contentProviderUtils.insertTrackPoint(trackPoint, trackId);
             trackStatisticsUpdater.addTrackPoint(trackPoint);
 
-            contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics());
+            contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics().getStatistics());
             lastStoredTrackPoint = trackPoint;
             if (trackPoint.hasLocation()) {
                 lastStoredTrackPointWithLocation = lastStoredTrackPoint;
