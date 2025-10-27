@@ -23,12 +23,12 @@ import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.CustomStatsItemBinding;
 import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.viewmodels.Mapping;
 import de.dennisguse.opentracks.viewmodels.StatisticViewHolder;
 

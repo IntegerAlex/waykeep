@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
-import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * A track.

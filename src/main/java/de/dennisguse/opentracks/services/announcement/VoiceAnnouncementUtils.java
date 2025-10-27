@@ -33,11 +33,11 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 

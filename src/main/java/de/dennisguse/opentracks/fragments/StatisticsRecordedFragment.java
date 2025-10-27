@@ -34,12 +34,12 @@ import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**

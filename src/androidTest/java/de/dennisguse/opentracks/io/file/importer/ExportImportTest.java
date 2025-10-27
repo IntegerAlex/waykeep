@@ -60,6 +60,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
@@ -75,7 +76,6 @@ import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
-import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * Export a track to {@link TrackFileFormat} and verify that the import is identical.

@@ -32,12 +32,12 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 
 /**

@@ -48,6 +48,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
@@ -55,7 +56,6 @@ import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
 

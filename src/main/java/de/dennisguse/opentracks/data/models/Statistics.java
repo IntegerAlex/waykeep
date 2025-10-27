@@ -1,15 +1,9 @@
-package de.dennisguse.opentracks.stats;
+package de.dennisguse.opentracks.data.models;
 
 import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-
-import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
-import de.dennisguse.opentracks.data.models.Distance;
-import de.dennisguse.opentracks.data.models.HeartRate;
-import de.dennisguse.opentracks.data.models.Power;
-import de.dennisguse.opentracks.data.models.Speed;
 
 public record Statistics(
         Instant startTime,

@@ -30,11 +30,11 @@ import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
-import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * Test that legacy KML/GPX formats can still be imported.

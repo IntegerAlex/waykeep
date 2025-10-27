@@ -18,11 +18,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
-import de.dennisguse.opentracks.stats.Statistics;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRecordingServiceNotificationManagerTest {

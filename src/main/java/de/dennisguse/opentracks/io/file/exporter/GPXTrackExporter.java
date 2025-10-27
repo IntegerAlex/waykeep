@@ -37,9 +37,9 @@ import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
