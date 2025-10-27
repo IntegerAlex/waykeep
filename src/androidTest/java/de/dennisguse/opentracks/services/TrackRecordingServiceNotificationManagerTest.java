@@ -22,6 +22,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRecordingServiceNotificationManagerTest {
@@ -29,10 +30,10 @@ public class TrackRecordingServiceNotificationManagerTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     @Mock
-    private TrackPoint trackPointMock;
+    private TrackPoint trackPointMock; //TODO No mock
 
     @Mock
-    private SegmentStatisticUpdater trackStatisticsMock;
+    private SegmentStatisticUpdater trackStatisticsMock; //TODO only use Statistic (not mock)
 
     @Mock
     private NotificationCompat.Builder notificationCompatBuilder;
@@ -45,7 +46,20 @@ public class TrackRecordingServiceNotificationManagerTest {
         when(trackPointMock.hasHorizontalAccuracy()).thenReturn(true);
         when(trackPointMock.getHorizontalAccuracy()).thenReturn(Distance.of(999f));
         when(trackPointMock.getSpeed()).thenReturn(Speed.of(0));
-        when(trackStatisticsMock.getTotalDistance()).thenReturn(Distance.of(0));
+        when(trackStatisticsMock.getStatistics()).thenReturn(new Statistics(
+                null,
+                null,
+                null,
+                null,
+                Distance.of(0),
+                false,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
         when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))
                 .thenReturn(notificationCompatBuilder);
 

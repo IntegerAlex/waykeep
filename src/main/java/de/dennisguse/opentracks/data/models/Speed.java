@@ -26,6 +26,7 @@ public record Speed(double speed_mps) {
         return of(Distance.ofKilometer(speed_kmh), Duration.ofHours(1));
     }
 
+    //TODO Like Duration.ZERO
     public static Speed zero() {
         return of(0.0);
     }

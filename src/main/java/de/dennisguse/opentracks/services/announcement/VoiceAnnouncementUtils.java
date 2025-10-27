@@ -37,7 +37,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
@@ -52,7 +52,7 @@ class VoiceAnnouncementUtils {
     }
 
     static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable IntervalStatistics.Interval currentInterval, @Nullable SensorStatistics sensorStatistics) {
-        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
+        Statistics trackStatistics = track.getStatistics();
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
@@ -60,7 +60,7 @@ class VoiceAnnouncementUtils {
             appendTime(builder, track.getStopTime());
         }
 
-        Distance totalDistance = trackStatistics.getTotalDistance();
+        Distance totalDistance = trackStatistics.totalDistance();
         Speed averageMovingSpeed = trackStatistics.getAverageMovingSpeed();
         Speed currentDistancePerTime = currentInterval != null ? currentInterval.getSpeed() : null;
 
@@ -112,7 +112,7 @@ class VoiceAnnouncementUtils {
         boolean hasTravelledDistance = !totalDistance.isZero();
 
         // Announce time
-        Duration movingTime = trackStatistics.getMovingTime();
+        Duration movingTime = trackStatistics.movingTime();
         if (shouldVoiceAnnounceMovingTime() && hasTravelledDistance && !movingTime.isZero()) {
             appendDuration(context, builder, movingTime);
             builder.append(".");

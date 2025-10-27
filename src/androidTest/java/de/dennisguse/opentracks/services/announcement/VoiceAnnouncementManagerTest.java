@@ -56,11 +56,11 @@ public class VoiceAnnouncementManagerTest {
         // when
         SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalDistance(Distance.ofKilometer(13));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Distance.of(15000), voiceAnnouncementManager.getNextTotalDistance());
 
         statistics.setTotalDistance(Distance.of(15100));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Distance.of(20000), voiceAnnouncementManager.getNextTotalDistance());
     }
 
@@ -76,11 +76,11 @@ public class VoiceAnnouncementManagerTest {
         // when
         SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalTime(Duration.ofSeconds(91));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Duration.ofSeconds(95), voiceAnnouncementManager.getNextTotalTime());
 
         statistics.setTotalTime(Duration.ofSeconds(95));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Duration.ofSeconds(100), voiceAnnouncementManager.getNextTotalTime());
     }
 

@@ -37,7 +37,32 @@ public record Statistics(
         Power avgPower
 ) {
 
+    public Duration getStoppedTime() {
+        return totalTime.minus(movingTime);
+    }
+
+    public Speed getAverageSpeed() {
+        if (totalTime.isZero()) {
+            return Speed.of(0);
+        }
+        return Speed.of(totalDistance, totalTime);
+    }
+
     public Speed getAverageMovingSpeed() {
         return Speed.of(totalDistance, movingTime);
+    }
+
+    @Deprecated
+    //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
+    public double getMinAltitude() {
+        if (altitudeMin_m == null) return 0;
+        return altitudeMin_m;
+    }
+
+    @Deprecated
+    //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
+    public double getMaxAltitude() {
+        if (altitudeMax_m == null) return 0;
+        return altitudeMax_m;
     }
 }

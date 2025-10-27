@@ -37,7 +37,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 
 /**
@@ -53,7 +53,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
 
     private TTSManager voiceAnnouncement;
 
-    private SegmentStatisticUpdater trackStatistics;
+    private Statistics trackStatistics;
 
     private static final Distance DISTANCE_OFF = Distance.of(Double.MAX_VALUE);
     private Distance distanceFrequency = DISTANCE_OFF;
@@ -79,13 +79,13 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         intervalStatistics = new IntervalStatistics(intervalDistance);
     }
 
-    public void start(@Nullable SegmentStatisticUpdater trackStatistics) {
+    public void start(@Nullable Statistics trackStatistics) {
         voiceAnnouncement = new TTSManager(context);
         voiceAnnouncement.start();
         update(trackStatistics);
     }
 
-    void update(@Nullable SegmentStatisticUpdater trackStatistics) {
+    void update(@Nullable Statistics trackStatistics) {
         this.trackStatistics = trackStatistics;
         updateNextDuration();
         updateNextTaskDistance();
@@ -126,12 +126,12 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         }
 
         boolean announce = false;
-        this.trackStatistics = track.getTrackStatistics();
-        if (trackStatistics.getTotalDistance().greaterThan(nextTotalDistance)) {
+        this.trackStatistics = track.getStatistics();
+        if (trackStatistics.totalDistance().greaterThan(nextTotalDistance)) {
             updateNextTaskDistance();
             announce = true;
         }
-        if (!trackStatistics.getTotalTime().minus(nextTotalTime).isNegative()) {
+        if (!trackStatistics.totalTime().minus(nextTotalTime).isNegative()) {
             updateNextDuration();
             announce = true;
         }
@@ -182,7 +182,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             nextTotalDistance = DISTANCE_OFF;
         } else {
 
-            Distance distance = trackStatistics.getTotalDistance();
+            Distance distance = trackStatistics.totalDistance();
 
             int index = (int) (distance.dividedBy(distanceFrequency));
             nextTotalDistance = distanceFrequency.multipliedBy(index + 1);
@@ -195,10 +195,9 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             nextTotalTime = TOTALTIME_OFF;
         } else {
 
-            Duration totalTime = trackStatistics.getTotalTime();
-            Duration intervalMod = Duration.ofMillis(trackStatistics.getTotalTime().toMillis() % totalTimeFrequency.toMillis());
+            Duration intervalMod = Duration.ofMillis(trackStatistics.totalTime().toMillis() % totalTimeFrequency.toMillis());
 
-            nextTotalTime = totalTime.plus(totalTimeFrequency.minus(intervalMod));
+            nextTotalTime = trackStatistics.totalTime().plus(totalTimeFrequency.minus(intervalMod));
         }
     }
 

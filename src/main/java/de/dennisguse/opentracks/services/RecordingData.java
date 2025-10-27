@@ -20,12 +20,13 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
         return track.getActivityTypeLocalized();
     }
 
+    @Deprecated
     @NonNull
-    public SegmentStatisticUpdater getStatisticsTrack() {
+    public Statistics getStatisticsTrack() {
         if (track == null) {
-            return new SegmentStatisticUpdater();
+            return new SegmentStatisticUpdater().getStatistics();
         }
 
-        return track.getTrackStatistics();
+        return track.getTrackStatistics().getStatistics();
     }
 }

@@ -72,6 +72,7 @@ public class TrackStatisticsUpdater {
         resetAverageHeartRate();
     }
 
+    //TODO Return Statistic?
     public SegmentStatisticUpdater getTrackStatistics() {
         // Take a snapshot - we don't want anyone messing with our trackStatistics
         SegmentStatisticUpdater stats = new SegmentStatisticUpdater(segmentStatisticUpdater);

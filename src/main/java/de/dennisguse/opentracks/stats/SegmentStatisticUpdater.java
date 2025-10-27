@@ -89,6 +89,7 @@ public class SegmentStatisticUpdater {
         isIdle = other.isIdle;
     }
 
+    @Deprecated //TODO Remove
     @VisibleForTesting
     public SegmentStatisticUpdater(String startTime, String stopTime, double totalDistance_m, int totalTime_s, int movingTime_s, float maxSpeed_mps, Float totalAltitudeGain_m, Float totalAltitudeLoss_m) {
         this.startTime = Instant.parse(startTime);
@@ -286,10 +287,6 @@ public class SegmentStatisticUpdater {
         movingTime = movingTime.plus(time);
     }
 
-    public Duration getStoppedTime() {
-        return totalTime.minus(movingTime);
-    }
-
     public boolean isIdle() {
         return isIdle;
     }
@@ -423,6 +420,7 @@ public class SegmentStatisticUpdater {
         totalAltitudeLoss_m += loss_m;
     }
 
+    @Deprecated //TODO Remove as it should (a) not be necessary and (b) toString is not complete?
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

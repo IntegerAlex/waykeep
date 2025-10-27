@@ -68,14 +68,14 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
 
         viewBinding.trackEditDescription.setText(track.getDescription());
 
-        viewBinding.time.setText(StringUtils.formatElapsedTime(track.getTrackStatistics().getMovingTime()));
+        viewBinding.time.setText(StringUtils.formatElapsedTime(track.getStatistics().movingTime()));
 
         {
             Pair<String, String> parts = SpeedFormatter.Builder()
                     .setUnit(PreferencesUtils.getUnitSystem())
                     .setReportSpeedOrPace(PreferencesUtils.isReportSpeed(track))
                     .build(this)
-                    .getSpeedParts(track.getTrackStatistics().getAverageMovingSpeed());
+                    .getSpeedParts(track.getStatistics().getAverageMovingSpeed());
             viewBinding.speed.setText(parts.first);
             viewBinding.speedUnit.setText(parts.second);
         }
@@ -84,7 +84,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             Pair<String, String> parts = DistanceFormatter.Builder()
                     .setUnit(PreferencesUtils.getUnitSystem())
                     .build(this)
-                    .getDistanceParts(track.getTrackStatistics().getTotalDistance());
+                    .getDistanceParts(track.getStatistics().totalDistance());
             viewBinding.distance.setText(parts.first);
             viewBinding.distanceUnit.setText(parts.second);
         }

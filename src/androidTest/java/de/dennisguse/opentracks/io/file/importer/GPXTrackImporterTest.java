@@ -34,7 +34,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 
 /**
  * Test that legacy KML/GPX formats can still be imported.
@@ -149,9 +149,9 @@ public class GPXTrackImporterTest {
         assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
 
         // 3. trackstatistics
-        SegmentStatisticUpdater trackStatistics = importedTrack.getTrackStatistics();
-        assertEquals(0.75, trackStatistics.getMaxSpeed().toMPS(), 0.01);
-        assertEquals(Duration.ofSeconds(101), trackStatistics.getMovingTime());
+        Statistics trackStatistics = importedTrack.getStatistics();
+        assertEquals(0.75, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(Duration.ofSeconds(101), trackStatistics.movingTime());
 
         // 4. trackpoints
         List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
@@ -204,9 +204,9 @@ public class GPXTrackImporterTest {
         assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
 
         // 3. trackstatistics
-        SegmentStatisticUpdater trackStatistics = importedTrack.getTrackStatistics();
-        assertEquals(5.0, trackStatistics.getMaxSpeed().toMPS(), 0.01);
-        assertEquals(Duration.ofSeconds(101), trackStatistics.getMovingTime());
+        Statistics trackStatistics = importedTrack.getStatistics();
+        assertEquals(5.0, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(Duration.ofSeconds(101), trackStatistics.movingTime());
 
         // 4. trackpoints
         List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);

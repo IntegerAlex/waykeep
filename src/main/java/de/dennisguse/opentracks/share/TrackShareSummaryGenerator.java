@@ -31,7 +31,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -65,7 +65,7 @@ public class TrackShareSummaryGenerator {
         writeString(track.getName(), builder, R.string.generic_name_line);
         writeString(track.getActivityTypeLocalized(), builder, R.string.description_activity_type);
         writeString(track.getDescription(), builder, R.string.generic_description_line);
-        builder.append(generateTrackStatisticsDescription(track.getTrackStatistics()));
+        builder.append(generateTrackStatisticsDescription(track.getStatistics()));
 
         return builder.toString();
     }
@@ -78,17 +78,17 @@ public class TrackShareSummaryGenerator {
         builder.append(TrackShareSummaryGenerator.TEXT_LINE_BREAK);
     }
 
-    private String generateTrackStatisticsDescription(SegmentStatisticUpdater stats) {
+    private String generateTrackStatisticsDescription(Statistics stats) {
         StringBuilder builder = new StringBuilder();
 
         // Total distance
-        writeDistance(stats.getTotalDistance(), builder, R.string.description_total_distance);
+        writeDistance(stats.totalDistance(), builder, R.string.description_total_distance);
 
         // Total time
-        writeTime(stats.getTotalTime(), builder, R.string.description_total_time);
+        writeTime(stats.totalTime(), builder, R.string.description_total_time);
 
         // Moving time
-        writeTime(stats.getMovingTime(), builder, R.string.description_moving_time);
+        writeTime(stats.movingTime(), builder, R.string.description_moving_time);
 
         // Average speed
         writeSpeed(stats.getAverageSpeed(), builder, R.string.description_average_speed);
@@ -97,7 +97,7 @@ public class TrackShareSummaryGenerator {
         writeSpeed(stats.getAverageMovingSpeed(), builder, R.string.description_average_moving_speed);
 
         // Max speed
-        writeSpeed(stats.getMaxSpeed(), builder, R.string.description_max_speed);
+        writeSpeed(stats.maxSpeed(), builder, R.string.description_max_speed);
 
         // Average pace
         writePace(stats.getAverageSpeed(), builder, R.string.description_average_pace_in_minute);
@@ -106,26 +106,22 @@ public class TrackShareSummaryGenerator {
         writePace(stats.getAverageMovingSpeed(), builder, R.string.description_average_moving_pace_in_minute);
 
         // Fastest pace
-        writePace(stats.getMaxSpeed(), builder, R.string.description_fastest_pace_in_minute);
+        writePace(stats.maxSpeed(), builder, R.string.description_fastest_pace_in_minute);
 
         // Min and Max altitude
-        if (stats.hasAltitudeExtremities()) {
-            writeAltitude(stats.getMaxAltitude(), builder, R.string.description_max_altitude);
-            writeAltitude(stats.getMinAltitude(), builder, R.string.description_min_altitude);
+        if (stats.altitudeMax_m() != null & stats.altitudeMin_m() != null) {
+            writeAltitude(stats.altitudeMax_m(), builder, R.string.description_max_altitude);
+            writeAltitude(stats.altitudeMin_m(), builder, R.string.description_min_altitude);
         }
 
-        // Altitude gain
-        if (stats.hasTotalAltitudeGain()) {
-            writeAltitude(stats.getTotalAltitudeGain(), builder, R.string.description_altitude_gain);
-        }
-
-        // Altitude loss
-        if (stats.hasTotalAltitudeLoss()) {
-            writeAltitude(stats.getTotalAltitudeLoss(), builder, R.string.description_altitude_loss);
+        // Altitude gain & loss
+        if (stats.altitudeGainLoss() != null) {
+            writeAltitude(stats.altitudeGainLoss().gain_m(), builder, R.string.description_altitude_gain);
+            writeAltitude(stats.altitudeGainLoss().loss_m(), builder, R.string.description_altitude_loss);
         }
 
         // Recorded time
-        builder.append(context.getString(R.string.description_recorded_time, StringUtils.formatDateTimeWithOffset(OffsetDateTime.ofInstant(stats.getStartTime(), ZoneId.systemDefault()))));
+        builder.append(context.getString(R.string.description_recorded_time, StringUtils.formatDateTimeWithOffset(OffsetDateTime.ofInstant(stats.startTime(), ZoneId.systemDefault()))));
         builder.append(TEXT_LINE_BREAK);
 
         return builder.toString();

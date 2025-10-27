@@ -124,7 +124,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
         ALTITUDE_CORRECTION_MANAGER.correctAltitude(context, current.first);
 
-        Track track = contentProviderUtils.getTrack(trackId); //Get copy
+        Track track = contentProviderUtils.getTrack(trackId); //Get copy TODO: Avoid re-loading data from DB
         if (track == null) {
             Log.w(TAG, "Requesting data if not recording is taking place, should not be done.");
             return null;

@@ -39,7 +39,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.stats.Statistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -279,18 +279,16 @@ public class GPXTrackExporter implements TrackExporter {
             printWriter.println("<opentracks:typeTranslated>" + StringUtils.formatCData(track.getActivityTypeLocalized()) + "</opentracks:typeTranslated>");
         }
 
-        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
+        Statistics trackStatistics = track.getStatistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
-        printWriter.println("<gpxtrkx:Distance>" + trackStatistics.getTotalDistance().toM() + "</gpxtrkx:Distance>");
-        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.getTotalTime().getSeconds() + "</gpxtrkx:TimerTime>");
-        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.getMovingTime().getSeconds() + "</gpxtrkx:MovingTime>");
+        printWriter.println("<gpxtrkx:Distance>" + trackStatistics.totalDistance().toM() + "</gpxtrkx:Distance>");
+        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalTime().getSeconds() + "</gpxtrkx:TimerTime>");
+        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.movingTime().getSeconds() + "</gpxtrkx:MovingTime>");
         printWriter.println("<gpxtrkx:StoppedTime>" + trackStatistics.getStoppedTime().getSeconds() + "</gpxtrkx:StoppedTime>");
-        printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.getMaxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
-        if (trackStatistics.hasTotalAltitudeGain()) {
-            printWriter.println("<gpxtrkx:Ascent>" + trackStatistics.getTotalAltitudeGain() + "</gpxtrkx:Ascent>");
-        }
-        if (trackStatistics.hasTotalAltitudeLoss()) {
-            printWriter.println("<gpxtrkx:Descent>" + trackStatistics.getTotalAltitudeLoss() + "</gpxtrkx:Descent>");
+        printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.maxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
+        if (trackStatistics.altitudeGainLoss() != null) {
+            printWriter.println("<gpxtrkx:Ascent>" + trackStatistics.altitudeGainLoss().gain_m() + "</gpxtrkx:Ascent>");
+            printWriter.println("<gpxtrkx:Descent>" + trackStatistics.altitudeGainLoss().loss_m() + "</gpxtrkx:Descent>");
         }
         printWriter.println("</gpxtrkx:TrackStatsExtension>");
 
