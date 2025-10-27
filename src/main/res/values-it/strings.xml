@@ -621,4 +621,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="settings_night_mode_option_night_dynamic">Notte (colore dinamico)</string>
     <string name="settings_night_mode_option_night_oled_dynamic">Adatto per OLED (colore dinamico)</string>
     <string name="voiceIdle">Passaggio a inattivo.</string>
+    <string name="settings_announcements_segment_average_speed_pace">Velocità/Ritmo medi (segmento)</string>
+    <string name="stats_average_segment_pace">Ritmo medio nel segmento</string>
 </resources>
