@@ -134,7 +134,7 @@ limitations under the License.
     <!-- Import -->
     <string name="import_progress_message">Імпорт із %1$s…</string>
     <!-- Marker -->
-    <string name="marker_add_error">Неможливо вставити маркер, оскільки відсутній сигнал GPS. Повторіть спробу.</string>
+    <string name="marker_add_error">Неможливо вставити маркер, оскільки відсутній сигнал GPS. Спробуйте ще раз.</string>
     <string name="marker_add_success">Маркер вставлено</string>
     <string name="marker_add_canceled">Скасовано, маркер не додано</string>
     <string name="marker_delete_one_confirm_message">Маркер буде назавжди видалено з пам’яті пристрою</string>
@@ -368,7 +368,7 @@ limitations under the License.
     <string name="import_parser_error">Помилка парсера: %1$s</string>
     <string name="import_no_kml_file_found">Файл kml не знайдено в KMZ</string>
     <string name="import_error_list_dialog_title">Файли не імпортовано</string>
-    <string name="import_error_info">%1$s:%2$s</string>
+    <string name="import_error_info">%1$s: %2$s</string>
     <string name="marker_add_photo_canceled">Скасовано, фотомаркер не додано</string>
     <string name="menu_insert_gallery_img">Додати зображення з галереї</string>
     <string name="menu_resume_track">Відновити трек</string>
@@ -581,4 +581,5 @@ limitations under the License.
     <string name="lap_heart_rate">Пульс за коло</string>
     <string name="settings_announcements_lap_power">Потужність за коло</string>
     <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
+    <string name="create_marker_error">Неможливо створити маркер. Спробуйте ще раз.</string>
 </resources>
