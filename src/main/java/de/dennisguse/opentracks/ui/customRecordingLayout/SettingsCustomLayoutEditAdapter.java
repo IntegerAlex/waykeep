@@ -49,7 +49,6 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 false,
                 Speed.of(0),
                 null,
-                null,
 
                 new AltitudeGainLoss(0f, 0f),
 

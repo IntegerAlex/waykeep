@@ -109,9 +109,9 @@ public class TrackShareSummaryGenerator {
         writePace(stats.maxSpeed(), builder, R.string.description_fastest_pace_in_minute);
 
         // Min and Max altitude
-        if (stats.altitudeMax_m() != null & stats.altitudeMin_m() != null) {
-            writeAltitude(stats.altitudeMax_m(), builder, R.string.description_max_altitude);
-            writeAltitude(stats.altitudeMin_m(), builder, R.string.description_min_altitude);
+        if (stats.altitudeExtremities() != null) {
+            writeAltitude(stats.altitudeExtremities().max_m(), builder, R.string.description_max_altitude);
+            writeAltitude(stats.altitudeExtremities().min_m(), builder, R.string.description_min_altitude);
         }
 
         // Altitude gain & loss

@@ -17,11 +17,8 @@ public record Statistics(
         boolean isIdle, //TODO Check if this is persisted; if not: remove
         Speed maxSpeed,
 
-        //TODO Create record for min/max altitude
         @Nullable
-        Double altitudeMin_m,
-        @Nullable
-        Double altitudeMax_m,
+        AltitudeExtremities altitudeExtremities,
 
         @Nullable
         AltitudeGainLoss altitudeGainLoss,
@@ -49,14 +46,14 @@ public record Statistics(
     @Deprecated
     //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
     public double getMinAltitude() {
-        if (altitudeMin_m == null) return 0;
-        return altitudeMin_m;
+        if (altitudeExtremities == null) return 0;
+        return altitudeExtremities.min_m();
     }
 
     @Deprecated
     //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
     public double getMaxAltitude() {
-        if (altitudeMax_m == null) return 0;
-        return altitudeMax_m;
+        if (altitudeExtremities == null) return 0;
+        return altitudeExtremities.max_m();
     }
 }

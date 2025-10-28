@@ -57,7 +57,6 @@ public class TrackRecordingServiceNotificationManagerTest {
                 null,
                 null,
                 null,
-                null,
                 null
         ));
         when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))

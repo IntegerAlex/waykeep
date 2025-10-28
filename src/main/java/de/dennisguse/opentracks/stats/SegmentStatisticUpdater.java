@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -85,7 +86,9 @@ public class SegmentStatisticUpdater {
         totalTime = statistics.totalTime();
         movingTime = statistics.movingTime();
         maxSpeed = statistics.maxSpeed();
-        altitudeExtremities.set(statistics.altitudeMin_m(), statistics.altitudeMax_m());
+        if (statistics.altitudeExtremities() != null) {
+            altitudeExtremities.set(statistics.altitudeExtremities().min_m(), statistics.altitudeExtremities().max_m());
+        }
         if (statistics.altitudeGainLoss() != null) {
             totalAltitudeGain_m = statistics.altitudeGainLoss().gain_m();
             totalAltitudeLoss_m = statistics.altitudeGainLoss().loss_m();
@@ -217,8 +220,7 @@ public class SegmentStatisticUpdater {
                 totalDistance,
                 isIdle,
                 getMaxSpeed(),
-                altitudeExtremities.hasData() ? altitudeExtremities.getMin() : null,
-                altitudeExtremities.hasData() ? altitudeExtremities.getMax() : null,
+                altitudeExtremities.hasData() ? new AltitudeExtremities(altitudeExtremities.getMin(), altitudeExtremities.getMax()) : null,
                 totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m) : null,
                 avgHeartRate,
                 avgPower
@@ -341,10 +343,6 @@ public class SegmentStatisticUpdater {
 
     public void setMaxSpeed(Speed maxSpeed) {
         this.maxSpeed = maxSpeed;
-    }
-
-    public boolean hasAltitudeExtremities() {
-        return altitudeExtremities.hasData();
     }
 
     public double getMinAltitude() {

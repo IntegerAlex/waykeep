@@ -339,7 +339,7 @@ public class ContentProviderUtils {
         values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
         values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
 
-        if (track.getTrackStatistics().hasAltitudeExtremities()) {
+        if (trackStatistics.altitudeExtremities() != null) {
             values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
             values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
         }
