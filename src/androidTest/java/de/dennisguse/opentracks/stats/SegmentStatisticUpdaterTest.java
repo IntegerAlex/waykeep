@@ -38,7 +38,7 @@ import de.dennisguse.opentracks.data.models.Speed;
  * @author Rodrigo Damazio
  */
 @RunWith(AndroidJUnit4.class)
-public class TrackStatisticsTest {
+public class SegmentStatisticUpdaterTest {
 
     private SegmentStatisticUpdater statistics;
 

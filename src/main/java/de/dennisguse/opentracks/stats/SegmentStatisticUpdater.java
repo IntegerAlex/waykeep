@@ -290,17 +290,9 @@ public class SegmentStatisticUpdater {
         isIdle = idle;
     }
 
-    public boolean hasAverageHeartRate() {
-        return avgHeartRate != null;
-    }
-
     @Nullable
     public HeartRate getAverageHeartRate() {
         return avgHeartRate;
-    }
-
-    public boolean hasPower() {
-        return avgPower != null;
     }
 
     @Nullable
