@@ -142,8 +142,9 @@ public class Track {
         return trackStatistics.getStatistics();
     }
 
-    public Statistics setStatistics() {
-        throw new RuntimeException("TODO");
+    public void setStatistics(Statistics statistics) {
+        //TODO Implementation is used for refactoring: this.statistics = statistics;
+        setTrackStatistics(new SegmentStatisticUpdater(statistics));
     }
 
     @Deprecated

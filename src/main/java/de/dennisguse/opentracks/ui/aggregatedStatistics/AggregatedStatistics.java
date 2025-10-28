@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
@@ -35,9 +36,9 @@ public class AggregatedStatistics {
     public void aggregate(@NonNull Track track) {
         String activityTypeLocalized = track.getActivityTypeLocalized();
         if (dataMap.containsKey(activityTypeLocalized)) {
-            dataMap.get(activityTypeLocalized).add(track.getTrackStatistics());
+            dataMap.get(activityTypeLocalized).add(track.getStatistics());
         } else {
-            dataMap.put(activityTypeLocalized, new AggregatedStatistic(activityTypeLocalized, track.getTrackStatistics()));
+            dataMap.put(activityTypeLocalized, new AggregatedStatistic(activityTypeLocalized, track.getStatistics()));
         }
     }
 
@@ -58,9 +59,9 @@ public class AggregatedStatistics {
         private final SegmentStatisticUpdater trackStatistics;
         private int countTracks = 1;
 
-        public AggregatedStatistic(String activityTypeLocalized, SegmentStatisticUpdater trackStatistics) {
+        public AggregatedStatistic(String activityTypeLocalized, Statistics trackStatistics) {
             this.activityTypeLocalized = activityTypeLocalized;
-            this.trackStatistics = trackStatistics;
+            this.trackStatistics = new SegmentStatisticUpdater(trackStatistics);
         }
 
         public String getActivityTypeLocalized() {
@@ -75,8 +76,8 @@ public class AggregatedStatistics {
             return countTracks;
         }
 
-        void add(SegmentStatisticUpdater statistics) {
-            trackStatistics.merge(statistics);
+        void add(Statistics statistics) {
+            trackStatistics.merge(new SegmentStatisticUpdater(statistics));
             countTracks++;
         }
     }

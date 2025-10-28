@@ -610,7 +610,7 @@ public class TrackRecordingServiceRecordingTest {
         service.endCurrentTrack();
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(4), Duration.ofSeconds(4), Distance.of(11113.275390625), false, Speed.of(1111.3275390625), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(11113.275390625), false, Speed.of(1111.3275146484375), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
 

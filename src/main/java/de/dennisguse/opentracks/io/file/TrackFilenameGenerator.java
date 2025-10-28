@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.util.FileUtils;
 
@@ -91,7 +92,7 @@ public class TrackFilenameGenerator {
         Track track = new Track();
         track.setName("Berlin");
         track.setUuid(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
-        track.getTrackStatistics().setStartTime(Instant.ofEpochMilli(0));
+        track.setStatistics(new Statistics(Instant.MIN, null, null, null, null, false, null, null, null, null, null));
 
         return format(track, TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES);
     }
