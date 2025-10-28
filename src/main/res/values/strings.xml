@@ -455,6 +455,7 @@ limitations under the License.
     <string name="stats_average_moving_speed">Avg moving speed</string>
     <string name="stats_average_pace">Avg pace</string>
     <string name="stats_average_segment_pace">Avg Segment pace</string>
+    <string name="stats_elapsed_segment_time">Elapsed Segment time</string>
     <string name="stats_average_speed">Avg speed</string>
     <string name="stats_altitude">Elevation</string>
     <string name="stats_fastest_pace">Fastest pace</string>
