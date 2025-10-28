@@ -26,7 +26,6 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Objects;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
@@ -168,22 +167,6 @@ public class Track {
                 ", activityType=" + activityType +
                 '}';
     }
-
-    @Deprecated //TODO Remove: should not be used.
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Track track = (Track) o;
-        return id.equals(track.id);
-    }
-
-    @Deprecated //TODO Remove: should not be used.
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
 
     public record Id(long id) implements Parcelable {
 

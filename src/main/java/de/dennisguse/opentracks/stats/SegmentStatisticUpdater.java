@@ -411,15 +411,6 @@ public class SegmentStatisticUpdater {
         totalAltitudeLoss_m += loss_m;
     }
 
-    @Deprecated //TODO Remove as it should (a) not be necessary and (b) toString is not complete?
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SegmentStatisticUpdater)) return false;
-
-        return toString().equals(o.toString());
-    }
-
     @NonNull
     @Override
     public String toString() {
