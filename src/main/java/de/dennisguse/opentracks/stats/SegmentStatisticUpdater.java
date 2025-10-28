@@ -52,7 +52,11 @@ public class SegmentStatisticUpdater {
     private Instant stopTime; //TODO Should never be null!
 
     private Distance totalDistance;
-    // Updated when new points are received, may be stale.
+    /**
+     * Updated when new points are received, may be stale.
+     * This statistic is only updated when a new point is added to the statistics, so it may be off.
+     * If you need to calculate the proper totalTime, use startTime with the current time.
+     */
     private Duration totalTime;
     // Based on when we believe the user is traveling.
     private Duration movingTime;
@@ -181,12 +185,12 @@ public class SegmentStatisticUpdater {
         startTime = null;
         stopTime = null;
 
-        setTotalDistance(Distance.of(0));
-        setTotalTime(Duration.ofSeconds(0));
-        setMovingTime(Duration.ofSeconds(0));
-        setMaxSpeed(Speed.zero());
-        setTotalAltitudeGain(null);
-        setTotalAltitudeLoss(null);
+        totalTime = Duration.ofSeconds(0);
+        movingTime = Duration.ofSeconds(0);
+        totalDistance = Distance.of(0);
+        maxSpeed = Speed.zero();
+        totalAltitudeGain_m = null;
+        totalAltitudeLoss_m = null;
 
         isIdle = false;
     }
@@ -241,6 +245,7 @@ public class SegmentStatisticUpdater {
         return totalDistance;
     }
 
+    @VisibleForTesting
     public void setTotalDistance(Distance totalDistance_m) {
         this.totalDistance = totalDistance_m;
     }
@@ -249,11 +254,6 @@ public class SegmentStatisticUpdater {
         totalDistance = totalDistance.plus(distance_m);
     }
 
-    /**
-     * Gets the total time in milliseconds that this track has been active.
-     * This statistic is only updated when a new point is added to the statistics, so it may be off.
-     * If you need to calculate the proper total time, use {@link #getStartTime} with the current time.
-     */
     public Duration getTotalTime() {
         return totalTime;
     }
@@ -406,11 +406,6 @@ public class SegmentStatisticUpdater {
     @NonNull
     @Override
     public String toString() {
-        return "TrackStatistics { Start Time: " + getStartTime() + "; Stop Time: " + getStopTime()
-                + "; Total Distance: " + getTotalDistance() + "; Total Time: " + getTotalTime()
-                + "; Moving Time: " + getMovingTime() + "; Max Speed: " + getMaxSpeed()
-                + "; Min Altitude: " + getMinAltitude() + "; Max Altitude: " + getMaxAltitude()
-                + "; Altitude Gain: " + getTotalAltitudeGain()
-                + "; Altitude Loss: " + getTotalAltitudeLoss() + "}";
+        return "SegmentStatisticUpdater{" + getStatistics() + "}";
     }
 }
