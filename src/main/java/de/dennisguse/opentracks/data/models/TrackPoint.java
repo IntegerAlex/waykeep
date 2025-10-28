@@ -83,6 +83,7 @@ public class TrackPoint {
     private HeartRate heartRate = null;
     private Cadence cadence = null;
     private Power power = null;
+    //TODO Use AltitudeGainLoss
     private Float altitudeGain_m = null;
     private Float altitudeLoss_m = null;
 

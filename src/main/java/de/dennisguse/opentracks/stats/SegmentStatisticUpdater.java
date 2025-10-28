@@ -98,20 +98,6 @@ public class SegmentStatisticUpdater {
         isIdle = statistics.isIdle();
     }
 
-    @Deprecated //TODO Remove
-    @VisibleForTesting
-    public SegmentStatisticUpdater(String startTime, String stopTime, double totalDistance_m, int totalTime_s, int movingTime_s, float maxSpeed_mps, Float totalAltitudeGain_m, Float totalAltitudeLoss_m) {
-        this.startTime = Instant.parse(startTime);
-        this.stopTime = Instant.parse(stopTime);
-        this.totalDistance = Distance.of(totalDistance_m);
-        this.totalTime = Duration.ofSeconds(totalTime_s);
-        this.movingTime = Duration.ofSeconds(movingTime_s);
-        this.maxSpeed = Speed.of(maxSpeed_mps);
-        this.totalAltitudeGain_m = totalAltitudeGain_m;
-        this.totalAltitudeLoss_m = totalAltitudeLoss_m;
-        altitudeExtremities.set(0.0, 0.0);
-    }
-
     /**
      * Combines these statistics with those from another object.
      * This assumes that the time periods covered by each do not intersect.
