@@ -41,6 +41,8 @@ import java.util.UUID;
 import de.dennisguse.opentracks.BuildConfig;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -54,7 +56,6 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -117,7 +118,6 @@ public class ContentProviderUtils {
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_LOSS);
 
         Track track = new Track(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)));
-        SegmentStatisticUpdater trackStatistics = track.getTrackStatistics();
         if (!cursor.isNull(idIndex)) {
             track.setId(new Track.Id(cursor.getLong(idIndex)));
         }
@@ -137,37 +137,25 @@ public class ContentProviderUtils {
             track.setActivityTypeLocalized(cursor.getString(activityTypeLocalizedIndex));
         }
 
-        if (!cursor.isNull(startTimeIndex)) {
-            trackStatistics.setStartTime(Instant.ofEpochMilli(cursor.getLong(startTimeIndex)));
-        }
-        if (!cursor.isNull(stopTimeIndex)) {
-            trackStatistics.setStopTime(Instant.ofEpochMilli(cursor.getLong(stopTimeIndex)));
-        }
-        if (!cursor.isNull(totalDistanceIndex)) {
-            trackStatistics.setTotalDistance(Distance.of(cursor.getFloat(totalDistanceIndex)));
-        }
-        if (!cursor.isNull(totalTimeIndex)) {
-            trackStatistics.setTotalTime(Duration.ofMillis(cursor.getLong(totalTimeIndex)));
-        }
-        if (!cursor.isNull(movingTimeIndex)) {
-            trackStatistics.setMovingTime(Duration.ofMillis(cursor.getLong(movingTimeIndex)));
-        }
-        if (!cursor.isNull(maxSpeedIndex)) {
-            trackStatistics.setMaxSpeed(Speed.of(cursor.getFloat(maxSpeedIndex)));
-        }
-        if (!cursor.isNull(minAltitudeIndex)) {
-            trackStatistics.setMinAltitude(cursor.getFloat(minAltitudeIndex));
-        }
-        if (!cursor.isNull(maxAltitudeIndex)) {
-            trackStatistics.setMaxAltitude(cursor.getFloat(maxAltitudeIndex));
-        }
-        if (!cursor.isNull(altitudeGainIndex)) {
-            trackStatistics.setTotalAltitudeGain(cursor.getFloat(altitudeGainIndex));
-        }
-        if (!cursor.isNull(altitudeLossIndex)) {
-            trackStatistics.setTotalAltitudeLoss(cursor.getFloat(altitudeLossIndex));
-        }
+        Statistics trackStatistics = new Statistics(
+                cursor.isNull(startTimeIndex) ? null : Instant.ofEpochMilli(cursor.getLong(startTimeIndex)),
+                cursor.isNull(stopTimeIndex) ? null : Instant.ofEpochMilli(cursor.getLong(stopTimeIndex)),
+                cursor.isNull(totalTimeIndex) ? null : Duration.ofMillis(cursor.getLong(totalTimeIndex)),
+                cursor.isNull(movingTimeIndex) ? null : Duration.ofMillis(cursor.getLong(movingTimeIndex)),
 
+                cursor.isNull(totalDistanceIndex) ? null : Distance.of(cursor.getFloat(totalDistanceIndex)),
+
+                false,
+
+                cursor.isNull(maxSpeedIndex) ? null : Speed.of(cursor.getFloat(maxSpeedIndex)),
+                cursor.isNull(minAltitudeIndex) || cursor.isNull(maxAltitudeIndex) ? null : new AltitudeExtremities(cursor.getFloat(minAltitudeIndex), cursor.getFloat(maxAltitudeIndex)),
+                cursor.isNull(altitudeGainIndex) || cursor.isNull(altitudeLossIndex) ? null : new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex)),
+
+                null,
+                null
+        );
+
+        track.setStatistics(trackStatistics);
         return track;
     }
 

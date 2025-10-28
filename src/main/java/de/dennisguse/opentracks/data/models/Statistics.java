@@ -22,6 +22,8 @@ public record Statistics(
 
         @Nullable
         AltitudeGainLoss altitudeGainLoss,
+
+        //NOTE: The following values are not persisted.
         @Nullable
         HeartRate avgHeartRate,
         @Nullable

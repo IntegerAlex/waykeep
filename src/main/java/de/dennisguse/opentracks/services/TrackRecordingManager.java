@@ -98,7 +98,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return false;
         }
 
-        trackStatisticsUpdater = new TrackStatisticsUpdater(track.getTrackStatistics());
+        trackStatisticsUpdater = new TrackStatisticsUpdater(track.getStatistics());
         onNewTrackPoint(trackPointCreator.createSegmentStartManual());
 
         reset();

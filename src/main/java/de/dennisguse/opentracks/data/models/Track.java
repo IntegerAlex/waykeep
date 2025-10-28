@@ -49,18 +49,25 @@ public class Track {
 
     private ActivityType activityType;
 
+    //TODO Move to Statistics?
     private ZoneOffset zoneOffset;
 
-    @Deprecated // TODO Replace with Statistic
-    private SegmentStatisticUpdater trackStatistics = new SegmentStatisticUpdater();
+    @NonNull
+    private Statistics trackStatistics;
 
     @VisibleForTesting
     public Track() {
         this(ZoneOffset.UTC);
     }
 
+    @Deprecated //TODO Remove
     public Track(@NonNull ZoneOffset zoneOffset) {
-        setZoneOffset(zoneOffset);
+        this(zoneOffset, new SegmentStatisticUpdater().getStatistics());
+    }
+
+    public Track(@NonNull ZoneOffset zoneOffset, @NonNull Statistics trackStatistics) {
+        this.zoneOffset = zoneOffset;
+        this.trackStatistics = trackStatistics;
     }
 
     /**
@@ -130,32 +137,25 @@ public class Track {
 
     public OffsetDateTime getStartTime() {
         return trackStatistics
-                .getStartTime().atOffset(zoneOffset);
+                .startTime().atOffset(zoneOffset);
     }
 
     public OffsetDateTime getStopTime() {
         return trackStatistics
-                .getStopTime().atOffset(zoneOffset);
+                .stopTime().atOffset(zoneOffset);
     }
 
     public Statistics getStatistics() {
-        return trackStatistics.getStatistics();
-    }
-
-    public void setStatistics(Statistics statistics) {
-        //TODO Implementation is used for refactoring: this.statistics = statistics;
-        setTrackStatistics(new SegmentStatisticUpdater(statistics));
-    }
-
-    @Deprecated
-    @NonNull
-    public SegmentStatisticUpdater getTrackStatistics() {
         return trackStatistics;
+    }
+
+    public void setStatistics(Statistics trackStatistics) {
+        this.trackStatistics = trackStatistics;
     }
 
     @Deprecated
     public void setTrackStatistics(@NonNull SegmentStatisticUpdater trackStatistics) {
-        this.trackStatistics = trackStatistics;
+        setStatistics(trackStatistics.getStatistics());
     }
 
     @NonNull

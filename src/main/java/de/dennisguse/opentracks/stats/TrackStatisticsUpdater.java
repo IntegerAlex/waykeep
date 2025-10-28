@@ -58,7 +58,12 @@ public class TrackStatisticsUpdater {
         this(new SegmentStatisticUpdater());
     }
 
-    public TrackStatisticsUpdater(SegmentStatisticUpdater segmentStatisticUpdater) {
+    public TrackStatisticsUpdater(Statistics statistics) {
+        this(new SegmentStatisticUpdater(statistics));
+    }
+
+    @Deprecated
+    private TrackStatisticsUpdater(SegmentStatisticUpdater segmentStatisticUpdater) {
         this.segmentStatisticUpdater = segmentStatisticUpdater;
         this.currentSegment = new SegmentStatisticUpdater();
 
