@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.R;
@@ -34,7 +35,32 @@ public class RecordingLayoutIO {
             }
             recordingLayout.addField(fromCSV(fieldParts, resources));
         }
+
+        // Add any new fields that have been added to the codebase since this layout was saved
+        addAllInvisibleDataFields(recordingLayout, resources);
+
         return recordingLayout;
+    }
+
+    /**
+     * Adds any missing fields to the layout as hidden fields.
+     * This ensures that new fields added to the codebase appear in existing layouts.
+     */
+    private static void addAllInvisibleDataFields(@NonNull RecordingLayout recordingLayout, @NonNull Resources resources) {
+        // Get all field keys currently in the layout
+        Set<String> existingFieldKeys = recordingLayout.getFields().stream()
+                .map(DataField::getKey)
+                .collect(Collectors.toSet());
+
+        // Get all available fields from the codebase
+        List<DataField> allAvailableFields = PreferencesUtils.getAllAvailableFields();
+
+        // Add any missing fields as hidden
+        for (DataField dataField : allAvailableFields) {
+            if (!existingFieldKeys.contains(dataField.getKey())) {
+                recordingLayout.addField(dataField);
+            }
+        }
     }
 
     public static String toCSV(List<RecordingLayout> recordingLayouts) {
