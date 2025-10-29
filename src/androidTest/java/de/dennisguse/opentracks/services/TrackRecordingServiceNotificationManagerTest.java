@@ -16,24 +16,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRecordingServiceNotificationManagerTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
-
-    @Mock
-    private TrackPoint trackPointMock; //TODO No mock
-
-    @Mock
-    private SegmentStatisticUpdater trackStatisticsMock; //TODO only use Statistic (not mock)
 
     @Mock
     private NotificationCompat.Builder notificationCompatBuilder;
@@ -43,10 +38,22 @@ public class TrackRecordingServiceNotificationManagerTest {
 
     @Test
     public void updateLocation_triggersAlertOnlyOnFirstInaccurateLocation() {
-        when(trackPointMock.hasHorizontalAccuracy()).thenReturn(true);
-        when(trackPointMock.getHorizontalAccuracy()).thenReturn(Distance.of(999f));
-        when(trackPointMock.getSpeed()).thenReturn(Speed.of(0));
-        when(trackStatisticsMock.getStatistics()).thenReturn(new Statistics(
+        TrackPoint trackPointMock = new TrackPoint(TrackPoint.Type.TRACKPOINT,
+                new Position(
+                        null,
+                        null, null, Distance.of(999f),
+                        Altitude.WGS84.of(10), null,
+                        null,
+                        Speed.of(0))
+        );
+
+        when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))
+                .thenReturn(notificationCompatBuilder);
+
+        TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationCompatBuilder);
+        subject.setUnitSystem(UnitSystem.METRIC);
+
+        Track track = new Track(new Statistics(
                 null,
                 null,
                 null,
@@ -59,14 +66,6 @@ public class TrackRecordingServiceNotificationManagerTest {
                 null,
                 null
         ));
-        when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))
-                .thenReturn(notificationCompatBuilder);
-
-        TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationCompatBuilder);
-        subject.setUnitSystem(UnitSystem.METRIC);
-
-        Track track = new Track();
-        track.setTrackStatistics(trackStatisticsMock);
         RecordingData data = new RecordingData(track, trackPointMock, null, null);
 
         // when

@@ -17,8 +17,11 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.ActivityType;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
@@ -28,21 +31,21 @@ public class AggregatedStatisticsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     private static Track createTrack(Context context, Distance totalDistance, Duration totalTime, String activityTypeLocalized) {
-        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
-        statistics.setStartTime(Instant.ofEpochMilli(1000L));  // Resulting start time
-        statistics.setStopTime(statistics.getStartTime().plus(totalTime));
-        statistics.setTotalTime(totalTime);
-        statistics.setMovingTime(totalTime);
-        statistics.setTotalDistance(totalDistance);
-        statistics.setTotalAltitudeGain(50.0f);
-        statistics.setMaxSpeed(Speed.of(50.0));  // Resulting max speed
-        statistics.setMaxAltitude(1250.0);
-        statistics.setMinAltitude(1200.0);  // Resulting min altitude
-
-        Track track = new Track();
+        Track track = new Track(new Statistics(
+                Instant.ofEpochMilli(1000),
+                Instant.ofEpochMilli(1000).plus(totalTime),
+                totalTime,
+                totalTime,
+                totalDistance,
+                false,
+                Speed.of(50),
+                new AltitudeExtremities(1250, 1250),
+                new AltitudeGainLoss(50, 50),
+                null,
+                null
+        ));
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
         track.setActivityTypeLocalized(activityTypeLocalized);
-        track.setTrackStatistics(statistics);
         return track;
     }
 

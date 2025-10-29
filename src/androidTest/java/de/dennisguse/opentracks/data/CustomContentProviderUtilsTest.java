@@ -51,18 +51,20 @@ import java.util.UUID;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.content.data.TestSensorDataUtil;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -406,18 +408,19 @@ public class CustomContentProviderUtilsTest {
         Pair<Track, List<TrackPoint>> track = TestDataUtil.createTrack(trackId, 10);
 
         // AverageSpeed
-        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
-        statistics.setStartTime(Instant.ofEpochMilli(1000));
-        statistics.setStopTime(Instant.ofEpochMilli(2500));
-        statistics.setTotalTime(Duration.ofMillis(1500));
-        statistics.setMovingTime(Duration.ofMillis(700));
-        statistics.setTotalDistance(Distance.of(750.0));
-        statistics.setTotalAltitudeGain(50.0f);
-        statistics.setMaxSpeed(Speed.of(60.0));
-        statistics.setMaxAltitude(1250.0);
-        statistics.setMinAltitude(1200.0);
-
-        track.first.setTrackStatistics(statistics);
+        track.first.setStatistics(new Statistics(
+                Instant.ofEpochMilli(1000),
+                Instant.ofEpochMilli(2500),
+                Duration.ofMillis(1500),
+                Duration.ofMillis(700),
+                Distance.of(750),
+                false,
+                Speed.of(60),
+                new AltitudeExtremities(1250, 1200),
+                new AltitudeGainLoss(50, 50),
+                null,
+                null
+        ));
         contentProviderUtils.insertTrack(track.first);
 
         Marker marker = new Marker(trackId, track.second.get(0));

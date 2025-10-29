@@ -158,11 +158,6 @@ public class Track {
         this.trackStatistics = trackStatistics;
     }
 
-    @Deprecated
-    public void setTrackStatistics(@NonNull SegmentStatisticUpdater trackStatistics) {
-        setStatistics(trackStatistics.getStatistics());
-    }
-
     @NonNull
     @Override
     public String toString() {
