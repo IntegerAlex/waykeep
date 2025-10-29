@@ -79,11 +79,16 @@ public class TrackStatisticsUpdater {
     }
 
     //TODO Return Statistic?
+    @Deprecated
     public SegmentStatisticUpdater getTrackStatistics() {
         // Take a snapshot - we don't want anyone messing with our trackStatistics
         SegmentStatisticUpdater stats = new SegmentStatisticUpdater(segmentStatisticUpdater);
         stats.merge(currentSegment);
         return stats;
+    }
+
+    public Statistics getStatistics() {
+        return getTrackStatistics().getStatistics();
     }
 
     public Statistics getCurrentSegment() {

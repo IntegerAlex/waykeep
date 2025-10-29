@@ -361,10 +361,6 @@ public class SegmentStatisticUpdater {
         }
     }
 
-    public boolean hasTotalAltitudeGain() {
-        return totalAltitudeGain_m != null;
-    }
-
     @Nullable
     public Float getTotalAltitudeGain() {
         return totalAltitudeGain_m;

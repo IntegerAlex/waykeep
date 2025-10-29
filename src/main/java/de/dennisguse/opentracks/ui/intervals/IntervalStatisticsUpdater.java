@@ -11,8 +11,8 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 public class IntervalStatisticsUpdater {
@@ -46,8 +46,8 @@ public class IntervalStatisticsUpdater {
             trackPoint = trackPointIterator.next();
             trackStatisticsUpdater.addTrackPoint(trackPoint);
 
-            if (trackStatisticsUpdater.getTrackStatistics().getTotalDistance().plus(interval.distance).greaterOrEqualThan(distanceInterval)) {
-                interval.add(trackStatisticsUpdater.getTrackStatistics(), trackPoint);
+            if (trackStatisticsUpdater.getStatistics().totalDistance().plus(interval.distance).greaterOrEqualThan(distanceInterval)) {
+                interval.add(trackStatisticsUpdater.getStatistics(), trackPoint);
 
                 double adjustFactor = distanceInterval.dividedBy(interval.distance);
                 Interval adjustedInterval = new Interval(interval, adjustFactor);
@@ -66,9 +66,9 @@ public class IntervalStatisticsUpdater {
         }
 
         if (newIntervalAdded) {
-            lastInterval.add(trackStatisticsUpdater.getTrackStatistics(), null);
+            lastInterval.add(trackStatisticsUpdater.getStatistics(), null);
         } else {
-            lastInterval.set(trackStatisticsUpdater.getTrackStatistics());
+            lastInterval.set(trackStatisticsUpdater.getStatistics());
         }
 
         return trackPoint != null ? trackPoint.getId() : null;
@@ -98,6 +98,7 @@ public class IntervalStatisticsUpdater {
         return null;
     }
 
+    //TODO Could be replaced with Statistics?
     public static class Interval {
         private Distance distance = Distance.of(0);
         private Duration time = Duration.ofSeconds(0);
@@ -172,13 +173,15 @@ public class IntervalStatisticsUpdater {
             return avgPower;
         }
 
-        private void add(SegmentStatisticUpdater trackStatistics, @Nullable TrackPoint lastTrackPoint) {
-            distance = distance.plus(trackStatistics.getTotalDistance());
-            time = time.plus(trackStatistics.getTotalTime());
-            gain_m = trackStatistics.hasTotalAltitudeGain() ? trackStatistics.getTotalAltitudeGain() : gain_m;
-            loss_m = trackStatistics.hasTotalAltitudeLoss() ? trackStatistics.getTotalAltitudeLoss() : loss_m;
-            avgHeartRate = trackStatistics.getAverageHeartRate();
-            avgPower = trackStatistics.getAveragePower();
+        private void add(Statistics trackStatistics, @Nullable TrackPoint lastTrackPoint) {
+            distance = distance.plus(trackStatistics.totalDistance());
+            time = time.plus(trackStatistics.totalTime());
+            if (trackStatistics.altitudeGainLoss() != null) {
+                gain_m = trackStatistics.altitudeGainLoss().gain_m();
+                loss_m = trackStatistics.altitudeGainLoss().loss_m();
+            }
+            avgHeartRate = trackStatistics.avgHeartRate();
+            avgPower = trackStatistics.avgPower();
             if (lastTrackPoint == null) {
                 return;
             }
@@ -190,13 +193,15 @@ public class IntervalStatisticsUpdater {
             }
         }
 
-        private void set(SegmentStatisticUpdater trackStatistics) {
-            distance = trackStatistics.getTotalDistance();
-            time = trackStatistics.getTotalTime();
-            gain_m = trackStatistics.hasTotalAltitudeGain() ? trackStatistics.getTotalAltitudeGain() : gain_m;
-            loss_m = trackStatistics.hasTotalAltitudeLoss() ? trackStatistics.getTotalAltitudeLoss() : loss_m;
-            avgHeartRate = trackStatistics.getAverageHeartRate();
-            avgPower = trackStatistics.getAveragePower();
+        private void set(Statistics trackStatistics) {
+            distance = trackStatistics.totalDistance();
+            time = trackStatistics.totalTime();
+            if (trackStatistics.altitudeGainLoss() != null) {
+                gain_m = trackStatistics.altitudeGainLoss().gain_m();
+                loss_m = trackStatistics.altitudeGainLoss().loss_m();
+            }
+            avgHeartRate = trackStatistics.avgHeartRate();
+            avgPower = trackStatistics.avgPower();
         }
     }
 }
