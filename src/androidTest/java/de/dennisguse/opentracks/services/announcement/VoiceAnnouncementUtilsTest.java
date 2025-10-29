@@ -25,7 +25,6 @@ import java.util.Map;
 import de.dennisguse.opentracks.LocaleRule;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -40,6 +39,7 @@ import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementUtilsTest {
@@ -180,8 +180,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -233,8 +232,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -364,8 +362,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -417,8 +414,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -446,8 +442,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
@@ -483,8 +478,7 @@ public class VoiceAnnouncementUtilsTest {
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(numberOfPoints, trackPointIterator.getCount());
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
             intervalStatistics.addTrackPoints(trackPointIterator);
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);

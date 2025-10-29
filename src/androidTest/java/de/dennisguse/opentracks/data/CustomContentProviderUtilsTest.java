@@ -65,6 +65,7 @@ import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -116,7 +117,7 @@ public class CustomContentProviderUtilsTest {
     private void testIterator(Track.Id trackId, int numPoints) {
         TrackPoint.Id lastPointId = initializeTrack(trackId, numPoints);
         List<TrackPoint> locations = new ArrayList<>(numPoints);
-        try (TrackPointIterator it = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
+        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 assertNotNull(trackPoint);
@@ -154,7 +155,7 @@ public class CustomContentProviderUtilsTest {
         // Load all inserted trackPoints.
         TrackPoint.Id lastPointId = null;
         int counter = 0;
-        try (TrackPointIterator it = contentProviderUtils.getTrackPointLocationIterator(id, null)) {
+        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointLocationIterator(id, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 lastPointId = trackPoint.getId();
@@ -857,7 +858,7 @@ public class CustomContentProviderUtilsTest {
         TrackPoint.Id startTrackPointId = trackpointIds.get(0);
 
         // when
-        TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, trackpointIds.get(0));
+        AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, trackpointIds.get(0));
 
         // then
         for (int i = 0; i < trackpointIds.size(); i++) {

@@ -5,16 +5,16 @@ import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * A lightweight wrapper around the original {@link Cursor}.
  */
-public class TrackPointIterator implements Iterator<TrackPoint>, AutoCloseable {
+class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
 
     private static final String TAG = TrackPointIterator.class.getSimpleName();
 
@@ -23,7 +23,7 @@ public class TrackPointIterator implements Iterator<TrackPoint>, AutoCloseable {
     private final CachedTrackPointsIndexes indexes;
     private Cursor cursor;
 
-    public TrackPointIterator(ContentProviderUtils contentProviderUtils, Track.Id trackId, TrackPoint.Id startTrackPointId) {
+    TrackPointIterator(ContentProviderUtils contentProviderUtils, Track.Id trackId, TrackPoint.Id startTrackPointId) {
         this.contentProviderUtils = contentProviderUtils;
         this.trackId = trackId;
 

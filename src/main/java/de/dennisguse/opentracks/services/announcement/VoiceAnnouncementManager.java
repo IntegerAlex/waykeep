@@ -30,7 +30,6 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
@@ -39,6 +38,7 @@ import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * Execute a periodic task on a time or distance schedule.
@@ -149,7 +149,8 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             startTrackPointId = null;
         }
 
-        TrackPointIterator trackPointIterator = new TrackPointIterator(contentProviderUtils, track.getId(), startTrackPointId);
+        //TODO wrap in try {}
+        AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), startTrackPointId);
         startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
         IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getLastInterval();
         SensorStatistics sensorStatistics = null;

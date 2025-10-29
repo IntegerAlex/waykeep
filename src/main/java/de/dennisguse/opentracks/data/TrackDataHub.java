@@ -42,6 +42,7 @@ import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * Track data hub.
@@ -330,7 +331,7 @@ public class TrackDataHub {
         }
 
         TrackPoint trackPoint = null;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
 
             while (trackPointIterator.hasNext()) {
                 //Prevents a NPE if stop() is happening while notifyTrackPointsTableUpdate()
