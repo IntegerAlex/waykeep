@@ -4,9 +4,9 @@ import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
@@ -38,7 +38,7 @@ public class IntervalStatisticsUpdater {
      *
      * @return the last track point's id used to compute the intervals.
      */
-    public TrackPoint.Id addTrackPoints(TrackPointIterator trackPointIterator) {
+    public TrackPoint.Id addTrackPoints(Iterator<TrackPoint> trackPointIterator) {
         boolean newIntervalAdded = false;
         TrackPoint trackPoint = null;
 

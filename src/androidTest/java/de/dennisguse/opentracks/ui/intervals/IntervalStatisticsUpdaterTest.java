@@ -3,39 +3,23 @@ package de.dennisguse.opentracks.ui.intervals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.content.Context;
 import android.util.Pair;
 
-import androidx.test.core.app.ApplicationProvider;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.content.data.TestDataUtil;
-import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 @RunWith(JUnit4.class)
 public class IntervalStatisticsUpdaterTest {
-
-    private static final String TAG = IntervalStatisticsUpdaterTest.class.getSimpleName();
-
-    private final Context context = ApplicationProvider.getApplicationContext();
-    private ContentProviderUtils contentProviderUtils;
-
-    @Before
-    public void setUp() {
-        contentProviderUtils = new ContentProviderUtils(context);
-    }
 
     /**
      * Tests that build method compute the distance correctly comparing the result with TrackStatisticsUpdater result.
@@ -117,36 +101,31 @@ public class IntervalStatisticsUpdaterTest {
         Track dummyTrack = new Track();
         dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
         dummyTrack.setName("Dummy Track Without Elevation Loss");
-        contentProviderUtils.insertTrack(dummyTrack);
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
+
+        ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
-            TrackPoint tp = TestDataUtil.createTrackPoint(i);
-            tp.setAltitudeLoss(null);
-            contentProviderUtils.insertTrackPoint(tp, dummyTrack.getId());
-            trackStatisticsUpdater.addTrackPoint(tp);
+            trackPoints.add(TestDataUtil.createTrackPoint(i).setAltitudeLoss(null));
         }
+        trackStatisticsUpdater.addTrackPoints(trackPoints);
+
         dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
-        contentProviderUtils.updateTrack(dummyTrack);
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getSegmentStatisticUpdater());
+        Pair<Track, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
 
         // when and then
-        whenAndThen(trackWithStats, numberOfPoints, distanceInterval);
+        whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
     private void whenAndThen(int numberOfPoints, float distanceInterval) {
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = TestDataUtil.buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        whenAndThen(trackWithStats, numberOfPoints, distanceInterval);
-
+        Pair<Track, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
+        whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
-    private void whenAndThen(Pair<Track.Id, SegmentStatisticUpdater> trackWithStats, int numberOfPoints, float distanceInterval) {
+    private void whenAndThen(Track track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
         IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(distanceInterval));
-        Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater trackStatistics = trackWithStats.second;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            assertEquals(trackPointIterator.getCount(), numberOfPoints);
-            intervalStatistics.addTrackPoints(trackPointIterator);
-        }
+
+        intervalStatistics.addTrackPoints(trackPoints.iterator());
+
         List<IntervalStatisticsUpdater.Interval> intervalList = intervalStatistics.getIntervalList();
         Distance totalDistance = Distance.of(0);
         float totalTime = 0L;
@@ -170,9 +149,9 @@ public class IntervalStatisticsUpdaterTest {
         }
 
         // then
-        assertEquals(trackStatistics.getTotalDistance().toM(), totalDistance.toM(), 0.01);
-        assertEquals(trackStatistics.getTotalTime().toSeconds(), totalTime, 0.01);
-        assertEquals(intervalList.size(), (int) Math.ceil(trackStatistics.getTotalDistance().toM() / distanceInterval));
+        assertEquals(track.getStatistics().totalTime().toSeconds(), totalTime, 0.01);
+        assertEquals(track.getStatistics().totalDistance().toM(), totalDistance.toM(), 0.01);
+        assertEquals(intervalList.size(), (int) Math.ceil(track.getStatistics().totalDistance().toM() / distanceInterval));
         if (totalGain != null) {
             assertEquals(totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
         } else {
@@ -189,5 +168,18 @@ public class IntervalStatisticsUpdaterTest {
             totalDistance = totalDistance.minus(intervalList.get(i).getDistance());
         }
         assertEquals(intervalList.get(intervalList.size() - 1).getDistance().toM(), totalDistance.toM(), 0.01);
+    }
+
+    private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
+        Track dummyTrack = new Track();
+        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
+
+        ArrayList<TrackPoint> trackPoints = new ArrayList<>();
+        for (int i = 0; i < numberOfPoints; i++) {
+            trackPoints.add(TestDataUtil.createTrackPoint(i));
+        }
+        trackStatisticsUpdater.addTrackPoints(trackPoints);
+        dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
+        return new Pair<>(dummyTrack, trackPoints);
     }
 }

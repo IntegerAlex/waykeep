@@ -6,7 +6,6 @@ import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +84,6 @@ public class TestDataUtil {
                 createTrackPoint(i, TrackPoint.Type.SEGMENT_END_MANUAL)
         );
 
-        //TODO Use TrackStatisticsUpdater
-        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
-        stats.setTotalDistance(Distance.of(0));
-        stats.setTotalTime(Duration.ofMillis(0));
         List<Marker> markers = List.of(
                 new Marker(trackId, trackPoints.get(1), "Marker 1", "Marker description 1", "Marker category 3", "", null),
                 new Marker(trackId, trackPoints.get(4), "Marker 2", "Marker description 2", "Marker category 3", "", null),
@@ -152,11 +147,6 @@ public class TestDataUtil {
         File dstFile = new File(MarkerUtils.getImageUrl(context, trackId));
         dstFile.createNewFile();
         Uri photoUri = FileUtils.getUriForFile(context, dstFile);
-
-        //TODO Use TrackStatisticsUpdater
-        SegmentStatisticUpdater stats = new SegmentStatisticUpdater();
-        stats.setTotalDistance(Distance.of(0));
-        stats.setTotalTime(Duration.ofMillis(0));
 
         return new Marker(trackId, trackPoint, "Marker name", "Marker description", "Marker category", "", photoUri);
     }
