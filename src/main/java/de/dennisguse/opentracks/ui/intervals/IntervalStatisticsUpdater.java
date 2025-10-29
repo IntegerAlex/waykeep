@@ -15,7 +15,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
-public class IntervalStatistics {
+public class IntervalStatisticsUpdater {
     private TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
     private final List<Interval> intervalList;
     private final Distance distanceInterval;
@@ -24,7 +24,7 @@ public class IntervalStatistics {
     /**
      * @param distanceInterval distance of every interval.
      */
-    public IntervalStatistics(Distance distanceInterval) {
+    public IntervalStatisticsUpdater(Distance distanceInterval) {
         this.distanceInterval = distanceInterval;
 
         interval = new Interval();

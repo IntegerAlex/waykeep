@@ -38,7 +38,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
+import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 class VoiceAnnouncementUtils {
@@ -51,7 +51,7 @@ class VoiceAnnouncementUtils {
                 .append(context.getString(R.string.voiceIdle));
     }
 
-    static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable IntervalStatistics.Interval currentInterval, @Nullable SensorStatistics sensorStatistics) {
+    static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable IntervalStatisticsUpdater.Interval currentInterval, @Nullable SensorStatistics sensorStatistics) {
         Statistics trackStatistics = track.getStatistics();
 
         SpannableStringBuilder builder = new SpannableStringBuilder();

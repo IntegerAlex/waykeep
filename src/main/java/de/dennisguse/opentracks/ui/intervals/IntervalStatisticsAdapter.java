@@ -18,7 +18,7 @@ import de.dennisguse.opentracks.util.StringUtils;
 
 public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<IntervalStatistics.Interval> intervalList;
+    private List<IntervalStatisticsUpdater.Interval> intervalList;
     private final Context context;
     private final StackMode stackMode;
     private UnitSystem unitSystem;
@@ -43,7 +43,7 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         int nextPosition = actualPosition + 1;
         boolean isLast = actualPosition == getItemCount() - 1;
         IntervalStatisticsAdapter.ViewHolder viewHolder = (IntervalStatisticsAdapter.ViewHolder) holder;
-        IntervalStatistics.Interval interval = intervalList.get(actualPosition);
+        IntervalStatisticsUpdater.Interval interval = intervalList.get(actualPosition);
         viewHolder.itemView.setTag(actualPosition);
 
         Distance sumDistance;
@@ -73,7 +73,7 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         return intervalList.size();
     }
 
-    public List<IntervalStatistics.Interval> swapData(List<IntervalStatistics.Interval> data, UnitSystem unitSystem, boolean isReportSpeed) {
+    public List<IntervalStatisticsUpdater.Interval> swapData(List<IntervalStatisticsUpdater.Interval> data, UnitSystem unitSystem, boolean isReportSpeed) {
         this.unitSystem = unitSystem;
         this.isReportSpeed = isReportSpeed;
         intervalList = data;

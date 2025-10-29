@@ -25,9 +25,9 @@ import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 @RunWith(JUnit4.class)
-public class IntervalStatisticsTest {
+public class IntervalStatisticsUpdaterTest {
 
-    private static final String TAG = IntervalStatisticsTest.class.getSimpleName();
+    private static final String TAG = IntervalStatisticsUpdaterTest.class.getSimpleName();
 
     private final Context context = ApplicationProvider.getApplicationContext();
     private ContentProviderUtils contentProviderUtils;
@@ -148,19 +148,19 @@ public class IntervalStatisticsTest {
     }
 
     private void whenAndThen(Pair<Track.Id, SegmentStatisticUpdater> trackWithStats, int numberOfPoints, float distanceInterval) {
-        IntervalStatistics intervalStatistics = new IntervalStatistics(Distance.of(distanceInterval));
+        IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(distanceInterval));
         Track.Id trackId = trackWithStats.first;
         SegmentStatisticUpdater trackStatistics = trackWithStats.second;
         try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             assertEquals(trackPointIterator.getCount(), numberOfPoints);
             intervalStatistics.addTrackPoints(trackPointIterator);
         }
-        List<IntervalStatistics.Interval> intervalList = intervalStatistics.getIntervalList();
+        List<IntervalStatisticsUpdater.Interval> intervalList = intervalStatistics.getIntervalList();
         Distance totalDistance = Distance.of(0);
         float totalTime = 0L;
         Float totalGain = null;
         Float totalLoss = null;
-        for (IntervalStatistics.Interval i : intervalList) {
+        for (IntervalStatisticsUpdater.Interval i : intervalList) {
             totalDistance = totalDistance.plus(i.getDistance());
             totalTime += i.getDistance().toM() / i.getSpeed().toMPS();
 
@@ -184,12 +184,12 @@ public class IntervalStatisticsTest {
         if (totalGain != null) {
             assertEquals(totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
         } else {
-            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatistics.Interval::hasGain));
+            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatisticsUpdater.Interval::hasGain));
         }
         if (totalLoss != null) {
             assertEquals(totalLoss, numberOfPoints * TestDataUtil.ALTITUDE_LOSS, 0.1);
         } else {
-            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatistics.Interval::hasLoss));
+            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatisticsUpdater.Interval::hasLoss));
         }
 
         for (int i = 0; i < intervalList.size() - 1; i++) {

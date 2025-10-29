@@ -32,8 +32,8 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
     private static final String TAG = IntervalStatisticsModel.class.getSimpleName();
 
-    private MutableLiveData<List<IntervalStatistics.Interval>> intervalsLiveData;
-    private IntervalStatistics intervalStatistics;
+    private MutableLiveData<List<IntervalStatisticsUpdater.Interval>> intervalsLiveData;
+    private IntervalStatisticsUpdater intervalStatistics;
     private Distance distanceInterval;
     private final ContentResolver contentResolver;
     private ContentObserver trackPointsTableObserver;
@@ -65,7 +65,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
         handler = null;
     }
 
-    public MutableLiveData<List<IntervalStatistics.Interval>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
+    public MutableLiveData<List<IntervalStatisticsUpdater.Interval>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
         if (intervalsLiveData == null) {
             if (interval == null) {
                 interval = IntervalOption.OPTION_1;
@@ -73,7 +73,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
             intervalsLiveData = new MutableLiveData<>();
             distanceInterval = interval.getDistance(unitSystem);
-            intervalStatistics = new IntervalStatistics(distanceInterval);
+            intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
 
             loadIntervalStatistics(trackId);
         }
@@ -112,7 +112,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
         lastTrackPointId = null;
         distanceInterval = interval.getDistance(unitSystem);
-        intervalStatistics = new IntervalStatistics(distanceInterval);
+        intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
         loadIntervalStatistics(trackId);
     }
 

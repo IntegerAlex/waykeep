@@ -38,7 +38,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
+import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 
 /**
  * Execute a periodic task on a time or distance schedule.
@@ -69,14 +69,14 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
     private final ContentProviderUtils contentProviderUtils;
     private TrackPoint.Id startTrackPointId = null;
 
-    private IntervalStatistics intervalStatistics;
+    private IntervalStatisticsUpdater intervalStatistics;
     private Distance intervalDistance;
 
     public VoiceAnnouncementManager(@NonNull Context context) {
         this.context = context;
         contentProviderUtils = new ContentProviderUtils(context);
         intervalDistance = PreferencesUtils.getVoiceAnnouncementDistance();
-        intervalStatistics = new IntervalStatistics(intervalDistance);
+        intervalStatistics = new IntervalStatisticsUpdater(intervalDistance);
     }
 
     public void start(@Nullable Statistics trackStatistics) {
@@ -144,14 +144,14 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
     private Spannable createAnnouncement(Track track, SensorDataSet sensorDataSet) {
         Distance currentIntervalDistance = PreferencesUtils.getVoiceAnnouncementDistance();
         if (currentIntervalDistance != intervalDistance) {
-            intervalStatistics = new IntervalStatistics(currentIntervalDistance);
+            intervalStatistics = new IntervalStatisticsUpdater(currentIntervalDistance);
             intervalDistance = currentIntervalDistance;
             startTrackPointId = null;
         }
 
         TrackPointIterator trackPointIterator = new TrackPointIterator(contentProviderUtils, track.getId(), startTrackPointId);
         startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
-        IntervalStatistics.Interval lastInterval = intervalStatistics.getLastInterval();
+        IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getLastInterval();
         SensorStatistics sensorStatistics = null;
         if (track.getId() != null) {
             sensorStatistics = contentProviderUtils.getSensorStats(track.getId());

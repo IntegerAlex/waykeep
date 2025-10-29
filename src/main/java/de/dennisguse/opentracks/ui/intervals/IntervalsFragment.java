@@ -192,7 +192,7 @@ public class IntervalsFragment extends Fragment {
         }
 
         viewBinding.intervalRate.setText(isReportSpeed ? getString(R.string.stats_speed) : getString(R.string.stats_pace));
-        LiveData<List<IntervalStatistics.Interval>> liveData = viewModel.getIntervalStats(trackId, unitSystem, selectedInterval);
+        LiveData<List<IntervalStatisticsUpdater.Interval>> liveData = viewModel.getIntervalStats(trackId, unitSystem, selectedInterval);
         liveData.observe(getActivity(), intervalList -> adapter.swapData(intervalList, unitSystem, isReportSpeed));
 
         setIntervalsDropdownText();
