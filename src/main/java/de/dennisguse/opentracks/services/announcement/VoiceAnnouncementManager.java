@@ -149,16 +149,16 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             startTrackPointId = null;
         }
 
-        //TODO wrap in try {}
-        AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), startTrackPointId);
-        startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
-        IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getLastInterval();
-        SensorStatistics sensorStatistics = null;
-        if (track.getId() != null) {
-            sensorStatistics = contentProviderUtils.getSensorStats(track.getId());
-        }
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), startTrackPointId)) {
+            startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
+            IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getLastInterval();
+            SensorStatistics sensorStatistics = null;
+            if (track.getId() != null) {
+                sensorStatistics = contentProviderUtils.getSensorStats(track.getId());
+            }
 
-        return VoiceAnnouncementUtils.createStatistics(context, track, sensorDataSet, PreferencesUtils.getUnitSystem(), PreferencesUtils.isReportSpeed(track), lastInterval, sensorStatistics);
+            return VoiceAnnouncementUtils.createStatistics(context, track, sensorDataSet, PreferencesUtils.getUnitSystem(), PreferencesUtils.isReportSpeed(track), lastInterval, sensorStatistics);
+        }
     }
 
     public void stop() {
