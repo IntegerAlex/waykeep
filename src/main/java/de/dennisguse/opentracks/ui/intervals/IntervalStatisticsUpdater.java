@@ -46,8 +46,8 @@ public class IntervalStatisticsUpdater {
             trackPoint = trackPointIterator.next();
             trackStatisticsUpdater.addTrackPoint(trackPoint);
 
-            if (trackStatisticsUpdater.getStatistics().totalDistance().plus(interval.distance).greaterOrEqualThan(distanceInterval)) {
-                interval.add(trackStatisticsUpdater.getStatistics(), trackPoint);
+            if (trackStatisticsUpdater.getTrackStatistics().totalDistance().plus(interval.distance).greaterOrEqualThan(distanceInterval)) {
+                interval.add(trackStatisticsUpdater.getTrackStatistics(), trackPoint);
 
                 double adjustFactor = distanceInterval.dividedBy(interval.distance);
                 Interval adjustedInterval = new Interval(interval, adjustFactor);
@@ -66,9 +66,9 @@ public class IntervalStatisticsUpdater {
         }
 
         if (newIntervalAdded) {
-            lastInterval.add(trackStatisticsUpdater.getStatistics(), null);
+            lastInterval.add(trackStatisticsUpdater.getTrackStatistics(), null);
         } else {
-            lastInterval.set(trackStatisticsUpdater.getStatistics());
+            lastInterval.set(trackStatisticsUpdater.getTrackStatistics());
         }
 
         return trackPoint != null ? trackPoint.getId() : null;

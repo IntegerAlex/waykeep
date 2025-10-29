@@ -17,13 +17,13 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.util.TrackNameUtils;
 
@@ -80,7 +80,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         track.setActivityTypeLocalized(activityTypeLocalized);
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
-        track.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
+        track.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
         contentProviderUtils.updateTrack(track);
 
@@ -130,7 +130,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return null;
         }
 
-        track.setTrackStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
+        track.setStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
 
         return new RecordingData(track, current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
     }
@@ -224,7 +224,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         handler.postDelayed(ON_IDLE, idleDuration.toMillis());
     }
 
-    SegmentStatisticUpdater getTrackStatistics() {
+    Statistics getTrackStatistics() {
         return trackStatisticsUpdater == null ? null : trackStatisticsUpdater.getTrackStatistics();
     }
 
@@ -249,7 +249,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             contentProviderUtils.insertTrackPoint(trackPoint, trackId);
             trackStatisticsUpdater.addTrackPoint(trackPoint);
 
-            contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics().getStatistics());
+            contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics());
             lastStoredTrackPoint = trackPoint;
             if (trackPoint.hasLocation()) {
                 lastStoredTrackPointWithLocation = lastStoredTrackPoint;

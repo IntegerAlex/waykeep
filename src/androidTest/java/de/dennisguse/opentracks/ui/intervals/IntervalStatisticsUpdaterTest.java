@@ -37,14 +37,6 @@ public class IntervalStatisticsUpdaterTest {
         contentProviderUtils = new ContentProviderUtils(context);
     }
 
-    private SegmentStatisticUpdater buildTrackStatistics(List<TrackPoint> trackPoints) {
-        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
-        for (TrackPoint tp : trackPoints) {
-            trackStatisticsUpdater.addTrackPoint(tp);
-        }
-        return trackStatisticsUpdater.getTrackStatistics();
-    }
-
     /**
      * Tests that build method compute the distance correctly comparing the result with TrackStatisticsUpdater result.
      */
@@ -133,9 +125,9 @@ public class IntervalStatisticsUpdaterTest {
             contentProviderUtils.insertTrackPoint(tp, dummyTrack.getId());
             trackStatisticsUpdater.addTrackPoint(tp);
         }
-        dummyTrack.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
+        dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         contentProviderUtils.updateTrack(dummyTrack);
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getTrackStatistics());
+        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getSegmentStatisticUpdater());
 
         // when and then
         whenAndThen(trackWithStats, numberOfPoints, distanceInterval);

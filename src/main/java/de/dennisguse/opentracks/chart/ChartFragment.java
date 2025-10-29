@@ -33,6 +33,7 @@ import java.util.List;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.TrackDataHub;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.ChartBinding;
@@ -202,7 +203,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         }
     }
 
-    public void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull SegmentStatisticUpdater trackStatistics) {
+    public void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
         if (isResumed()) {
             ChartPoint point = ChartPoint.create(trackStatistics, trackPoint, trackPoint.getSpeed(), chartByDistance, viewBinding.chartView.getUnitSystem());
             pendingPoints.add(point);

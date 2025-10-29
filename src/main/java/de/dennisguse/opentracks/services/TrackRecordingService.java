@@ -194,7 +194,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
         startSensors();
 
-        voiceAnnouncementManager.start(trackRecordingManager.getTrackStatistics().getStatistics());
+        voiceAnnouncementManager.start(trackRecordingManager.getTrackStatistics());
 
         notificationManager.onRecordingStarted(this, recordingStatus.trackId());
     }

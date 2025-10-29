@@ -17,6 +17,7 @@
 package de.dennisguse.opentracks.stats;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import java.time.Duration;
 import java.util.List;
@@ -78,17 +79,17 @@ public class TrackStatisticsUpdater {
         resetAverageHeartRate();
     }
 
-    //TODO Return Statistic?
-    @Deprecated
-    public SegmentStatisticUpdater getTrackStatistics() {
+    @Deprecated //TODO Remove
+    @VisibleForTesting
+    public SegmentStatisticUpdater getSegmentStatisticUpdater() {
         // Take a snapshot - we don't want anyone messing with our trackStatistics
         SegmentStatisticUpdater stats = new SegmentStatisticUpdater(segmentStatisticUpdater);
         stats.merge(currentSegment);
         return stats;
     }
 
-    public Statistics getStatistics() {
-        return getTrackStatistics().getStatistics();
+    public Statistics getTrackStatistics() {
+        return getSegmentStatisticUpdater().getStatistics();
     }
 
     public Statistics getCurrentSegment() {

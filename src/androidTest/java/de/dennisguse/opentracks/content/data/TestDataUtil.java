@@ -182,8 +182,8 @@ public class TestDataUtil {
             contentProviderUtils.insertTrackPoint(tp, dummyTrack.getId());
             trackStatisticsUpdater.addTrackPoint(tp);
         }
-        dummyTrack.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
+        dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         contentProviderUtils.updateTrack(dummyTrack);
-        return new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getTrackStatistics());
+        return new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getSegmentStatisticUpdater());
     }
 }

@@ -147,7 +147,7 @@ public class TrackImporter {
 
         TrackStatisticsUpdater updater = new TrackStatisticsUpdater();
         updater.addTrackPoints(trackPoints);
-        track.setTrackStatistics(updater.getTrackStatistics());
+        track.setStatistics(updater.getTrackStatistics());
 
         Track.Id trackId = contentProviderUtils.insertTrack(track);
 
