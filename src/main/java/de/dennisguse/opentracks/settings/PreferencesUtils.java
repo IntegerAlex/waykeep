@@ -52,7 +52,6 @@ import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
 import de.dennisguse.opentracks.sensors.SensorType;
 import de.dennisguse.opentracks.ui.customRecordingLayout.CsvLayoutUtils;
-import de.dennisguse.opentracks.ui.customRecordingLayout.DataField;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayoutIO;
 
@@ -849,20 +848,6 @@ public class PreferencesUtils {
 
     public static String getDefaultLayoutName() {
         return resources.getString(R.string.stats_custom_layout_default_layout);
-    }
-
-    /**
-     * @return List of all available field keys with their default visibility settings
-     */
-    @SuppressLint("ResourceType")
-    public static List<DataField> getAllAvailableFields() {
-        List<TypedArray> fieldsArrays = getLayoutDataFields();
-        return fieldsArrays.stream()
-                .map(i -> {
-                    String fieldKey = i.getString(0);
-                    return new DataField(fieldKey, false, false, fieldKey.equals(resources.getString(R.string.stats_custom_layout_coordinates_key)));
-                })
-                .toList();
     }
 
     /**
