@@ -119,8 +119,7 @@ public class TestDataUtil {
         trackPoint.setHeartRate(100f + i % 80);
         trackPoint.setCadence(300f + i);
         trackPoint.setPower(400f + i);
-        trackPoint.setAltitudeGain(ALTITUDE_GAIN);
-        trackPoint.setAltitudeLoss(ALTITUDE_LOSS);
+        trackPoint.setAltitudeGainLoss(ALTITUDE_GAIN, ALTITUDE_LOSS);
         return trackPoint;
     }
 

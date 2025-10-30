@@ -98,8 +98,8 @@ public class CSVTrackExporter implements TrackExporter {
                 new Column("accuracy_vertical", t -> t.hasVerticalAccuracy() ? DISTANCE_FORMAT.format(t.getVerticalAccuracy().toM()) : ""),
 
                 new Column("speed", t -> t.hasSpeed() ? SPEED_FORMAT.format(t.getSpeed().toKMH()) : ""),
-                new Column("altitude_gain", t -> t.hasAltitudeGain() ? ALTITUDE_FORMAT.format(t.getAltitudeGain()) : ""),
-                new Column("altitude_loss", t -> t.hasAltitudeLoss() ? ALTITUDE_FORMAT.format(t.getAltitudeLoss()) : ""),
+                new Column("altitude_gain", t -> t.hasAltitudeGainLoss() ? ALTITUDE_FORMAT.format(t.getAltitudeGainLoss().gain_m()) : ""),
+                new Column("altitude_loss", t -> t.hasAltitudeGainLoss() ? ALTITUDE_FORMAT.format(t.getAltitudeGainLoss().loss_m()) : ""),
                 new Column("sensor_distance", t -> t.hasSensorDistance() ? DISTANCE_FORMAT.format(t.getSensorDistance().toM()) : ""),
                 new Column("heartrate", t -> t.hasHeartRate() ? HEARTRATE_FORMAT.format(t.getHeartRate().getBPM()) : ""),
                 new Column("cadence", t -> t.hasCadence() ? CADENCE_FORMAT.format(t.getCadence().getRPM()) : ""),

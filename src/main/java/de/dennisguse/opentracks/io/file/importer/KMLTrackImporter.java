@@ -342,11 +342,10 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             if (i < sensorPowerList.size() && sensorPowerList.get(i) != null) {
                 trackPoint.setPower(sensorPowerList.get(i));
             }
-            if (i < altitudeGainList.size()) {
-                trackPoint.setAltitudeGain(altitudeGainList.get(i));
-            }
-            if (i < altitudeLossList.size()) {
-                trackPoint.setAltitudeLoss(altitudeLossList.get(i));
+            if (i < altitudeGainList.size() && i < altitudeLossList.size()) {
+                if (altitudeGainList.get(i) != null && altitudeLossList.get(i) != null) {
+                    trackPoint.setAltitudeGainLoss(altitudeGainList.get(i), altitudeLossList.get(i));
+                }
             }
             if (i < accuracyHorizontal.size() && accuracyHorizontal.get(i) != null) {
                 trackPoint.setHorizontalAccuracy(Distance.of(accuracyHorizontal.get(i)));

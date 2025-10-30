@@ -360,42 +360,37 @@ public class SegmentStatisticUpdater {
         }
     }
 
+    @VisibleForTesting
+    @Deprecated
     @Nullable
     public Float getTotalAltitudeGain() {
         return totalAltitudeGain_m;
     }
 
+    @VisibleForTesting
+    @Deprecated
     public void setTotalAltitudeGain(Float totalAltitudeGain_m) {
         this.totalAltitudeGain_m = totalAltitudeGain_m;
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public void addTotalAltitudeGain(float gain_m) {
-        if (totalAltitudeGain_m == null) {
-            totalAltitudeGain_m = 0f;
-        }
-        totalAltitudeGain_m += gain_m;
-    }
-
-    public boolean hasTotalAltitudeLoss() {
-        return totalAltitudeLoss_m != null;
-    }
-
+    @VisibleForTesting
+    @Deprecated
     @Nullable
     public Float getTotalAltitudeLoss() {
         return totalAltitudeLoss_m;
     }
 
-    public void setTotalAltitudeLoss(Float totalAltitudeLoss_m) {
-        this.totalAltitudeLoss_m = totalAltitudeLoss_m;
-    }
-
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public void addTotalAltitudeLoss(float loss_m) {
+    public void addTotalAltitudeGainLoss(AltitudeGainLoss altitudeGainLoss) {
+        if (totalAltitudeGain_m == null) {
+            totalAltitudeGain_m = 0f;
+        }
+        totalAltitudeGain_m += altitudeGainLoss.gain_m();
+
         if (totalAltitudeLoss_m == null) {
             totalAltitudeLoss_m = 0f;
         }
-        totalAltitudeLoss_m += loss_m;
+        totalAltitudeLoss_m += altitudeGainLoss.loss_m();
     }
 
     @NonNull

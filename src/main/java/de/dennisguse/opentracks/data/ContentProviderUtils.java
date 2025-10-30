@@ -652,11 +652,8 @@ public class ContentProviderUtils {
             trackPoint.setPower(cursor.getFloat(indexes.sensorPowerIndex));
         }
 
-        if (!cursor.isNull(indexes.altitudeGainIndex)) {
-            trackPoint.setAltitudeGain(cursor.getFloat(indexes.altitudeGainIndex));
-        }
-        if (!cursor.isNull(indexes.altitudeLossIndex)) {
-            trackPoint.setAltitudeLoss(cursor.getFloat(indexes.altitudeLossIndex));
+        if (!cursor.isNull(indexes.altitudeGainIndex) && !cursor.isNull(indexes.altitudeLossIndex)) {
+            trackPoint.setAltitudeGainLoss(cursor.getFloat(indexes.altitudeGainIndex), cursor.getFloat(indexes.altitudeLossIndex));
         }
 
         return trackPoint;
@@ -810,13 +807,10 @@ public class ContentProviderUtils {
             values.put(TrackPointsColumns.SENSOR_POWER, trackPoint.getPower().getW());
         }
 
-        if (trackPoint.hasAltitudeGain()) {
-            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.getAltitudeGain());
+        if (trackPoint.hasAltitudeGainLoss()) {
+            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.getAltitudeGainLoss().gain_m());
+            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.getAltitudeGainLoss().loss_m());
         }
-        if (trackPoint.hasAltitudeLoss()) {
-            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.getAltitudeLoss());
-        }
-
         return values;
     }
 

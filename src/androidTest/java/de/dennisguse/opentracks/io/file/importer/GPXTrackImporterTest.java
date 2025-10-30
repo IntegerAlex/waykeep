@@ -267,8 +267,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f),
+                        .setAltitudeGainLoss(1, 1),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:17Z"),
@@ -276,8 +275,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(5)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f)
+                        .setAltitudeGainLoss(1, 1)
                         .setSensorDistance(Distance.of(12))
                         .setHeartRate(69)
                         .setPower(50f)
@@ -289,8 +287,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:22Z"),
@@ -298,8 +295,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
@@ -307,8 +303,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(10)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setSpeed(Speed.of(15))
         ), actual);
     }

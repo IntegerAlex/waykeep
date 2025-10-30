@@ -237,17 +237,14 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(1020.25), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f),
+                        .setAltitudeGainLoss(1, 1),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         Instant.parse("2020-02-02T02:02:04Z"))
                         .setSensorDistance(Distance.of(10))
                         .setSpeed(Speed.of(15))
                         .setHeartRate(HeartRate.of(66))
                         .setCadence(3)
-                        .setPower(50)
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f),
+                        .setPower(50).setAltitudeGainLoss(1, 1),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.parse("2020-02-02T02:02:15Z"))
                         .setHeartRate(HeartRate.of(68))
                         .setCadence(3)
@@ -260,8 +257,7 @@ public class ExportImportTest {
                                 null,
                                 Speed.of(5)))
                         .setSensorDistance(Distance.of(2))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setHeartRate(HeartRate.of(69))
                         .setCadence(3)
                         .setPower(50),
@@ -274,27 +270,23 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.1229858398438), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(Instant.parse("2020-02-02T02:03:22Z"),
                                 3.123456, 16d, Distance.of(10),
                                 Altitude.WGS84.of(999.1229858398438), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.IDLE, Instant.parse("2020-02-02T02:03:30Z"))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
                                 3.123456, 16.001, Distance.of(10),
                                 Altitude.WGS84.of(999.1229858398438), null,
                                 null, Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:04:00Z"))
         ), actual);
     }
@@ -433,8 +425,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(1020.2), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f),
+                        .setAltitudeGainLoss(1, 1),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:17Z"),
@@ -442,8 +433,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(1020.2), null,
                                 null,
                                 Speed.of(5)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f)
+                        .setAltitudeGainLoss(1, 1)
                         .setSensorDistance(Distance.of(12))
                         .setHeartRate(69)
                         .setPower(50f)
@@ -455,8 +445,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:22Z"),
@@ -464,8 +453,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
@@ -473,8 +461,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
                                 Speed.of(10)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setSpeed(Speed.of(15))
         ), actual);
 

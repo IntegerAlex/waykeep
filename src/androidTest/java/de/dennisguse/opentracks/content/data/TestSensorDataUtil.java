@@ -41,8 +41,7 @@ public class TestSensorDataUtil {
         if (power != null) {
             tp.setPower(power);
         }
-        tp.setAltitudeGain(3f);
-        tp.setAltitudeLoss(3f);
+        tp.setAltitudeGainLoss(3, 3);
         trackPointList.add(tp);
     }
 

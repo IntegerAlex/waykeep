@@ -369,18 +369,11 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             }
         }
 
-        if (gain != null) {
+        if (gain != null && loss != null) {
             try {
-                trackPoint.setAltitudeGain(Float.parseFloat(gain));
+                trackPoint.setAltitudeGainLoss(Float.parseFloat(gain), Float.parseFloat(loss));
             } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s", gain)), e);
-            }
-        }
-        if (loss != null) {
-            try {
-                trackPoint.setAltitudeLoss(Float.parseFloat(loss));
-            } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude loss: %s", loss)), e);
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s or los: %s", gain, loss)), e);
             }
         }
         if (sensorDistance != null) {

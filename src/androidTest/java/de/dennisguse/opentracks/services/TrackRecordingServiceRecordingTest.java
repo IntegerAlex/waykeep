@@ -127,8 +127,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
@@ -199,8 +198,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(pauseTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
 
         //when
@@ -215,8 +213,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(pauseTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(resumeTime))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
@@ -249,8 +246,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(starTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(pauseTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), trackPoints);
     }
 
@@ -279,8 +275,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(resumeTime))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
@@ -316,12 +311,10 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.parse(sensor3))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setHeartRate(HeartRate.of(7)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setHeartRate(HeartRate.of(7))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
@@ -379,8 +372,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse(gps2),
@@ -388,8 +380,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse(gps3),
@@ -397,11 +388,9 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
@@ -455,8 +444,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse(gps3),
@@ -464,8 +452,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL,
                         new Position(
                                 Instant.parse(stopTime),
@@ -473,8 +460,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
@@ -516,8 +502,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse(gps3),
@@ -525,11 +510,9 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
@@ -573,8 +556,7 @@ public class TrackRecordingServiceRecordingTest {
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
@@ -624,8 +606,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse(gps2),
@@ -633,11 +614,9 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse(stopTime))
-                        .setAltitudeGain(0f)
-                        .setAltitudeLoss(0f)
+                        .setAltitudeGainLoss(0, 0)
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 

@@ -114,12 +114,8 @@ public class TrackStatisticsUpdater {
         currentSegment.setTotalTime(Duration.between(currentSegment.getStartTime(), trackPoint.getTime()));
 
         // Process sensor data: barometer
-        if (trackPoint.hasAltitudeGain()) {
-            currentSegment.addTotalAltitudeGain(trackPoint.getAltitudeGain());
-        }
-
-        if (trackPoint.hasAltitudeLoss()) {
-            currentSegment.addTotalAltitudeLoss(trackPoint.getAltitudeLoss());
+        if (trackPoint.hasAltitudeGainLoss()) {
+            currentSegment.addTotalAltitudeGainLoss(trackPoint.getAltitudeGainLoss());
         }
 
         //Update absolute (GPS-based) altitude

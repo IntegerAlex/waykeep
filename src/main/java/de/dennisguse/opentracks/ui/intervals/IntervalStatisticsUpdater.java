@@ -185,11 +185,9 @@ public class IntervalStatisticsUpdater {
             if (lastTrackPoint == null) {
                 return;
             }
-            if (hasGain() && lastTrackPoint.hasAltitudeGain()) {
-                gain_m = gain_m - lastTrackPoint.getAltitudeGain();
-            }
-            if (hasLoss() && lastTrackPoint.hasAltitudeLoss()) {
-                loss_m = loss_m - lastTrackPoint.getAltitudeLoss();
+            if (hasGain() && lastTrackPoint.hasAltitudeGainLoss()) {
+                gain_m = gain_m - lastTrackPoint.getAltitudeGainLoss().gain_m();
+                loss_m = loss_m - lastTrackPoint.getAltitudeGainLoss().loss_m();
             }
         }
 
