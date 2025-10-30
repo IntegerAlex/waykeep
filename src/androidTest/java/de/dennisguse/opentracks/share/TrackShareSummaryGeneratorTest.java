@@ -69,7 +69,6 @@ public class TrackShareSummaryGeneratorTest {
                 Duration.ofSeconds(600),
                 Duration.ofSeconds(300),
                 Distance.of(20000),
-                false,
                 Speed.of(100),
                 new AltitudeExtremities(-500, 550),
                 new AltitudeGainLoss(6000, 6000),

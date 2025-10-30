@@ -21,12 +21,12 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 @RunWith(AndroidJUnit4.class)
 public class ChartPointTest {
 
-    private static final Statistics STATISTIC_NULL = new Statistics(null, null, Duration.ZERO, null, null, false, null, null, null, null, null);
+    private static final Statistics STATISTIC_NULL = new Statistics(null, null, Duration.ZERO, null, null, null, null, null, null, null);
 
     @Test
     public void create_by_time() {
         // given
-        Statistics statistics = new Statistics(null, null, Duration.ofSeconds(1000), null, null, false, null, null, null, null, null);
+        Statistics statistics = new Statistics(null, null, Duration.ofSeconds(1000), null, null, null, null, null, null, null);
 
         // when
         ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.of(0), false, UnitSystem.IMPERIAL_FEET);
@@ -38,7 +38,7 @@ public class ChartPointTest {
     @Test
     public void create_by_distance() {
         // given
-        Statistics statistics = new Statistics(null, null, null, null, Distance.of(1000), false, null, null, null, null, null);
+        Statistics statistics = new Statistics(null, null, null, null, Distance.of(1000), null, null, null, null, null);
 
         // when
         ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.of(0), true, UnitSystem.METRIC);

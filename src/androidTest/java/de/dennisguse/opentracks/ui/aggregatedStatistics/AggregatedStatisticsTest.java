@@ -37,7 +37,6 @@ public class AggregatedStatisticsTest {
                 totalTime,
                 totalTime,
                 totalDistance,
-                false,
                 Speed.of(50),
                 new AltitudeExtremities(1250, 1250),
                 new AltitudeGainLoss(50, 50),

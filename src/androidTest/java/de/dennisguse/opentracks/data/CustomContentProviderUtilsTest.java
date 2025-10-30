@@ -415,7 +415,6 @@ public class CustomContentProviderUtilsTest {
                 Duration.ofMillis(1500),
                 Duration.ofMillis(700),
                 Distance.of(750),
-                false,
                 Speed.of(60),
                 new AltitudeExtremities(1250, 1200),
                 new AltitudeGainLoss(50, 50),

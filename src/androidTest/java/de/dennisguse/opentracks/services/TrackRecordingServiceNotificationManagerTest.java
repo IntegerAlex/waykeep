@@ -59,7 +59,6 @@ public class TrackRecordingServiceNotificationManagerTest {
                 null,
                 null,
                 Distance.of(0),
-                false,
                 null,
                 null,
                 null,

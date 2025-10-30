@@ -14,7 +14,7 @@ public record Statistics(
         Duration movingTime, // Based on when we believe the user is traveling
 
         Distance totalDistance,
-        boolean isIdle, //TODO Check if this is persisted; if not: remove
+        //TODO Check if this is persisted; if not: remove
         Speed maxSpeed,
 
         @Nullable

@@ -146,8 +146,6 @@ public class ContentProviderUtils {
 
                 cursor.isNull(totalDistanceIndex) ? null : Distance.of(cursor.getFloat(totalDistanceIndex)),
 
-                false,
-
                 cursor.isNull(maxSpeedIndex) ? null : Speed.of(cursor.getFloat(maxSpeedIndex)),
                 cursor.isNull(minAltitudeIndex) || cursor.isNull(maxAltitudeIndex) ? null : new AltitudeExtremities(cursor.getFloat(minAltitudeIndex), cursor.getFloat(maxAltitudeIndex)),
                 cursor.isNull(altitudeGainIndex) || cursor.isNull(altitudeLossIndex) ? null : new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex)),

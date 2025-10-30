@@ -81,6 +81,7 @@ public class SegmentStatisticUpdater {
      */
     public SegmentStatisticUpdater(SegmentStatisticUpdater other) {
         this(other.getStatistics());
+        this.isIdle = other.isIdle();
     }
 
     public SegmentStatisticUpdater(Statistics statistics) {
@@ -99,7 +100,6 @@ public class SegmentStatisticUpdater {
         }
         avgHeartRate = statistics.avgHeartRate();
         avgPower = statistics.avgPower();
-        isIdle = statistics.isIdle();
     }
 
     /**
@@ -208,7 +208,6 @@ public class SegmentStatisticUpdater {
                 movingTime,
 
                 totalDistance,
-                isIdle,
                 getMaxSpeed(),
                 altitudeExtremities.hasData() ? new AltitudeExtremities(altitudeExtremities.getMin(), altitudeExtremities.getMax()) : null,
                 totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m) : null,
