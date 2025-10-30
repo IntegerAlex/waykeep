@@ -19,12 +19,12 @@ import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
 import de.dennisguse.opentracks.LocaleRule;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
-import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -35,11 +35,8 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementUtilsTest {
@@ -48,12 +45,9 @@ public class VoiceAnnouncementUtilsTest {
     public final LocaleRule mLocaleRule = new LocaleRule(Locale.ENGLISH);
 
     private final Context context = ApplicationProvider.getApplicationContext();
-    private ContentProviderUtils contentProviderUtils;
 
     @Before
     public void setUp() {
-        contentProviderUtils = new ContentProviderUtils(context);
-
         PreferencesUtils.setVoiceAnnounceHeartRateCurrent(false);
         PreferencesUtils.setVoiceAnnounceLapHeartRate(false);
         PreferencesUtils.setVoiceAnnounceAverageHeartRate(false);
@@ -175,35 +169,13 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_metric_speed() {
         // given
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
-
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                false,
-                Speed.of(104),
-                null,
-                null,
-                null,
-                null
-        ));
-
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, lastInterval, null).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, null).toString();
 
         // then
         assertEquals("12:16 AM. Total distance 14.2 kilometers. 16 minutes 39 seconds. Average moving speed 51.2 kilometers per hour. Lap speed 51.2 kilometers per hour.", announcement);
@@ -238,35 +210,13 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_metric_pace() {
         // given
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
-
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                false,
-                Speed.of(104),
-                null,
-                null,
-                null,
-                null
-        ));
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, false, lastInterval, null).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, false, data.second, null).toString();
 
         // then
         assertEquals("12:16 AM. Total distance 14.2 kilometers. 16 minutes 39 seconds. Pace 1 minute 10 seconds per kilometer. Lap time 1 minute 10 seconds per kilometer.", announcement);
@@ -379,35 +329,13 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_imperial_speed() {
         // given
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
-
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                false,
-                Speed.of(104),
-                null,
-                null,
-                null,
-                null
-        ));
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_FEET, true, lastInterval, null).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.IMPERIAL_FEET, true, data.second, null).toString();
 
         // then
         assertEquals("12:16 AM. Total distance 8.8 miles. 16 minutes 39 seconds. Average moving speed 31.8 miles per hour. Lap speed 31.8 miles per hour.", announcement);
@@ -442,35 +370,13 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_imperial_pace() {
         // given
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
-
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                false,
-                Speed.of(104),
-                null,
-                null,
-                null,
-                null
-        ));
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_FEET, false, lastInterval, null).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.IMPERIAL_FEET, false, data.second, null).toString();
 
         // then
         assertEquals("12:16 AM. Total distance 8.8 miles. 16 minutes 39 seconds. Pace 1 minute 53 seconds per mile. Lap time 1 minute 53 seconds per mile.", announcement);
@@ -478,29 +384,19 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_heart_rate_and_sensor_statistics() {
+        // given
         PreferencesUtils.setVoiceAnnounceAverageHeartRate(true);
         PreferencesUtils.setVoiceAnnounceLapHeartRate(true);
 
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
-
-        Track track = new Track(stats.getStatistics());
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, lastInterval, sensorStatistics).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();
 
         // then
         assertEquals("12:16 AM. Total distance 14.2 kilometers. 16 minutes 39 seconds. Average moving speed 51.2 kilometers per hour. Lap speed 51.2 kilometers per hour. Average heart rate 180 bpm. Lap heart rate 133 bpm.", announcement);
@@ -508,6 +404,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_heart_rate() {
+        // given
         PreferencesUtils.setVoiceAnnounceHeartRateCurrent(true);
         PreferencesUtils.setVoiceAnnounceLapHeartRate(true);
         PreferencesUtils.setVoiceAnnounceAverageHeartRate(true);
@@ -517,37 +414,15 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceAverageSpeedPace(false);
         PreferencesUtils.setVoiceAnnounceLapSpeedPace(false);
 
-        int numberOfPoints = 1000;
-        Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
-        Track.Id trackId = trackWithStats.first;
-        IntervalStatisticsUpdater.Interval lastInterval;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
-            IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
-            intervalStatistics.addTrackPoints(trackPointIterator);
-            lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
-        }
+        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
-
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                false,
-                Speed.of(104),
-                null,
-                null,
-                null,
-                null
-        ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
         // when
-        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, lastInterval, sensorStatistics).toString();
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();
 
         // then
         assertEquals("12:16 AM.  Current heart rate 60 bpm. Average heart rate 180 bpm. Lap heart rate 133 bpm.", announcement);
@@ -568,20 +443,32 @@ public class VoiceAnnouncementUtilsTest {
         assertEquals("1.2 miles", MessageFormat.format(template, Map.of("n", 1.18)));
     }
 
-    @Deprecated
-    public static Pair<Track.Id, SegmentStatisticUpdater> buildTrackWithTrackPoints(ContentProviderUtils contentProviderUtils, int numberOfPoints) {
-        Track dummyTrack = new Track();
-        dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
-        dummyTrack.setName("Dummy Track");
-        contentProviderUtils.insertTrack(dummyTrack);
-        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
+    private static Pair<Track, IntervalStatisticsUpdater.Interval> buildTrackWithTrackPoints() {
+        int numberOfPoints = 1000;
+
+        ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
-            TrackPoint tp = TestDataUtil.createTrackPoint(i);
-            contentProviderUtils.insertTrackPoint(tp, dummyTrack.getId());
-            trackStatisticsUpdater.addTrackPoint(tp);
+            trackPoints.add(TestDataUtil.createTrackPoint(i));
         }
-        dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
-        contentProviderUtils.updateTrack(dummyTrack);
-        return new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getSegmentStatisticUpdater());
+
+        IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
+        intervalStatistics.addTrackPoints(trackPoints.iterator());
+        IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
+
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
+
+        return new Pair<>(track, lastInterval);
     }
 }
