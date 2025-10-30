@@ -178,7 +178,6 @@ public class VoiceAnnouncementUtilsTest {
         int numberOfPoints = 1000;
         Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
@@ -189,7 +188,19 @@ public class VoiceAnnouncementUtilsTest {
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
-        Track track = new Track(stats.getStatistics());
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, lastInterval, null).toString();
@@ -230,7 +241,6 @@ public class VoiceAnnouncementUtilsTest {
         int numberOfPoints = 1000;
         Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
@@ -238,7 +248,19 @@ public class VoiceAnnouncementUtilsTest {
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
         }
 
-        Track track = new Track(stats.getStatistics());
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -360,7 +382,6 @@ public class VoiceAnnouncementUtilsTest {
         int numberOfPoints = 1000;
         Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
@@ -368,7 +389,19 @@ public class VoiceAnnouncementUtilsTest {
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
         }
 
-        Track track = new Track(stats.getStatistics());
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -412,7 +445,6 @@ public class VoiceAnnouncementUtilsTest {
         int numberOfPoints = 1000;
         Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
@@ -420,7 +452,19 @@ public class VoiceAnnouncementUtilsTest {
             lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
         }
 
-        Track track = new Track(stats.getStatistics());
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -476,7 +520,6 @@ public class VoiceAnnouncementUtilsTest {
         int numberOfPoints = 1000;
         Pair<Track.Id, SegmentStatisticUpdater> trackWithStats = buildTrackWithTrackPoints(contentProviderUtils, numberOfPoints);
         Track.Id trackId = trackWithStats.first;
-        SegmentStatisticUpdater stats = trackWithStats.second;
         IntervalStatisticsUpdater.Interval lastInterval;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
@@ -486,7 +529,19 @@ public class VoiceAnnouncementUtilsTest {
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
-        Track track = new Track(stats.getStatistics());
+        Track track = new Track(new Statistics(
+                Instant.EPOCH,
+                Instant.EPOCH.plusSeconds(999),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Duration.ofMinutes(16).plusSeconds(39),
+                Distance.of(14208),
+                false,
+                Speed.of(104),
+                null,
+                null,
+                null,
+                null
+        ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -513,6 +568,7 @@ public class VoiceAnnouncementUtilsTest {
         assertEquals("1.2 miles", MessageFormat.format(template, Map.of("n", 1.18)));
     }
 
+    @Deprecated
     public static Pair<Track.Id, SegmentStatisticUpdater> buildTrackWithTrackPoints(ContentProviderUtils contentProviderUtils, int numberOfPoints) {
         Track dummyTrack = new Track();
         dummyTrack.setId(new Track.Id(System.currentTimeMillis()));

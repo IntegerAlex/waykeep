@@ -171,7 +171,6 @@ public class IntervalStatisticsUpdaterTest {
     }
 
     private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
-        Track dummyTrack = new Track();
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
 
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
@@ -179,7 +178,7 @@ public class IntervalStatisticsUpdaterTest {
             trackPoints.add(TestDataUtil.createTrackPoint(i));
         }
         trackStatisticsUpdater.addTrackPoints(trackPoints);
-        dummyTrack.setStatistics(trackStatisticsUpdater.getTrackStatistics());
-        return new Pair<>(dummyTrack, trackPoints);
+
+        return new Pair<>(new Track(trackStatisticsUpdater.getTrackStatistics()), trackPoints);
     }
 }
