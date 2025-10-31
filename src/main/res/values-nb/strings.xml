@@ -506,7 +506,7 @@ limitations under the License.
     <string name="error_crash_title">%1$s krasjet</string>
     <string name="share_crash_report">Del krasjrapport</string>
     <string name="report_bug">Rapporter feil</string>
-    <string name="show_on_dashboard">OpenTracks-API for oversikten</string>
+    <string name="show_on_dashboard">OpenTracks dashbord API</string>
     <string name="always">Alltid</string>
     <string name="settings_announcements_average_heart_rate">Gjennomsnittlig puls</string>
     <string name="settings_announcements_lap_heart_rate">Runde-puls</string>
@@ -585,4 +585,6 @@ limitations under the License.
     <string name="settings_recording_show_gps_disabled_warning_summary">Vis en advarsel hvis GPS er avslått under opptak.</string>
     <string name="marker_detail_title">%1$d av %2$d: %3$s</string>
     <string name="track_edit_time_offset">Tidssoneforskyvning</string>
+    <string name="stats_average_segment_pace">Gjen. segmenttempo</string>
+    <string name="settings_announcements_segment_average_speed_pace">Gjennomsnittlig hastighet/tempo (Segment)</string>
 </resources>
