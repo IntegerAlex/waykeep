@@ -7,18 +7,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.databinding.IntervalStatsListItemBinding;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.util.StringUtils;
 
 public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<IntervalStatisticsUpdater.Interval> intervalList;
+    private List<Statistics> intervalList = new ArrayList<>();
     private final Context context;
     private final StackMode stackMode;
     private UnitSystem unitSystem;
@@ -43,46 +45,39 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         int nextPosition = actualPosition + 1;
         boolean isLast = actualPosition == getItemCount() - 1;
         IntervalStatisticsAdapter.ViewHolder viewHolder = (IntervalStatisticsAdapter.ViewHolder) holder;
-        IntervalStatisticsUpdater.Interval interval = intervalList.get(actualPosition);
+        Statistics interval = intervalList.get(actualPosition);
         viewHolder.itemView.setTag(actualPosition);
 
         Distance sumDistance;
         if (isLast && actualPosition > 0) {
-            sumDistance = intervalList.get(actualPosition - 1).getDistance()
+            sumDistance = intervalList.get(actualPosition - 1).totalDistance()
                     .multipliedBy(actualPosition)
-                    .plus(interval.getDistance());
+                    .plus(interval.totalDistance());
         } else {
-            sumDistance = interval.getDistance().multipliedBy(nextPosition);
+            sumDistance = interval.totalDistance().multipliedBy(nextPosition);
         }
         viewHolder.viewBinding.intervalItemDistance.setText(DistanceFormatter.Builder()
                 .setUnit(unitSystem)
                 .build(context).formatDistance(sumDistance));
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(isReportSpeed).build(context);
-        viewHolder.viewBinding.intervalItemRate.setText(formatter.formatSpeed(interval.getSpeed()));
+        viewHolder.viewBinding.intervalItemRate.setText(formatter.formatSpeed(interval.getAverageSpeed()));
 
-        viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.getGain_m(), unitSystem));
-        viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.getLoss_m(), unitSystem));
+        viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss() != null ? interval.altitudeGainLoss().gain_m() : null, unitSystem));
+        viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss() != null ? interval.altitudeGainLoss().loss_m() : null, unitSystem));
     }
 
     @Override
     public int getItemCount() {
-        if (intervalList == null) {
-            return 0;
-        }
         return intervalList.size();
     }
 
-    public List<IntervalStatisticsUpdater.Interval> swapData(List<IntervalStatisticsUpdater.Interval> data, UnitSystem unitSystem, boolean isReportSpeed) {
+    public void swapData(@NonNull List<Statistics> data, UnitSystem unitSystem, boolean isReportSpeed) {
         this.unitSystem = unitSystem;
         this.isReportSpeed = isReportSpeed;
         intervalList = data;
 
-        if (data != null) {
-            this.notifyDataSetChanged();
-        }
-
-        return data;
+        this.notifyDataSetChanged();
     }
 
     /**

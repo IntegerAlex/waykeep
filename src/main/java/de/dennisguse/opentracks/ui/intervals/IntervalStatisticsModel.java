@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
@@ -32,7 +33,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
     private static final String TAG = IntervalStatisticsModel.class.getSimpleName();
 
-    private MutableLiveData<List<IntervalStatisticsUpdater.Interval>> intervalsLiveData;
+    private MutableLiveData<List<Statistics>> intervalsLiveData;
     private IntervalStatisticsUpdater intervalStatistics;
     private Distance distanceInterval;
     private final ContentResolver contentResolver;
@@ -65,7 +66,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
         handler = null;
     }
 
-    public MutableLiveData<List<IntervalStatisticsUpdater.Interval>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
+    public MutableLiveData<List<Statistics>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
         if (intervalsLiveData == null) {
             if (interval == null) {
                 interval = IntervalOption.OPTION_1;

@@ -11,8 +11,7 @@ import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 /**
  * {@link Track} and {@link TrackPoint} must be immutable (i.e., their content does not change).
  */
-public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet,
-                            Statistics currentSegment) {
+public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet, Statistics currentSegment) {
     public String getTrackCategory() {
         if (track == null) {
             return "";

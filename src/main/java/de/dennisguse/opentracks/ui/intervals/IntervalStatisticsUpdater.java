@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
@@ -74,8 +75,8 @@ public class IntervalStatisticsUpdater {
         return trackPoint != null ? trackPoint.getId() : null;
     }
 
-    public List<Interval> getIntervalList() {
-        return intervalList;
+    public List<Statistics> getIntervalList() {
+        return intervalList.stream().map(Interval::toStatistics).toList();
     }
 
     /**
@@ -84,14 +85,15 @@ public class IntervalStatisticsUpdater {
      *
      * @return the interval object or null if any interval is completed.
      */
-    public Interval getLastInterval() {
+    @Nullable
+    public Statistics getLastInterval() {
         if (intervalList.size() == 1 && intervalList.get(0).getDistance().lessThan(distanceInterval)) {
             return null;
         }
 
         for (int i = intervalList.size() - 1; i >= 0; i--) {
             if (intervalList.get(i).getDistance().greaterOrEqualThan(distanceInterval)) {
-                return this.intervalList.get(i);
+                return this.intervalList.get(i).toStatistics();
             }
         }
 
@@ -99,7 +101,8 @@ public class IntervalStatisticsUpdater {
     }
 
     //TODO Could be replaced with Statistics?
-    public static class Interval {
+    @Deprecated
+    private static class Interval {
         private Distance distance = Distance.of(0);
         private Duration time = Duration.ofSeconds(0);
         private Float gain_m;
@@ -145,18 +148,6 @@ public class IntervalStatisticsUpdater {
             return gain_m != null;
         }
 
-        public Float getGain_m() {
-            return gain_m;
-        }
-
-        public boolean hasLoss() {
-            return loss_m != null;
-        }
-
-        public Float getLoss_m() {
-            return loss_m;
-        }
-
         public boolean hasAverageHeartRate() {
             return avgHeartRate != null;
         }
@@ -200,6 +191,21 @@ public class IntervalStatisticsUpdater {
             }
             avgHeartRate = trackStatistics.avgHeartRate();
             avgPower = trackStatistics.avgPower();
+        }
+
+        private Statistics toStatistics() {
+            return new Statistics(
+                    null,
+                    null,
+                    time,
+                    null,
+                    distance,
+                    null,
+                    null,
+                    gain_m != null ? new AltitudeGainLoss(gain_m, loss_m) : null,
+                    avgHeartRate,
+                    avgPower
+            );
         }
     }
 }

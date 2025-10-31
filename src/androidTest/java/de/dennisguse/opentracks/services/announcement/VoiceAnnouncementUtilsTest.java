@@ -165,7 +165,7 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_metric_speed() {
         // given
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
         
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -205,7 +205,7 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_metric_pace() {
         // given
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -320,7 +320,7 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_imperial_speed() {
         // given
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -360,7 +360,7 @@ public class VoiceAnnouncementUtilsTest {
     @Test
     public void getAnnouncement_withInterval_imperial_pace() {
         // given
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -378,7 +378,7 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceAverageHeartRate(true);
         PreferencesUtils.setVoiceAnnounceLapHeartRate(true);
 
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
@@ -404,7 +404,7 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceAverageSpeedPace(false);
         PreferencesUtils.setVoiceAnnounceLapSpeedPace(false);
 
-        Pair<Track, IntervalStatisticsUpdater.Interval> data = buildTrackWithTrackPoints();
+        Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
@@ -433,7 +433,7 @@ public class VoiceAnnouncementUtilsTest {
         assertEquals("1.2 miles", MessageFormat.format(template, Map.of("n", 1.18)));
     }
 
-    private static Pair<Track, IntervalStatisticsUpdater.Interval> buildTrackWithTrackPoints() {
+    private static Pair<Track, Statistics> buildTrackWithTrackPoints() {
         int numberOfPoints = 1000;
 
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
@@ -443,7 +443,7 @@ public class VoiceAnnouncementUtilsTest {
 
         IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(1000));
         intervalStatistics.addTrackPoints(trackPoints.iterator());
-        IntervalStatisticsUpdater.Interval lastInterval = intervalStatistics.getIntervalList().get(intervalStatistics.getIntervalList().size() - 1);
+        Statistics lastInterval = intervalStatistics.getLastInterval();
 
         Track track = new Track(new Statistics(
                 Instant.EPOCH,

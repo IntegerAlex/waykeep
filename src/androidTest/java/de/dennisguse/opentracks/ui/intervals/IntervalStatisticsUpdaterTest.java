@@ -14,6 +14,7 @@ import java.util.List;
 
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
@@ -126,25 +127,25 @@ public class IntervalStatisticsUpdaterTest {
 
         intervalStatistics.addTrackPoints(trackPoints.iterator());
 
-        List<IntervalStatisticsUpdater.Interval> intervalList = intervalStatistics.getIntervalList();
+        List<Statistics> intervalList = intervalStatistics.getIntervalList();
         Distance totalDistance = Distance.of(0);
         float totalTime = 0L;
         Float totalGain = null;
         Float totalLoss = null;
-        for (IntervalStatisticsUpdater.Interval i : intervalList) {
-            totalDistance = totalDistance.plus(i.getDistance());
-            totalTime += i.getDistance().toM() / i.getSpeed().toMPS();
+        for (Statistics i : intervalList) {
+            totalDistance = totalDistance.plus(i.totalDistance());
+            totalTime += i.totalDistance().toM() / i.getAverageSpeed().toMPS();
 
             if (totalGain == null) {
-                totalGain = i.getGain_m();
-            } else if (i.getGain_m() != null) {
-                totalGain += i.getGain_m();
+                totalGain = i.altitudeGainLoss() != null ? i.altitudeGainLoss().gain_m() : null;
+            } else if (i.altitudeGainLoss() != null) {
+                totalGain += i.altitudeGainLoss().gain_m();
             }
 
             if (totalLoss == null) {
-                totalLoss = i.getLoss_m();
-            } else if (i.getLoss_m() != null) {
-                totalLoss += i.getLoss_m();
+                totalLoss = i.altitudeGainLoss() != null ? i.altitudeGainLoss().loss_m() : null;
+            } else if (i.altitudeGainLoss() != null) {
+                totalLoss += i.altitudeGainLoss().loss_m();
             }
         }
 
@@ -152,22 +153,19 @@ public class IntervalStatisticsUpdaterTest {
         assertEquals(track.getStatistics().totalTime().toSeconds(), totalTime, 0.01);
         assertEquals(track.getStatistics().totalDistance().toM(), totalDistance.toM(), 0.01);
         assertEquals(intervalList.size(), (int) Math.ceil(track.getStatistics().totalDistance().toM() / distanceInterval));
-        if (totalGain != null) {
+        if (totalGain != null && totalLoss != null) {
             assertEquals(totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
-        } else {
-            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatisticsUpdater.Interval::hasGain));
-        }
-        if (totalLoss != null) {
             assertEquals(totalLoss, numberOfPoints * TestDataUtil.ALTITUDE_LOSS, 0.1);
+
         } else {
-            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(IntervalStatisticsUpdater.Interval::hasLoss));
+            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(i -> i.altitudeGainLoss() != null));
         }
 
         for (int i = 0; i < intervalList.size() - 1; i++) {
-            assertEquals(intervalList.get(i).getDistance().toM(), distanceInterval, 0.001);
-            totalDistance = totalDistance.minus(intervalList.get(i).getDistance());
+            assertEquals(intervalList.get(i).totalDistance().toM(), distanceInterval, 0.001);
+            totalDistance = totalDistance.minus(intervalList.get(i).totalDistance());
         }
-        assertEquals(intervalList.get(intervalList.size() - 1).getDistance().toM(), totalDistance.toM(), 0.01);
+        assertEquals(intervalList.get(intervalList.size() - 1).totalDistance().toM(), totalDistance.toM(), 0.01);
     }
 
     private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
