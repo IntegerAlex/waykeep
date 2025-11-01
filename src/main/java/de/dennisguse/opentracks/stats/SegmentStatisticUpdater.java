@@ -108,7 +108,7 @@ public class SegmentStatisticUpdater {
      *
      * @param other another statistics data object
      */
-    //TODO Should be refactored to append only [mainly due to isIdle] (NOTE: This requires to use a custom value object for AggregatedStatistics; this is anyhow recommended).
+    //TODO Should be refactored to append only [mainly due to isIdle]
     public void merge(SegmentStatisticUpdater other) {
         if (startTime == null) {
             startTime = other.startTime;

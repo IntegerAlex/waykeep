@@ -86,14 +86,14 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
 
             SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(reportSpeed).build(context);
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getTrackStatistics().getAverageMovingSpeed());
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.avgMovingSpeed);
                 viewBinding.aggregatedStatsAvgRate.setText(parts.first);
                 viewBinding.aggregatedStatsAvgRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsAvgRateLabel.setText(context.getString(R.string.stats_average_moving_speed));
             }
 
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getTrackStatistics().getMaxSpeed());
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed);
                 viewBinding.aggregatedStatsMaxRate.setText(parts.first);
                 viewBinding.aggregatedStatsMaxRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsMaxRateLabel.setText(context.getString(R.string.stats_max_speed));
@@ -105,14 +105,14 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
 
             SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(reportSpeed).build(context);
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getTrackStatistics().getAverageMovingSpeed());
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.avgMovingSpeed);
                 viewBinding.aggregatedStatsAvgRate.setText(parts.first);
                 viewBinding.aggregatedStatsAvgRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsAvgRateLabel.setText(context.getString(R.string.stats_average_moving_pace));
             }
 
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getTrackStatistics().getMaxSpeed());
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed);
                 viewBinding.aggregatedStatsMaxRate.setText(parts.first);
                 viewBinding.aggregatedStatsMaxRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsMaxRateLabel.setText(R.string.stats_fastest_pace);
@@ -132,11 +132,11 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
 
             Pair<String, String> parts = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
-                    .build(context).getDistanceParts(aggregatedStatistic.getTrackStatistics().getTotalDistance());
+                    .build(context).getDistanceParts(aggregatedStatistic.totalDistance);
             viewBinding.aggregatedStatsDistance.setText(parts.first);
             viewBinding.aggregatedStatsDistanceUnit.setText(parts.second);
 
-            viewBinding.aggregatedStatsTime.setText(StringUtils.formatElapsedTime(aggregatedStatistic.getTrackStatistics().getMovingTime()));
+            viewBinding.aggregatedStatsTime.setText(StringUtils.formatElapsedTime(aggregatedStatistic.totalMovingTime));
         }
 
         private int getIcon(AggregatedStatistics.AggregatedStatistic aggregatedStatistic) {

@@ -1,53 +1,47 @@
 package de.dennisguse.opentracks.ui.aggregatedStatistics;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import de.dennisguse.opentracks.data.models.Statistics;
+import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 public class AggregatedStatistics {
 
-    private final Map<String, AggregatedStatistic> dataMap = new HashMap<>();
-
-    private final List<AggregatedStatistic> dataList = new ArrayList<>();
+    private final List<AggregatedStatistic> dataList;
 
     public AggregatedStatistics(@NonNull List<Track> tracks) {
-        for (Track track : tracks) {
-            aggregate(track);
-        }
+        Map<String, List<Track>> groupedByActivityType = tracks.stream().collect(Collectors.groupingBy(Track::getActivityTypeLocalized));
 
-        dataList.addAll(dataMap.values());
-        dataList.sort((o1, o2) -> {
-            if (o1.getCountTracks() == o2.getCountTracks()) {
-                return o1.getActivityTypeLocalized().compareTo(o2.getActivityTypeLocalized());
-            }
-            return (o1.getCountTracks() < o2.getCountTracks() ? 1 : -1);
-        });
-    }
+        List<Pair<String, List<Track>>> groupedByActivityTypeList = new ArrayList<>();
+        groupedByActivityType.forEach((activityTypeLocalized, trackList) -> groupedByActivityTypeList.add(new Pair<>(activityTypeLocalized, trackList)));
 
-    @VisibleForTesting
-    public void aggregate(@NonNull Track track) {
-        String activityTypeLocalized = track.getActivityTypeLocalized();
-        if (dataMap.containsKey(activityTypeLocalized)) {
-            dataMap.get(activityTypeLocalized).add(track.getStatistics());
-        } else {
-            dataMap.put(activityTypeLocalized, new AggregatedStatistic(activityTypeLocalized, track.getStatistics()));
-        }
+        dataList = groupedByActivityTypeList.parallelStream()
+                .map(i -> new AggregatedStatistic(i.first, i.second))
+                .sorted((o1, o2) -> {
+                    if (o1.getCountTracks() == o2.getCountTracks()) {
+                        return o1.getActivityTypeLocalized().compareTo(o2.getActivityTypeLocalized());
+                    }
+                    return (o1.getCountTracks() < o2.getCountTracks() ? 1 : -1);
+                }).toList();
     }
 
     public int getCount() {
-        return dataMap.size();
+        return dataList.size();
     }
 
-    public AggregatedStatistic get(String activityType) {
-        return dataMap.get(activityType);
+    @VisibleForTesting
+    public AggregatedStatistic get(String activityTypeLocalized) {
+        return dataList.stream().filter(i -> i.getActivityTypeLocalized().equals(activityTypeLocalized)).findFirst().get();
     }
 
     public AggregatedStatistic getItem(int position) {
@@ -55,30 +49,33 @@ public class AggregatedStatistics {
     }
 
     public static class AggregatedStatistic {
-        private final String activityTypeLocalized;
-        private final SegmentStatisticUpdater trackStatistics;
-        private int countTracks = 1;
+        final String activityTypeLocalized;
+        final int countTracks;
 
-        public AggregatedStatistic(String activityTypeLocalized, Statistics trackStatistics) {
+        final Duration totalMovingTime;
+
+        final Distance totalDistance;
+
+        final Speed avgMovingSpeed;
+
+        final Speed maxSpeed;
+
+        public AggregatedStatistic(String activityTypeLocalized, List<Track> tracks) {
             this.activityTypeLocalized = activityTypeLocalized;
-            this.trackStatistics = new SegmentStatisticUpdater(trackStatistics);
+            this.countTracks = tracks.size();
+
+            totalMovingTime = tracks.stream().map(t -> t.getStatistics().movingTime()).reduce(Duration.ZERO, Duration::plus);
+            totalDistance = tracks.stream().map(t -> t.getStatistics().totalDistance()).reduce(Distance.of(0), Distance::plus);
+            maxSpeed = tracks.stream().map(t -> t.getStatistics().maxSpeed()).max((o1, o2) -> (int) (o1.speed_mps() - o2.speed_mps())).orElse(Speed.zero());
+            avgMovingSpeed = Speed.of(totalDistance, totalMovingTime);
         }
 
         public String getActivityTypeLocalized() {
             return activityTypeLocalized;
         }
 
-        public SegmentStatisticUpdater getTrackStatistics() {
-            return trackStatistics;
-        }
-
         public int getCountTracks() {
             return countTracks;
-        }
-
-        void add(Statistics statistics) {
-            trackStatistics.merge(new SegmentStatisticUpdater(statistics));
-            countTracks++;
         }
     }
 }
