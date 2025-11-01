@@ -32,9 +32,8 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
-import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
+import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
@@ -120,13 +119,13 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         voiceAnnouncement.speak(VoiceAnnouncementUtils.createIdle(context));
     }
 
-    public void announceStatisticsIfNeeded(@NonNull Track track, @NonNull SensorDataSet sensorDataSet) {
+    public void announceStatisticsIfNeeded(@NonNull RecordingData data) {
         if (shouldNotAnnounce()) {
             return;
         }
 
         boolean announce = false;
-        this.trackStatistics = track.getStatistics();
+        this.trackStatistics = data.track().getStatistics();
         if (trackStatistics.totalDistance().greaterThan(nextTotalDistance)) {
             updateNextTaskDistance();
             announce = true;
@@ -137,11 +136,11 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         }
 
         if (announce) {
-            voiceAnnouncement.speak(createAnnouncement(track, sensorDataSet));
+            voiceAnnouncement.speak(createAnnouncement(data));
         }
     }
 
-    private Spannable createAnnouncement(Track track, SensorDataSet sensorDataSet) {
+    private Spannable createAnnouncement(RecordingData data) {
         Distance currentIntervalDistance = PreferencesUtils.getVoiceAnnouncementDistance();
         if (currentIntervalDistance != intervalDistance) {
             intervalStatistics = new IntervalStatisticsUpdater(currentIntervalDistance);
@@ -150,15 +149,15 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         }
 
         //TODO Avoid reloading (some) TrackPoints just to announce the last interval.
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), startTrackPointId)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(data.track().getId(), startTrackPointId)) {
             startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
             Statistics lastInterval = intervalStatistics.getLastInterval();
             SensorStatistics sensorStatistics = null;
-            if (track.getId() != null) {
-                sensorStatistics = contentProviderUtils.getSensorStats(track.getId());
+            if (data.track().getId() != null) {
+                sensorStatistics = contentProviderUtils.getSensorStats(data.track().getId());
             }
 
-            return VoiceAnnouncementUtils.createStatistics(context, track, sensorDataSet, PreferencesUtils.getUnitSystem(), PreferencesUtils.isReportSpeed(track), lastInterval, sensorStatistics);
+            return VoiceAnnouncementUtils.createStatistics(context, data.track(), data.sensorDataSet(), PreferencesUtils.getUnitSystem(), PreferencesUtils.isReportSpeed(data.track()), lastInterval, sensorStatistics);
         }
     }
 
