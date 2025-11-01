@@ -3,6 +3,7 @@ package de.dennisguse.opentracks.sensors;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
+import de.dennisguse.opentracks.util.SystemUtils;
 
 public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -23,6 +25,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     //TODO Should be final and not be visible for testing
     @VisibleForTesting
     public SensorDataSet sensorDataSet;
+
+    private PowerManager.WakeLock wakeLock;
 
     private final TrackPointCreator observer;
 
@@ -71,6 +75,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             throw new RuntimeException("SensorManager cannot be started twice; stop first.");
         }
 
+        wakeLock = SystemUtils.acquireWakeLock(context, wakeLock);
+
         gpsManager = new GpsManager(observer, listener);
         altitudeSumManager = new GainManager(listener);
         bluetoothSensorManager = new BluetoothRemoteSensorManager(context, handler, listener);
@@ -83,6 +89,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public void stop(Context context) {
+        wakeLock = SystemUtils.releaseWakeLock(wakeLock);
+
         bluetoothSensorManager.stop(context);
         bluetoothSensorManager = null;
 

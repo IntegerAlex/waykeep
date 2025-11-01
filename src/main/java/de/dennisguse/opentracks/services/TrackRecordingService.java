@@ -22,7 +22,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -44,7 +43,6 @@ import de.dennisguse.opentracks.sensors.GpsStatusValue;
 import de.dennisguse.opentracks.services.announcement.VoiceAnnouncementManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.util.SystemUtils;
 
 public class TrackRecordingService extends Service implements TrackPointCreator.Callback, SharedPreferences.OnSharedPreferenceChangeListener, TrackRecordingManager.IdleObserver {
 
@@ -89,7 +87,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private MutableLiveData<RecordingData> recordingDataObservable;
 
     // The following variables are set when recording:
-    private WakeLock wakeLock; //TODO Move to SensorManager
     private Handler handler;
 
     private TrackPointCreator trackPointCreator;
@@ -125,7 +122,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         if (isRecording()) {
             endCurrentTrack();
         }
-        if (isSensorStarted()) {
+        if (trackPointCreator != null && trackPointCreator.isStarted()) {
             stopSensors();
         }
 
@@ -200,7 +197,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     }
 
     public void tryStartSensors() {
-        if (isSensorStarted()) return;
+        if (trackPointCreator.isStarted()) return;
 
         Log.i(TAG, "tryStartSensors");
 
@@ -208,12 +205,11 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     }
 
     private synchronized void startSensors() {
-        if (isSensorStarted()) {
+        if (trackPointCreator.isStarted()) {
             Log.i(TAG, "sensors already started; skipping");
             return;
         }
         Log.i(TAG, "startSensors");
-        wakeLock = SystemUtils.acquireWakeLock(this, wakeLock);
         trackPointCreator.start(this, handler);
 
         ServiceCompat.startForeground(this, TrackRecordingServiceNotificationManager.NOTIFICATION_ID, notificationManager.onSensorsStarted(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION + ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
@@ -241,7 +237,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         trackPointCreator.stop();
         stopForeground(true);
         notificationManager.stop();
-        wakeLock = SystemUtils.releaseWakeLock(wakeLock);
         gpsStatusObservable.postValue(STATUS_GPS_DEFAULT);
     }
 
@@ -347,9 +342,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         return recordingStatus.isRecording();
     }
 
-    private boolean isSensorStarted() {
-        return wakeLock != null;
-    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
