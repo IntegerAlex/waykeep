@@ -48,10 +48,9 @@ public class TrackFilenameGeneratorTest {
     @Test
     public void testFilenameTemplate() {
         // given
-        Track track = new Track();
+        Track track = new Track(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
         track.setName("Best Track");
         track.setUuid(UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb"));
-        track.setStatistics(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
 
         // when
         String filename = subject.format(track, TrackFileFormat.GPX);

@@ -54,7 +54,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 null,
                 null
         );
-        Track track = new Track(ZoneOffset.UTC); //TODO Pass statistics as well
+        Track track = new Track(ZoneOffset.UTC, statistics);
 
         Position position = new Position(
                 Instant.ofEpochMilli(0),

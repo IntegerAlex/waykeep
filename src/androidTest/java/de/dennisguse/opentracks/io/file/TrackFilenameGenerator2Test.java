@@ -34,10 +34,9 @@ public class TrackFilenameGenerator2Test {
     @Test(expected = TrackFilenameGenerator.TemplateInvalidException.class)
     public void testFilenameTemplate() {
         // given
-        Track track = new Track();
+        Track track = new Track(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
         track.setName("Best Track");
         track.setUuid(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
-        track.setStatistics(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
 
         // when
         subject.format(track, TrackFileFormat.GPX);

@@ -48,7 +48,7 @@ public class Track {
 
     private ActivityType activityType;
 
-    //TODO Move to Statistics?
+    @NonNull
     private ZoneOffset zoneOffset;
 
     @NonNull
