@@ -5,8 +5,11 @@ import static org.junit.Assert.assertFalse;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Looper;
 
+import androidx.core.location.LocationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -143,10 +146,14 @@ public class TrackRecordingServiceRecordingTest {
         String startTime = "2020-02-02T02:02:02Z";
         trackPointCreator.setClock(startTime);
         Track.Id trackId = service.startNewTrack();
+
+        //We do not want the real GPS to interfere.
+        LocationManagerCompat.removeUpdates((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), trackPointCreator.getSensorManager().getGpsManager());
+
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
         String gps2 = "2020-02-02T02:02:04Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 1, 15);
 
         // when
         String idleTime = "2020-02-02T02:02:17Z";
@@ -332,7 +339,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.of(15), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
@@ -340,7 +347,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.0001, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.0001, 35.0, 1, 15);
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps2), Duration.ofSeconds(4), Duration.ofSeconds(4), Distance.of(11.113178253173828), Speed.of(15), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
@@ -348,7 +355,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps3 = "2020-02-02T02:02:08Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps3, 45.0002, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps3, 45.0002, 35.0, 1, 15);
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps3), Duration.ofSeconds(6), Duration.ofSeconds(6), Distance.of(22.226356506347656), Speed.of(15), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
@@ -406,7 +413,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
 
         // then
         Statistics gps1Statistics = new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.of(15), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null);
@@ -414,14 +421,14 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.00001, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.00001, 35.0, 1, 15);
 
         // then
         assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).getStatistics());
 
         // when
         String gps3 = "2020-02-02T02:02:08Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps3, 45.00002, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps3, 45.00002, 35.0, 1, 15);
 
         // then
         assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).getStatistics());
@@ -477,15 +484,15 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
 
         // when - will be ignored
         String gps2 = "2020-02-02T02:02:04Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 1, 15);
 
         // when
         String gps3 = "2020-02-02T02:02:05Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps3, 45.0001, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps3, 45.0001, 35.0, 1, 15);
 
         // when
         String stopTime = "2020-02-02T02:02:12Z";
@@ -528,7 +535,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 100, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 100, 15);
 
         // then
         Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ofSeconds(0), Duration.ofSeconds(0), Distance.of(0), Speed.of(0), new AltitudeExtremities(0.0, 0.0), null, null, null);
@@ -537,7 +544,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.1, 35.0, 100, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.1, 35.0, 100, 15);
 
         // then
         assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).getStatistics());
@@ -572,7 +579,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:03Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.of(15), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
@@ -580,7 +587,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.1, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps2, 45.1, 35.0, 1, 15);
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps2), Duration.ofSeconds(4), Duration.ofSeconds(4), Distance.of(11113.275390625), Speed.of(2778.31884765625f), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
@@ -649,7 +656,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps1 = "2020-02-02T02:02:05Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
 
         // when
         String sensor3 = "2020-02-02T02:02:06Z";
@@ -663,7 +670,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps2 = "2020-02-02T02:02:08Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 4, 15); //Should be ignored
+        sendGPSLocation(trackPointCreator, gps2, 45.0, 35.0, 4, 15); //Should be ignored
 
         // when
         String sensor5 = "2020-02-02T02:02:10Z";
@@ -672,11 +679,11 @@ public class TrackRecordingServiceRecordingTest {
 
         // when
         String gps3 = "2020-02-02T02:02:12Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps3, 45.001, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps3, 45.001, 35.0, 1, 15);
 
         // when
         String gps4 = "2020-02-02T02:02:14Z";
-        TrackRecordingServiceTestUtils.sendGPSLocation(trackPointCreator, gps4, 45.001, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, gps4, 45.001, 35.0, 1, 15);
 
 
         // when
@@ -740,5 +747,17 @@ public class TrackRecordingServiceRecordingTest {
                 return new AltitudeGainLoss(altitudeGain, altitudeGain);
             }
         };
+    }
+
+    private static void sendGPSLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, long speed) {
+        Location location = new Location("mock");
+        location.setTime(1L); // Should be ignored anyhow.
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        location.setAccuracy(accuracy);
+        location.setSpeed(speed);
+
+        trackPointCreator.setClock(time);
+        trackPointCreator.getSensorManager().getGpsManager().onLocationChanged(location);
     }
 }

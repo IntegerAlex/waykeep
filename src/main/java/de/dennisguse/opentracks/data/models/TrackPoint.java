@@ -379,9 +379,9 @@ public class TrackPoint {
     public String toString() {
         return "TrackPoint{" +
                 "id=" + id +
+                ", type=" + type +
                 ", position=" + position +
                 ", sensorDistance=" + sensorDistance +
-                ", type=" + type +
                 ", heartRate=" + heartRate +
                 ", cadence=" + cadence +
                 ", power=" + power +
