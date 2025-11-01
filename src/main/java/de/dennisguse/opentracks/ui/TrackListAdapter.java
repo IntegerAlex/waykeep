@@ -1,9 +1,7 @@
 package de.dennisguse.opentracks.ui;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -269,10 +267,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 // Not recording -> open detail activity.
                 Intent newIntent = IntentUtils.newIntent(context, TrackRecordedActivity.class)
                         .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, trackId);
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(
-                        context,
-                        new Pair<>(viewBinding.getRoot().findViewById(R.id.track_list_item_icon), TrackRecordedActivity.VIEW_TRACK_ICON));
-                context.startActivity(newIntent, activityOptions.toBundle());
+                context.startActivity(newIntent);
             }
         }
 

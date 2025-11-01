@@ -30,7 +30,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
@@ -157,8 +156,6 @@ public class StatisticsRecordedFragment extends Fragment {
                     loadTrackDescription(track);
                     updateUI();
                     updateSensorUI();
-
-                    ((TrackRecordedActivity) getActivity()).startPostponedEnterTransitionWith(viewBinding.statsActivityTypeIcon);
                 }
             });
         }
