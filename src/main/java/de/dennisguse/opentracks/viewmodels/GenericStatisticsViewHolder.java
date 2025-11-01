@@ -216,6 +216,17 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         }
     }
 
+    public static class ElapsedSegmentTime extends GenericStatisticsViewHolder {
+
+        @Override
+        public void onChanged(UnitSystem unitSystem, RecordingData data) {
+            String value = StringUtils.formatElapsedTime(data.getStatisticsCurrentSegment().getTotalTime());
+
+            getBinding().statsValue.setText(value);
+            getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_elapsed_segment_time));
+        }
+    }
+
     public static class FastestPace extends GenericStatisticsViewHolder {
 
         @Override

@@ -25,6 +25,7 @@ public class Mapping {
         m.put(context.getString(R.string.stats_custom_layout_average_moving_pace_key), GenericStatisticsViewHolder.AverageMovingPace::new);
         m.put(context.getString(R.string.stats_custom_layout_average_pace_key), GenericStatisticsViewHolder.AveragePace::new);
         m.put(context.getString(R.string.stats_custom_layout_average_segment_pace_key), GenericStatisticsViewHolder.AverageSegmentPace::new);
+        m.put(context.getString(R.string.stats_custom_layout_elapsed_segment_time_key), GenericStatisticsViewHolder.ElapsedSegmentTime::new);
         m.put(context.getString(R.string.stats_custom_layout_fastest_pace_key), GenericStatisticsViewHolder.FastestPace::new);
 
         m.put(context.getString(R.string.stats_custom_layout_altitude_key), GenericStatisticsViewHolder.Altitude::new);
