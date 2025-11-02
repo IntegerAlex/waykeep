@@ -187,7 +187,7 @@ public class SegmentStatisticUpdater {
 
         totalTime = Duration.ofSeconds(0);
         movingTime = Duration.ofSeconds(0);
-        totalDistance = Distance.of(0);
+        totalDistance = Distance.ZERO;
         maxSpeed = Speed.ZERO;
         totalAltitudeGain_m = null;
         totalAltitudeLoss_m = null;

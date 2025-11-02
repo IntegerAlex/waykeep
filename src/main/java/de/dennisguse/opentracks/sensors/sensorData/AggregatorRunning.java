@@ -43,14 +43,14 @@ public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningS
     @Override
     public void resetAggregated() {
         if (aggregatedValue != null) {
-            aggregatedValue = new Data(aggregatedValue.speed, aggregatedValue.cadence, Distance.of(0));
+            aggregatedValue = new Data(aggregatedValue.speed, aggregatedValue.cadence, Distance.ZERO);
         }
     }
 
     @NonNull
     @Override
     protected Data getNoneValue() {
-        return new Data(Speed.ZERO, Cadence.of(0f), Distance.of(0));
+        return new Data(Speed.ZERO, Cadence.of(0f), Distance.ZERO);
     }
 
     public record Data(Speed speed, Cadence cadence, @NonNull Distance distance) {

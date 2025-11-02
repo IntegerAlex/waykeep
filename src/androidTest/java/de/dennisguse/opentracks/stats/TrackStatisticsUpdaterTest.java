@@ -288,7 +288,7 @@ public class TrackStatisticsUpdaterTest {
         // when
         subject.addTrackPoint(
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.ofEpochSecond(40))
-                        .setSensorDistance(Distance.of(0)));
+                        .setSensorDistance(Distance.ZERO));
         // then
         assertTrue(subject.getSegmentStatisticUpdater().isIdle());
         assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getMovingTime());

@@ -103,7 +103,7 @@ public class IntervalStatisticsUpdater {
     //TODO Could be replaced with Statistics?
     @Deprecated
     private static class Interval {
-        private Distance distance = Distance.of(0);
+        private Distance distance = Distance.ZERO;
         private Duration time = Duration.ofSeconds(0);
         private Float gain_m;
         private Float loss_m;

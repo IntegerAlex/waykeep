@@ -65,7 +65,7 @@ public class AggregatedStatistics {
             this.countTracks = tracks.size();
 
             totalMovingTime = tracks.stream().map(t -> t.getStatistics().movingTime()).reduce(Duration.ZERO, Duration::plus);
-            totalDistance = tracks.stream().map(t -> t.getStatistics().totalDistance()).reduce(Distance.of(0), Distance::plus);
+            totalDistance = tracks.stream().map(t -> t.getStatistics().totalDistance()).reduce(Distance.ZERO, Distance::plus);
             maxSpeed = tracks.stream().map(t -> t.getStatistics().maxSpeed()).max((o1, o2) -> (int) (o1.speed_mps() - o2.speed_mps())).orElse(Speed.ZERO);
             avgMovingSpeed = Speed.of(totalDistance, totalMovingTime);
         }

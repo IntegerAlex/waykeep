@@ -7,6 +7,8 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 
 public record Distance(double distance_m) {
 
+    public static Distance ZERO = Distance.of(0);
+
     public static Distance of(double distance_m) {
         return new Distance(distance_m);
     }

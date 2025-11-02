@@ -125,6 +125,6 @@ public class SensorDataCyclingTest {
         // TODO See #953
 //        assertEquals(2, current.getValue().getDistance().toM(), 0.01);
 //        assertEquals(2, current.getValue().getSpeed().toMPS(), 0.01);
-        assertEquals(new AggregatorCyclingDistanceSpeed.Data(Distance.of(0), Distance.of(0), Speed.ZERO), current.getAggregatedValue(Instant.MIN));
+        assertEquals(new AggregatorCyclingDistanceSpeed.Data(Distance.ZERO, Distance.ZERO, Speed.ZERO), current.getAggregatedValue(Instant.MIN));
     }
 }

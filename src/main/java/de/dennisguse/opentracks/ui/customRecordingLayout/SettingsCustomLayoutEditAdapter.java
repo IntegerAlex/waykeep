@@ -45,7 +45,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 Duration.ofMinutes(0),
                 Duration.ofMinutes(0),
 
-                Distance.of(0),
+                Distance.ZERO,
                 Speed.ZERO,
                 null,
 

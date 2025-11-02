@@ -128,7 +128,7 @@ public class IntervalStatisticsUpdaterTest {
         intervalStatistics.addTrackPoints(trackPoints.iterator());
 
         List<Statistics> intervalList = intervalStatistics.getIntervalList();
-        Distance totalDistance = Distance.of(0);
+        Distance totalDistance = Distance.ZERO;
         float totalTime = 0L;
         Float totalGain = null;
         Float totalLoss = null;

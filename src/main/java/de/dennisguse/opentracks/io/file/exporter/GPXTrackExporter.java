@@ -124,7 +124,7 @@ public class GPXTrackExporter implements TrackExporter {
     private void writeTrackPoints(Track track) throws InterruptedException {
         boolean wroteTrack = false;
         boolean wroteSegment = false;
-        Distance trackDistance = Distance.of(0);
+        Distance trackDistance = Distance.ZERO;
 
         LinkedList<TrackPoint> sensorPoints = new LinkedList<>();
 
@@ -383,7 +383,7 @@ public class GPXTrackExporter implements TrackExporter {
         if (cumulativeDistance != null) {
             return cumulativeDistance;
         }
-        return Distance.of(0);
+        return Distance.ZERO;
     }
 
     private Double cumulateSensorData(TrackPoint trackPoint, List<TrackPoint> sensorPoints, Function<TrackPoint, Double> map) {
