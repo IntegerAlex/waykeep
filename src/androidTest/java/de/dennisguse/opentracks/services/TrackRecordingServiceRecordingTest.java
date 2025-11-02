@@ -110,7 +110,7 @@ public class TrackRecordingServiceRecordingTest {
 
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ZERO, Duration.ZERO, Distance.of(0), Speed.zero(), new AltitudeExtremities(0.0, 0.0), null, null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ZERO, Duration.ZERO, Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), null, null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
         new TrackPointAssert().assertEquals(List.of(
@@ -124,7 +124,7 @@ public class TrackRecordingServiceRecordingTest {
         service.endCurrentTrack();
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.zero(), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
         new TrackPointAssert().assertEquals(List.of(
@@ -199,7 +199,7 @@ public class TrackRecordingServiceRecordingTest {
         service.endCurrentTrack();
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(pauseTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.zero(), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(pauseTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
         new TrackPointAssert().assertEquals(List.of(
@@ -214,7 +214,7 @@ public class TrackRecordingServiceRecordingTest {
         service.resumeTrack(trackId);
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(resumeTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.zero(), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(resumeTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
         new TrackPointAssert().assertEquals(List.of(
@@ -538,7 +538,7 @@ public class TrackRecordingServiceRecordingTest {
         sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 100, 15);
 
         // then
-        Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ofSeconds(0), Duration.ofSeconds(0), Distance.of(0), Speed.of(0), new AltitudeExtremities(0.0, 0.0), null, null, null);
+        Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ofSeconds(0), Duration.ofSeconds(0), Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), null, null, null);
         assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).getStatistics());
 
 
@@ -556,7 +556,7 @@ public class TrackRecordingServiceRecordingTest {
         service.endCurrentTrack();
 
         // then
-        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(0), Speed.of(0), new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
+        assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(0), Speed.ZERO, new AltitudeExtremities(0.0, 0.0), new AltitudeGainLoss(0, 0), null, null)
                 , contentProviderUtils.getTrack(trackId).getStatistics());
 
         // then
@@ -730,7 +730,7 @@ public class TrackRecordingServiceRecordingTest {
                                 45.001, 35d, Distance.of(1),
                                 null, null,
                                 null,
-                                Speed.of(0))) //Sensor data is now outdated, but we do not fall back to GPS.
+                                Speed.ZERO)) //Sensor data is now outdated, but we do not fall back to GPS.
                         .setSensorDistance(Distance.of(0))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }

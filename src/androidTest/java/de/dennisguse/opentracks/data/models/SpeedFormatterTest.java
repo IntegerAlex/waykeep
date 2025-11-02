@@ -28,7 +28,7 @@ public class SpeedFormatterTest {
         assertEquals("4:59", formatter.getSpeedParts(Speed.of(3.34)).first);
         assertEquals("5:00", formatter.getSpeedParts(Speed.of(3.33)).first);
 
-        assertEquals("min/km", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("min/km", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class SpeedFormatterTest {
                 .build(context);
 
         assertEquals("8:02", formatter.getSpeedParts(Speed.of(3.34)).first);
-        assertEquals("min/mi", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("min/mi", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class SpeedFormatterTest {
                 .build(context);
 
         assertEquals("9:14", formatter.getSpeedParts(Speed.of(3.34)).first);
-        assertEquals("min/NM", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("min/NM", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SpeedFormatterTest {
                 .build(context);
 
         assertEquals("11.9", formatter.getSpeedParts(Speed.of(3.31)).first);
-        assertEquals("km/h", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("km/h", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SpeedFormatterTest {
                 .build(context);
 
         assertEquals("7.5", formatter.getSpeedParts(Speed.of(3.34)).first);
-        assertEquals("mph", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("mph", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class SpeedFormatterTest {
                 .build(context);
 
         assertEquals("6.5", formatter.getSpeedParts(Speed.of(3.34)).first);
-        assertEquals("kn", formatter.getSpeedParts(Speed.zero()).second);
+        assertEquals("kn", formatter.getSpeedParts(Speed.ZERO).second);
     }
 
     @Test

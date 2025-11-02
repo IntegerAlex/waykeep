@@ -37,9 +37,9 @@ public class TrackStatisticsUpdaterTest {
         assertEquals(Duration.ZERO, statistics.getTotalTime());
         assertEquals(Duration.ZERO, statistics.getMovingTime());
 
-        assertEquals(Speed.of(0), statistics.getAverageSpeed());
-        assertEquals(Speed.of(0), statistics.getAverageMovingSpeed());
-        assertEquals(Speed.of(0), statistics.getMaxSpeed());
+        assertEquals(Speed.ZERO, statistics.getAverageSpeed());
+        assertEquals(Speed.ZERO, statistics.getAverageMovingSpeed());
+        assertEquals(Speed.ZERO, statistics.getMaxSpeed());
 
         assertNull(statistics.getTotalAltitudeGain());
         assertNull(statistics.getTotalAltitudeLoss());
@@ -64,9 +64,9 @@ public class TrackStatisticsUpdaterTest {
         assertEquals(Duration.ZERO, statistics.getTotalTime());
         assertEquals(Duration.ZERO, statistics.getMovingTime());
 
-        assertEquals(Speed.of(0), statistics.getAverageSpeed());
-        assertEquals(Speed.of(0), statistics.getAverageMovingSpeed());
-        assertEquals(Speed.of(0), statistics.getMaxSpeed());
+        assertEquals(Speed.ZERO, statistics.getAverageSpeed());
+        assertEquals(Speed.ZERO, statistics.getAverageMovingSpeed());
+        assertEquals(Speed.ZERO, statistics.getMaxSpeed());
 
         assertNull(statistics.getTotalAltitudeGain());
         assertNull(statistics.getTotalAltitudeLoss());

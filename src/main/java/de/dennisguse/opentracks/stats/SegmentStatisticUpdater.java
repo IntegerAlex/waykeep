@@ -188,7 +188,7 @@ public class SegmentStatisticUpdater {
         totalTime = Duration.ofSeconds(0);
         movingTime = Duration.ofSeconds(0);
         totalDistance = Distance.of(0);
-        maxSpeed = Speed.zero();
+        maxSpeed = Speed.ZERO;
         totalAltitudeGain_m = null;
         totalAltitudeLoss_m = null;
 
@@ -305,7 +305,7 @@ public class SegmentStatisticUpdater {
      */
     public Speed getAverageSpeed() {
         if (totalTime.isZero()) {
-            return Speed.of(0);
+            return Speed.ZERO;
         }
         return Speed.of(totalDistance.toM() / totalTime.getSeconds());
     }

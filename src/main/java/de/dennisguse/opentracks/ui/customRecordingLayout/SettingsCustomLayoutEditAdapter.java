@@ -46,7 +46,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 Duration.ofMinutes(0),
 
                 Distance.of(0),
-                Speed.of(0),
+                Speed.ZERO,
                 null,
 
                 new AltitudeGainLoss(0f, 0f),
@@ -64,7 +64,7 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 Altitude.EGM2008.of(0),
                 null,
                 null,
-                Speed.zero()
+                Speed.ZERO
         );
 
         demoData = new RecordingData(track, new TrackPoint(TrackPoint.Type.TRACKPOINT, position), null, statistics);

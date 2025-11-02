@@ -44,7 +44,7 @@ public class TrackRecordingServiceNotificationManagerTest {
                         null, null, Distance.of(999f),
                         Altitude.WGS84.of(10), null,
                         null,
-                        Speed.of(0))
+                        Speed.ZERO)
         );
 
         when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))

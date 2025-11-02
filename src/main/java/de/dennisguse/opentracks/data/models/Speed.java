@@ -6,9 +6,11 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 
 public record Speed(double speed_mps) {
 
+    public static Speed ZERO = Speed.of(0);
+
     public static Speed of(Distance distance, Duration duration) {
         if (duration.isZero()) {
-            return zero();
+            return ZERO;
         }
 
         return new Speed(distance.toM() / (duration.toMillis() / (double) Duration.ofSeconds(1).toMillis()));
@@ -26,11 +28,6 @@ public record Speed(double speed_mps) {
         return of(Distance.ofKilometer(speed_kmh), Duration.ofHours(1));
     }
 
-    //TODO Like Duration.ZERO
-    public static Speed zero() {
-        return of(0.0);
-    }
-
     public static Speed max(Speed speed1, Speed speed2) {
         if (speed1.greaterThan(speed2)) {
             return speed1;
@@ -40,7 +37,7 @@ public record Speed(double speed_mps) {
     }
 
     public boolean isZero() {
-        return speed_mps == 0;
+        return this.equals(ZERO);
     }
 
     public boolean isInvalid() {

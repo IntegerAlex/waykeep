@@ -203,7 +203,7 @@ public class KMLTrackImporterTest {
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(421.8070983886719), null,
                                 null,
-                                Speed.of(0))),
+                                Speed.ZERO)),
                 // created resume trackpoint with time of next valid trackpoint
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
@@ -211,21 +211,21 @@ public class KMLTrackImporterTest {
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(419.93902587890625), null,
                                 null,
-                                Speed.of(0))),
+                                Speed.ZERO)),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:06:56.905Z"),
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(419.9036560058594), null,
                                 null,
-                                Speed.of(0))),
+                                Speed.ZERO)),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:07:20.870Z"),
                                 12.340082, 1.234046, null,
                                 Altitude.WGS84.of(417.99432373046875), null,
                                 null,
-                                Speed.of(0)))
+                                Speed.ZERO))
         ), importedTrackPoints);
     }
 

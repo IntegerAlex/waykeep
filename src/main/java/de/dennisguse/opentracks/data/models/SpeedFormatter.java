@@ -50,7 +50,7 @@ public class SpeedFormatter {
         String unitString = resources.getString(unitId);
 
         if (speed == null) {
-            speed = Speed.zero();
+            speed = Speed.ZERO;
         }
 
         if (reportSpeedOrPace) {

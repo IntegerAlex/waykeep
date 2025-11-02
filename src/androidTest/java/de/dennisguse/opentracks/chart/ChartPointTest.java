@@ -29,7 +29,7 @@ public class ChartPointTest {
         Statistics statistics = new Statistics(null, null, Duration.ofSeconds(1000), null, null, null, null, null, null, null);
 
         // when
-        ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.of(0), false, UnitSystem.IMPERIAL_FEET);
+        ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.ZERO, false, UnitSystem.IMPERIAL_FEET);
 
         // then
         assertEquals(1000000, (long) point.timeOrDistance());
@@ -41,7 +41,7 @@ public class ChartPointTest {
         Statistics statistics = new Statistics(null, null, null, null, Distance.of(1000), null, null, null, null, null);
 
         // when
-        ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.of(0), true, UnitSystem.METRIC);
+        ChartPoint point = ChartPoint.create(statistics, TrackStubUtils.createDefaultTrackPoint(), Speed.ZERO, true, UnitSystem.METRIC);
 
         // then
         assertEquals(1, (long) point.timeOrDistance());
