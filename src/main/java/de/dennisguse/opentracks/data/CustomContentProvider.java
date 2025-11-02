@@ -19,7 +19,6 @@ package de.dennisguse.opentracks.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -111,18 +110,7 @@ public class CustomContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        return onCreate(getContext());
-    }
-
-    /**
-     * Helper method to make onCreate is testable.
-     *
-     * @param context context to creates database
-     * @return true means run successfully
-     */
-    @VisibleForTesting
-    boolean onCreate(Context context) {
-        CustomSQLiteOpenHelper databaseHelper = new CustomSQLiteOpenHelper(context);
+        CustomSQLiteOpenHelper databaseHelper = new CustomSQLiteOpenHelper(getContext());
         try {
             db = databaseHelper.getWritableDatabase();
             // Necessary to enable cascade deletion from Track to TrackPoints and Markers
