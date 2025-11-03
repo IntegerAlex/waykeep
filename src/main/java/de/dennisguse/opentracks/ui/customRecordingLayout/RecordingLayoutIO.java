@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
+//TODO Migrate to DataStore.
 public class RecordingLayoutIO {
 
     private static final String TAG = RecordingLayout.class.getSimpleName();

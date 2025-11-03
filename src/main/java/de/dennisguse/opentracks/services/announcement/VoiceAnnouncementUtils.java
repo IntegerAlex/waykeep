@@ -33,12 +33,11 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
-import de.dennisguse.opentracks.ui.intervals.IntervalStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 class VoiceAnnouncementUtils {
@@ -51,8 +50,8 @@ class VoiceAnnouncementUtils {
                 .append(context.getString(R.string.voiceIdle));
     }
 
-    static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable IntervalStatistics.Interval currentInterval, @Nullable SensorStatistics sensorStatistics) {
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+    static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable Statistics currentInterval, @Nullable SensorStatistics sensorStatistics) {
+        Statistics trackStatistics = track.getStatistics();
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
@@ -60,9 +59,9 @@ class VoiceAnnouncementUtils {
             appendTime(builder, track.getStopTime());
         }
 
-        Distance totalDistance = trackStatistics.getTotalDistance();
+        Distance totalDistance = trackStatistics.totalDistance();
         Speed averageMovingSpeed = trackStatistics.getAverageMovingSpeed();
-        Speed currentDistancePerTime = currentInterval != null ? currentInterval.getSpeed() : null;
+        Speed currentDistancePerTime = currentInterval != null ? currentInterval.getAverageSpeed() : null;
 
         int perUnitStringId = R.string.empty;
         int distanceId = R.string.voiceDistance;
@@ -112,7 +111,7 @@ class VoiceAnnouncementUtils {
         boolean hasTravelledDistance = !totalDistance.isZero();
 
         // Announce time
-        Duration movingTime = trackStatistics.getMovingTime();
+        Duration movingTime = trackStatistics.movingTime();
         if (shouldVoiceAnnounceMovingTime() && hasTravelledDistance && !movingTime.isZero()) {
             appendDuration(context, builder, movingTime);
             builder.append(".");
@@ -179,8 +178,8 @@ class VoiceAnnouncementUtils {
                 appendCardinal(builder, context.getString(R.string.sensor_state_heart_rate_value, averageHeartRate), averageHeartRate);
                 builder.append(".");
             }
-            if (shouldVoiceAnnounceLapHeartRate() && currentInterval != null && currentInterval.hasAverageHeartRate()) {
-                int currentHeartRate = Math.round(currentInterval.getAverageHeartRate().getBPM());
+            if (shouldVoiceAnnounceLapHeartRate() && currentInterval != null && currentInterval.avgHeartRate() != null) {
+                int currentHeartRate = Math.round(currentInterval.avgHeartRate().getBPM());
 
                 builder.append(" ")
                         .append(context.getString(R.string.lap_heart_rate));
@@ -188,8 +187,8 @@ class VoiceAnnouncementUtils {
                 builder.append(".");
             }
 
-            if (shouldVoiceAnnounceLapPower() && currentInterval != null && currentInterval.hasAveragePower()) {
-                int currentPower = Math.round(currentInterval.getAveragePower().getW());
+            if (shouldVoiceAnnounceLapPower() && currentInterval != null && currentInterval.avgPower() != null) {
+                int currentPower = Math.round(currentInterval.avgPower().getW());
                 if (shouldVoiceAnnounceUnit()) {
                     String template = context.getResources().getString(R.string.power_x_watt);
                     builder.append(" ")

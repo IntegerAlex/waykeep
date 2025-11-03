@@ -83,8 +83,7 @@ public class TrackPoint {
     private HeartRate heartRate = null;
     private Cadence cadence = null;
     private Power power = null;
-    private Float altitudeGain_m = null;
-    private Float altitudeLoss_m = null;
+    private AltitudeGainLoss altitudeGainLoss = null;
 
     public TrackPoint(@Nullable TrackPoint.Id id, @NonNull Type type, @NonNull Position position) {
         this.id = id;
@@ -163,31 +162,21 @@ public class TrackPoint {
         return getPosition().toLocation();
     }
 
-    public boolean hasAltitudeGain() {
-        return altitudeGain_m != null;
+    public boolean hasAltitudeGainLoss() {
+        return altitudeGainLoss != null;
     }
 
-    public float getAltitudeGain() {
-        return altitudeGain_m;
+    public AltitudeGainLoss getAltitudeGainLoss() {
+        return altitudeGainLoss;
     }
 
-    @Deprecated
-    public TrackPoint setAltitudeGain(Float altitudeGain_m) {
-        this.altitudeGain_m = altitudeGain_m;
+    public TrackPoint setAltitudeGainLoss(AltitudeGainLoss altitudeGainLoss) {
+        this.altitudeGainLoss = altitudeGainLoss;
         return this;
     }
 
-    public boolean hasAltitudeLoss() {
-        return altitudeLoss_m != null;
-    }
-
-    public float getAltitudeLoss() {
-        return altitudeLoss_m;
-    }
-
-    @Deprecated
-    public TrackPoint setAltitudeLoss(Float altitudeLoss_m) {
-        this.altitudeLoss_m = altitudeLoss_m;
+    public TrackPoint setAltitudeGainLoss(float altitudeGain_m, float altitudeLoss_m) {
+        setAltitudeGainLoss(new AltitudeGainLoss(altitudeGain_m, altitudeLoss_m));
         return this;
     }
 
@@ -326,11 +315,10 @@ public class TrackPoint {
         if (hasSensorDistance() && lastTrackPoint.hasSensorDistance()) {
             sensorDistance = sensorDistance.minus(lastTrackPoint.getSensorDistance());
         }
-        if (hasAltitudeGain() && lastTrackPoint.hasAltitudeGain()) {
-            altitudeGain_m -= lastTrackPoint.altitudeGain_m;
-        }
-        if (hasAltitudeLoss() && lastTrackPoint.hasAltitudeLoss()) {
-            altitudeLoss_m -= lastTrackPoint.altitudeLoss_m;
+        if (hasAltitudeGainLoss() && lastTrackPoint.hasAltitudeGainLoss()) {
+            altitudeGainLoss = new AltitudeGainLoss(
+                    altitudeGainLoss.gain_m() - lastTrackPoint.altitudeGainLoss.gain_m(),
+                    altitudeGainLoss.loss_m() - lastTrackPoint.altitudeGainLoss.loss_m());
         }
         return this;
     }
@@ -391,14 +379,13 @@ public class TrackPoint {
     public String toString() {
         return "TrackPoint{" +
                 "id=" + id +
+                ", type=" + type +
                 ", position=" + position +
                 ", sensorDistance=" + sensorDistance +
-                ", type=" + type +
                 ", heartRate=" + heartRate +
                 ", cadence=" + cadence +
                 ", power=" + power +
-                ", altitudeGain_m=" + altitudeGain_m +
-                ", altitudeLoss_m=" + altitudeLoss_m +
+                ", altitudeGainLoss=" + altitudeGainLoss +
                 '}';
     }
 

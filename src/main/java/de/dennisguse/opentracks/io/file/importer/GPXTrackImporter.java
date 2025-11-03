@@ -38,6 +38,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -48,7 +49,7 @@ import de.dennisguse.opentracks.util.StringUtils;
  * <p>
  * {@link de.dennisguse.opentracks.io.file.exporter.GPXTrackExporter} does not export information if a segment was started automatic or manually.
  * Therefore, all segments starts are marked as SEGMENT_START_AUTOMATIC.
- * Thus, the {@link de.dennisguse.opentracks.stats.TrackStatistics} cannot be restored correctly.
+ * Thus, the {@link SegmentStatisticUpdater} cannot be restored correctly.
  *
  * @author Jimmy Shih
  */
@@ -368,18 +369,11 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             }
         }
 
-        if (gain != null) {
+        if (gain != null && loss != null) {
             try {
-                trackPoint.setAltitudeGain(Float.parseFloat(gain));
+                trackPoint.setAltitudeGainLoss(Float.parseFloat(gain), Float.parseFloat(loss));
             } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s", gain)), e);
-            }
-        }
-        if (loss != null) {
-            try {
-                trackPoint.setAltitudeLoss(Float.parseFloat(loss));
-            } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude loss: %s", loss)), e);
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s or los: %s", gain, loss)), e);
             }
         }
         if (sensorDistance != null) {

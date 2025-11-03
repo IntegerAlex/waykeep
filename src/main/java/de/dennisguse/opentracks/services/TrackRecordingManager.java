@@ -17,13 +17,13 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.util.TrackNameUtils;
 
@@ -80,7 +80,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         track.setActivityTypeLocalized(activityTypeLocalized);
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
-        track.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
+        track.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
         contentProviderUtils.updateTrack(track);
 
@@ -98,7 +98,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return false;
         }
 
-        trackStatisticsUpdater = new TrackStatisticsUpdater(track.getTrackStatistics());
+        trackStatisticsUpdater = new TrackStatisticsUpdater(track.getStatistics());
         onNewTrackPoint(trackPointCreator.createSegmentStartManual());
 
         reset();
@@ -124,16 +124,15 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
         ALTITUDE_CORRECTION_MANAGER.correctAltitude(context, current.first);
 
-        Track track = contentProviderUtils.getTrack(trackId); //Get copy
+        Track track = contentProviderUtils.getTrack(trackId); //Get copy TODO: Avoid re-loading data from DB
         if (track == null) {
             Log.w(TAG, "Requesting data if not recording is taking place, should not be done.");
             return null;
         }
 
-        track.setTrackStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
-        TrackStatistics currentSegment = tmpTrackStatisticsUpdater.getCurrentSegment();
+        track.setStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
 
-        return new RecordingData(track, current.first, current.second, currentSegment);
+        return new RecordingData(track, current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
@@ -225,7 +224,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         handler.postDelayed(ON_IDLE, idleDuration.toMillis());
     }
 
-    TrackStatistics getTrackStatistics() {
+    Statistics getTrackStatistics() {
         return trackStatisticsUpdater == null ? null : trackStatisticsUpdater.getTrackStatistics();
     }
 

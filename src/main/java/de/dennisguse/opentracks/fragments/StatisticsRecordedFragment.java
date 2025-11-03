@@ -30,16 +30,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -157,8 +156,6 @@ public class StatisticsRecordedFragment extends Fragment {
                     loadTrackDescription(track);
                     updateUI();
                     updateSensorUI();
-
-                    ((TrackRecordedActivity) getActivity()).startPostponedEnterTransitionWith(viewBinding.statsActivityTypeIcon);
                 }
             });
         }
@@ -171,12 +168,12 @@ public class StatisticsRecordedFragment extends Fragment {
     }
 
     private void updateUI() {
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        Statistics trackStatistics = track.getStatistics();
         // Set total distance
         {
             Pair<String, String> parts = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
-                    .build(getContext()).getDistanceParts(trackStatistics.getTotalDistance());
+                    .build(getContext()).getDistanceParts(trackStatistics.totalDistance());
 
             viewBinding.statsDistanceValue.setText(parts.first);
             viewBinding.statsDistanceUnit.setText(parts.second);
@@ -187,8 +184,8 @@ public class StatisticsRecordedFragment extends Fragment {
 
         // Set time and start datetime
         {
-            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
-            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
+            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.movingTime()));
+            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.totalTime()));
         }
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());
@@ -205,7 +202,7 @@ public class StatisticsRecordedFragment extends Fragment {
         {
             viewBinding.statsMaxSpeedLabel.setText(preferenceReportSpeed ? R.string.stats_max_speed : R.string.stats_fastest_pace);
 
-            Pair<String, String> parts = formatter.getSpeedParts(trackStatistics.getMaxSpeed());
+            Pair<String, String> parts = formatter.getSpeedParts(trackStatistics.maxSpeed());
             viewBinding.statsMaxSpeedValue.setText(parts.first);
             viewBinding.statsMaxSpeedUnit.setText(parts.second);
         }
@@ -221,8 +218,8 @@ public class StatisticsRecordedFragment extends Fragment {
 
         // Set altitude gain and loss
         {
-            Float altitudeGain_m = trackStatistics.getTotalAltitudeGain();
-            Float altitudeLoss_m = trackStatistics.getTotalAltitudeLoss();
+            Float altitudeGain_m = trackStatistics.altitudeGainLoss() != null ? trackStatistics.altitudeGainLoss().gain_m() : null;
+            Float altitudeLoss_m = trackStatistics.altitudeGainLoss() != null ? trackStatistics.altitudeGainLoss().loss_m() : null;
 
             Pair<String, String> parts;
 

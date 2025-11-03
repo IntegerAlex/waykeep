@@ -17,12 +17,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.settings.UnitSystem;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * This model is used to load intervals for a track.
@@ -32,8 +33,8 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
     private static final String TAG = IntervalStatisticsModel.class.getSimpleName();
 
-    private MutableLiveData<List<IntervalStatistics.Interval>> intervalsLiveData;
-    private IntervalStatistics intervalStatistics;
+    private MutableLiveData<List<Statistics>> intervalsLiveData;
+    private IntervalStatisticsUpdater intervalStatistics;
     private Distance distanceInterval;
     private final ContentResolver contentResolver;
     private ContentObserver trackPointsTableObserver;
@@ -65,7 +66,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
         handler = null;
     }
 
-    public MutableLiveData<List<IntervalStatistics.Interval>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
+    public MutableLiveData<List<Statistics>> getIntervalStats(Track.Id trackId, UnitSystem unitSystem, @Nullable IntervalOption interval) {
         if (intervalsLiveData == null) {
             if (interval == null) {
                 interval = IntervalOption.OPTION_1;
@@ -73,7 +74,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
             intervalsLiveData = new MutableLiveData<>();
             distanceInterval = interval.getDistance(unitSystem);
-            intervalStatistics = new IntervalStatistics(distanceInterval);
+            intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
 
             loadIntervalStatistics(trackId);
         }
@@ -92,7 +93,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
     private void loadIntervalStatistics(Track.Id trackId) {
         executor.execute(() -> {
             ContentProviderUtils contentProviderUtils = new ContentProviderUtils(getApplication());
-            try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, lastTrackPointId)) {
+            try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, lastTrackPointId)) {
                 lastTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
                 intervalsLiveData.postValue(intervalStatistics.getIntervalList());
             }
@@ -112,7 +113,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
         lastTrackPointId = null;
         distanceInterval = interval.getDistance(unitSystem);
-        intervalStatistics = new IntervalStatistics(distanceInterval);
+        intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
         loadIntervalStatistics(trackId);
     }
 

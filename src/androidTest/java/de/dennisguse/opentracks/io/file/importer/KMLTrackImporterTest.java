@@ -189,24 +189,21 @@ public class KMLTrackImporterTest {
                                 12.340097, 1.234156, null,
                                 Altitude.WGS84.of(469.286376953125), null,
                                 null,
-                                Speed.of(0.539)))
-                        .setAltitudeGain(0f),
+                                Speed.of(0.539))),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:06:25.448Z"),
                                 12.340036, 1.23415, null,
                                 Altitude.WGS84.of(439.1626281738281), null,
                                 null,
-                                Speed.of(0.1577)))
-                        .setAltitudeGain(0f),
+                                Speed.of(0.1577))),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:06:47.888Z"),
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(421.8070983886719), null,
                                 null,
-                                Speed.of(0)))
-                        .setAltitudeGain(0f),
+                                Speed.of(0))),
                 // created resume trackpoint with time of next valid trackpoint
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
@@ -214,16 +211,14 @@ public class KMLTrackImporterTest {
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(419.93902587890625), null,
                                 null,
-                                Speed.of(0)))
-                        .setAltitudeGain(0f),
+                                Speed.of(0))),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:06:56.905Z"),
                                 12.340057, 1.23405, null,
                                 Altitude.WGS84.of(419.9036560058594), null,
                                 null,
-                                Speed.of(0)))
-                        .setAltitudeGain(0f),
+                                Speed.of(0))),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-11-28T17:07:20.870Z"),
@@ -231,7 +226,6 @@ public class KMLTrackImporterTest {
                                 Altitude.WGS84.of(417.99432373046875), null,
                                 null,
                                 Speed.of(0)))
-                        .setAltitudeGain(0f)
         ), importedTrackPoints);
     }
 

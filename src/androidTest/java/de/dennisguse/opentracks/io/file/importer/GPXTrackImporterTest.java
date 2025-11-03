@@ -30,11 +30,11 @@ import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 
 /**
  * Test that legacy KML/GPX formats can still be imported.
@@ -149,9 +149,9 @@ public class GPXTrackImporterTest {
         assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
 
         // 3. trackstatistics
-        TrackStatistics trackStatistics = importedTrack.getTrackStatistics();
-        assertEquals(0.75, trackStatistics.getMaxSpeed().toMPS(), 0.01);
-        assertEquals(Duration.ofSeconds(101), trackStatistics.getMovingTime());
+        Statistics trackStatistics = importedTrack.getStatistics();
+        assertEquals(0.75, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(Duration.ofSeconds(101), trackStatistics.movingTime());
 
         // 4. trackpoints
         List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
@@ -204,9 +204,9 @@ public class GPXTrackImporterTest {
         assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
 
         // 3. trackstatistics
-        TrackStatistics trackStatistics = importedTrack.getTrackStatistics();
-        assertEquals(5.0, trackStatistics.getMaxSpeed().toMPS(), 0.01);
-        assertEquals(Duration.ofSeconds(101), trackStatistics.getMovingTime());
+        Statistics trackStatistics = importedTrack.getStatistics();
+        assertEquals(5.0, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(Duration.ofSeconds(101), trackStatistics.movingTime());
 
         // 4. trackpoints
         List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
@@ -267,8 +267,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f),
+                        .setAltitudeGainLoss(1, 1),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:17Z"),
@@ -276,8 +275,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(5)))
-                        .setAltitudeLoss(1f)
-                        .setAltitudeGain(1f)
+                        .setAltitudeGainLoss(1, 1)
                         .setSensorDistance(Distance.of(12))
                         .setHeartRate(69)
                         .setPower(50f)
@@ -289,8 +287,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:22Z"),
@@ -298,8 +295,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f),
+                        .setAltitudeGainLoss(0, 0),
                 new TrackPoint(TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
@@ -307,8 +303,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(10)))
-                        .setAltitudeLoss(0f)
-                        .setAltitudeGain(0f)
+                        .setAltitudeGainLoss(0, 0)
                         .setSpeed(Speed.of(15))
         ), actual);
     }

@@ -21,6 +21,7 @@ import java.util.Objects;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.IntervalListViewBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
@@ -192,7 +193,7 @@ public class IntervalsFragment extends Fragment {
         }
 
         viewBinding.intervalRate.setText(isReportSpeed ? getString(R.string.stats_speed) : getString(R.string.stats_pace));
-        LiveData<List<IntervalStatistics.Interval>> liveData = viewModel.getIntervalStats(trackId, unitSystem, selectedInterval);
+        LiveData<List<Statistics>> liveData = viewModel.getIntervalStats(trackId, unitSystem, selectedInterval);
         liveData.observe(getActivity(), intervalList -> adapter.swapData(intervalList, unitSystem, isReportSpeed));
 
         setIntervalsDropdownText();

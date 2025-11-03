@@ -25,7 +25,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -59,8 +58,6 @@ import de.dennisguse.opentracks.util.IntentUtils;
 public class TrackRecordedActivity extends AbstractTrackDeleteActivity implements ConfirmDeleteDialogFragment.ConfirmDeleteCaller, TrackDataHubInterface {
 
     private static final String TAG = TrackRecordedActivity.class.getSimpleName();
-
-    public static final String VIEW_TRACK_ICON = "track_icon";
 
     public static final String EXTRA_TRACK_ID = "track_id";
 
@@ -98,8 +95,6 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
 
         viewBinding.bottomAppBarLayout.bottomAppBar.replaceMenu(R.menu.track_detail);
         setSupportActionBar(viewBinding.bottomAppBarLayout.bottomAppBar);
-
-        postponeEnterTransition();
     }
 
     @Override
@@ -282,11 +277,6 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };
         }
-    }
-
-    public void startPostponedEnterTransitionWith(View viewIcon) {
-        ViewCompat.setTransitionName(viewIcon, TrackRecordedActivity.VIEW_TRACK_ICON);
-        startPostponedEnterTransition();
     }
 
     private void onRecordingStatusChanged(RecordingStatus status) {

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 
 //TODO Merge with TrackFilenameGeneratorTest whenever Junit5 gets available.
@@ -36,9 +37,9 @@ public class TrackFilenameGenerator2Test {
         Track track = new Track();
         track.setName("Best Track");
         track.setUuid(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
-        track.getTrackStatistics().setStartTime(Instant.parse("2020-02-02T02:02:02Z"));
+        track.setStatistics(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
 
         // when
-        String filename = subject.format(track, TrackFileFormat.GPX);
+        subject.format(track, TrackFileFormat.GPX);
     }
 }

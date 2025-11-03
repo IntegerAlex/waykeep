@@ -33,13 +33,13 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -128,7 +128,7 @@ public class GPXTrackExporter implements TrackExporter {
 
         LinkedList<TrackPoint> sensorPoints = new LinkedList<>();
 
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(track.getId(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -279,18 +279,16 @@ public class GPXTrackExporter implements TrackExporter {
             printWriter.println("<opentracks:typeTranslated>" + StringUtils.formatCData(track.getActivityTypeLocalized()) + "</opentracks:typeTranslated>");
         }
 
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        Statistics trackStatistics = track.getStatistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
-        printWriter.println("<gpxtrkx:Distance>" + trackStatistics.getTotalDistance().toM() + "</gpxtrkx:Distance>");
-        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.getTotalTime().getSeconds() + "</gpxtrkx:TimerTime>");
-        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.getMovingTime().getSeconds() + "</gpxtrkx:MovingTime>");
+        printWriter.println("<gpxtrkx:Distance>" + trackStatistics.totalDistance().toM() + "</gpxtrkx:Distance>");
+        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalTime().getSeconds() + "</gpxtrkx:TimerTime>");
+        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.movingTime().getSeconds() + "</gpxtrkx:MovingTime>");
         printWriter.println("<gpxtrkx:StoppedTime>" + trackStatistics.getStoppedTime().getSeconds() + "</gpxtrkx:StoppedTime>");
-        printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.getMaxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
-        if (trackStatistics.hasTotalAltitudeGain()) {
-            printWriter.println("<gpxtrkx:Ascent>" + trackStatistics.getTotalAltitudeGain() + "</gpxtrkx:Ascent>");
-        }
-        if (trackStatistics.hasTotalAltitudeLoss()) {
-            printWriter.println("<gpxtrkx:Descent>" + trackStatistics.getTotalAltitudeLoss() + "</gpxtrkx:Descent>");
+        printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.maxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
+        if (trackStatistics.altitudeGainLoss() != null) {
+            printWriter.println("<gpxtrkx:Ascent>" + trackStatistics.altitudeGainLoss().gain_m() + "</gpxtrkx:Ascent>");
+            printWriter.println("<gpxtrkx:Descent>" + trackStatistics.altitudeGainLoss().loss_m() + "</gpxtrkx:Descent>");
         }
         printWriter.println("</gpxtrkx:TrackStatsExtension>");
 
@@ -340,12 +338,12 @@ public class GPXTrackExporter implements TrackExporter {
                 extensionContent += "<pwr:PowerInWatts>" + POWER_FORMAT.format(trackPoint.getPower().getW()) + "</pwr:PowerInWatts>\n";
             }
 
-            Double cumulativeGain = cumulateSensorData(trackPoint, sensorPoints, (tp) -> tp.hasAltitudeGain() ? (double) tp.getAltitudeGain() : null);
+            Double cumulativeGain = cumulateSensorData(trackPoint, sensorPoints, (tp) -> tp.hasAltitudeGainLoss() ? (double) tp.getAltitudeGainLoss().gain_m() : null);
             if (cumulativeGain != null) {
                 extensionContent += ("<opentracks:gain>" + ALTITUDE_FORMAT.format(cumulativeGain) + "</opentracks:gain>\n");
             }
 
-            Double cumulativeLoss = cumulateSensorData(trackPoint, sensorPoints, (tp) -> tp.hasAltitudeLoss() ? (double) tp.getAltitudeLoss() : null);
+            Double cumulativeLoss = cumulateSensorData(trackPoint, sensorPoints, (tp) -> tp.hasAltitudeGainLoss() ? (double) tp.getAltitudeGainLoss().loss_m() : null);
             if (cumulativeLoss != null) {
                 extensionContent += ("<opentracks:loss>" + ALTITUDE_FORMAT.format(cumulativeLoss) + "</opentracks:loss>\n");
             }

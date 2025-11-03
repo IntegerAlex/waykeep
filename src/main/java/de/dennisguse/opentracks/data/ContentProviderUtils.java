@@ -41,6 +41,8 @@ import java.util.UUID;
 import de.dennisguse.opentracks.BuildConfig;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -48,14 +50,15 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -116,7 +119,6 @@ public class ContentProviderUtils {
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_LOSS);
 
         Track track = new Track(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)));
-        TrackStatistics trackStatistics = track.getTrackStatistics();
         if (!cursor.isNull(idIndex)) {
             track.setId(new Track.Id(cursor.getLong(idIndex)));
         }
@@ -136,37 +138,23 @@ public class ContentProviderUtils {
             track.setActivityTypeLocalized(cursor.getString(activityTypeLocalizedIndex));
         }
 
-        if (!cursor.isNull(startTimeIndex)) {
-            trackStatistics.setStartTime(Instant.ofEpochMilli(cursor.getLong(startTimeIndex)));
-        }
-        if (!cursor.isNull(stopTimeIndex)) {
-            trackStatistics.setStopTime(Instant.ofEpochMilli(cursor.getLong(stopTimeIndex)));
-        }
-        if (!cursor.isNull(totalDistanceIndex)) {
-            trackStatistics.setTotalDistance(Distance.of(cursor.getFloat(totalDistanceIndex)));
-        }
-        if (!cursor.isNull(totalTimeIndex)) {
-            trackStatistics.setTotalTime(Duration.ofMillis(cursor.getLong(totalTimeIndex)));
-        }
-        if (!cursor.isNull(movingTimeIndex)) {
-            trackStatistics.setMovingTime(Duration.ofMillis(cursor.getLong(movingTimeIndex)));
-        }
-        if (!cursor.isNull(maxSpeedIndex)) {
-            trackStatistics.setMaxSpeed(Speed.of(cursor.getFloat(maxSpeedIndex)));
-        }
-        if (!cursor.isNull(minAltitudeIndex)) {
-            trackStatistics.setMinAltitude(cursor.getFloat(minAltitudeIndex));
-        }
-        if (!cursor.isNull(maxAltitudeIndex)) {
-            trackStatistics.setMaxAltitude(cursor.getFloat(maxAltitudeIndex));
-        }
-        if (!cursor.isNull(altitudeGainIndex)) {
-            trackStatistics.setTotalAltitudeGain(cursor.getFloat(altitudeGainIndex));
-        }
-        if (!cursor.isNull(altitudeLossIndex)) {
-            trackStatistics.setTotalAltitudeLoss(cursor.getFloat(altitudeLossIndex));
-        }
+        Statistics trackStatistics = new Statistics(
+                cursor.isNull(startTimeIndex) ? null : Instant.ofEpochMilli(cursor.getLong(startTimeIndex)),
+                cursor.isNull(stopTimeIndex) ? null : Instant.ofEpochMilli(cursor.getLong(stopTimeIndex)),
+                cursor.isNull(totalTimeIndex) ? null : Duration.ofMillis(cursor.getLong(totalTimeIndex)),
+                cursor.isNull(movingTimeIndex) ? null : Duration.ofMillis(cursor.getLong(movingTimeIndex)),
 
+                cursor.isNull(totalDistanceIndex) ? null : Distance.of(cursor.getFloat(totalDistanceIndex)),
+
+                cursor.isNull(maxSpeedIndex) ? null : Speed.of(cursor.getFloat(maxSpeedIndex)),
+                cursor.isNull(minAltitudeIndex) || cursor.isNull(maxAltitudeIndex) ? null : new AltitudeExtremities(cursor.getFloat(minAltitudeIndex), cursor.getFloat(maxAltitudeIndex)),
+                cursor.isNull(altitudeGainIndex) || cursor.isNull(altitudeLossIndex) ? null : new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex)),
+
+                null,
+                null
+        );
+
+        track.setStatistics(trackStatistics);
         return track;
     }
 
@@ -314,7 +302,7 @@ public class ContentProviderUtils {
 
     private ContentValues createContentValues(Track track) {
         ContentValues values = new ContentValues();
-        TrackStatistics trackStatistics = track.getTrackStatistics();
+        Statistics trackStatistics = track.getStatistics();
 
         if (track.getId() != null) {
             values.put(TracksColumns._ID, track.getId().id());
@@ -325,48 +313,56 @@ public class ContentProviderUtils {
         values.put(TracksColumns.ACTIVITY_TYPE, track.getActivityType() != null ? track.getActivityType().getId() : null);
         values.put(TracksColumns.ACTIVITY_TYPE_LOCALIZED, track.getActivityTypeLocalized());
         values.put(TracksColumns.STARTTIME_OFFSET, track.getZoneOffset().getTotalSeconds());
-        if (trackStatistics.getStartTime() != null) {
-            values.put(TracksColumns.STARTTIME, trackStatistics.getStartTime().toEpochMilli());
+        if (trackStatistics.startTime() != null) {
+            values.put(TracksColumns.STARTTIME, trackStatistics.startTime().toEpochMilli());
         }
-        if (trackStatistics.getStopTime() != null) {
-            values.put(TracksColumns.STOPTIME, trackStatistics.getStopTime().toEpochMilli());
+        if (trackStatistics.stopTime() != null) {
+            values.put(TracksColumns.STOPTIME, trackStatistics.stopTime().toEpochMilli());
         }
-        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.getTotalDistance().toM());
-        values.put(TracksColumns.TOTALTIME, trackStatistics.getTotalTime().toMillis());
-        values.put(TracksColumns.MOVINGTIME, trackStatistics.getMovingTime().toMillis());
+        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
+        values.put(TracksColumns.TOTALTIME, trackStatistics.totalTime().toMillis());
+        values.put(TracksColumns.MOVINGTIME, trackStatistics.movingTime().toMillis());
         values.put(TracksColumns.AVGSPEED, trackStatistics.getAverageSpeed().toMPS());
         values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
-        values.put(TracksColumns.MAXSPEED, trackStatistics.getMaxSpeed().toMPS());
-        values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
-        values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
-        values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.getTotalAltitudeGain());
-        values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.getTotalAltitudeLoss());
+        values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
+
+        if (trackStatistics.altitudeExtremities() != null) {
+            values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
+            values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
+        }
+
+        if (trackStatistics.altitudeGainLoss() != null) {
+            values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
+            values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());
+        }
 
         return values;
     }
 
-    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull TrackStatistics trackStatistics) {
+    public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull Statistics trackStatistics) {
         contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(trackStatistics), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
     }
 
-    private ContentValues createContentValues(TrackStatistics trackStatistics) {
+    private ContentValues createContentValues(Statistics trackStatistics) {
         ContentValues values = new ContentValues();
-        if (trackStatistics.getStartTime() != null) {
-            values.put(TracksColumns.STARTTIME, trackStatistics.getStartTime().toEpochMilli());
+        if (trackStatistics.startTime() != null) {
+            values.put(TracksColumns.STARTTIME, trackStatistics.startTime().toEpochMilli());
         }
-        if (trackStatistics.getStopTime() != null) {
-            values.put(TracksColumns.STOPTIME, trackStatistics.getStopTime().toEpochMilli());
+        if (trackStatistics.stopTime() != null) {
+            values.put(TracksColumns.STOPTIME, trackStatistics.stopTime().toEpochMilli());
         }
-        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.getTotalDistance().toM());
-        values.put(TracksColumns.TOTALTIME, trackStatistics.getTotalTime().toMillis());
-        values.put(TracksColumns.MOVINGTIME, trackStatistics.getMovingTime().toMillis());
+        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
+        values.put(TracksColumns.TOTALTIME, trackStatistics.totalTime().toMillis());
+        values.put(TracksColumns.MOVINGTIME, trackStatistics.movingTime().toMillis());
         values.put(TracksColumns.AVGSPEED, trackStatistics.getAverageSpeed().toMPS());
         values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
-        values.put(TracksColumns.MAXSPEED, trackStatistics.getMaxSpeed().toMPS());
+        values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
         values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
         values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
-        values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.getTotalAltitudeGain());
-        values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.getTotalAltitudeLoss());
+        if (trackStatistics.altitudeGainLoss() != null) {
+            values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
+            values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());
+        }
         return values;
     }
 
@@ -656,11 +652,8 @@ public class ContentProviderUtils {
             trackPoint.setPower(cursor.getFloat(indexes.sensorPowerIndex));
         }
 
-        if (!cursor.isNull(indexes.altitudeGainIndex)) {
-            trackPoint.setAltitudeGain(cursor.getFloat(indexes.altitudeGainIndex));
-        }
-        if (!cursor.isNull(indexes.altitudeLossIndex)) {
-            trackPoint.setAltitudeLoss(cursor.getFloat(indexes.altitudeLossIndex));
+        if (!cursor.isNull(indexes.altitudeGainIndex) && !cursor.isNull(indexes.altitudeLossIndex)) {
+            trackPoint.setAltitudeGainLoss(cursor.getFloat(indexes.altitudeGainIndex), cursor.getFloat(indexes.altitudeLossIndex));
         }
 
         return trackPoint;
@@ -814,13 +807,10 @@ public class ContentProviderUtils {
             values.put(TrackPointsColumns.SENSOR_POWER, trackPoint.getPower().getW());
         }
 
-        if (trackPoint.hasAltitudeGain()) {
-            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.getAltitudeGain());
+        if (trackPoint.hasAltitudeGainLoss()) {
+            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.getAltitudeGainLoss().gain_m());
+            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.getAltitudeGainLoss().loss_m());
         }
-        if (trackPoint.hasAltitudeLoss()) {
-            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.getAltitudeLoss());
-        }
-
         return values;
     }
 
@@ -834,7 +824,7 @@ public class ContentProviderUtils {
      * @param trackId           the track id
      * @param startTrackPointId the starting trackPoint id. `null` to ignore
      */
-    public TrackPointIterator getTrackPointLocationIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
+    public AutoCloseableIterator<TrackPoint> getTrackPointLocationIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
         return new TrackPointIterator(this, trackId, startTrackPointId);
     }
 

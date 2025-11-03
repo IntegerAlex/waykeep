@@ -185,8 +185,7 @@ public class SensorDataSet {
         }
 
         if (barometer != null && barometer.hasReceivedData()) {
-            trackPoint.setAltitudeGain(barometer.getAggregatedValue(trackPointCreator.createNow()).gain_m());
-            trackPoint.setAltitudeLoss(barometer.getAggregatedValue(trackPointCreator.createNow()).loss_m());
+            trackPoint.setAltitudeGainLoss(barometer.getAggregatedValue(trackPointCreator.createNow()).gain_m(), barometer.getAggregatedValue(trackPointCreator.createNow()).loss_m());
         }
     }
 

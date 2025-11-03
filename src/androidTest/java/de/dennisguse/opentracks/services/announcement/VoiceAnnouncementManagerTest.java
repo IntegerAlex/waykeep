@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.services.TrackRecordingService;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementManagerTest {
@@ -54,13 +54,13 @@ public class VoiceAnnouncementManagerTest {
         voiceAnnouncementManager.setFrequency(Distance.ofKilometer(5));
 
         // when
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalDistance(Distance.ofKilometer(13));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Distance.of(15000), voiceAnnouncementManager.getNextTotalDistance());
 
         statistics.setTotalDistance(Distance.of(15100));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Distance.of(20000), voiceAnnouncementManager.getNextTotalDistance());
     }
 
@@ -74,13 +74,13 @@ public class VoiceAnnouncementManagerTest {
         voiceAnnouncementManager.setFrequency(Duration.ofSeconds(5));
 
         // when
-        TrackStatistics statistics = new TrackStatistics();
+        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
         statistics.setTotalTime(Duration.ofSeconds(91));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Duration.ofSeconds(95), voiceAnnouncementManager.getNextTotalTime());
 
         statistics.setTotalTime(Duration.ofSeconds(95));
-        voiceAnnouncementManager.start(statistics);
+        voiceAnnouncementManager.start(statistics.getStatistics());
         assertEquals(Duration.ofSeconds(100), voiceAnnouncementManager.getNextTotalTime());
     }
 

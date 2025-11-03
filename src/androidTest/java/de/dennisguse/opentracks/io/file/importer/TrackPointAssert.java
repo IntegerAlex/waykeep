@@ -29,13 +29,9 @@ public class TrackPointAssert {
             Assert.assertEquals("altitude", expected.getAltitude().toM(), actual.getAltitude().toM(), delta);
         }
 
-        Assert.assertEquals("has altitudeGain", expected.hasAltitudeGain(), actual.hasAltitudeGain());
-        if (expected.hasAltitudeGain()) {
-            Assert.assertEquals("altitudeGain", expected.getAltitudeGain(), actual.getAltitudeGain(), delta);
-        }
-        Assert.assertEquals("has altitudeLoss", expected.hasAltitudeLoss(), actual.hasAltitudeLoss());
-        if (expected.hasAltitudeLoss()) {
-            Assert.assertEquals("altitudeLoss", expected.getAltitudeLoss(), actual.getAltitudeLoss(), delta);
+        Assert.assertEquals("has altitudeGainLoss", expected.hasAltitudeGainLoss(), actual.hasAltitudeGainLoss());
+        if (expected.hasAltitudeGainLoss()) {
+            Assert.assertEquals("altitudeGainLoss", expected.getAltitudeGainLoss(), actual.getAltitudeGainLoss());
         }
 
         Assert.assertEquals("has speed", expected.hasSpeed(), actual.hasSpeed());

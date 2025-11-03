@@ -74,7 +74,6 @@ Average moving pace: 0:00 min/km (0:00 min/mi)
 Fastest pace: 0:00 min/km (0:00 min/mi)
 Max elevation: -9223372036854775808 m (-9223372036854775808 ft)
 Min elevation: 9223372036854775807 m (9223372036854775807 ft)
-Elevation gain: 0 m (0 ft)
 Max grade: 0 %
 Min grade: 0 %
 Recorded: 6/23 11:29]]></description>
@@ -126,11 +125,6 @@ Recorded: 6/23 11:29]]></description>
                 <gx:value>0.15777911</gx:value>
                 <gx:value>0.0</gx:value>
               </gx:SimpleArrayData>
-              <gx:SimpleArrayData name="elevation_gain">
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
-              </gx:SimpleArrayData>
             </SchemaData>
           </ExtendedData>
         </gx:Track>
@@ -144,14 +138,6 @@ Recorded: 6/23 11:29]]></description>
           <ExtendedData>
             <SchemaData schemaUrl="#schema">
               <gx:SimpleArrayData name="speed">
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
-              </gx:SimpleArrayData>
-              <gx:SimpleArrayData name="elevation_gain">
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
-                <gx:value>0.0</gx:value>
                 <gx:value>0.0</gx:value>
                 <gx:value>0.0</gx:value>
                 <gx:value>0.0</gx:value>
@@ -179,7 +165,6 @@ Average moving pace: 0:00 min/km (0:00 min/mi)
 Fastest pace: 0:00 min/km (0:00 min/mi)
 Max elevation: 469 m (1540 ft)
 Min elevation: 419 m (1376 ft)
-Elevation gain: 0 m (0 ft)
 Recorded: 11/28 18:06]]></description>
       <TimeStamp>
         <when>2020-11-28T17:07:20.870Z</when>

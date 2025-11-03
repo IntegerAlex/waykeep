@@ -18,8 +18,6 @@ package de.dennisguse.opentracks.share;
 
 import static org.junit.Assert.assertEquals;
 
-import android.content.Context;
-
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -36,10 +34,12 @@ import java.util.Locale;
 
 import de.dennisguse.opentracks.LocaleRule;
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -56,8 +56,6 @@ public class TrackShareSummaryGeneratorTest {
     private static final Instant START_TIME = Instant.ofEpochMilli(1288721514000L);
     private TrackShareSummaryGenerator descriptionGenerator;
 
-    private final Context context = ApplicationProvider.getApplicationContext();
-
     @Before
     public void setUp() {
         descriptionGenerator = new TrackShareSummaryGenerator(ApplicationProvider.getApplicationContext());
@@ -65,19 +63,20 @@ public class TrackShareSummaryGeneratorTest {
 
     @Test
     public void testGenerateTrackDescription() {
-        Track track = new Track();
-        TrackStatistics stats = new TrackStatistics();
-        stats.setTotalDistance(Distance.of(20000));
-        stats.setTotalTime(Duration.ofMillis(600000));
-        stats.setMovingTime(Duration.ofMillis(300000));
-        stats.setMaxSpeed(Speed.of(100));
-        stats.setMaxAltitude(550);
-        stats.setMinAltitude(-500);
-        stats.setTotalAltitudeGain(6000f);
-        stats.setTotalAltitudeLoss(6000f);
-        stats.setStartTime(START_TIME);
-        track.setTrackStatistics(stats);
+        Track track = new Track(new Statistics(
+                START_TIME,
+                START_TIME,
+                Duration.ofSeconds(600),
+                Duration.ofSeconds(300),
+                Distance.of(20000),
+                Speed.of(100),
+                new AltitudeExtremities(-500, 550),
+                new AltitudeGainLoss(6000, 6000),
+                null,
+                null
+        ));
         track.setActivityTypeLocalized("hiking");
+
         String expected = //"Created by"
                 "OpenTracks (Debug)\n\n"
                         + "Name: -\n"

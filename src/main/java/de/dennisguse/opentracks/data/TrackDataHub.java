@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
@@ -40,8 +41,8 @@ import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
-import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * Track data hub.
@@ -330,7 +331,7 @@ public class TrackDataHub {
         }
 
         TrackPoint trackPoint = null;
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
 
             while (trackPointIterator.hasNext()) {
                 //Prevents a NPE if stop() is happening while notifyTrackPointsTableUpdate()
@@ -428,7 +429,7 @@ public class TrackDataHub {
          *
          * @param trackPoint the trackPoint
          */
-        default void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull TrackStatistics trackStatistics) {
+        default void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
         }
 
         /**
@@ -436,7 +437,7 @@ public class TrackDataHub {
          *
          * @param trackPoint the trackPoint
          */
-        default void onSampledOutTrackPoint(@NonNull TrackPoint trackPoint, @NonNull TrackStatistics trackStatistics) {
+        default void onSampledOutTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
         }
 
         /**

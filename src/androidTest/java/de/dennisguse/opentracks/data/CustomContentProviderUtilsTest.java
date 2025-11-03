@@ -51,18 +51,21 @@ import java.util.UUID;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.content.data.TestSensorDataUtil;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -114,7 +117,7 @@ public class CustomContentProviderUtilsTest {
     private void testIterator(Track.Id trackId, int numPoints) {
         TrackPoint.Id lastPointId = initializeTrack(trackId, numPoints);
         List<TrackPoint> locations = new ArrayList<>(numPoints);
-        try (TrackPointIterator it = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
+        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 assertNotNull(trackPoint);
@@ -152,7 +155,7 @@ public class CustomContentProviderUtilsTest {
         // Load all inserted trackPoints.
         TrackPoint.Id lastPointId = null;
         int counter = 0;
-        try (TrackPointIterator it = contentProviderUtils.getTrackPointLocationIterator(id, null)) {
+        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointLocationIterator(id, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 lastPointId = trackPoint.getId();
@@ -406,18 +409,18 @@ public class CustomContentProviderUtilsTest {
         Pair<Track, List<TrackPoint>> track = TestDataUtil.createTrack(trackId, 10);
 
         // AverageSpeed
-        TrackStatistics statistics = new TrackStatistics();
-        statistics.setStartTime(Instant.ofEpochMilli(1000));
-        statistics.setStopTime(Instant.ofEpochMilli(2500));
-        statistics.setTotalTime(Duration.ofMillis(1500));
-        statistics.setMovingTime(Duration.ofMillis(700));
-        statistics.setTotalDistance(Distance.of(750.0));
-        statistics.setTotalAltitudeGain(50.0f);
-        statistics.setMaxSpeed(Speed.of(60.0));
-        statistics.setMaxAltitude(1250.0);
-        statistics.setMinAltitude(1200.0);
-
-        track.first.setTrackStatistics(statistics);
+        track.first.setStatistics(new Statistics(
+                Instant.ofEpochMilli(1000),
+                Instant.ofEpochMilli(2500),
+                Duration.ofMillis(1500),
+                Duration.ofMillis(700),
+                Distance.of(750),
+                Speed.of(60),
+                new AltitudeExtremities(1250, 1200),
+                new AltitudeGainLoss(50, 50),
+                null,
+                null
+        ));
         contentProviderUtils.insertTrack(track.first);
 
         Marker marker = new Marker(trackId, track.second.get(0));
@@ -854,7 +857,7 @@ public class CustomContentProviderUtilsTest {
         TrackPoint.Id startTrackPointId = trackpointIds.get(0);
 
         // when
-        TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, trackpointIds.get(0));
+        AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, trackpointIds.get(0));
 
         // then
         for (int i = 0; i < trackpointIds.size(); i++) {

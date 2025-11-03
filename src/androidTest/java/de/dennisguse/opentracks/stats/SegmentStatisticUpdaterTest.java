@@ -32,25 +32,25 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
 
 /**
- * Tests for {@link TrackStatistics}.
+ * Tests for {@link SegmentStatisticUpdater}.
  * This only tests non-trivial pieces of that class.
  *
  * @author Rodrigo Damazio
  */
 @RunWith(AndroidJUnit4.class)
-public class TrackStatisticsTest {
+public class SegmentStatisticUpdaterTest {
 
-    private TrackStatistics statistics;
+    private SegmentStatisticUpdater statistics;
 
     @Before
     public void setUp() {
-        statistics = new TrackStatistics();
+        statistics = new SegmentStatisticUpdater();
     }
 
     @Test
     public void testMerge_no_data() {
         // given
-        TrackStatistics statistics2 = new TrackStatistics();
+        SegmentStatisticUpdater statistics2 = new SegmentStatisticUpdater();
 
         // when
         statistics.merge(statistics2);
@@ -74,7 +74,7 @@ public class TrackStatisticsTest {
     @Test
     public void testMerge() {
         // given
-        TrackStatistics statistics2 = new TrackStatistics();
+        SegmentStatisticUpdater statistics2 = new SegmentStatisticUpdater();
         statistics.setStartTime(Instant.ofEpochMilli(1000));  // Resulting start time
         statistics.setStopTime(Instant.ofEpochMilli(2500));
         statistics2.setStartTime(Instant.ofEpochMilli(3000));

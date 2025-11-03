@@ -2,15 +2,16 @@ package de.dennisguse.opentracks.services;
 
 import androidx.annotation.NonNull;
 
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 /**
  * {@link Track} and {@link TrackPoint} must be immutable (i.e., their content does not change).
  */
-public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet, TrackStatistics currentSegment) {
+public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorDataSet sensorDataSet, Statistics currentSegment) {
     public String getTrackCategory() {
         if (track == null) {
             return "";
@@ -18,22 +19,13 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
         return track.getActivityTypeLocalized();
     }
 
+    @Deprecated
     @NonNull
-    public TrackStatistics getStatisticsTrack() {
+    public Statistics getStatisticsTrack() {
         if (track == null) {
-            return new TrackStatistics();
+            return new SegmentStatisticUpdater().getStatistics();
         }
 
-        return track.getTrackStatistics();
+        return track.getStatistics();
     }
-
-    @NonNull
-    public TrackStatistics getStatisticsCurrentSegment() {
-        if (currentSegment == null) {
-            return new TrackStatistics();
-        }
-
-        return currentSegment;
-    }
-
 }

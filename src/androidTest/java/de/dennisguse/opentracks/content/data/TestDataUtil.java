@@ -6,13 +6,11 @@ import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
@@ -20,9 +18,8 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatistics;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 public class TestDataUtil {
@@ -85,10 +82,6 @@ public class TestDataUtil {
                 createTrackPoint(i, TrackPoint.Type.SEGMENT_END_MANUAL)
         );
 
-        //TODO Use TrackStatisticsUpdater
-        TrackStatistics stats = new TrackStatistics();
-        stats.setTotalDistance(Distance.of(0));
-        stats.setTotalTime(Duration.ofMillis(0));
         List<Marker> markers = List.of(
                 new Marker(trackId, trackPoints.get(1), "Marker 1", "Marker description 1", "Marker category 3", "", null),
                 new Marker(trackId, trackPoints.get(4), "Marker 2", "Marker description 2", "Marker category 3", "", null),
@@ -126,8 +119,7 @@ public class TestDataUtil {
         trackPoint.setHeartRate(100f + i % 80);
         trackPoint.setCadence(300f + i);
         trackPoint.setPower(400f + i);
-        trackPoint.setAltitudeGain(ALTITUDE_GAIN);
-        trackPoint.setAltitudeLoss(ALTITUDE_LOSS);
+        trackPoint.setAltitudeGainLoss(ALTITUDE_GAIN, ALTITUDE_LOSS);
         return trackPoint;
     }
 
@@ -153,37 +145,16 @@ public class TestDataUtil {
         dstFile.createNewFile();
         Uri photoUri = FileUtils.getUriForFile(context, dstFile);
 
-        //TODO Use TrackStatisticsUpdater
-        TrackStatistics stats = new TrackStatistics();
-        stats.setTotalDistance(Distance.of(0));
-        stats.setTotalTime(Duration.ofMillis(0));
-
         return new Marker(trackId, trackPoint, "Marker name", "Marker description", "Marker category", "", photoUri);
     }
 
     public static List<TrackPoint> getTrackPoints(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
-        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
             ArrayList<TrackPoint> trackPoints = new ArrayList<>();
             while (trackPointIterator.hasNext()) {
                 trackPoints.add(trackPointIterator.next());
             }
             return trackPoints;
         }
-    }
-
-    public static Pair<Track.Id, TrackStatistics> buildTrackWithTrackPoints(ContentProviderUtils contentProviderUtils, int numberOfPoints) {
-        Track dummyTrack = new Track();
-        dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
-        dummyTrack.setName("Dummy Track");
-        contentProviderUtils.insertTrack(dummyTrack);
-        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
-        for (int i = 0; i < numberOfPoints; i++) {
-            TrackPoint tp = TestDataUtil.createTrackPoint(i);
-            contentProviderUtils.insertTrackPoint(tp, dummyTrack.getId());
-            trackStatisticsUpdater.addTrackPoint(tp);
-        }
-        dummyTrack.setTrackStatistics(trackStatisticsUpdater.getTrackStatistics());
-        contentProviderUtils.updateTrack(dummyTrack);
-        return new Pair<>(dummyTrack.getId(), trackStatisticsUpdater.getTrackStatistics());
     }
 }

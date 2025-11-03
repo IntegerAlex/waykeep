@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TimezoneRule;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 
 @RunWith(Parameterized.class)
@@ -50,7 +51,7 @@ public class TrackFilenameGeneratorTest {
         Track track = new Track();
         track.setName("Best Track");
         track.setUuid(UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb"));
-        track.getTrackStatistics().setStartTime(Instant.parse("2020-02-02T02:02:02Z"));
+        track.setStatistics(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
 
         // when
         String filename = subject.format(track, TrackFileFormat.GPX);

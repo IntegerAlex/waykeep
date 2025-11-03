@@ -26,10 +26,9 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Objects;
 import java.util.UUID;
 
-import de.dennisguse.opentracks.stats.TrackStatistics;
+import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 /**
  * A track.
@@ -49,17 +48,31 @@ public class Track {
 
     private ActivityType activityType;
 
+    //TODO Move to Statistics?
     private ZoneOffset zoneOffset;
 
-    private TrackStatistics trackStatistics = new TrackStatistics();
+    @NonNull
+    private Statistics trackStatistics;
 
+    @Deprecated
     @VisibleForTesting
     public Track() {
         this(ZoneOffset.UTC);
     }
 
+    @VisibleForTesting
+    public Track(Statistics statistics) {
+        this(ZoneOffset.UTC, statistics);
+    }
+
+    @Deprecated //TODO Remove
     public Track(@NonNull ZoneOffset zoneOffset) {
-        setZoneOffset(zoneOffset);
+        this(zoneOffset, new SegmentStatisticUpdater().getStatistics());
+    }
+
+    public Track(@NonNull ZoneOffset zoneOffset, @NonNull Statistics trackStatistics) {
+        this.zoneOffset = zoneOffset;
+        this.trackStatistics = trackStatistics;
     }
 
     /**
@@ -129,23 +142,23 @@ public class Track {
 
     public OffsetDateTime getStartTime() {
         return trackStatistics
-                .getStartTime().atOffset(zoneOffset);
+                .startTime().atOffset(zoneOffset);
     }
 
     public OffsetDateTime getStopTime() {
         return trackStatistics
-                .getStopTime().atOffset(zoneOffset);
+                .stopTime().atOffset(zoneOffset);
     }
 
-    @NonNull
-    public TrackStatistics getTrackStatistics() {
+    public Statistics getStatistics() {
         return trackStatistics;
     }
 
-    public void setTrackStatistics(@NonNull TrackStatistics trackStatistics) {
+    public void setStatistics(Statistics trackStatistics) {
         this.trackStatistics = trackStatistics;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Track{" +
@@ -155,20 +168,6 @@ public class Track {
                 ", activityType=" + activityType +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Track track = (Track) o;
-        return id.equals(track.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
 
     public record Id(long id) implements Parcelable {
 
