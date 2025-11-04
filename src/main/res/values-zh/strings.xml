@@ -638,4 +638,5 @@ limitations under the License.
     <string name="track_edit_time_offset">时区偏移</string>
     <string name="settings_announcements_segment_average_speed_pace">平均速度/配速（路段）</string>
     <string name="stats_average_segment_pace">平均路段配速</string>
+    <string name="stats_elapsed_segment_time">已用分段时间</string>
 </resources>
