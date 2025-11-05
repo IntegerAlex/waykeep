@@ -20,6 +20,7 @@ public record Speed(double speed_mps) {
         return new Speed(speed_mps);
     }
 
+    @Deprecated //TODO Remove
     public static Speed of(String speed_mps) {
         return of(Float.parseFloat(speed_mps));
     }

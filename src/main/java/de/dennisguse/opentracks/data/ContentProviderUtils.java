@@ -66,6 +66,7 @@ import de.dennisguse.opentracks.util.FileUtils;
  *
  * @author Leif Hendrik Wilden
  */
+//TODO Check if do {} while can be replaced by while (cursor.moveToNext)
 public class ContentProviderUtils {
 
     private static final String TAG = ContentProviderUtils.class.getSimpleName();
@@ -80,6 +81,7 @@ public class ContentProviderUtils {
 
     private final ContentResolver contentResolver;
 
+    //TODO Check if this can be used in more than one place. If not remove.
     public interface ContentProviderSelectionInterface {
         SelectionData buildSelection();
     }
@@ -200,21 +202,7 @@ public class ContentProviderUtils {
         return tracks;
     }
 
-    public List<Track> getTracks(ContentProviderSelectionInterface selection) {
-        SelectionData selectionData = selection.buildSelection();
-        ArrayList<Track> tracks = new ArrayList<>();
-        try (Cursor cursor = getTrackCursor(selectionData.selection(), selectionData.selectionArgs(), TracksColumns._ID)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                tracks.ensureCapacity(cursor.getCount());
-                do {
-                    tracks.add(createTrack(cursor));
-                } while (cursor.moveToNext());
-            }
-        }
-
-        return tracks;
-    }
-
+    //TODO Implement someting like TrackPointIterator: just as a cursor
     public Cursor searchTracks(String searchQuery) {
         // Needed, because MARKER_COUNT is a virtual column and has to be explicitly requested.
         // Used only be TrackListAdapter
@@ -311,6 +299,8 @@ public class ContentProviderUtils {
         values.put(TracksColumns.ACTIVITY_TYPE, track.getActivityType() != null ? track.getActivityType().getId() : null);
         values.put(TracksColumns.ACTIVITY_TYPE_LOCALIZED, track.getActivityTypeLocalized());
         values.put(TracksColumns.STARTTIME_OFFSET, track.getZoneOffset().getTotalSeconds());
+
+        //TODO Duplicates createContentValues(Statistics trackStatistics)
         if (trackStatistics.startTime() != null) {
             values.put(TracksColumns.STARTTIME, trackStatistics.startTime().toEpochMilli());
         }
@@ -896,5 +886,23 @@ public class ContentProviderUtils {
 
         }
         return sensorStatistics;
+    }
+
+    @NonNull
+    public List<AggregatedStatistic> getAggregatedStatisticsForTracks(ContentProviderSelectionInterface selection) {
+        SelectionData data = selection.buildSelection();
+        try (Cursor cursor = contentResolver.query(TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS, null, data.selection(), data.selectionArgs(), null)) {
+            ArrayList<AggregatedStatistic> aggregatedStatistics = new ArrayList<>(cursor.getCount());
+            while (cursor.moveToNext()) {
+                aggregatedStatistics.add(new AggregatedStatistic(
+                        cursor.getString(cursor.getColumnIndexOrThrow(TracksColumns.ACTIVITY_TYPE_LOCALIZED)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(TracksColumns.TRACK_COUNT)),
+                        Duration.ofMillis(cursor.getLong(cursor.getColumnIndexOrThrow(TracksColumns.MOVINGTIME))),
+                        Distance.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE))),
+                        Speed.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED)))
+                ));
+            }
+            return aggregatedStatistics;
+        }
     }
 }

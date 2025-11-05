@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.AggregatedStatistic;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
@@ -22,10 +22,10 @@ import de.dennisguse.opentracks.util.StringUtils;
 
 public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private AggregatedStatistics aggregatedStatistics;
+    private List<AggregatedStatistic> aggregatedStatistics;
     private final Context context;
 
-    public AggregatedStatisticsAdapter(Context context, AggregatedStatistics aggregatedStatistics) {
+    public AggregatedStatisticsAdapter(Context context, @NonNull List<AggregatedStatistic> aggregatedStatistics) {
         this.context = context;
         this.aggregatedStatistics = aggregatedStatistics;
     }
@@ -40,9 +40,9 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
 
-        AggregatedStatistics.AggregatedStatistic aggregatedStatistic = aggregatedStatistics.getItem(position);
+        AggregatedStatistic aggregatedStatistic = aggregatedStatistics.get(position);
 
-        String type = aggregatedStatistic.getActivityTypeLocalized();
+        String type = aggregatedStatistic.activityTypeLocalized();
         if (ActivityType.findByLocalizedString(context, type).isShowSpeedPreferred()) {
             viewHolder.setSpeed(aggregatedStatistic);
         } else {
@@ -52,23 +52,18 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        if (aggregatedStatistics == null) {
-            return 0;
-        }
-        return aggregatedStatistics.getCount();
+        return aggregatedStatistics.size();
     }
 
-    public void swapData(AggregatedStatistics aggregatedStatistics) {
+    public void swapData(List<AggregatedStatistic> aggregatedStatistics) {
         this.aggregatedStatistics = aggregatedStatistics;
         this.notifyDataSetChanged();
     }
 
     public List<String> getCategories() {
-        List<String> categories = new ArrayList<>();
-        for (int i = 0; i < aggregatedStatistics.getCount(); i++) {
-            categories.add(aggregatedStatistics.getItem(i).getActivityTypeLocalized());
-        }
-        return categories;
+        return aggregatedStatistics.stream()
+                .map(AggregatedStatistic::activityTypeLocalized)
+                .toList();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -81,38 +76,38 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
             this.viewBinding = viewBinding;
         }
 
-        public void setSpeed(AggregatedStatistics.AggregatedStatistic aggregatedStatistic) {
+        public void setSpeed(AggregatedStatistic aggregatedStatistic) {
             setCommonValues(aggregatedStatistic);
 
             SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(reportSpeed).build(context);
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.avgMovingSpeed);
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getAverageMovingSpeed());
                 viewBinding.aggregatedStatsAvgRate.setText(parts.first);
                 viewBinding.aggregatedStatsAvgRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsAvgRateLabel.setText(context.getString(R.string.stats_average_moving_speed));
             }
 
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed);
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed());
                 viewBinding.aggregatedStatsMaxRate.setText(parts.first);
                 viewBinding.aggregatedStatsMaxRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsMaxRateLabel.setText(context.getString(R.string.stats_max_speed));
             }
         }
 
-        public void setPace(AggregatedStatistics.AggregatedStatistic aggregatedStatistic) {
+        public void setPace(AggregatedStatistic aggregatedStatistic) {
             setCommonValues(aggregatedStatistic);
 
             SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(reportSpeed).build(context);
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.avgMovingSpeed);
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.getAverageMovingSpeed());
                 viewBinding.aggregatedStatsAvgRate.setText(parts.first);
                 viewBinding.aggregatedStatsAvgRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsAvgRateLabel.setText(context.getString(R.string.stats_average_moving_pace));
             }
 
             {
-                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed);
+                Pair<String, String> parts = formatter.getSpeedParts(aggregatedStatistic.maxSpeed());
                 viewBinding.aggregatedStatsMaxRate.setText(parts.first);
                 viewBinding.aggregatedStatsMaxRateUnit.setText(parts.second);
                 viewBinding.aggregatedStatsMaxRateLabel.setText(R.string.stats_fastest_pace);
@@ -120,27 +115,27 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         //TODO Check preference handling.
-        private void setCommonValues(AggregatedStatistics.AggregatedStatistic aggregatedStatistic) {
-            String activityType = aggregatedStatistic.getActivityTypeLocalized();
+        private void setCommonValues(AggregatedStatistic aggregatedStatistic) {
+            String activityType = aggregatedStatistic.activityTypeLocalized();
 
             reportSpeed = PreferencesUtils.isReportSpeed(activityType);
             unitSystem = PreferencesUtils.getUnitSystem();
 
             viewBinding.activityIcon.setImageResource(getIcon(aggregatedStatistic));
             viewBinding.aggregatedStatsTypeLabel.setText(activityType);
-            viewBinding.aggregatedStatsNumTracks.setText(StringUtils.valueInParentheses(String.valueOf(aggregatedStatistic.getCountTracks())));
+            viewBinding.aggregatedStatsNumTracks.setText(StringUtils.valueInParentheses(String.valueOf(aggregatedStatistic.countTracks())));
 
             Pair<String, String> parts = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
-                    .build(context).getDistanceParts(aggregatedStatistic.totalDistance);
+                    .build(context).getDistanceParts(aggregatedStatistic.totalDistance());
             viewBinding.aggregatedStatsDistance.setText(parts.first);
             viewBinding.aggregatedStatsDistanceUnit.setText(parts.second);
 
-            viewBinding.aggregatedStatsTime.setText(StringUtils.formatElapsedTime(aggregatedStatistic.totalMovingTime));
+            viewBinding.aggregatedStatsTime.setText(StringUtils.formatElapsedTime(aggregatedStatistic.totalMovingTime()));
         }
 
-        private int getIcon(AggregatedStatistics.AggregatedStatistic aggregatedStatistic) {
-            String localizedActivityType = aggregatedStatistic.getActivityTypeLocalized();
+        private int getIcon(AggregatedStatistic aggregatedStatistic) {
+            String localizedActivityType = aggregatedStatistic.activityTypeLocalized();
             return ActivityType.findByLocalizedString(context, localizedActivityType)
                     .getIconDrawableId();
         }

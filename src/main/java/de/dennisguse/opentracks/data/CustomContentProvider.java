@@ -30,7 +30,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import java.util.Arrays;
 
@@ -65,7 +64,7 @@ public class CustomContentProvider extends ContentProvider {
      * Finally, it ignores manual pause (SEGMENT_START_MANUAL).
      */
     private final String SENSOR_STATS_QUERY =
-            "WITH time_select as " +
+            "WITH time_select AS " +
                 "(SELECT t1." + TrackPointsColumns.TIME + " * (t1." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")) time_value " +
                 "FROM " + TrackPointsColumns.TABLE_NAME + " t1 " +
                 "WHERE t1." + TrackPointsColumns._ID + " > t." + TrackPointsColumns._ID + " AND t1." + TrackPointsColumns.TRACKID + " = ? ORDER BY _id LIMIT 1) " +
@@ -101,6 +100,7 @@ public class CustomContentProvider extends ContentProvider {
 
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath(), UrlType.TRACKS.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_SENSOR_STATS.getPath() + "/#", UrlType.TRACKS_SENSOR_STATS.ordinal());
+        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath() + "/*", UrlType.TRACKS_BY_ID.ordinal());
 
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
@@ -223,6 +223,8 @@ public class CustomContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri url, String[] projection, String selection, String[] selectionArgs, String sort) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         String sortOrder = null;
+        String groupBy = null;
+        //TODO queryBuilder.appendWhere() should use selectionArgs?
         switch (getUrlType(url)) {
             case TRACKPOINTS -> {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
@@ -249,8 +251,22 @@ public class CustomContentProvider extends ContentProvider {
                 queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
             }
             case TRACKS_SENSOR_STATS -> {
+                //TODO Replace with SQLQueryBuilder?
                 long trackId = ContentUris.parseId(url);
                 return db.rawQuery(SENSOR_STATS_QUERY, new String[]{String.valueOf(trackId), String.valueOf(trackId)});
+            }
+            case TRACKS_AGGREGATED_STATISTICS -> {
+                queryBuilder.setTables(TracksColumns.TABLE_NAME);
+                projection = new String[]{
+                        "COUNT(*) AS " + TracksColumns.TRACK_COUNT,
+                        TracksColumns.ACTIVITY_TYPE_LOCALIZED,
+                        "SUM(" + TracksColumns.MOVINGTIME + ") AS " + TracksColumns.MOVINGTIME,
+                        "SUM(" + TracksColumns.TOTALDISTANCE + ") AS " + TracksColumns.TOTALDISTANCE,
+                        "MAX(" + TracksColumns.MAXSPEED + ") AS " + TracksColumns.MAXSPEED
+                };
+
+                sortOrder = TracksColumns.TRACK_COUNT + " DESC";
+                groupBy = TracksColumns.ACTIVITY_TYPE_LOCALIZED;
             }
             case MARKERS -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
@@ -266,7 +282,7 @@ public class CustomContentProvider extends ContentProvider {
             }
             default -> throw new IllegalArgumentException("Unknown url " + url);
         }
-        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, groupBy, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), url);
         return cursor;
     }
@@ -379,14 +395,14 @@ public class CustomContentProvider extends ContentProvider {
         throw new SQLException("Failed to insert a marker " + url);
     }
 
-    @VisibleForTesting
-    enum UrlType {
+    private enum UrlType {
         TRACKPOINTS,
         TRACKPOINTS_BY_ID,
         TRACKPOINTS_BY_TRACKID,
         TRACKS,
         TRACKS_BY_ID,
         TRACKS_SENSOR_STATS,
+        TRACKS_AGGREGATED_STATISTICS,
         MARKERS,
         MARKERS_BY_ID,
         MARKERS_BY_TRACKID

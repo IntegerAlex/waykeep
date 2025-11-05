@@ -31,6 +31,7 @@ public interface TracksColumns extends BaseColumns {
     String TABLE_NAME = "tracks";
     Uri CONTENT_URI = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME);
     Uri CONTENT_URI_SENSOR_STATS = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME + "/sensorstats");
+    Uri CONTENT_URI_AGGREGATED_STATISTICS = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME + "/aggregated/");
     String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.de.dennisguse.track";
     String CONTENT_ITEMTYPE = "vnd.android.cursor.item/vnd.de.dennisguse.track";
     String DEFAULT_SORT_ORDER = _ID;
@@ -46,7 +47,9 @@ public interface TracksColumns extends BaseColumns {
     String STARTTIME_OFFSET = "time_offset"; // in plus/minus in seconds
     String STARTTIME = "time_start"; // track start time
     String STOPTIME = "time_stop"; // track stop time
+
     String MARKER_COUNT = "markerCount"; // the numbers of markers (virtual column)
+    String TRACK_COUNT = "trackCount"; // the numbers of markers (virtual column)
 
     String TOTALDISTANCE = "distance"; // total distance
     String TOTALTIME = "duration_total";

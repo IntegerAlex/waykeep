@@ -55,12 +55,7 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
 
         viewModel = new ViewModelProvider(this).get(AggregatedStatisticsModel.class);
         viewModel.getAggregatedStats(selection).observe(this, aggregatedStatistics -> {
-            if ((aggregatedStatistics == null || aggregatedStatistics.getCount() == 0) && !selection.isEmpty()) {
-                viewBinding.aggregatedStatsEmptyView.setText(getString(R.string.aggregated_stats_filter_no_results));
-            }
-            if (aggregatedStatistics != null) {
-                adapter.swapData(aggregatedStatistics);
-            }
+            adapter.swapData(aggregatedStatistics);
             checkListEmpty();
         });
 
@@ -71,6 +66,9 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
         if (adapter.getItemCount() == 0) {
             viewBinding.aggregatedStatsList.setVisibility(View.GONE);
             viewBinding.aggregatedStatsEmptyView.setVisibility(View.VISIBLE);
+            if (!selection.isEmpty()) {
+                viewBinding.aggregatedStatsEmptyView.setText(getString(R.string.aggregated_stats_filter_no_results));
+            }
         } else {
             viewBinding.aggregatedStatsList.setVisibility(View.VISIBLE);
             viewBinding.aggregatedStatsEmptyView.setVisibility(View.GONE);

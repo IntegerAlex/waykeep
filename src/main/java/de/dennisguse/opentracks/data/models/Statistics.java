@@ -35,9 +35,6 @@ public record Statistics(
     }
 
     public Speed getAverageSpeed() {
-        if (totalTime.isZero()) {
-            return Speed.ZERO;
-        }
         return Speed.of(totalDistance, totalTime);
     }
 

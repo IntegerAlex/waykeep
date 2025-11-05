@@ -19,6 +19,8 @@ public record Distance(double distance_m) {
             return Distance.of((double) distance_m);
         }
     }
+
+    @Deprecated //TODO Remove
     public static Distance of(String distance_m) {
         return of(Float.parseFloat(distance_m));
     }

@@ -10,19 +10,19 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import de.dennisguse.opentracks.data.AggregatedStatistic;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.TrackSelection;
-import de.dennisguse.opentracks.data.models.Track;
 
 public class AggregatedStatisticsModel extends AndroidViewModel {
 
-    private MutableLiveData<AggregatedStatistics> aggregatedStats;
+    private MutableLiveData<List<AggregatedStatistic>> aggregatedStats;
 
     public AggregatedStatisticsModel(@NonNull Application application) {
         super(application);
     }
 
-    public LiveData<AggregatedStatistics> getAggregatedStats(@Nullable TrackSelection selection) {
+    public LiveData<List<AggregatedStatistic>> getAggregatedStats(@Nullable TrackSelection selection) {
         if (aggregatedStats == null) {
             aggregatedStats = new MutableLiveData<>();
             loadAggregatedStats(selection);
@@ -41,11 +41,7 @@ public class AggregatedStatisticsModel extends AndroidViewModel {
     private void loadAggregatedStats(TrackSelection selection) {
         new Thread(() -> {
             ContentProviderUtils contentProviderUtils = new ContentProviderUtils(getApplication().getApplicationContext());
-            List<Track> tracks = selection != null ? contentProviderUtils.getTracks(selection) : contentProviderUtils.getTracks();
-
-            AggregatedStatistics aggregatedStatistics = new AggregatedStatistics(tracks);
-
-            aggregatedStats.postValue(aggregatedStatistics);
+            aggregatedStats.postValue(contentProviderUtils.getAggregatedStatisticsForTracks(selection));
         }).start();
     }
 }
