@@ -29,7 +29,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 38;
+    private static final int DATABASE_VERSION = 39;
 
     private final Context context;
 
@@ -82,6 +82,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 36 -> upgradeFrom35to36(db);
                 case 37 -> upgradeFrom36to37(db);
                 case 38 -> upgradeFrom37to38(db);
+                case 39 -> upgradeFrom38to39(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -107,6 +108,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 35 -> downgradeFrom36to35(db);
                 case 36 -> downgradeFrom37to36(db);
                 case 37 -> downgradeFrom38to37(db);
+                case 38 -> downgradeFrom39to38(db);
                 default -> throw new RuntimeException("Not implemented: downgrade to " + toVersion);
             }
         }
@@ -670,4 +672,36 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         db.endTransaction();
     }
 
+    private void upgradeFrom38to39(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("DROP INDEX tracks_uuid_index");
+
+        db.execSQL("ALTER TABLE tracks RENAME TO tracks_old");
+        db.execSQL("CREATE TABLE tracks (_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BLOB, name TEXT, description TEXT, activity_type TEXT, activity_type_localized TEXT, time_offset INTEGER, time_start INTEGER, time_stop INTEGER, duration_total INTEGER, duration_moving INTEGER, distance FLOAT, speed_max FLOAT, altitude_min FLOAT, altitude_max FLOAT, altitude_gain FLOAT, altitude_loss FLOAT)");
+        db.execSQL("INSERT INTO tracks SELECT _id, uuid, name, description, activity_type, category, starttime_offset, starttime, stoptime, totaltime, movingtime, totaldistance, maxspeed, minelevation, maxelevation, elevationgain, elevationloss FROM tracks_old");
+        db.execSQL("DROP TABLE tracks_old");
+
+        db.execSQL("CREATE UNIQUE INDEX tracks_uuid_index ON tracks(uuid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void downgradeFrom39to38(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("DROP INDEX tracks_uuid_index");
+
+        db.execSQL("ALTER TABLE tracks RENAME TO tracks_old");
+        db.execSQL("CREATE TABLE tracks (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, category TEXT, starttime INTEGER, stoptime INTEGER, numpoints INTEGER, totaldistance FLOAT, totaltime INTEGER, movingtime INTEGER, avgspeed FLOAT, avgmovingspeed FLOAT, maxspeed FLOAT, minelevation FLOAT, maxelevation FLOAT, elevationgain FLOAT, icon TEXT, uuid BLOB, elevationloss FLOAT, starttime_offset INTEGER)");
+
+        db.execSQL("INSERT INTO tracks SELECT _id, name, description, activity_type_localized, time_start, time_stop, 0, distance, duration_total, duration_moving, 0, 0, speed_max, altitude_min, altitude_max, altitude_gain, null, uuid, altitude_loss, time_offset FROM tracks_old");
+        db.execSQL("DROP TABLE tracks_old");
+
+        db.execSQL("CREATE UNIQUE INDEX tracks_uuid_index ON tracks(uuid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
 }

@@ -65,7 +65,7 @@ public class TrackSelectionTest extends TestCase {
     }
 
     @Test
-    public void testFilterBuildSelection_onlyOneCategory() {
+    public void testFilterBuildSelection_onlyOneactivity_type_localized() {
         // given
         TrackSelection filter = new TrackSelection().addActivityType("running");
 
@@ -73,7 +73,7 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals("category IN (?)", selection.selection());
+        assertEquals("activity_type_localized IN (?)", selection.selection());
         assertEquals(1, selection.selectionArgs().length);
         assertEquals("running", selection.selectionArgs()[0]);
     }
@@ -91,7 +91,7 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals("category IN (?,?,?,?)", selection.selection());
+        assertEquals("activity_type_localized IN (?,?,?,?)", selection.selection());
         assertEquals(4, selection.selectionArgs().length);
         assertEquals("running", selection.selectionArgs()[0]);
         assertEquals("road biking", selection.selectionArgs()[1]);
@@ -120,7 +120,7 @@ public class TrackSelectionTest extends TestCase {
         assertNull(selectionWrong2.selection());
         assertNull(selectionWrong2.selectionArgs());
 
-        assertEquals("starttime BETWEEN ? AND ?", selectionOk.selection());
+        assertEquals("time_start BETWEEN ? AND ?", selectionOk.selection());
         assertEquals(2, selectionOk.selectionArgs().length);
         assertEquals(selectionOk.selectionArgs()[0], Long.toString(instant.toEpochMilli()));
         assertEquals(selectionOk.selectionArgs()[1], Long.toString(instant.toEpochMilli() + oneDay));
@@ -143,7 +143,7 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals("_id IN (?,?,?) AND category IN (?,?)", selection.selection());
+        assertEquals("_id IN (?,?,?) AND activity_type_localized IN (?,?)", selection.selection());
         assertEquals(5, selection.selectionArgs().length);
         assertEquals("1", selection.selectionArgs()[0]);
         assertEquals("2", selection.selectionArgs()[1]);
@@ -172,7 +172,7 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals("_id IN (?,?,?) AND starttime BETWEEN ? AND ?", selection.selection());
+        assertEquals("_id IN (?,?,?) AND time_start BETWEEN ? AND ?", selection.selection());
         assertEquals(5, selection.selectionArgs().length);
         assertEquals("1", selection.selectionArgs()[0]);
         assertEquals("2", selection.selectionArgs()[1]);
@@ -196,7 +196,7 @@ public class TrackSelectionTest extends TestCase {
         SelectionData selection = filter.buildSelection();
 
         // Then
-        assertEquals("category IN (?,?) AND starttime BETWEEN ? AND ?", selection.selection());
+        assertEquals("activity_type_localized IN (?,?) AND time_start BETWEEN ? AND ?", selection.selection());
         assertEquals(4, selection.selectionArgs().length);
         assertEquals("running", selection.selectionArgs()[0]);
         assertEquals("road biking", selection.selectionArgs()[1]);

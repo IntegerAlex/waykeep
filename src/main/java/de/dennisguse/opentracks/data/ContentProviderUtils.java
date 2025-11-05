@@ -320,8 +320,6 @@ public class ContentProviderUtils {
         values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
         values.put(TracksColumns.TOTALTIME, trackStatistics.totalTime().toMillis());
         values.put(TracksColumns.MOVINGTIME, trackStatistics.movingTime().toMillis());
-        values.put(TracksColumns.AVGSPEED, trackStatistics.getAverageSpeed().toMPS());
-        values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
         values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
 
         if (trackStatistics.altitudeExtremities() != null) {
@@ -352,8 +350,6 @@ public class ContentProviderUtils {
         values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
         values.put(TracksColumns.TOTALTIME, trackStatistics.totalTime().toMillis());
         values.put(TracksColumns.MOVINGTIME, trackStatistics.movingTime().toMillis());
-        values.put(TracksColumns.AVGSPEED, trackStatistics.getAverageSpeed().toMPS());
-        values.put(TracksColumns.AVGMOVINGSPEED, trackStatistics.getAverageMovingSpeed().toMPS());
         values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
         values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
         values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());

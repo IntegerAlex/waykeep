@@ -41,49 +41,41 @@ public interface TracksColumns extends BaseColumns {
     String DESCRIPTION = "description"; // track description
     /** see {@link de.dennisguse.opentracks.data.models.ActivityType}.id */
     String ACTIVITY_TYPE = "activity_type";
-    String ACTIVITY_TYPE_LOCALIZED = "category"; // track activity type
-    @Deprecated
-    String ICON = "icon"; // track activity type icon
-    String STARTTIME = "starttime"; // track start time
-    String STARTTIME_OFFSET = "starttime_offset"; // in plus/minus in seconds
-    String STOPTIME = "stoptime"; // track stop time
-    String MARKER_COUNT = "markerCount"; // the numbers of markers (virtual column)
-    @Deprecated
-    String NUMPOINTS = "numpoints"; // number of track points //TODO UNUSED
-    String TOTALDISTANCE = "totaldistance"; // total distance
-    String TOTALTIME = "totaltime"; // total time
-    String MOVINGTIME = "movingtime"; // moving time
+    String ACTIVITY_TYPE_LOCALIZED = "activity_type_localized";
 
-    String AVGSPEED = "avgspeed"; // average speed
-    String AVGMOVINGSPEED = "avgmovingspeed"; // average moving speed
-    String MAXSPEED = "maxspeed"; // maximum speed
-    String MIN_ALTITUDE = "minelevation"; // minimum altitude //TODO RENAME column
-    String MAX_ALTITUDE = "maxelevation"; // maximum altitude //TODO RENAME column
-    String ALTITUDE_GAIN = "elevationgain"; // altitude gain //TODO RENAME column
-    String ALTITUDE_LOSS = "elevationloss"; // altitude loss //TODO RENAME column
+    String STARTTIME_OFFSET = "time_offset"; // in plus/minus in seconds
+    String STARTTIME = "time_start"; // track start time
+    String STOPTIME = "time_stop"; // track stop time
+    String MARKER_COUNT = "markerCount"; // the numbers of markers (virtual column)
+
+    String TOTALDISTANCE = "distance"; // total distance
+    String TOTALTIME = "duration_total";
+    String MOVINGTIME = "duration_moving";
+
+    String MAXSPEED = "speed_max";
+    String MIN_ALTITUDE = "altitude_min";
+    String MAX_ALTITUDE = "altitude_max";
+    String ALTITUDE_GAIN = "altitude_gain";
+    String ALTITUDE_LOSS = "altitude_loss";
 
     String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + UUID + " BLOB, "
             + NAME + " TEXT, "
             + DESCRIPTION + " TEXT, "
+            + ACTIVITY_TYPE + " TEXT, "
             + ACTIVITY_TYPE_LOCALIZED + " TEXT, "
+            + STARTTIME_OFFSET + " INTEGER, "
             + STARTTIME + " INTEGER, "
             + STOPTIME + " INTEGER, "
-            + NUMPOINTS + " INTEGER, "
-            + TOTALDISTANCE + " FLOAT, "
             + TOTALTIME + " INTEGER, "
             + MOVINGTIME + " INTEGER, "
-            + AVGSPEED + " FLOAT, "
-            + AVGMOVINGSPEED + " FLOAT, "
+            + TOTALDISTANCE + " FLOAT, "
             + MAXSPEED + " FLOAT, "
             + MIN_ALTITUDE + " FLOAT, "
             + MAX_ALTITUDE + " FLOAT, "
             + ALTITUDE_GAIN + " FLOAT, "
-            + ICON + " TEXT, "
-            + UUID + " BLOB, "
-            + ALTITUDE_LOSS + " FLOAT, "
-            + STARTTIME_OFFSET + " INTEGER, "
-            + ACTIVITY_TYPE + " TEXT)";
+            + ALTITUDE_LOSS + " FLOAT)";
 
     String CREATE_TABLE_INDEX = "CREATE UNIQUE INDEX " + TABLE_NAME + "_" + UUID + "_index ON " + TABLE_NAME + "(" + UUID + ")";
 
