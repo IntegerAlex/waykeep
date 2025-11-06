@@ -227,7 +227,7 @@ limitations under the License.
     <string name="settings_recording_fullscreen_on_while_recording_summary">Mentras grava, mostrar a pantalla completa.</string>
     <string name="settings_recording_default_activity_title">Tipo de actividade predeterminada</string>
     <string name="settings_recording_location_frequency_summary">%1$s entre comprobacións da posición</string>
-    <string name="settings_recording_max_recording_distance_summary">Créase un novo segmento se a distancia entre as posicións é superior a %1$s</string>
+    <string name="settings_recording_max_recording_distance_summary">Créase un novo tramo se a distancia entre as posicións é superior a %1$s</string>
     <string name="settings_recording_max_recording_distance_title">Distancia máxima</string>
     <string name="settings_recording_min_recording_distance_title">Intervalo da distancia para gravar</string>
     <string name="settings_recording_min_recording_interval_title">Tempo entre posicións</string>
@@ -603,6 +603,7 @@ limitations under the License.
     <string name="settings_night_mode_option_night_dynamic">Noite (Cores Dinámicas)</string>
     <string name="settings_night_mode_option_night_oled_dynamic">para OLED (Cores Dinámicas)</string>
     <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
-    <string name="settings_announcements_segment_average_speed_pace">Velocidade/Ritmo medios (Segmento)</string>
-    <string name="stats_average_segment_pace">Ritmo medio no Segmento</string>
+    <string name="settings_announcements_segment_average_speed_pace">Velocidade/Ritmo medios (Tramo)</string>
+    <string name="stats_average_segment_pace">Ritmo medio no Tramo</string>
+    <string name="stats_elapsed_segment_time">Tempo transcurrido no tramo</string>
 </resources>

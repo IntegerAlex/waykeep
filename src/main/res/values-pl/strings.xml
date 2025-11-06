@@ -573,4 +573,21 @@ limitations under the License.
     <string name="settings_sensor_bluetooth_service_filter_off">Pokaż wszystkie urządzenia bluetooth</string>
     <string name="settings_public_api_enabled_title">Publiczne API</string>
     <string name="settings_announcements_idle_category_title">Powiadomienia o przerwach</string>
+    <string name="pace">Tempo</string>
+    <string name="always">Zawsze</string>
+    <string name="settings_night_mode_option_system_dynamic">Systemowy (dynamiczne kolory)</string>
+    <string name="settings_night_mode_option_day_dynamic">Dzień (dynamiczne kolory)</string>
+    <string name="settings_night_mode_option_night_dynamic">Noc (dynamiczne kolory)</string>
+    <string name="track_edit_time_offset">Przesunięcie strefy czasowej</string>
+    <string name="voice_per_kilometer">na kilometr</string>
+    <string name="voice_per_mile">na milę</string>
+    <string name="lap_time">Czas okrążenia</string>
+    <string name="total_distance">Całkowity dystans</string>
+    <string name="report_bug">Zgłoś błąd</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Ostrzeżenie o wyłączonym GPS</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Przyjazne OLED (dynamiczne kolory)</string>
+    <string name="speed">Średnia prędkość poruszania się</string>
+    <string name="show_on_dashboard">API panelu OpenTracks</string>
+    <string name="marker_detail_title">%1$d z %2$d: %3$s</string>
+    <string name="voice_on_device_speaker_title">Użyj wbudowanego głośnika</string>
 </resources>
