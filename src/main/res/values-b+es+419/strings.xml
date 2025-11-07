@@ -478,4 +478,9 @@
     <string name="average_heart_rate">Ritmo cardíaco promedio</string>
     <string name="current_heart_rate">Ritmo cardíaco actual</string>
     <string name="settings_export_filename_title">Formato del nombre del archivo</string>
+    <string name="help_data_google_play_services_content">No</string>
+    <string name="activity_type_kickscooter">scooter</string>
+    <string name="description_pace_nautical">Cadencia (min/NM)</string>
+    <string name="description_speed_nautical">Velocidad (nudos)</string>
+    <string name="image_discard">Descartar</string>
 </resources>
