@@ -87,13 +87,13 @@ limitations under the License.
     <string name="description_average_moving_speed">Середня швидкість руху: %1$.2f км/год (%2$.1f миль/год)</string>
     <string name="description_average_pace_in_minute">Середній темп: %1$s хв/км (%2$s хв/милю)</string>
     <string name="description_average_speed">Середня швидкість: %1$.2f км/год (%2$.1f миль/год)</string>
-    <string name="description_altitude_gain">Збільшення висоти: %1$d м (%2$d фут)</string>
+    <string name="description_altitude_gain">Збільшення висоти: %1$d м (%2$d футів)</string>
     <string name="description_altitude_imperial">Висота (фути)</string>
     <string name="description_altitude_metric">Висота (метри)</string>
     <string name="description_fastest_pace_in_minute">Найшвидший темп: %1$s хв/км (%2$s хв/милю)</string>
-    <string name="description_max_altitude">Максимальний підйом: %1$d м (%2$d фут)</string>
+    <string name="description_max_altitude">Максимальна висота: %1$d м (%2$d футів)</string>
     <string name="description_max_speed">Макс. швидкість: %1$.2f км/год (%2$.1f миль/год)</string>
-    <string name="description_min_altitude">Мін. підйом: %1$d м (%2$d фут)</string>
+    <string name="description_min_altitude">Мінімальна висота: %1$d м (%2$d футів)</string>
     <string name="description_moving_time">Час руху: %1$s</string>
     <string name="description_pace_imperial">Темп (хв/милю)</string>
     <string name="description_pace_metric">Темп (хв/км)</string>
@@ -202,7 +202,7 @@ limitations under the License.
     <string name="stats_average_moving_speed">Середня швидкість руху</string>
     <string name="stats_average_pace">Середній темп</string>
     <string name="stats_average_speed">Середня швидкість</string>
-    <string name="stats_altitude">Підйом</string>
+    <string name="stats_altitude">Висота</string>
     <string name="stats_fastest_pace">Найшвидший темп</string>
     <string name="stats_gain">Приріст</string>
     <string name="stats_max_speed">Макс. швидкість</string>
@@ -238,8 +238,8 @@ limitations under the License.
     <string name="unit_minute_per_kilometer">хв/км</string>
     <string name="unit_minute_per_mile">хв/милю</string>
     <!-- Value -->
-    <string name="value_integer_feet_excellent_gps">%1$d фут. (відмінний сигнал GPS)</string>
-    <string name="value_integer_feet_recommended">%1$d фут. (рекомендовано)</string>
+    <string name="value_integer_feet_excellent_gps">%1$d футів (відмінний сигнал GPS)</string>
+    <string name="value_integer_feet_recommended">%1$d футів (рекомендовано)</string>
     <string name="value_integer_kilometer_hour">%1$d км/год</string>
     <string name="value_integer_meter_excellent_gps">%1$d м (відмінний сигнал GPS)</string>
     <string name="value_integer_meter_poor_gps">%1$d м (слабкий сигнал GPS)</string>
@@ -302,13 +302,13 @@ limitations under the License.
     <string name="waypoint_type_waterfall">водоспад</string>
     <string name="waypoint_type_water_fountain">фонтан</string>
     <string name="waypoint_type_waypoint">точка маршруту</string>
-    <string name="sensor_state_heart_rate_avg">Сер. ритм серця</string>
-    <string name="sensor_state_heart_rate_max">Макс. ритм серця</string>
+    <string name="sensor_state_heart_rate_avg">Сер. пульс</string>
+    <string name="sensor_state_heart_rate_max">Макс. пульс</string>
     <string name="sensor_state_power_avg">Сер. потужність</string>
     <string name="settings_night_mode_option_day">День</string>
     <string name="settings_night_mode_option_night">Ніч</string>
     <string name="stats_split_interval">Розділити на</string>
-    <string name="track_recording_notification_accuracy">Точність місцеположення: %1$s</string>
+    <string name="track_recording_notification_accuracy">Точність місцезнаходження: %1$s</string>
     <string name="track_detail_intervals_tab">Інтервали</string>
     <string name="interval_list_empty_message">Ще немає інтервалу</string>
     <string name="share_image_body">Гадаю, це зображення може вас зацікавити.</string>
@@ -335,12 +335,12 @@ limitations under the License.
     <string name="help_recording_title">Як OpenTracks записує дані\?</string>
     <string name="help_track_export_title">Як я можу експортувати записані треки і ділитися ними?</string>
     <string name="settings_night_mode_title">Тема UI</string>
-    <string name="help_gps_troubleshooting_title">OpenTracks не записує моє місцеположення\?</string>
+    <string name="help_gps_troubleshooting_title">OpenTracks не записує моє місцезнаходження?</string>
     <string name="help_support_title">Як я можу підтримати OpenTracks\?</string>
     <string name="open_track_as_trackfileformat">Відкрити як %1$s</string>
-    <string name="activity_type_escooter">електро-байк</string>
+    <string name="activity_type_escooter">електросамокат</string>
     <string name="settings_sensor_wheel_circumference">Окружність колеса (мм)</string>
-    <string name="description_altitude_loss">Зменшення висоти: %1$d м (%2$d фут)</string>
+    <string name="description_altitude_loss">Зменшення висоти: %1$d м (%2$d футів)</string>
     <string name="export_progress_summary_new_msg">Нові файли експортовано</string>
     <string name="export_progress_summary_overwrite_msg">Файли перезаписано</string>
     <string name="export_progress_summary_skip_msg">Пропущені файли</string>
@@ -379,7 +379,7 @@ limitations under the License.
     <string name="help_feature_content">* створення GPS-треків\n* використання датчика серцевого ритму (тільки Bluetooth LE)\n* голосові сповіщення (за часом або відстанню)\n* створення маркерів (у т.ч. із зображеннями)\n* повноцінний автономний режим\n* відображення треків на мапі (див. нижче)</string>
     <string name="help_track_export_content">Треки можна експортувати з Налаштувань у форматах KMZ, KML або GPX (KMZ/KML — усі дані, а GPX — тільки розташування). При використанні <i>значка «Поділитися»</i> треки експортуються у форматі KMZ.</string>
     <string name="help_recording_content">OpenTracks використовує GPS-датчик пристрою для безперервного запису місцезнаходження. Якщо GPS-пристрій повідомляє неточні дані (наприклад, місцезнаходження, швидкість, висоту), OpenTracks нічого не може з цим вдіяти.</string>
-    <string name="help_data_storage_content"> Дані датчика зиписуються в кожному зареєстрованому місці. Що стосується датчика частоти серцевих скорочень для кожного місцезнаходження зберігається тільки <i>одне</i> вимірювання частоти. Якщо ви зупинилися або перебуваєте в приміщенні, дані датчика не будуть записані (але будуть відображатися). </string>
+    <string name="help_data_storage_content">Дані датчиків зберігаються для кожного записаного місця. Стосовно датчика серцевого ритму це означає, що для кожного місцезнаходження зберігається тільки <i>один</i> показник пульсу. Якщо ви стоїте або перебуваєте в приміщенні, дані датчика не записуються (але відображаються).</string>
     <string name="help_support_content"> Ви можете:
 \n а) поширювати інформацію про OpenTracks,
 \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">пропонувати нові функції</a>,
@@ -397,15 +397,12 @@ limitations under the License.
     <string name="sensor_state_cadence_max">Макс. каденс</string>
     <string name="sensor_could_not_scan">Не вдалося знайти Bluetooth пристрій (помилка %1$i).</string>
     <string name="bluetooth_disabled">Увімкніть Bluetooth.</string>
-    <string name="settings_default_trackfileformat">Формат файла експорту/обміну</string>
+    <string name="settings_default_trackfileformat">Формат файлу для експорту/обміну</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Під час запису показувати статистику без розблокування пристрою.</string>
     <string name="stats_loss">Втрачено</string>
     <string name="share_image_subject">Я хочу поділитися з вами зображенням</string>
     <string name="settings_default_export_uri_title">Каталог експорту треків</string>
-    <string name="help_track_map_content"> Використовуйте маленьку піктограму мапи.
-\n a) (оновлення в реальному часі) Встановіть застосунок <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Він дозволяє дивитися карти онлайн чи офлайн завдяки <a href="https://www.openstreetmap.org">OpenStreetMap</a>.
-\n Насправді OSMDashboard є окремим застосунком, який має тимчасовий доступ лише до даних треку(ів) які будуть відображені.
-\n b) Через звичайний картографічний застосунок (на приклад, <a href="http://osmand.net/">OsmAnd</a> та <a href="https://maps.me/">MAPS.ME</a>). Ці застосунки повинні підтримувати формат файлів KMZ (тільки місцеположення та мітки часу). Фактично, застосунок повинен підтримувати функцію <i>ACTION_VIEW</i> з MIME <i>application/vnd.google-earth.kmz</i>. </string>
+    <string name="help_track_map_content">Використовуйте маленький значок мапи. \n a) (оновлення в реальному часі) Встановіть застосунок <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Він дозволяє дивитися карти онлайн чи офлайн завдяки <a href="https://www.openstreetmap.org">OpenStreetMap</a>. \n OSMDashboard — окремий застосунок, що має тимчасовий доступ лише до даних треку, який буде відображено. \n b) Через звичайний картографічний застосунок (наприклад, <a href="http://osmand.net/">OsmAnd</a> та <a href="https://maps.me/">MAPS.ME</a>). Ці застосунки повинні підтримувати формат файлів KMZ (тільки місцезнаходження та мітки часу). Фактично, застосунок повинен підтримувати функцію <i>ACTION_VIEW</i> з MIME <i>application/vnd.google-earth.kmz</i>.</string>
     <string name="settings_prevent_reimport_tracks_title">Заборонити повторний імпорт треків</string>
     <plurals name="generic_completed_with_errors">
         <item quantity="one">Завершено з %1$d помилкою</item>
@@ -430,7 +427,7 @@ limitations under the License.
     <string name="settings_sensor_running_speed_and_cadence">Дистанція, швидкість і каденс</string>
     <string name="generic_choose_an_option">Оберіть опцію</string>
     <string name="permission_bluetooth_failed">OpenTracks потребує дозволу на використання Bluetooth.</string>
-    <string name="permission_bluetooth_failed_rejected">Вам необхідно вручну надати OpenTracks доступ до прилеглих пристроїв в системних налаштуваннях.</string>
+    <string name="permission_bluetooth_failed_rejected">Вам необхідно вручну надати в системних налаштуваннях доступ для OpenTracks до пристроїв поблизу.</string>
     <string name="field_set_primary">Первинний</string>
     <string name="field_remove_from_layout">Видалити</string>
     <string name="stats_clock">Годинник</string>
@@ -464,7 +461,7 @@ limitations under the License.
     <string name="settings_import_section">Імпорт</string>
     <string name="stats_sensors_power">Потужність</string>
     <string name="stats_sensors_cadence">Каденс</string>
-    <string name="stats_sensors_heart_rate">Частота серцебиття</string>
+    <string name="stats_sensors_heart_rate">Пульс</string>
     <string name="settings_defaults_summary">Переважні одиниці виміру, Активність за замовчуванням, Назва треку за замовчуванням</string>
     <string name="settings_defaults_title">Одиниці виміру і дії за замовчуванням</string>
     <string name="settings_ui_title">Інтерфейс користувача</string>
@@ -479,7 +476,7 @@ limitations under the License.
     <string name="aggregated_stats_filter_no_results">Для зазначеного фільтра немає дій</string>
     <string name="stats_coordinates">Широта/Довгота</string>
     <string name="settings_sensor_bluetooth_service_filter_on">Показувати лише пристрої Bluetooth, які оголошують про необхідні послуги</string>
-    <string name="settings_layout_reset_done">Всі налаштування макета були повернуті до значень за замовчуванням</string>
+    <string name="settings_layout_reset_done">Усі налаштування макета повернуто до значень за замовчуванням</string>
     <string name="settings_layout_reset_confirm_message">Усі налаштування макета буде повернуто до значень за замовчуванням. Це не призведе до видалення жодних треків з пристрою.</string>
     <string name="custom_layout_list_title">Макет</string>
     <string name="generic_today">Сьогодні</string>
@@ -582,4 +579,31 @@ limitations under the License.
     <string name="settings_announcements_lap_power">Потужність за коло</string>
     <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
     <string name="create_marker_error">Неможливо створити маркер. Спробуйте ще раз.</string>
+    <string name="permission_recording_failed">OpenTracks потребує дозволу на доступ до вашого місцезнаходження, а також до пристроїв поблизу.</string>
+    <string name="settings_recording_title">Запис</string>
+    <string name="settings_ui_dynamic_colors_title">Динамічні кольори</string>
+    <string name="settings_ui_dynamic_colors_summary">Використовувати визначені користувачем динамічні кольори (тільки для Android 12+; потрібне перезавантаження вручну)</string>
+    <string name="settings_locale_system_default">Як у системі</string>
+    <string name="track_edit_time_offset">Зсув часового поясу</string>
+    <string name="settings_theme_switch_restart">Для зміни теми може знадобитися перезапуск уручну.</string>
+    <string name="settings_announcements_unit">Одиниця відстані/швидкості</string>
+    <string name="settings_charts_title">Діаграми</string>
+    <string name="activity_type_kickscooter">самокат</string>
+    <string name="settings_chart_display_elevation_title">Показувати висоту</string>
+    <string name="settings_chart_display_pace_or_speed_title">Показувати темп чи швидкість</string>
+    <string name="settings_chart_display_heart_rate_title">Показувати пульс</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Під час запису показувати попередження, якщо GPS вимкнено.</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Попередження «GPS вимкнено»</string>
+    <string name="settings_night_mode_option_system_dynamic">Системна (динамічні кольори)</string>
+    <string name="settings_night_mode_option_day_dynamic">День (динамічні кольори)</string>
+    <string name="settings_night_mode_option_night_dynamic">Ніч (динамічні кольори)</string>
+    <string name="settings_night_mode_option_night_oled">Сумісна з OLED</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Сумісна з OLED (динамічні кольори)</string>
+    <string name="value_internal_sensor">Вбудований датчик</string>
+    <string name="settings_recording_min_sampling_interval_title">Інтервал вибірки</string>
+    <string name="settings_recording_location_distance_summary">%1$s між записами місцезнаходження</string>
+    <string name="settings_announcements_idle_category_title">Голосові сповіщення без руху</string>
+    <string name="settings_announcements_idle_title">Без руху</string>
+    <string name="voiceIdle">Перехід у режим без руху.</string>
+    <string name="settings_recording_idle_timeout_title">Поріг режиму «Без руху»</string>
 </resources>
