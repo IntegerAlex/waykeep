@@ -37,12 +37,12 @@ limitations under the License.
     <string name="activity_type_hiking">пішохідний туризм</string>
     <string name="activity_type_horse_back_riding">верхова їзда на конях</string>
     <string name="activity_type_hot_air_balloon">повітряна куля</string>
-    <string name="activity_type_ice_sailing">буерний спорт</string>
+    <string name="activity_type_ice_sailing">буєрний спорт</string>
     <string name="activity_type_inline_skating">роликові ковзани</string>
     <string name="activity_type_kayaking">каякінг</string>
     <string name="activity_type_kite_surfing">кайтсерфінг</string>
     <string name="activity_type_land_sailing">наземні вітрильники</string>
-    <string name="activity_type_mixed_type">змішаного типу</string>
+    <string name="activity_type_mixed_type">змішаний тип</string>
     <string name="activity_type_motor_bike">мотоцикл</string>
     <string name="activity_type_motor_boating">моторні човни</string>
     <string name="activity_type_mountain_biking">гірський велосипедний спорт</string>
@@ -87,13 +87,13 @@ limitations under the License.
     <string name="description_average_moving_speed">Середня швидкість руху: %1$.2f км/год (%2$.1f миль/год)</string>
     <string name="description_average_pace_in_minute">Середній темп: %1$s хв/км (%2$s хв/милю)</string>
     <string name="description_average_speed">Середня швидкість: %1$.2f км/год (%2$.1f миль/год)</string>
-    <string name="description_altitude_gain">Збільшення висоти: %1$d м (%2$d футів)</string>
+    <string name="description_altitude_gain">Підйом: %1$d м (%2$d футів)</string>
     <string name="description_altitude_imperial">Висота (фути)</string>
     <string name="description_altitude_metric">Висота (метри)</string>
     <string name="description_fastest_pace_in_minute">Найшвидший темп: %1$s хв/км (%2$s хв/милю)</string>
-    <string name="description_max_altitude">Максимальна висота: %1$d м (%2$d футів)</string>
+    <string name="description_max_altitude">Макс. висота: %1$d м (%2$d футів)</string>
     <string name="description_max_speed">Макс. швидкість: %1$.2f км/год (%2$.1f миль/год)</string>
-    <string name="description_min_altitude">Мінімальна висота: %1$d м (%2$d футів)</string>
+    <string name="description_min_altitude">Мін. висота: %1$d м (%2$d футів)</string>
     <string name="description_moving_time">Час руху: %1$s</string>
     <string name="description_pace_imperial">Темп (хв/милю)</string>
     <string name="description_pace_metric">Темп (хв/км)</string>
@@ -171,7 +171,7 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Розширені</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Дистанція</string>
+    <string name="settings_chart_by_distance">Відстань</string>
     <string name="settings_chart_by_time">Час</string>
     <string name="settings_recording_default_activity_title">Тип за замовчуванням</string>
     <string name="settings_recording_location_frequency_summary">%1$s між перевірками місцезнаходження</string>
@@ -204,7 +204,7 @@ limitations under the License.
     <string name="stats_average_speed">Середня швидкість</string>
     <string name="stats_altitude">Висота</string>
     <string name="stats_fastest_pace">Найшвидший темп</string>
-    <string name="stats_gain">Приріст</string>
+    <string name="stats_gain">Підйом</string>
     <string name="stats_max_speed">Макс. швидкість</string>
     <string name="stats_moving_time">Час у дорозі</string>
     <string name="stats_pace">Темп</string>
@@ -251,7 +251,7 @@ limitations under the License.
     <string name="value_off">Вимк.</string>
     <string name="value_smallest_recommended">Найменше (рекомендовано)</string>
     <!-- Waypoint Type -->
-    <string name="waypoint_type_atm">Банкомат</string>
+    <string name="waypoint_type_atm">банкомат</string>
     <string name="waypoint_type_bank">банк</string>
     <string name="waypoint_type_bar">бар</string>
     <string name="waypoint_type_barbecue">барбекю</string>
@@ -340,7 +340,7 @@ limitations under the License.
     <string name="open_track_as_trackfileformat">Відкрити як %1$s</string>
     <string name="activity_type_escooter">електросамокат</string>
     <string name="settings_sensor_wheel_circumference">Окружність колеса (мм)</string>
-    <string name="description_altitude_loss">Зменшення висоти: %1$d м (%2$d футів)</string>
+    <string name="description_altitude_loss">Спуск: %1$d м (%2$d футів)</string>
     <string name="export_progress_summary_new_msg">Нові файли експортовано</string>
     <string name="export_progress_summary_overwrite_msg">Файли перезаписано</string>
     <string name="export_progress_summary_skip_msg">Пропущені файли</string>
@@ -380,14 +380,7 @@ limitations under the License.
     <string name="help_track_export_content">Треки можна експортувати з Налаштувань у форматах KMZ, KML або GPX (KMZ/KML — усі дані, а GPX — тільки розташування). При використанні <i>значка «Поділитися»</i> треки експортуються у форматі KMZ.</string>
     <string name="help_recording_content">OpenTracks використовує GPS-датчик пристрою для безперервного запису місцезнаходження. Якщо GPS-пристрій повідомляє неточні дані (наприклад, місцезнаходження, швидкість, висоту), OpenTracks нічого не може з цим вдіяти.</string>
     <string name="help_data_storage_content">Дані датчиків зберігаються для кожного записаного місця. Стосовно датчика серцевого ритму це означає, що для кожного місцезнаходження зберігається тільки <i>один</i> показник пульсу. Якщо ви стоїте або перебуваєте в приміщенні, дані датчика не записуються (але відображаються).</string>
-    <string name="help_support_content"> Ви можете:
-\n а) поширювати інформацію про OpenTracks,
-\n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">пропонувати нові функції</a>,
-\n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">повідомляти про помилки</a>,
-\n d) допомогти в розробці програмного забезпечення,
-\n e) купувати в <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>,
-\n f) зробити фінансовий внесок, та
-\n g) робити все, що, на вашу думку, допомагає OpenTracks. </string>
+    <string name="help_support_content">Ви можете: \n а) поширювати інформацію про OpenTracks, \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">пропонувати нові функції</a>, \n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">повідомляти про помилки</a>, \n d) допомогти в розробці програмного забезпечення, \n e) купувати в <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>, \n f) зробити фінансовий внесок і \n g) робити все, що, на вашу думку, допомагає OpenTracks.</string>
     <string name="description_default_speed_or_pace">За активністю</string>
     <string name="export_error_post_workout">Не вдалося виконати експорт після тренування, перевірте каталог експорту.</string>
     <string name="aggregated_stats_empty_message">Запишіть свій перший трек, щоб побачити загальну статистику</string>
@@ -399,7 +392,7 @@ limitations under the License.
     <string name="bluetooth_disabled">Увімкніть Bluetooth.</string>
     <string name="settings_default_trackfileformat">Формат файлу для експорту/обміну</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Під час запису показувати статистику без розблокування пристрою.</string>
-    <string name="stats_loss">Втрачено</string>
+    <string name="stats_loss">Спуск</string>
     <string name="share_image_subject">Я хочу поділитися з вами зображенням</string>
     <string name="settings_default_export_uri_title">Каталог експорту треків</string>
     <string name="help_track_map_content">Використовуйте маленький значок мапи. \n a) (оновлення в реальному часі) Встановіть застосунок <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Він дозволяє дивитися карти онлайн чи офлайн завдяки <a href="https://www.openstreetmap.org">OpenStreetMap</a>. \n OSMDashboard — окремий застосунок, що має тимчасовий доступ лише до даних треку, який буде відображено. \n b) Через звичайний картографічний застосунок (наприклад, <a href="http://osmand.net/">OsmAnd</a> та <a href="https://maps.me/">MAPS.ME</a>). Ці застосунки повинні підтримувати формат файлів KMZ (тільки місцезнаходження та мітки часу). Фактично, застосунок повинен підтримувати функцію <i>ACTION_VIEW</i> з MIME <i>application/vnd.google-earth.kmz</i>.</string>
@@ -424,7 +417,7 @@ limitations under the License.
     <string name="menu_voice_rate">Швидкість передачі голосу</string>
     <string name="settings_sensor_cycling_cadence">Каденс</string>
     <string name="settings_sensor_cycling_distance_speed">Відстань і швидкість</string>
-    <string name="settings_sensor_running_speed_and_cadence">Дистанція, швидкість і каденс</string>
+    <string name="settings_sensor_running_speed_and_cadence">Відстань, швидкість і каденс</string>
     <string name="generic_choose_an_option">Оберіть опцію</string>
     <string name="permission_bluetooth_failed">OpenTracks потребує дозволу на використання Bluetooth.</string>
     <string name="permission_bluetooth_failed_rejected">Вам необхідно вручну надати в системних налаштуваннях доступ для OpenTracks до пристроїв поблизу.</string>
@@ -439,7 +432,7 @@ limitations under the License.
     <string name="generic_from">Від</string>
     <string name="generic_to">До</string>
     <string name="menu_select_layout">Виберіть макет</string>
-    <string name="menu_add_custom_layout">Нове планування</string>
+    <string name="menu_add_custom_layout">Новий макет</string>
     <string name="menu_filter">Фільтр</string>
     <string name="settings_reset_summary">Скинути налаштування до значень за замовчуванням</string>
     <string name="settings_activity_defaults_category">Дії за замовчуванням</string>
@@ -462,12 +455,12 @@ limitations under the License.
     <string name="stats_sensors_power">Потужність</string>
     <string name="stats_sensors_cadence">Каденс</string>
     <string name="stats_sensors_heart_rate">Пульс</string>
-    <string name="settings_defaults_summary">Переважні одиниці виміру, Активність за замовчуванням, Назва треку за замовчуванням</string>
-    <string name="settings_defaults_title">Одиниці виміру і дії за замовчуванням</string>
+    <string name="settings_defaults_summary">Одиниці вимірювання, Активність за замовчуванням, Назва треку за замовчуванням</string>
+    <string name="settings_defaults_title">Одиниці вимірювання і дії за замовчуванням</string>
     <string name="settings_ui_title">Інтерфейс користувача</string>
     <string name="settings_ui_summary">Зовнішній вигляд, Макет запису, Тема</string>
     <string name="settings_sensors_title">Датчики</string>
-    <string name="settings_announcements_statistics_title">Голосові оголошення</string>
+    <string name="settings_announcements_statistics_title">Голосові сповіщення статистики</string>
     <string name="settings_gps_summary">Інтервал часу, Інтервал відстані, Макс. відстань, Точність</string>
     <string name="settings_sensors_summary">Датчики велосипеда, Окружність колеса, Датчики ходу</string>
     <string name="settings_cycling_sensor">Їзда на велосипеді</string>
@@ -528,7 +521,7 @@ limitations under the License.
     <string name="settings_public_api_disabled_toast">Публічний API OpenTracks вимкнено: його можна ввімкнути в налаштуваннях.</string>
     <string name="track_discarding">Скасування треку</string>
     <string name="unit_knots">вузли</string>
-    <string name="settings_sensor_heart_rate_max">Зони: максимальна частота серцевих скорочень (уд./хв)</string>
+    <string name="settings_sensor_heart_rate_max">Зони: макс. частота серцевих скорочень (уд./хв)</string>
     <string name="settings_stats_units_nautical">Морська (морські милі, фути)</string>
     <string name="settings_api_summary">API дистанційного керування та статистики для інших програм</string>
     <string name="voice_per_kilometer">за кілометр</string>
@@ -584,7 +577,7 @@ limitations under the License.
     <string name="settings_ui_dynamic_colors_title">Динамічні кольори</string>
     <string name="settings_ui_dynamic_colors_summary">Використовувати визначені користувачем динамічні кольори (тільки для Android 12+; потрібне перезавантаження вручну)</string>
     <string name="settings_locale_system_default">Як у системі</string>
-    <string name="track_edit_time_offset">Зсув часового поясу</string>
+    <string name="track_edit_time_offset">Часовий пояс</string>
     <string name="settings_theme_switch_restart">Для зміни теми може знадобитися перезапуск уручну.</string>
     <string name="settings_announcements_unit">Одиниця відстані/швидкості</string>
     <string name="settings_charts_title">Діаграми</string>
@@ -602,8 +595,11 @@ limitations under the License.
     <string name="value_internal_sensor">Вбудований датчик</string>
     <string name="settings_recording_min_sampling_interval_title">Інтервал вибірки</string>
     <string name="settings_recording_location_distance_summary">%1$s між записами місцезнаходження</string>
-    <string name="settings_announcements_idle_category_title">Голосові сповіщення без руху</string>
+    <string name="settings_announcements_idle_category_title">Голосові сповіщення «Без руху»</string>
     <string name="settings_announcements_idle_title">Без руху</string>
     <string name="voiceIdle">Перехід у режим без руху.</string>
     <string name="settings_recording_idle_timeout_title">Поріг режиму «Без руху»</string>
+    <string name="stats_gain_loss">Підйом і спуск</string>
+    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
+    <string name="stats_elapsed_segment_time">Час на відрізок</string>
 </resources>
