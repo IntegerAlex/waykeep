@@ -184,8 +184,8 @@ public class StatisticsRecordedFragment extends Fragment {
 
         // Set time and start datetime
         {
-            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.movingTime()));
-            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.totalTime()));
+            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.movingDuration()));
+            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.totalDuration()));
         }
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());

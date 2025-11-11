@@ -130,7 +130,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             updateNextTaskDistance();
             announce = true;
         }
-        if (!trackStatistics.totalTime().minus(nextTotalTime).isNegative()) {
+        if (!trackStatistics.totalDuration().minus(nextTotalTime).isNegative()) {
             updateNextDuration();
             announce = true;
         }
@@ -196,9 +196,9 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             nextTotalTime = TOTALTIME_OFF;
         } else {
 
-            Duration intervalMod = Duration.ofMillis(trackStatistics.totalTime().toMillis() % totalTimeFrequency.toMillis());
+            Duration intervalMod = Duration.ofMillis(trackStatistics.totalDuration().toMillis() % totalTimeFrequency.toMillis());
 
-            nextTotalTime = trackStatistics.totalTime().plus(totalTimeFrequency.minus(intervalMod));
+            nextTotalTime = trackStatistics.totalDuration().plus(totalTimeFrequency.minus(intervalMod));
         }
     }
 

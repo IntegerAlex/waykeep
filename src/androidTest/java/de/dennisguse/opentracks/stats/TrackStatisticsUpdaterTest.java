@@ -246,7 +246,7 @@ public class TrackStatisticsUpdaterTest {
         ));
 
         // then
-        assertEquals(Duration.ofSeconds(35), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
+        assertEquals(Duration.ofSeconds(35), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
     }
 
     @Test
@@ -276,7 +276,7 @@ public class TrackStatisticsUpdaterTest {
         ));
 
         // then
-        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
+        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
 
         assertEquals(Distance.of(1040), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
     }
@@ -294,8 +294,8 @@ public class TrackStatisticsUpdaterTest {
         subject.addTrackPoint(new TrackPoint(TrackPoint.Type.IDLE, Instant.ofEpochSecond(30)));
         // then
         assertTrue(subject.getSegmentStatisticUpdater().isIdle());
-        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
-        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().totalTime());
+        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
+        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().totalDuration());
         assertEquals(Distance.of(10), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
 
         // when
@@ -304,8 +304,8 @@ public class TrackStatisticsUpdaterTest {
                         .setSensorDistance(Distance.ZERO));
         // then
         assertTrue(subject.getSegmentStatisticUpdater().isIdle());
-        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
-        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().totalTime());
+        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
+        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().totalDuration());
         assertEquals(Distance.of(10), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
 
         // when
@@ -314,8 +314,8 @@ public class TrackStatisticsUpdaterTest {
                         .setSensorDistance(Distance.of(1)));
         // then
         assertTrue(subject.getSegmentStatisticUpdater().isIdle());
-        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
-        assertEquals(Duration.ofSeconds(45), subject.getSegmentStatisticUpdater().getStatistics().totalTime());
+        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
+        assertEquals(Duration.ofSeconds(45), subject.getSegmentStatisticUpdater().getStatistics().totalDuration());
         assertEquals(Distance.of(11), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
 
         // when
@@ -324,8 +324,8 @@ public class TrackStatisticsUpdaterTest {
                         .setSensorDistance(Distance.of(10)));
         // then
         assertFalse(subject.getSegmentStatisticUpdater().isIdle());
-        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
-        assertEquals(Duration.ofSeconds(50), subject.getSegmentStatisticUpdater().getStatistics().totalTime());
+        assertEquals(Duration.ofSeconds(30), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
+        assertEquals(Duration.ofSeconds(50), subject.getSegmentStatisticUpdater().getStatistics().totalDuration());
         assertEquals(Distance.of(21), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
 
         // when
@@ -333,8 +333,8 @@ public class TrackStatisticsUpdaterTest {
 
         // then
         assertFalse(subject.getSegmentStatisticUpdater().isIdle());
-        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().movingTime());
-        assertEquals(Duration.ofSeconds(60), subject.getSegmentStatisticUpdater().getStatistics().totalTime());
+        assertEquals(Duration.ofSeconds(40), subject.getSegmentStatisticUpdater().getStatistics().movingDuration());
+        assertEquals(Duration.ofSeconds(60), subject.getSegmentStatisticUpdater().getStatistics().totalDuration());
         assertEquals(Distance.of(21), subject.getSegmentStatisticUpdater().getStatistics().totalDistance());
     }
 

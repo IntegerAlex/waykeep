@@ -209,8 +209,8 @@ public class ExportImportTest {
         assertEquals(Instant.parse("2020-02-02T02:02:02Z"), trackStatistics.startTime());
         assertEquals(Instant.parse("2020-02-02T02:04:00Z"), trackStatistics.stopTime());
 
-        assertEquals(Duration.ofSeconds(56), trackStatistics.totalTime());
-        assertEquals(Duration.ofSeconds(26), trackStatistics.movingTime()); //TODO Likely too low
+        assertEquals(Duration.ofSeconds(56), trackStatistics.totalDuration());
+        assertEquals(Duration.ofSeconds(26), trackStatistics.movingDuration()); //TODO Likely too low
 
         // Distance
         assertEquals(222049.34375, trackStatistics.totalDistance().toM(), 0.01); //TODO Too low
@@ -333,8 +333,8 @@ public class ExportImportTest {
         assertEquals(Instant.parse("2020-02-02T02:02:02Z"), importedTrackStatistics.startTime());
         assertEquals(Instant.parse("2020-02-02T02:04:00Z"), importedTrackStatistics.stopTime());
 
-        assertEquals(Duration.ofSeconds(56), importedTrackStatistics.totalTime());
-        assertEquals(Duration.ofSeconds(26), importedTrackStatistics.movingTime());
+        assertEquals(Duration.ofSeconds(56), importedTrackStatistics.totalDuration());
+        assertEquals(Duration.ofSeconds(26), importedTrackStatistics.movingDuration());
 
         // Distance
         assertEquals(222049.421, importedTrackStatistics.totalDistance().toM(), 0.01);
@@ -473,8 +473,8 @@ public class ExportImportTest {
         assertEquals(Instant.parse("2020-02-02T02:02:03Z"), importedTrackStatistics.startTime());
         assertEquals(Instant.parse("2020-02-02T02:03:50Z"), importedTrackStatistics.stopTime());
 
-        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.totalTime());
-        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.movingTime());
+        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.totalDuration());
+        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.movingDuration());
 
         // Distance
         assertEquals(222271.734, importedTrackStatistics.totalDistance().toM(), 0.01);

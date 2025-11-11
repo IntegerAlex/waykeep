@@ -150,7 +150,7 @@ public class IntervalStatisticsUpdaterTest {
         }
 
         // then
-        assertEquals(track.getStatistics().totalTime().toSeconds(), totalTime, 0.01);
+        assertEquals(track.getStatistics().totalDuration().toSeconds(), totalTime, 0.01);
         assertEquals(track.getStatistics().totalDistance().toM(), totalDistance.toM(), 0.01);
         assertEquals(intervalList.size(), (int) Math.ceil(track.getStatistics().totalDistance().toM() / distanceInterval));
         if (totalGain != null && totalLoss != null) {

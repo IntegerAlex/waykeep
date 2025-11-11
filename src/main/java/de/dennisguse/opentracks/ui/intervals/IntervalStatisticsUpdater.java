@@ -166,7 +166,7 @@ public class IntervalStatisticsUpdater {
 
         private void add(Statistics trackStatistics, @Nullable TrackPoint lastTrackPoint) {
             distance = distance.plus(trackStatistics.totalDistance());
-            time = time.plus(trackStatistics.totalTime());
+            time = time.plus(trackStatistics.totalDuration());
             if (trackStatistics.altitudeGainLoss() != null) {
                 gain_m = trackStatistics.altitudeGainLoss().gain_m();
                 loss_m = trackStatistics.altitudeGainLoss().loss_m();
@@ -184,7 +184,7 @@ public class IntervalStatisticsUpdater {
 
         private void set(Statistics trackStatistics) {
             distance = trackStatistics.totalDistance();
-            time = trackStatistics.totalTime();
+            time = trackStatistics.totalDuration();
             if (trackStatistics.altitudeGainLoss() != null) {
                 gain_m = trackStatistics.altitudeGainLoss().gain_m();
                 loss_m = trackStatistics.altitudeGainLoss().loss_m();

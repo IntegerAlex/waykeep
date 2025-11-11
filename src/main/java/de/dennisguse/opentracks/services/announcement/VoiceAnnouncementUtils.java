@@ -111,7 +111,7 @@ class VoiceAnnouncementUtils {
         boolean hasTravelledDistance = !totalDistance.isZero();
 
         // Announce time
-        Duration movingTime = trackStatistics.movingTime();
+        Duration movingTime = trackStatistics.movingDuration();
         if (shouldVoiceAnnounceMovingTime() && hasTravelledDistance && !movingTime.isZero()) {
             appendDuration(context, builder, movingTime);
             builder.append(".");

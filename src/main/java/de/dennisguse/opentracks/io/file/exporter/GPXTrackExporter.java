@@ -282,8 +282,8 @@ public class GPXTrackExporter implements TrackExporter {
         Statistics trackStatistics = track.getStatistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
         printWriter.println("<gpxtrkx:Distance>" + trackStatistics.totalDistance().toM() + "</gpxtrkx:Distance>");
-        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalTime().getSeconds() + "</gpxtrkx:TimerTime>");
-        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.movingTime().getSeconds() + "</gpxtrkx:MovingTime>");
+        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalDuration().getSeconds() + "</gpxtrkx:TimerTime>");
+        printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.movingDuration().getSeconds() + "</gpxtrkx:MovingTime>");
         printWriter.println("<gpxtrkx:StoppedTime>" + trackStatistics.getStoppedTime().getSeconds() + "</gpxtrkx:StoppedTime>");
         printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.maxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
         if (trackStatistics.altitudeGainLoss() != null) {

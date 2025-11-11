@@ -9,10 +9,8 @@ import java.time.Instant;
 public record Statistics(
         Instant startTime,
         Instant stopTime,
-        //TODO Rename to totalDuration
-        Duration totalTime,
-        //TODO Rename to movingDuration
-        Duration movingTime, // Based on when we believe the user is traveling
+        Duration totalDuration,
+        Duration movingDuration, // Based on when we believe the user is traveling
 
         Distance totalDistance,
 
@@ -32,15 +30,15 @@ public record Statistics(
 ) {
 
     public Duration getStoppedTime() {
-        return totalTime.minus(movingTime);
+        return totalDuration.minus(movingDuration);
     }
 
     public Speed getAverageSpeed() {
-        return Speed.of(totalDistance, totalTime);
+        return Speed.of(totalDistance, totalDuration);
     }
 
     public Speed getAverageMovingSpeed() {
-        return Speed.of(totalDistance, movingTime);
+        return Speed.of(totalDistance, movingDuration);
     }
 
     @Deprecated

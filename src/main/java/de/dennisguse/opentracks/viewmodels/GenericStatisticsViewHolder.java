@@ -46,7 +46,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.getStatisticsTrack().totalTime()), null);
+            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.getStatisticsTrack().totalDuration()), null);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -58,7 +58,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            String value = StringUtils.formatElapsedTime(data.getStatisticsTrack().movingTime());
+            String value = StringUtils.formatElapsedTime(data.getStatisticsTrack().movingDuration());
 
             getBinding().statsValue.setText(value);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_moving_time));
@@ -220,7 +220,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            String value = StringUtils.formatElapsedTime(data.currentSegment().totalTime());
+            String value = StringUtils.formatElapsedTime(data.currentSegment().totalDuration());
 
             getBinding().statsValue.setText(value);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_elapsed_segment_time));

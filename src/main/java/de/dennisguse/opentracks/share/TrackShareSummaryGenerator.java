@@ -85,10 +85,10 @@ public class TrackShareSummaryGenerator {
         writeDistance(stats.totalDistance(), builder, R.string.description_total_distance);
 
         // Total time
-        writeTime(stats.totalTime(), builder, R.string.description_total_time);
+        writeTime(stats.totalDuration(), builder, R.string.description_total_time);
 
         // Moving time
-        writeTime(stats.movingTime(), builder, R.string.description_moving_time);
+        writeTime(stats.movingDuration(), builder, R.string.description_moving_time);
 
         // Average speed
         writeSpeed(stats.getAverageSpeed(), builder, R.string.description_average_speed);

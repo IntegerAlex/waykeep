@@ -54,11 +54,11 @@ public class SegmentStatisticUpdater {
     /**
      * Updated when new points are received, may be stale.
      * This statistic is only updated when a new point is added to the statistics, so it may be off.
-     * If you need to calculate the proper totalTime, use startTime with the current time.
+     * If you need to calculate the proper totalDuration, use startTime with the current time.
      */
-    private Duration totalTime;
+    private Duration totalDuration;
     // Based on when we believe the user is traveling.
-    private Duration movingTime;
+    private Duration movingDuration;
     // The maximum speed (meters/second) that we believe is valid.
     private Speed maxSpeed;
     private Float totalAltitudeGain_m = null;
@@ -87,8 +87,8 @@ public class SegmentStatisticUpdater {
         startTime = statistics.startTime();
         stopTime = statistics.stopTime();
         totalDistance = statistics.totalDistance();
-        totalTime = statistics.totalTime();
-        movingTime = statistics.movingTime();
+        totalDuration = statistics.totalDuration();
+        movingDuration = statistics.movingDuration();
         maxSpeed = statistics.maxSpeed();
         if (statistics.altitudeExtremities() != null) {
             altitudeExtremities.set(statistics.altitudeExtremities().min_m(), statistics.altitudeExtremities().max_m());
@@ -129,8 +129,8 @@ public class SegmentStatisticUpdater {
                 // Using total time as weights for the averaging.
                 // Important to do this before total time is updated
                 avgHeartRate = HeartRate.of(
-                        (totalTime.getSeconds() * avgHeartRate.getBPM() + other.totalTime.getSeconds() * other.avgHeartRate.getBPM())
-                                / (totalTime.getSeconds() + other.totalTime.getSeconds())
+                        (totalDuration.getSeconds() * avgHeartRate.getBPM() + other.totalDuration.getSeconds() * other.avgHeartRate.getBPM())
+                                / (totalDuration.getSeconds() + other.totalDuration.getSeconds())
                 );
             }
         }
@@ -142,15 +142,15 @@ public class SegmentStatisticUpdater {
                 // Using total time as weights for the averaging.
                 // Important to do this before total time is updated
                 avgPower = Power.of(
-                        (totalTime.getSeconds() * avgPower.getW() + other.totalTime.getSeconds() * other.avgPower.getW())
-                                / (totalTime.getSeconds() + other.totalTime.getSeconds())
+                        (totalDuration.getSeconds() * avgPower.getW() + other.totalDuration.getSeconds() * other.avgPower.getW())
+                                / (totalDuration.getSeconds() + other.totalDuration.getSeconds())
                 );
             }
         }
 
         totalDistance = totalDistance.plus(other.totalDistance);
-        totalTime = totalTime.plus(other.totalTime);
-        movingTime = movingTime.plus(other.movingTime);
+        totalDuration = totalDuration.plus(other.totalDuration);
+        movingDuration = movingDuration.plus(other.movingDuration);
         maxSpeed = Speed.max(maxSpeed, other.maxSpeed);
         if (other.altitudeExtremities.hasData()) {
             altitudeExtremities.update(other.altitudeExtremities.getMin());
@@ -184,8 +184,8 @@ public class SegmentStatisticUpdater {
         startTime = null;
         stopTime = null;
 
-        totalTime = Duration.ZERO;
-        movingTime = Duration.ZERO;
+        totalDuration = Duration.ZERO;
+        movingDuration = Duration.ZERO;
         totalDistance = Distance.ZERO;
         maxSpeed = Speed.ZERO;
         totalAltitudeGain_m = null;
@@ -204,8 +204,8 @@ public class SegmentStatisticUpdater {
         return new Statistics(
                 startTime,
                 stopTime,
-                totalTime,
-                movingTime,
+                totalDuration,
+                movingDuration,
 
                 totalDistance,
                 getMaxSpeed(),
@@ -244,7 +244,7 @@ public class SegmentStatisticUpdater {
     }
 
     public void updateTotalTime(Instant now) {
-        this.totalTime = Duration.between(startTime, now);
+        this.totalDuration = Duration.between(startTime, now);
     }
 
     public void addMovingTime(TrackPoint trackPoint, TrackPoint lastTrackPoint) {
@@ -253,7 +253,7 @@ public class SegmentStatisticUpdater {
         if (movingDuration.isNegative()) {
             throw new RuntimeException("Moving time cannot be negative");
         }
-        movingTime = movingTime.plus(movingDuration);
+        this.movingDuration = this.movingDuration.plus(movingDuration);
     }
 
     public boolean isIdle() {
@@ -265,7 +265,7 @@ public class SegmentStatisticUpdater {
     }
 
     private Speed getAverageMovingSpeed() {
-        return Speed.of(totalDistance, movingTime);
+        return Speed.of(totalDistance, movingDuration);
     }
 
     public Speed getMaxSpeed() {

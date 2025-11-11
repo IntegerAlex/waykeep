@@ -26,7 +26,7 @@ public record ChartPoint(
         return new ChartPoint(
                 chartByDistance
                         ? trackStatistics.totalDistance().toKM_Miles(unitSystem)
-                        : trackStatistics.totalTime().toMillis(),
+                        : trackStatistics.totalDuration().toMillis(),
                 trackPoint.hasAltitude()
                         ? Distance.of(trackPoint.getAltitude().toM()).toM_FT(unitSystem)
                         : null,
