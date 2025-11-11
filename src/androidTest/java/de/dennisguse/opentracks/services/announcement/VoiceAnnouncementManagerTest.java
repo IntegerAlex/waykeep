@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
@@ -73,14 +74,37 @@ public class VoiceAnnouncementManagerTest {
         VoiceAnnouncementManager voiceAnnouncementManager = new VoiceAnnouncementManager(service);
         voiceAnnouncementManager.setFrequency(Duration.ofSeconds(5));
 
+        Statistics first = new Statistics(
+                null,
+                null,
+                Duration.ofSeconds(91),
+                Duration.ZERO,
+                Distance.ZERO,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        Statistics second = new Statistics(
+                null,
+                null,
+                Duration.ofSeconds(95),
+                Duration.ZERO,
+                Distance.ZERO,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
         // when
-        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
-        statistics.setTotalTime(Duration.ofSeconds(91));
-        voiceAnnouncementManager.start(statistics.getStatistics());
+        voiceAnnouncementManager.start(first);
         assertEquals(Duration.ofSeconds(95), voiceAnnouncementManager.getNextTotalTime());
 
-        statistics.setTotalTime(Duration.ofSeconds(95));
-        voiceAnnouncementManager.start(statistics.getStatistics());
+        voiceAnnouncementManager.start(second);
         assertEquals(Duration.ofSeconds(100), voiceAnnouncementManager.getNextTotalTime());
     }
 

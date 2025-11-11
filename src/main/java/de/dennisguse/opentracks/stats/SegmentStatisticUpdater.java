@@ -218,10 +218,6 @@ public class SegmentStatisticUpdater {
         );
     }
 
-    public Instant getStartTime() {
-        return startTime;
-    }
-
     /**
      * Should only be called on start.
      */
@@ -247,9 +243,8 @@ public class SegmentStatisticUpdater {
         totalDistance = totalDistance.plus(distance_m);
     }
 
-    @VisibleForTesting
-    public void setTotalTime(Duration totalTime) {
-        this.totalTime = totalTime;
+    public void updateTotalTime(Instant now) {
+        this.totalTime = Duration.between(startTime, now);
     }
 
     public void addMovingTime(TrackPoint trackPoint, TrackPoint lastTrackPoint) {

@@ -111,7 +111,7 @@ public class TrackStatisticsUpdater {
 
         // Always update time
         currentSegment.setStopTime(trackPoint.getTime());
-        currentSegment.setTotalTime(Duration.between(currentSegment.getStartTime(), trackPoint.getTime()));
+        currentSegment.updateTotalTime(trackPoint.getTime());
 
         // Process sensor data: barometer
         if (trackPoint.hasAltitudeGainLoss()) {
