@@ -16,20 +16,21 @@
 package de.dennisguse.opentracks.stats;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.Duration;
 import java.time.Instant;
 
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 
 /**
  * Tests for {@link SegmentStatisticUpdater}.
@@ -40,89 +41,87 @@ import de.dennisguse.opentracks.data.models.Speed;
 @RunWith(AndroidJUnit4.class)
 public class SegmentStatisticUpdaterTest {
 
-    private SegmentStatisticUpdater statistics;
-
-    @Before
-    public void setUp() {
-        statistics = new SegmentStatisticUpdater();
-    }
-
+    @Deprecated //TODO SegmentStatisticsUpdater should always have data, right?
     @Test
     public void testMerge_no_data() {
         // given
-        SegmentStatisticUpdater statistics2 = new SegmentStatisticUpdater();
+        SegmentStatisticUpdater subject = new SegmentStatisticUpdater();
+        SegmentStatisticUpdater append = new SegmentStatisticUpdater();
 
         // when
-        statistics.merge(statistics2);
+        subject.merge(append);
+        Statistics result = subject.getStatistics();
 
         // then
-        assertNull(statistics.getStartTime());
-        assertNull(statistics.getStopTime());
-        assertEquals(Duration.ZERO, statistics.getMovingTime());
-        assertEquals(Duration.ZERO, statistics.getTotalTime());
-
-        assertNull(statistics.getTotalAltitudeGain());
-        assertNull(statistics.getTotalAltitudeLoss());
-        assertEquals(Double.NEGATIVE_INFINITY, statistics.getMaxAltitude(), 0.0);
-        assertEquals(Double.POSITIVE_INFINITY, statistics.getMinAltitude(), 0.0);
-        assertEquals(0.0, statistics.getMaxSpeed().toMPS(), 0.0);
-        assertEquals(0.0, statistics.getAverageSpeed().toMPS(), 0.0);
-        assertEquals(0.0, statistics.getAverageMovingSpeed().toMPS(), 0.0);
-        assertNull(statistics.getAverageHeartRate());
+        assertEquals(
+                new Statistics(
+                        null,
+                        null,
+                        Duration.ZERO,
+                        Duration.ZERO,
+                        Distance.ZERO,
+                        Speed.ZERO,
+                        null,
+                        null,
+                        null,
+                        null
+                ),
+                result
+        );
     }
 
     @Test
     public void testMerge() {
         // given
-        SegmentStatisticUpdater statistics2 = new SegmentStatisticUpdater();
-        statistics.setStartTime(Instant.ofEpochMilli(1000));  // Resulting start time
-        statistics.setStopTime(Instant.ofEpochMilli(2500));
-        statistics2.setStartTime(Instant.ofEpochMilli(3000));
-        statistics2.setStopTime(Instant.ofEpochMilli(4000));  // Resulting stop time
-        statistics.setTotalTime(Duration.ofMillis(1500));
-        statistics2.setTotalTime(Duration.ofMillis(1000));  // Result: 1500+1000
-        statistics.setMovingTime(Duration.ofMillis(700));
-        statistics2.setMovingTime(Duration.ofMillis(600));  // Result: 700+600
-        statistics.setTotalDistance(Distance.of(750.0));
-        statistics2.setTotalDistance(Distance.of(350.0));  // Result: 750+350
-        statistics.setTotalAltitudeGain(50.0f);
-        statistics2.setTotalAltitudeGain(850.0f);  // Result: 850+50
-        statistics.setMaxSpeed(Speed.of(60.0));  // Resulting max speed
-        statistics2.setMaxSpeed(Speed.of(30.0));
-        statistics.setMaxAltitude(1250.0);
-        statistics.setMinAltitude(1200.0);  // Resulting min altitude
-        statistics2.setMaxAltitude(3575.0);  // Resulting max altitude
-        statistics2.setMinAltitude(2800.0);
-        statistics.setAverageHeartRate(HeartRate.of(100f));
-        statistics2.setAverageHeartRate(HeartRate.of(200f));
+        SegmentStatisticUpdater subject = new SegmentStatisticUpdater(
+                new Statistics(
+                        Instant.ofEpochMilli(1000),
+                        Instant.ofEpochMilli(2500),
+                        Duration.ofMillis(1500),
+                        Duration.ofMillis(700),
+                        Distance.of(750.0),
+                        Speed.of(60.0),
+                        new AltitudeExtremities(1200, 1250),
+                        new AltitudeGainLoss(50, 0),
+                        HeartRate.of(100),
+                        null
+                )
+        );
+
+        SegmentStatisticUpdater append = new SegmentStatisticUpdater(
+                new Statistics(
+                        Instant.ofEpochMilli(3000),
+                        Instant.ofEpochMilli(4000),
+                        Duration.ofMillis(1000),
+                        Duration.ofMillis(600),
+                        Distance.of(350.0),
+                        Speed.of(30.0),
+                        new AltitudeExtremities(2800.0, 3575.0),
+                        new AltitudeGainLoss(850, 0),
+                        HeartRate.of(200),
+                        null
+                )
+        );
 
         // when
-        statistics.merge(statistics2);
+        subject.merge(append);
+        Statistics result = subject.getStatistics();
 
         // then
-        assertEquals(Instant.ofEpochMilli(1000), statistics.getStartTime());
-        assertEquals(Instant.ofEpochMilli(4000), statistics.getStopTime());
-        assertEquals(Duration.ofMillis(2500), statistics.getTotalTime());
-        assertEquals(Duration.ofMillis(1300), statistics.getMovingTime());
-        assertEquals(1100.0, statistics.getTotalDistance().toM(), 0.001);
-        assertEquals(900.0, statistics.getTotalAltitudeGain(), 0.001);
-        assertEquals(Speed.of(statistics.getTotalDistance(), statistics.getMovingTime()).toMPS(), statistics.getMaxSpeed().toMPS(), 0.001);
-        assertEquals(1200.0, statistics.getMinAltitude(), 0.001);
-        assertEquals(3575.0, statistics.getMaxAltitude(), 0.001);
-        assertEquals(150.0, statistics.getAverageHeartRate().getBPM(), 0.001);
-    }
-
-    @Test
-    public void testGetAverageSpeed() {
-        statistics.setTotalDistance(Distance.of(1000.0));
-        statistics.setTotalTime(Duration.ofMillis(50000));
-        assertEquals(20.0, statistics.getAverageSpeed().toMPS(), 0.001);
-    }
-
-    @Test
-    public void testGetAverageMovingSpeed() {
-        statistics.setTotalDistance(Distance.of(1000.0));
-        statistics.setMovingTime(Duration.ofMillis(20000));
-        assertEquals(50.0, statistics.getAverageMovingSpeed().toMPS(), 0.001);
+        assertEquals(
+                new Statistics(
+                        Instant.ofEpochMilli(1000),
+                        Instant.ofEpochMilli(4000),
+                        Duration.ofMillis(2500),
+                        Duration.ofMillis(1300),
+                        Distance.of(1100),
+                        Speed.of(846.1538461538461), //TODO Check why this is not 60
+                        new AltitudeExtremities(1200, 3575),
+                        new AltitudeGainLoss(900, 0),
+                        HeartRate.of(150),
+                        null
+                )
+                , result
+        );
     }
 }

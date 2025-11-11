@@ -265,20 +265,18 @@ public class SegmentStatisticUpdater {
         return movingTime;
     }
 
+    @VisibleForTesting
     public void setMovingTime(Duration movingTime) {
         this.movingTime = movingTime;
     }
 
     public void addMovingTime(TrackPoint trackPoint, TrackPoint lastTrackPoint) {
-        addMovingTime(Duration.between(lastTrackPoint.getTime(), trackPoint.getTime()));
-    }
+        Duration movingDuration = Duration.between(lastTrackPoint.getTime(), trackPoint.getTime());
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public void addMovingTime(Duration time) {
-        if (time.isNegative()) {
+        if (movingDuration.isNegative()) {
             throw new RuntimeException("Moving time cannot be negative");
         }
-        movingTime = movingTime.plus(time);
+        movingTime = movingTime.plus(movingDuration);
     }
 
     public boolean isIdle() {
@@ -289,14 +287,10 @@ public class SegmentStatisticUpdater {
         isIdle = idle;
     }
 
+    @VisibleForTesting
     @Nullable
     public HeartRate getAverageHeartRate() {
         return avgHeartRate;
-    }
-
-    @Nullable
-    public Power getAveragePower() {
-        return avgPower;
     }
 
     /**
@@ -322,24 +316,20 @@ public class SegmentStatisticUpdater {
         this.maxSpeed = maxSpeed;
     }
 
+    @VisibleForTesting
+    @Deprecated
     public double getMinAltitude() {
         return altitudeExtremities.getMin();
-    }
-
-    public void setMinAltitude(double altitude_m) {
-        altitudeExtremities.setMin(altitude_m);
     }
 
     /**
      * Gets the maximum altitude.
      * This is calculated from the smoothed altitude, so this can actually be less than the current altitude.
      */
+    @VisibleForTesting
+    @Deprecated
     public double getMaxAltitude() {
         return altitudeExtremities.getMax();
-    }
-
-    public void setMaxAltitude(double altitude_m) {
-        altitudeExtremities.setMax(altitude_m);
     }
 
     public void updateAltitudeExtremities(Altitude altitude) {

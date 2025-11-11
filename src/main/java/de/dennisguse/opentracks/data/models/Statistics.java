@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 
+//TODO Add @NonNull to attributes
 public record Statistics(
         Instant startTime,
         Instant stopTime,
@@ -14,7 +15,7 @@ public record Statistics(
         Duration movingTime, // Based on when we believe the user is traveling
 
         Distance totalDistance,
-        //TODO Check if this is persisted; if not: remove
+
         Speed maxSpeed,
 
         @Nullable
