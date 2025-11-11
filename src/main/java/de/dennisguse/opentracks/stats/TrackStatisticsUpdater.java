@@ -214,6 +214,7 @@ public class TrackStatisticsUpdater {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "TrackStatisticsUpdater{" +

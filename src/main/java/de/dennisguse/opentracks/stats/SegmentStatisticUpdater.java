@@ -17,7 +17,6 @@
 package de.dennisguse.opentracks.stats;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.time.Duration;
@@ -201,6 +200,7 @@ public class SegmentStatisticUpdater {
     }
 
     public Statistics getStatistics() {
+        // Times may not be live (i.e., updated automatically).
         return new Statistics(
                 startTime,
                 stopTime,
@@ -209,6 +209,8 @@ public class SegmentStatisticUpdater {
 
                 totalDistance,
                 getMaxSpeed(),
+
+                // This is calculated from the smoothed altitude, so this can actually be less than the current altitude.
                 altitudeExtremities.hasData() ? new AltitudeExtremities(altitudeExtremities.getMin(), altitudeExtremities.getMax()) : null,
                 totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m) : null,
                 avgHeartRate,
@@ -228,20 +230,12 @@ public class SegmentStatisticUpdater {
         setStopTime(startTime);
     }
 
-    public Instant getStopTime() {
-        return stopTime;
-    }
-
     public void setStopTime(Instant stopTime) {
         if (stopTime.isBefore(startTime)) {
             // Time must be monotonically increasing, but we might have events at the same point in time (BLE and GPS)
             throw new RuntimeException("stopTime cannot be less than startTime: " + startTime + " " + stopTime);
         }
         this.stopTime = stopTime;
-    }
-
-    public Distance getTotalDistance() {
-        return totalDistance;
     }
 
     @VisibleForTesting
@@ -253,21 +247,9 @@ public class SegmentStatisticUpdater {
         totalDistance = totalDistance.plus(distance_m);
     }
 
-    public Duration getTotalTime() {
-        return totalTime;
-    }
-
+    @VisibleForTesting
     public void setTotalTime(Duration totalTime) {
         this.totalTime = totalTime;
-    }
-
-    public Duration getMovingTime() {
-        return movingTime;
-    }
-
-    @VisibleForTesting
-    public void setMovingTime(Duration movingTime) {
-        this.movingTime = movingTime;
     }
 
     public void addMovingTime(TrackPoint trackPoint, TrackPoint lastTrackPoint) {
@@ -287,24 +269,7 @@ public class SegmentStatisticUpdater {
         isIdle = idle;
     }
 
-    @VisibleForTesting
-    @Nullable
-    public HeartRate getAverageHeartRate() {
-        return avgHeartRate;
-    }
-
-    /**
-     * Gets the average speed.
-     * This calculation only takes into account the displacement until the last point that was accounted for in statistics.
-     */
-    public Speed getAverageSpeed() {
-        if (totalTime.isZero()) {
-            return Speed.ZERO;
-        }
-        return Speed.of(totalDistance.toM() / totalTime.getSeconds());
-    }
-
-    public Speed getAverageMovingSpeed() {
+    private Speed getAverageMovingSpeed() {
         return Speed.of(totalDistance, movingTime);
     }
 
@@ -314,22 +279,6 @@ public class SegmentStatisticUpdater {
 
     public void setMaxSpeed(Speed maxSpeed) {
         this.maxSpeed = maxSpeed;
-    }
-
-    @VisibleForTesting
-    @Deprecated
-    public double getMinAltitude() {
-        return altitudeExtremities.getMin();
-    }
-
-    /**
-     * Gets the maximum altitude.
-     * This is calculated from the smoothed altitude, so this can actually be less than the current altitude.
-     */
-    @VisibleForTesting
-    @Deprecated
-    public double getMaxAltitude() {
-        return altitudeExtremities.getMax();
     }
 
     public void updateAltitudeExtremities(Altitude altitude) {
@@ -352,22 +301,8 @@ public class SegmentStatisticUpdater {
 
     @VisibleForTesting
     @Deprecated
-    @Nullable
-    public Float getTotalAltitudeGain() {
-        return totalAltitudeGain_m;
-    }
-
-    @VisibleForTesting
-    @Deprecated
     public void setTotalAltitudeGain(Float totalAltitudeGain_m) {
         this.totalAltitudeGain_m = totalAltitudeGain_m;
-    }
-
-    @VisibleForTesting
-    @Deprecated
-    @Nullable
-    public Float getTotalAltitudeLoss() {
-        return totalAltitudeLoss_m;
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
