@@ -82,7 +82,7 @@ public record Speed(double speed_mps) {
 
     public Duration toPace(UnitSystem unitSystem) {
         if (isZero()) {
-            return Duration.ofSeconds(0);
+            return Duration.ZERO;
         }
 
         double distance = Distance.of(speed_mps).toKM_Miles(unitSystem);

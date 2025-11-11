@@ -58,8 +58,8 @@ public class SegmentStatisticUpdaterTest {
         // then
         assertNull(statistics.getStartTime());
         assertNull(statistics.getStopTime());
-        assertEquals(Duration.ofSeconds(0), statistics.getMovingTime());
-        assertEquals(Duration.ofSeconds(0), statistics.getTotalTime());
+        assertEquals(Duration.ZERO, statistics.getMovingTime());
+        assertEquals(Duration.ZERO, statistics.getTotalTime());
 
         assertNull(statistics.getTotalAltitudeGain());
         assertNull(statistics.getTotalAltitudeLoss());

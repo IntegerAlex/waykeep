@@ -104,7 +104,7 @@ public class IntervalStatisticsUpdater {
     @Deprecated
     private static class Interval {
         private Distance distance = Distance.ZERO;
-        private Duration time = Duration.ofSeconds(0);
+        private Duration time = Duration.ZERO;
         private Float gain_m;
         private Float loss_m;
         private HeartRate avgHeartRate;

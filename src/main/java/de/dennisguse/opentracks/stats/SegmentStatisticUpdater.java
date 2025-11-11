@@ -185,8 +185,8 @@ public class SegmentStatisticUpdater {
         startTime = null;
         stopTime = null;
 
-        totalTime = Duration.ofSeconds(0);
-        movingTime = Duration.ofSeconds(0);
+        totalTime = Duration.ZERO;
+        movingTime = Duration.ZERO;
         totalDistance = Distance.ZERO;
         maxSpeed = Speed.ZERO;
         totalAltitudeGain_m = null;

@@ -538,7 +538,7 @@ public class TrackRecordingServiceRecordingTest {
         sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 100, 15);
 
         // then
-        Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ofSeconds(0), Duration.ofSeconds(0), Distance.ZERO, Speed.ZERO, new AltitudeExtremities(0.0, 0.0), null, null, null);
+        Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ZERO, Duration.ZERO, Distance.ZERO, Speed.ZERO, new AltitudeExtremities(0.0, 0.0), null, null, null);
         assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).getStatistics());
 
 
