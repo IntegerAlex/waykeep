@@ -293,7 +293,7 @@ public class TrackStatisticsUpdaterTest {
 
         subject.addTrackPoint(new TrackPoint(TrackPoint.Type.IDLE, Instant.ofEpochSecond(30)));
         // then
-        assertTrue(subject.getSegmentStatisticUpdater().isIdle());
+        assertTrue(subject.isIdle());
         assertEquals(Duration.ofSeconds(30), subject.getTrackStatistics().movingDuration());
         assertEquals(Duration.ofSeconds(30), subject.getTrackStatistics().totalDuration());
         assertEquals(Distance.of(10), subject.getTrackStatistics().totalDistance());
@@ -303,7 +303,7 @@ public class TrackStatisticsUpdaterTest {
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.ofEpochSecond(40))
                         .setSensorDistance(Distance.ZERO));
         // then
-        assertTrue(subject.getSegmentStatisticUpdater().isIdle());
+        assertTrue(subject.isIdle());
         assertEquals(Duration.ofSeconds(30), subject.getTrackStatistics().movingDuration());
         assertEquals(Duration.ofSeconds(40), subject.getTrackStatistics().totalDuration());
         assertEquals(Distance.of(10), subject.getTrackStatistics().totalDistance());
@@ -313,7 +313,7 @@ public class TrackStatisticsUpdaterTest {
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.ofEpochSecond(45))
                         .setSensorDistance(Distance.of(1)));
         // then
-        assertTrue(subject.getSegmentStatisticUpdater().isIdle());
+        assertTrue(subject.isIdle());
         assertEquals(Duration.ofSeconds(30), subject.getTrackStatistics().movingDuration());
         assertEquals(Duration.ofSeconds(45), subject.getTrackStatistics().totalDuration());
         assertEquals(Distance.of(11), subject.getTrackStatistics().totalDistance());
@@ -323,7 +323,7 @@ public class TrackStatisticsUpdaterTest {
                 new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.ofEpochSecond(50))
                         .setSensorDistance(Distance.of(10)));
         // then
-        assertFalse(subject.getSegmentStatisticUpdater().isIdle());
+        assertFalse(subject.isIdle());
         assertEquals(Duration.ofSeconds(30), subject.getTrackStatistics().movingDuration());
         assertEquals(Duration.ofSeconds(50), subject.getTrackStatistics().totalDuration());
         assertEquals(Distance.of(21), subject.getTrackStatistics().totalDistance());
@@ -332,7 +332,7 @@ public class TrackStatisticsUpdaterTest {
         subject.addTrackPoint(new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.ofEpochSecond(60)));
 
         // then
-        assertFalse(subject.getSegmentStatisticUpdater().isIdle());
+        assertFalse(subject.isIdle());
         assertEquals(Duration.ofSeconds(40), subject.getTrackStatistics().movingDuration());
         assertEquals(Duration.ofSeconds(60), subject.getTrackStatistics().totalDuration());
         assertEquals(Distance.of(21), subject.getTrackStatistics().totalDistance());
