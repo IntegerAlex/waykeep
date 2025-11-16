@@ -12,7 +12,9 @@ public class AggregatorHeartRate extends Aggregator<HeartRate, HeartRate> {
 
     @Override
     protected void computeValue(Raw<HeartRate> current) {
-        this.aggregatedValue = current.value();
+        if (current.value().isValid()) {
+            this.aggregatedValue = current.value();
+        }
     }
 
     @Override

@@ -161,7 +161,7 @@ class VoiceAnnouncementUtils {
         }
 
         Pair<HeartRate, String> heartrate = sensorDataSet.getHeartRate();
-        if (shouldVoiceAnnounceHeartRateCurrent() && heartrate != null && heartrate.first != null) { //TODO Check has an announcable value?
+        if (shouldVoiceAnnounceHeartRateCurrent() && heartrate != null && heartrate.first != null && heartrate.first.isValid()) { //TODO Check has an announcable value?
             int averageHeartRate = Math.round(heartrate.first.getBPM());
 
             builder.append(" ")

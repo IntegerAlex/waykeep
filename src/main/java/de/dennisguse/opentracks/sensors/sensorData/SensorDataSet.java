@@ -64,7 +64,8 @@ public class SensorDataSet {
 
     public Pair<HeartRate, String> getHeartRate() {
         if (heartRate != null) {
-            return heartRate.getAggregatedValueWithSensorName(trackPointCreator.createNow());
+            Pair<HeartRate, String> value = heartRate.getAggregatedValueWithSensorName(trackPointCreator.createNow());
+            if (value.first.isValid()) return value;
         }
 
         return null;
