@@ -143,8 +143,8 @@ adb shell am start -n "de.dennisguse.opentracks.playstore/de.dennisguse.opentrac
 | [FitTrackee](https://github.com/SamR1/FitTrackee)         | yes                                                                            | n/a                                                                  | n/a                                                                  |
 | [SportsTracker](https://github.com/ssaring/sportstracker) | yes, [single tracks only](https://github.com/ssaring/sportstracker/issues/260) | no                                                                   | no                                                                   |
 | [ExifTool](https://exiftool.org)                          | [yes](https://exiftool.org/forum/index.php?topic=15972.0)                      | no                                                                   | no                                                                   |
-| [Wanderer](https://wanderer.to/)                          | yes                      | yes                                                                   | yes                                                                   |
-
+| [Wanderer](https://wanderer.to/)                          | yes                                                                            | yes                                                                  | yes                                                                  |
+| [GPX.Studio]https://gpx.studio/)                          | yes                                                                            | no                                                                   | no                                                                   |
 
 ## Dashboard API (incl. map)
 
