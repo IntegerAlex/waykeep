@@ -67,8 +67,6 @@ public class SegmentStatisticUpdater {
     private HeartRate avgHeartRate = null;
     private Power avgPower = null;
 
-    private boolean isIdle;
-
     public SegmentStatisticUpdater() {
         reset();
     }
@@ -80,7 +78,6 @@ public class SegmentStatisticUpdater {
      */
     public SegmentStatisticUpdater(SegmentStatisticUpdater other) {
         this(other.getStatistics());
-        this.isIdle = other.isIdle();
     }
 
     public SegmentStatisticUpdater(Statistics statistics) {
@@ -119,8 +116,6 @@ public class SegmentStatisticUpdater {
         } else {
             stopTime = stopTime.isAfter(other.stopTime) ? stopTime : other.stopTime;
         }
-
-        isIdle = other.isIdle; //TODO This implicitly assumes append mode.
 
         if (avgHeartRate == null) {
             avgHeartRate = other.avgHeartRate;
@@ -190,8 +185,6 @@ public class SegmentStatisticUpdater {
         maxSpeed = Speed.ZERO;
         totalAltitudeGain_m = null;
         totalAltitudeLoss_m = null;
-
-        isIdle = false;
     }
 
     public void reset(Instant startTime) {
@@ -254,14 +247,6 @@ public class SegmentStatisticUpdater {
             throw new RuntimeException("Moving time cannot be negative");
         }
         this.movingDuration = this.movingDuration.plus(movingDuration);
-    }
-
-    public boolean isIdle() {
-        return isIdle;
-    }
-
-    public void setIdle(boolean idle) {
-        isIdle = idle;
     }
 
     private Speed getAverageMovingSpeed() {

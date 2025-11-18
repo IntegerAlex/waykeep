@@ -54,6 +54,8 @@ public class TrackStatisticsUpdater {
     // Current segment's last trackPoint
     private TrackPoint lastTrackPoint;
 
+    private boolean isIdle;
+
     public TrackStatisticsUpdater() {
         this(new SegmentStatisticUpdater());
     }
@@ -88,7 +90,7 @@ public class TrackStatisticsUpdater {
     }
 
     public boolean isIdle() {
-        return currentSegment.isIdle();
+        return isIdle;
     }
 
     public Statistics getCurrentSegment() {
@@ -159,19 +161,19 @@ public class TrackStatisticsUpdater {
                 currentSegment.addTotalDistance(movingDistance);
             }
 
-            if (!currentSegment.isIdle()) {
+            if (!isIdle) {
                 if (!trackPoint.isSegmentManualStart() && lastTrackPoint != null) {
                     currentSegment.addMovingTime(trackPoint, lastTrackPoint);
                 }
             }
 
             if (trackPoint.isIdleTriggered()) {
-                currentSegment.setIdle(true);
-            } else if (currentSegment.isIdle()) {
+                isIdle = true;
+            } else if (isIdle) {
                 // Shall we switch to non-idle?
                 if (movingDistance != null
                         && movingDistance.greaterOrEqualThan(PreferencesUtils.getRecordingDistanceInterval())) {
-                    currentSegment.setIdle(false);
+                    isIdle = false;
                 }
             }
 
