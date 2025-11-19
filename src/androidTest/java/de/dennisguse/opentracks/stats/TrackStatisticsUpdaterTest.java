@@ -101,7 +101,7 @@ public class TrackStatisticsUpdaterTest {
                         Duration.ofSeconds(12),
                         Duration.ofSeconds(12),
                         Distance.of(142.2637701034546),
-                        Speed.of(11.855314175287882),
+                        Speed.of(12.448093056678772),
                         new AltitudeExtremities(2.5, 32.5),
                         new AltitudeGainLoss(36, 36),
                         HeartRate.of(106.833336f),

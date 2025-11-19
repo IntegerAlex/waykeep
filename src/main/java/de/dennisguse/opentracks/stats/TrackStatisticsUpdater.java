@@ -42,7 +42,8 @@ public class TrackStatisticsUpdater {
 
     private static final String TAG = TrackStatisticsUpdater.class.getSimpleName();
 
-    private final SegmentStatisticUpdater segmentStatisticUpdater;
+    @NonNull
+    private Statistics statisticsWithoutCurrentSegment;
 
     private float averageHeartRateBPM;
     private Duration totalHeartRateDuration = Duration.ZERO;
@@ -56,25 +57,22 @@ public class TrackStatisticsUpdater {
 
     private boolean isIdle;
 
-    public TrackStatisticsUpdater() {
-        this(new SegmentStatisticUpdater());
-    }
-
-    public TrackStatisticsUpdater(Statistics statistics) {
-        this(new SegmentStatisticUpdater(statistics));
-    }
-
     @Deprecated
-    private TrackStatisticsUpdater(SegmentStatisticUpdater segmentStatisticUpdater) {
-        this.segmentStatisticUpdater = segmentStatisticUpdater;
+    public TrackStatisticsUpdater() {
+        this(new SegmentStatisticUpdater().getStatistics());
+    }
+
+    public TrackStatisticsUpdater(@NonNull Statistics statistics) {
+        this.statisticsWithoutCurrentSegment = statistics;
         this.currentSegment = new SegmentStatisticUpdater();
 
         resetAverageHeartRate();
     }
 
-    public TrackStatisticsUpdater(TrackStatisticsUpdater toCopy) {
+    @Deprecated
+    public TrackStatisticsUpdater(@NonNull TrackStatisticsUpdater toCopy) {
         this.currentSegment = new SegmentStatisticUpdater(toCopy.currentSegment);
-        this.segmentStatisticUpdater = new SegmentStatisticUpdater(toCopy.segmentStatisticUpdater);
+        this.statisticsWithoutCurrentSegment = toCopy.statisticsWithoutCurrentSegment;
 
         this.lastTrackPoint = toCopy.lastTrackPoint;
         resetAverageHeartRate();
@@ -84,7 +82,7 @@ public class TrackStatisticsUpdater {
      * Compute TrackStatistics.
      */
     public Statistics getTrackStatistics() {
-        SegmentStatisticUpdater stats = new SegmentStatisticUpdater(segmentStatisticUpdater);
+        SegmentStatisticUpdater stats = new SegmentStatisticUpdater(statisticsWithoutCurrentSegment); //TODO Should not be necessary.
         stats.merge(currentSegment);
         return stats.getStatistics();
     }
@@ -192,7 +190,10 @@ public class TrackStatisticsUpdater {
 
     private void reset(TrackPoint trackPoint) {
         if (currentSegment.isInitialized()) {
-            segmentStatisticUpdater.merge(currentSegment);
+            //TODO Simplify
+            SegmentStatisticUpdater intermediate =  new SegmentStatisticUpdater(statisticsWithoutCurrentSegment);
+            intermediate.merge(currentSegment);
+            statisticsWithoutCurrentSegment = intermediate.getStatistics();
         }
         currentSegment.reset(trackPoint.getTime());
 
@@ -219,7 +220,7 @@ public class TrackStatisticsUpdater {
     @Override
     public String toString() {
         return "TrackStatisticsUpdater{" +
-                "segmentStatisticUpdater=" + segmentStatisticUpdater +
+                "segmentStatisticUpdater=" + statisticsWithoutCurrentSegment +
                 ", currentSegment=" + currentSegment +
                 ", lastTrackPoint=" + lastTrackPoint +
                 '}';
