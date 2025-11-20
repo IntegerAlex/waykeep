@@ -29,30 +29,6 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 @RunWith(AndroidJUnit4.class)
 public class TrackStatisticsUpdaterTest {
 
-    @Deprecated //TODO SegmentStatisticsUpdater should always have data, right?
-    @Test
-    public void empty() {
-        // when
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
-        // then
-        assertEquals(
-                new Statistics(
-                        null,
-                        null,
-                        Duration.ZERO,
-                        Duration.ZERO,
-                        Distance.ZERO,
-                        Speed.ZERO,
-                        null,
-                        null,
-                        null,
-                        null
-                ),
-                subject.getTrackStatistics()
-        );
-    }
-
     @Test
     public void startTime() {
         // given
@@ -60,11 +36,8 @@ public class TrackStatisticsUpdaterTest {
         TrackPoint tp = new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, startTime);
 
         // when
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(tp);
 
-        subject.addTrackPoint(tp);
-
-        // then
         // then
         assertEquals(
                 new Statistics(
@@ -89,8 +62,7 @@ public class TrackStatisticsUpdaterTest {
         TestDataUtil.TrackData data = TestDataUtil.createTestingTrack(new Track.Id(1));
 
         // when
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-        data.trackPoints().forEach(subject::addTrackPoint);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(data.trackPoints());
 
         // then
         Statistics result = subject.getTrackStatistics();
@@ -114,17 +86,13 @@ public class TrackStatisticsUpdaterTest {
     @Test
     public void addTrackPoint_distance_from_GPS_moving() {
         // given
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         TrackPoint tp1 = new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochMilli(1000));
         TrackPoint tp2 = createTrackPoint(0, 0, Altitude.WGS84.of(5.0), Instant.ofEpochMilli(2000));
         TrackPoint tp3 = createTrackPoint(0.00001, 0, Altitude.WGS84.of(5.0), Instant.ofEpochMilli(3000));
         tp3.setSpeed(Speed.of(5f));
 
         // when
-        subject.addTrackPoint(tp1);
-        subject.addTrackPoint(tp2);
-        subject.addTrackPoint(tp3);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(tp1, tp2, tp3));
 
         // then
         assertEquals(Distance.of(1.1057428121566772), subject.getTrackStatistics().totalDistance());
@@ -133,8 +101,6 @@ public class TrackStatisticsUpdaterTest {
     @Test
     public void addTrackPoint_distance_from_GPS_moving_and_sensor_moving() {
         // given
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         TrackPoint tp1 = new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochMilli(1000));
         TrackPoint tp2 = createTrackPoint(0, 0, Altitude.WGS84.of(5.0), Instant.ofEpochMilli(2000));
         tp2.setSpeed(Speed.of(5f));
@@ -147,9 +113,7 @@ public class TrackStatisticsUpdaterTest {
         tp5.setSensorDistance(Distance.of(10f));
 
         // when
-        subject.addTrackPoint(tp1);
-        subject.addTrackPoint(tp2);
-        subject.addTrackPoint(tp3);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(tp1, tp2, tp3));
 
         // then
         assertEquals(Distance.of(110.57427215576172), subject.getTrackStatistics().totalDistance());
@@ -165,8 +129,6 @@ public class TrackStatisticsUpdaterTest {
     @Test
     public void addTrackPoint_distance_from_GPS_moving_and_sensor_disconnecting() {
         // given
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         TrackPoint tp1 = new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochMilli(1000));
         TrackPoint tp2 = createTrackPoint(0, 0, Altitude.WGS84.of(5.0), Instant.ofEpochMilli(2000));
         tp2.setSpeed(Speed.of(5f));
@@ -178,9 +140,7 @@ public class TrackStatisticsUpdaterTest {
         TrackPoint tp5 = new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.ofEpochMilli(5000));
 
         // when
-        subject.addTrackPoint(tp1);
-        subject.addTrackPoint(tp2);
-        subject.addTrackPoint(tp3);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(tp1, tp2, tp3));
 
         // then
         assertEquals(Distance.of(5), subject.getTrackStatistics().totalDistance());
@@ -195,10 +155,7 @@ public class TrackStatisticsUpdaterTest {
 
     @Test
     public void addTrackPoint_maxSpeed_multiple_segments() {
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-        assertEquals(Speed.of(0), subject.getTrackStatistics().maxSpeed());
-
-        subject.addTrackPoints(List.of(
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(0)),
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(1))
                         .setSpeed(Speed.of(2f)),
@@ -224,10 +181,8 @@ public class TrackStatisticsUpdaterTest {
 
     @Test
     public void addTrackPoint_idle_withoutDistance() {
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         // when
-        subject.addTrackPoints(List.of(
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(0)),
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(1))
                         .setSpeed(Speed.of(2f)),
@@ -251,10 +206,8 @@ public class TrackStatisticsUpdaterTest {
 
     @Test
     public void addTrackPoint_idle_withDistance() {
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         // when
-        subject.addTrackPoints(List.of(
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(0)),
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(1))
                         .setSensorDistance(Distance.of(10)),
@@ -283,10 +236,8 @@ public class TrackStatisticsUpdaterTest {
 
     @Test
     public void addTrackPoint_idle_remain_idle() {
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         // when
-        subject.addTrackPoint(new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(0)));
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(0)));
         subject.addTrackPoint(
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(10))
                         .setSensorDistance(Distance.of(10)));
@@ -341,8 +292,6 @@ public class TrackStatisticsUpdaterTest {
     @Test
     public void copy_constructor() {
         // given
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater();
-
         TrackPoint tp1 = new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochMilli(1000));
         TrackPoint tp2 = createTrackPoint(0, 0, Altitude.WGS84.of(5.0), Instant.ofEpochMilli(2000));
         tp2.setSpeed(Speed.of(5f));
@@ -352,10 +301,7 @@ public class TrackStatisticsUpdaterTest {
         tp4.setSpeed(Speed.of(5f));
         TrackPoint tp5 = new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.ofEpochMilli(5000));
 
-        subject.addTrackPoint(tp1);
-        subject.addTrackPoint(tp2);
-        subject.addTrackPoint(tp3);
-        subject.addTrackPoint(tp4);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(tp1, tp2,tp3, tp4));
 
         // when
         TrackStatisticsUpdater copy = new TrackStatisticsUpdater(subject);

@@ -69,20 +69,19 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         TrackPoint segmentStartTrackPoint = trackPointCreator.createSegmentStartManual();
 
         ZoneOffset zoneOffset = ZoneOffset.systemDefault().getRules().getOffset(segmentStartTrackPoint.getTime());
-        trackStatisticsUpdater = new TrackStatisticsUpdater();
+        trackStatisticsUpdater = new TrackStatisticsUpdater(segmentStartTrackPoint);
 
         Track track = new Track(zoneOffset, trackStatisticsUpdater.getTrackStatistics());
-        trackId = contentProviderUtils.insertTrack(track);
-        track.setId(trackId);
-
-        onNewTrackPoint(segmentStartTrackPoint);
 
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         track.setActivityTypeLocalized(activityTypeLocalized);
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
         track.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
-        contentProviderUtils.updateTrack(track);
+
+        trackId = contentProviderUtils.insertTrack(track);
+
+        onNewTrackPoint(segmentStartTrackPoint);
 
         return trackId;
     }

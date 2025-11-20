@@ -55,13 +55,32 @@ public class VoiceAnnouncementManagerTest {
         voiceAnnouncementManager.setFrequency(Distance.ofKilometer(5));
 
         // when
-        SegmentStatisticUpdater statistics = new SegmentStatisticUpdater();
-        statistics.setTotalDistance(Distance.ofKilometer(13));
-        voiceAnnouncementManager.start(statistics.getStatistics());
+        voiceAnnouncementManager.start(new Statistics(
+                null,
+                null,
+                Duration.ofSeconds(91),
+                Duration.ZERO,
+                Distance.ofKilometer(13),
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
         assertEquals(Distance.of(15000), voiceAnnouncementManager.getNextTotalDistance());
 
-        statistics.setTotalDistance(Distance.of(15100));
-        voiceAnnouncementManager.start(statistics.getStatistics());
+        voiceAnnouncementManager.start(new Statistics(
+                null,
+                null,
+                Duration.ofSeconds(91),
+                Duration.ZERO,
+                Distance.of(15000),
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
         assertEquals(Distance.of(20000), voiceAnnouncementManager.getNextTotalDistance());
     }
 

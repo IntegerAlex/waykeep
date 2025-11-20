@@ -62,6 +62,18 @@ public class TrackStatisticsUpdater {
         this(new SegmentStatisticUpdater().getStatistics());
     }
 
+    public TrackStatisticsUpdater(@NonNull TrackPoint trackPoint) {
+        this();
+        addTrackPoint(trackPoint);
+    }
+
+    public TrackStatisticsUpdater(List<TrackPoint> trackPoints) {
+        this();
+        assert !trackPoints.isEmpty(); //TODO Enforce that this is always true (e.g., import)
+
+        addTrackPoints(trackPoints);
+    }
+
     public TrackStatisticsUpdater(@NonNull Statistics statistics) {
         this.statisticsWithoutCurrentSegment = statistics;
         this.currentSegment = new SegmentStatisticUpdater();
@@ -82,9 +94,7 @@ public class TrackStatisticsUpdater {
      * Compute TrackStatistics.
      */
     public Statistics getTrackStatistics() {
-        SegmentStatisticUpdater stats = new SegmentStatisticUpdater(statisticsWithoutCurrentSegment); //TODO Should not be necessary.
-        stats.merge(currentSegment);
-        return stats.getStatistics();
+        return currentSegment.aggregate(statisticsWithoutCurrentSegment);
     }
 
     public boolean isIdle() {
@@ -190,10 +200,7 @@ public class TrackStatisticsUpdater {
 
     private void reset(TrackPoint trackPoint) {
         if (currentSegment.isInitialized()) {
-            //TODO Simplify
-            SegmentStatisticUpdater intermediate =  new SegmentStatisticUpdater(statisticsWithoutCurrentSegment);
-            intermediate.merge(currentSegment);
-            statisticsWithoutCurrentSegment = intermediate.getStatistics();
+            statisticsWithoutCurrentSegment = currentSegment.aggregate(statisticsWithoutCurrentSegment);
         }
         currentSegment.reset(trackPoint.getTime());
 

@@ -99,13 +99,12 @@ public class IntervalStatisticsUpdaterTest {
         // given
         float distanceInterval = 1000f;
         int numberOfPoints = 10000;
-        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
 
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
             trackPoints.add(TestDataUtil.createTrackPoint(i).setAltitudeGainLoss(null));
         }
-        trackStatisticsUpdater.addTrackPoints(trackPoints);
+        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
         Track dummyTrack = new Track(trackStatisticsUpdater.getTrackStatistics());
         dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
@@ -169,13 +168,11 @@ public class IntervalStatisticsUpdaterTest {
     }
 
     private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
-        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
-
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
             trackPoints.add(TestDataUtil.createTrackPoint(i));
         }
-        trackStatisticsUpdater.addTrackPoints(trackPoints);
+        TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
         return new Pair<>(new Track(trackStatisticsUpdater.getTrackStatistics()), trackPoints);
     }

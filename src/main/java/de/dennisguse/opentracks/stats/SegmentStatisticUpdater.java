@@ -98,11 +98,15 @@ public class SegmentStatisticUpdater {
         avgPower = statistics.avgPower();
     }
 
+    public Statistics aggregate(Statistics statistics) {
+        SegmentStatisticUpdater intermediate = new SegmentStatisticUpdater(statistics);
+        intermediate.merge(this);
+        return intermediate.getStatistics();
+    }
+
     /**
      * Combines these statistics with those from another object.
      * This assumes that the time periods covered by each do not intersect.
-     *
-     * @param other another statistics data object
      */
     //TODO Should be refactored to append only [mainly due to isIdle]
     public void merge(SegmentStatisticUpdater other) {

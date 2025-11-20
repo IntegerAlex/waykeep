@@ -334,8 +334,6 @@ public class TrackDataHub {
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
 
             while (trackPointIterator.hasNext()) {
-                //Prevents a NPE if stop() is happening while notifyTrackPointsTableUpdate()
-                TrackStatisticsUpdater currentUpdater = trackStatisticsUpdater;
 
                 if (!isStarted()) {
                     return;
@@ -360,7 +358,14 @@ public class TrackDataHub {
                     samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
                 }
 
-                currentUpdater.addTrackPoint(trackPoint);
+                //Prevents a NPE if stop() is happening while notifyTrackPointsTableUpdate()
+                //TODO Check if this NPE is still happening (and if so, fix it properly. Not with currentUpdater.
+                if (trackStatisticsUpdater == null) {
+                    trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
+                }  else {
+                    trackStatisticsUpdater.addTrackPoint(trackPoint);
+                }
+                TrackStatisticsUpdater currentUpdater = trackStatisticsUpdater;
 
                 // Also include the last point if the selected track is not recording.
                 if ((localNumLoadedTrackPoints % samplingFrequency == 0) || (trackPointId == lastTrackPointId && !isSelectedTrackRecording())) {
@@ -391,7 +396,6 @@ public class TrackDataHub {
     }
 
 
-
     /**
      * Resets the track points sampling states.
      */
@@ -399,7 +403,7 @@ public class TrackDataHub {
         numLoadedPoints = 0;
         firstSeenTrackPointId = null;
         lastSeenTrackPointId = null;
-        trackStatisticsUpdater = new TrackStatisticsUpdater();
+        trackStatisticsUpdater = null;
     }
 
     private boolean isStarted() {

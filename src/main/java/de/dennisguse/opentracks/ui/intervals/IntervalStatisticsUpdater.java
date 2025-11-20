@@ -17,7 +17,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
 public class IntervalStatisticsUpdater {
-    private TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater();
+    private TrackStatisticsUpdater trackStatisticsUpdater;
     private final List<Interval> intervalList;
     private final Distance distanceInterval;
     private Interval interval, lastInterval;
@@ -45,7 +45,11 @@ public class IntervalStatisticsUpdater {
 
         while (trackPointIterator.hasNext()) {
             trackPoint = trackPointIterator.next();
-            trackStatisticsUpdater.addTrackPoint(trackPoint);
+            if (trackStatisticsUpdater == null) {
+                trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
+            } else {
+                trackStatisticsUpdater.addTrackPoint(trackPoint);
+            }
 
             if (trackStatisticsUpdater.getTrackStatistics().totalDistance().plus(interval.distance).greaterOrEqualThan(distanceInterval)) {
                 interval.add(trackStatisticsUpdater.getTrackStatistics(), trackPoint);
@@ -56,8 +60,7 @@ public class IntervalStatisticsUpdater {
                 intervalList.set(intervalList.size() - 1, adjustedInterval);
 
                 interval = new Interval(interval.distance.minus(adjustedInterval.distance), interval.time.minus(adjustedInterval.time));
-                trackStatisticsUpdater = new TrackStatisticsUpdater();
-                trackStatisticsUpdater.addTrackPoint(trackPoint);
+                trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
 
                 lastInterval = new Interval(interval);
                 intervalList.add(lastInterval);
@@ -66,10 +69,12 @@ public class IntervalStatisticsUpdater {
             }
         }
 
-        if (newIntervalAdded) {
-            lastInterval.add(trackStatisticsUpdater.getTrackStatistics(), null);
-        } else {
-            lastInterval.set(trackStatisticsUpdater.getTrackStatistics());
+        if (trackStatisticsUpdater != null) {
+            if (newIntervalAdded) {
+                lastInterval.add(trackStatisticsUpdater.getTrackStatistics(), null);
+            } else {
+                lastInterval.set(trackStatisticsUpdater.getTrackStatistics());
+            }
         }
 
         return trackPoint != null ? trackPoint.getId() : null;
