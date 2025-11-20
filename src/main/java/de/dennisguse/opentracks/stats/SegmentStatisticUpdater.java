@@ -71,6 +71,10 @@ public class SegmentStatisticUpdater {
         reset();
     }
 
+    public SegmentStatisticUpdater(Instant startTime) {
+        reset(startTime);
+    }
+
     /**
      * Copy constructor.
      *
@@ -98,81 +102,8 @@ public class SegmentStatisticUpdater {
         avgPower = statistics.avgPower();
     }
 
-    public Statistics aggregate(Statistics statistics) {
-        SegmentStatisticUpdater intermediate = new SegmentStatisticUpdater(statistics);
-        intermediate.merge(this);
-        return intermediate.getStatistics();
-    }
-
-    /**
-     * Combines these statistics with those from another object.
-     * This assumes that the time periods covered by each do not intersect.
-     */
-    //TODO Should be refactored to append only [mainly due to isIdle]
-    public void merge(SegmentStatisticUpdater other) {
-        if (startTime == null) {
-            startTime = other.startTime;
-        } else {
-            startTime = startTime.isBefore(other.startTime) ? startTime : other.startTime;
-        }
-        if (stopTime == null) {
-            stopTime = other.stopTime;
-        } else {
-            stopTime = stopTime.isAfter(other.stopTime) ? stopTime : other.stopTime;
-        }
-
-        if (avgHeartRate == null) {
-            avgHeartRate = other.avgHeartRate;
-        } else {
-            if (other.avgHeartRate != null) {
-                // Using total time as weights for the averaging.
-                // Important to do this before total time is updated
-                avgHeartRate = HeartRate.of(
-                        (totalDuration.getSeconds() * avgHeartRate.getBPM() + other.totalDuration.getSeconds() * other.avgHeartRate.getBPM())
-                                / (totalDuration.getSeconds() + other.totalDuration.getSeconds())
-                );
-            }
-        }
-
-        if (avgPower == null) {
-            avgPower = other.avgPower;
-        } else {
-            if (other.avgPower != null) {
-                // Using total time as weights for the averaging.
-                // Important to do this before total time is updated
-                avgPower = Power.of(
-                        (totalDuration.getSeconds() * avgPower.getW() + other.totalDuration.getSeconds() * other.avgPower.getW())
-                                / (totalDuration.getSeconds() + other.totalDuration.getSeconds())
-                );
-            }
-        }
-
-        totalDistance = totalDistance.plus(other.totalDistance);
-        totalDuration = totalDuration.plus(other.totalDuration);
-        movingDuration = movingDuration.plus(other.movingDuration);
-        maxSpeed = Speed.max(maxSpeed, other.maxSpeed);
-        if (other.altitudeExtremities.hasData()) {
-            altitudeExtremities.update(other.altitudeExtremities.getMin());
-            altitudeExtremities.update(other.altitudeExtremities.getMax());
-        }
-        if (totalAltitudeGain_m == null) {
-            if (other.totalAltitudeGain_m != null) {
-                totalAltitudeGain_m = other.totalAltitudeGain_m;
-            }
-        } else {
-            if (other.totalAltitudeGain_m != null) {
-                totalAltitudeGain_m += other.totalAltitudeGain_m;
-            }
-        }
-        if (totalAltitudeLoss_m == null) {
-            if (other.totalAltitudeLoss_m != null) {
-                totalAltitudeLoss_m = other.totalAltitudeLoss_m;
-            }
-        } else {
-            if (other.totalAltitudeLoss_m != null) {
-                totalAltitudeLoss_m += other.totalAltitudeLoss_m;
-            }
-        }
+    public Statistics merge(Statistics statistics) {
+        return statistics.merge(getStatistics());
     }
 
     public boolean isInitialized() {

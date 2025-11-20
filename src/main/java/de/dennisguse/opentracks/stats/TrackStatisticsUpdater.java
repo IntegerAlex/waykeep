@@ -94,7 +94,7 @@ public class TrackStatisticsUpdater {
      * Compute TrackStatistics.
      */
     public Statistics getTrackStatistics() {
-        return currentSegment.aggregate(statisticsWithoutCurrentSegment);
+        return currentSegment.merge(statisticsWithoutCurrentSegment);
     }
 
     public boolean isIdle() {
@@ -200,7 +200,7 @@ public class TrackStatisticsUpdater {
 
     private void reset(TrackPoint trackPoint) {
         if (currentSegment.isInitialized()) {
-            statisticsWithoutCurrentSegment = currentSegment.aggregate(statisticsWithoutCurrentSegment);
+            statisticsWithoutCurrentSegment = currentSegment.merge(statisticsWithoutCurrentSegment);
         }
         currentSegment.reset(trackPoint.getTime());
 

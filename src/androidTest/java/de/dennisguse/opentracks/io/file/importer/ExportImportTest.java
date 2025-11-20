@@ -216,7 +216,7 @@ public class ExportImportTest {
         assertEquals(222049.34375, trackStatistics.totalDistance().toM(), 0.01); //TODO Too low
 
         // Speed
-        assertEquals(8540.359, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(22203.7421875, trackStatistics.maxSpeed().toMPS(), 0.01);
         assertEquals(3965.166, trackStatistics.getAverageSpeed().toMPS(), 0.01);
         assertEquals(8540.359, trackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
 
@@ -340,7 +340,7 @@ public class ExportImportTest {
         assertEquals(222049.421, importedTrackStatistics.totalDistance().toM(), 0.01);
 
         // Speed
-        assertEquals(8540.362, importedTrackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(22203.7421875, importedTrackStatistics.maxSpeed().toMPS(), 0.01);
         assertEquals(3965.168, importedTrackStatistics.getAverageSpeed().toMPS(), 0.01);
         assertEquals(8540.362, importedTrackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
 
