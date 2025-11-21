@@ -166,14 +166,14 @@ public class TrackStatisticsUpdaterTest {
         assertEquals(Speed.of(2), subject.getTrackStatistics().maxSpeed());
 
         // when
-        subject.addTrackPoints(List.of(
+        List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.ofEpochSecond(5)),
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(6))
                         .setSpeed(Speed.of(1f)),
                 createTrackPoint(0, 0, Altitude.WGS84.of(0), Instant.ofEpochSecond(7))
                         .setSpeed(Speed.of(1f)),
                 new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.ofEpochSecond(8))
-        ));
+        ).forEach(subject::addTrackPoint);
 
         // then
         assertEquals(Speed.of(2f), subject.getTrackStatistics().maxSpeed());

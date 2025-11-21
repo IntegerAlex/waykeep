@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public class Track {
 
     @Deprecated //TODO Remove
     public Track(@NonNull ZoneOffset zoneOffset) {
-        this(zoneOffset, new SegmentStatisticUpdater().getStatistics());
+        this(zoneOffset, Statistics.DEFAULT);
     }
 
     public Track(@NonNull ZoneOffset zoneOffset, @NonNull Statistics trackStatistics) {

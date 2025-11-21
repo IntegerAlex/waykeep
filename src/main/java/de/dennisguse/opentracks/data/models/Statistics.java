@@ -7,15 +7,20 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
-//TODO Add @NonNull to attributes
 public record Statistics(
+        @NonNull
         Instant startTime,
+        @NonNull
         Instant stopTime,
+        @NonNull
         Duration totalDuration,
+        @NonNull
         Duration movingDuration, // Based on when we believe the user is traveling
 
+        @NonNull
         Distance totalDistance,
 
+        @NonNull
         Speed maxSpeed,
 
         @Nullable
@@ -30,6 +35,22 @@ public record Statistics(
         @Nullable
         Power avgPower
 ) {
+
+    //TODO: Should not be necessary; refactor and remove.
+    @Deprecated
+    public static final Statistics DEFAULT =
+        new Statistics(
+                null,
+                null,
+                Duration.ZERO,
+                Duration.ZERO,
+                Distance.ZERO,
+                Speed.ZERO,
+                null,
+                null,
+                null,
+                null
+        );
 
     public Duration getStoppedTime() {
         return totalDuration.minus(movingDuration);

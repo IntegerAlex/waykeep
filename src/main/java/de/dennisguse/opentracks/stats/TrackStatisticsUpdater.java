@@ -32,8 +32,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 /**
  * Updater for {@link SegmentStatisticUpdater}.
  * For updating track {@link SegmentStatisticUpdater} as new {@link TrackPoint}s are added.
- * NOTE: Some of the locations represent pause/resume separator.
- * NOTE: Has still support for segments (at the moment unused).
+ * NOTE: {@link TrackPoint} represent pause/resume separator.
  *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
@@ -51,7 +50,7 @@ public class TrackStatisticsUpdater {
     private Duration totalPowerDuration = Duration.ZERO;
 
     // The current segment's statistics
-    private final SegmentStatisticUpdater currentSegment;
+    private SegmentStatisticUpdater currentSegment;
     // Current segment's last trackPoint
     private TrackPoint lastTrackPoint;
 
@@ -59,7 +58,7 @@ public class TrackStatisticsUpdater {
 
     @Deprecated
     public TrackStatisticsUpdater() {
-        this(new SegmentStatisticUpdater().getStatistics());
+        this(Statistics.DEFAULT);
     }
 
     public TrackStatisticsUpdater(@NonNull TrackPoint trackPoint) {
@@ -71,12 +70,12 @@ public class TrackStatisticsUpdater {
         this();
         assert !trackPoints.isEmpty(); //TODO Enforce that this is always true (e.g., import)
 
-        addTrackPoints(trackPoints);
+        trackPoints.forEach(this::addTrackPoint);
     }
 
     public TrackStatisticsUpdater(@NonNull Statistics statistics) {
         this.statisticsWithoutCurrentSegment = statistics;
-        this.currentSegment = new SegmentStatisticUpdater();
+        this.currentSegment = null;
 
         resetAverageHeartRate();
     }
@@ -105,17 +104,12 @@ public class TrackStatisticsUpdater {
         return currentSegment.getStatistics();
     }
 
-    public void addTrackPoints(List<TrackPoint> trackPoints) {
-        trackPoints.forEach(this::addTrackPoint);
-    }
-
     public void addTrackPoint(TrackPoint trackPoint) {
         if (trackPoint.isSegmentManualStart()) {
             reset(trackPoint);
         }
-
-        if (!currentSegment.isInitialized()) {
-            currentSegment.setStartTime(trackPoint.getTime());
+        if (currentSegment == null) {
+            currentSegment = new SegmentStatisticUpdater(trackPoint.getTime());
         }
 
         // Always update time
@@ -199,10 +193,10 @@ public class TrackStatisticsUpdater {
     }
 
     private void reset(TrackPoint trackPoint) {
-        if (currentSegment.isInitialized()) {
+        if (currentSegment != null) {
             statisticsWithoutCurrentSegment = currentSegment.merge(statisticsWithoutCurrentSegment);
         }
-        currentSegment.reset(trackPoint.getTime());
+        currentSegment = new SegmentStatisticUpdater(trackPoint.getTime());
 
         lastTrackPoint = null;
         resetAverageHeartRate();

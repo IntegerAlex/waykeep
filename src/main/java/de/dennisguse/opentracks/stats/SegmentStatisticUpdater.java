@@ -46,9 +46,11 @@ public class SegmentStatisticUpdater {
     private final ExtremityMonitor altitudeExtremities = new ExtremityMonitor();
 
     // The track start time.
-    private Instant startTime; //TODO Should never be null!
+    @NonNull
+    private final Instant startTime;
     // The track stop time.
-    private Instant stopTime; //TODO Should never be null!
+    @NonNull
+    private Instant stopTime;
 
     private Distance totalDistance;
     /**
@@ -67,12 +69,14 @@ public class SegmentStatisticUpdater {
     private HeartRate avgHeartRate = null;
     private Power avgPower = null;
 
-    public SegmentStatisticUpdater() {
-        reset();
-    }
-
-    public SegmentStatisticUpdater(Instant startTime) {
-        reset(startTime);
+    public SegmentStatisticUpdater(@NonNull Instant startTime) {
+        this.startTime = this.stopTime = startTime;
+        totalDuration = Duration.ZERO;
+        movingDuration = Duration.ZERO;
+        totalDistance = Distance.ZERO;
+        maxSpeed = Speed.ZERO;
+        totalAltitudeGain_m = null;
+        totalAltitudeLoss_m = null;
     }
 
     /**
@@ -106,27 +110,6 @@ public class SegmentStatisticUpdater {
         return statistics.merge(getStatistics());
     }
 
-    public boolean isInitialized() {
-        return startTime != null;
-    }
-
-    public void reset() {
-        startTime = null;
-        stopTime = null;
-
-        totalDuration = Duration.ZERO;
-        movingDuration = Duration.ZERO;
-        totalDistance = Distance.ZERO;
-        maxSpeed = Speed.ZERO;
-        totalAltitudeGain_m = null;
-        totalAltitudeLoss_m = null;
-    }
-
-    public void reset(Instant startTime) {
-        reset();
-        setStartTime(startTime);
-    }
-
     public Statistics getStatistics() {
         // Times may not be live (i.e., updated automatically).
         return new Statistics(
@@ -144,14 +127,6 @@ public class SegmentStatisticUpdater {
                 avgHeartRate,
                 avgPower
         );
-    }
-
-    /**
-     * Should only be called on start.
-     */
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
-        setStopTime(startTime);
     }
 
     public void setStopTime(Instant stopTime) {

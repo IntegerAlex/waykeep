@@ -23,7 +23,7 @@ public record RecordingData(Track track, TrackPoint latestTrackPoint, SensorData
     @NonNull
     public Statistics getStatisticsTrack() {
         if (track == null) {
-            return new SegmentStatisticUpdater().getStatistics();
+            return Statistics.DEFAULT; //TODO Refactor code that this is not necessary.
         }
 
         return track.getStatistics();
