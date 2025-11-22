@@ -15,6 +15,7 @@ import androidx.gridlayout.widget.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import de.dennisguse.opentracks.R;
@@ -165,11 +166,14 @@ public class StatisticsRecordingFragment extends Fragment {
     }
 
     private void onRecordingDataChanged(RecordingData recordingData) {
-        String oldCategory = this.recordingData.getTrackCategory();
-        String newCategory = recordingData.getTrackCategory();
+        Track oldTrack = this.recordingData.track();
+        String oldActivityType = oldTrack != null ? oldTrack.getActivityTypeLocalized() : "";
+        Track newTrack = recordingData.track();
+        String newActivityType = newTrack != null ? newTrack.getActivityTypeLocalized() : "";
+
         this.recordingData = recordingData;
 
-        if (!oldCategory.equals(newCategory)) {
+        if (!oldActivityType.equals(newActivityType)) {
             sharedPreferenceChangeListener.onSharedPreferenceChanged(null, getString(R.string.stats_rate_key));
         }
 

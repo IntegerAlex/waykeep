@@ -18,13 +18,6 @@ public record RecordingData(
 
     public static final RecordingData NOT_RECORDING = new RecordingData(null, null, null, null);
 
-    public String getTrackCategory() {
-        if (track == null) {
-            return "";
-        }
-        return track.getActivityTypeLocalized();
-    }
-
     public Statistics trackStatistics() {
         return track.getStatistics();
     }
