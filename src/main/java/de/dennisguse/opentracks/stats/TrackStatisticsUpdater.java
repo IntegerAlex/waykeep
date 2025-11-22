@@ -72,13 +72,14 @@ public class TrackStatisticsUpdater {
         resetAverageHeartRate();
     }
 
-    @Deprecated
-    public TrackStatisticsUpdater(@NonNull TrackStatisticsUpdater toCopy) {
-        this.currentSegment = new SegmentStatisticUpdater(toCopy.currentSegment);
+    public TrackStatisticsUpdater(@NonNull TrackStatisticsUpdater toCopy, TrackPoint tmp) {
         this.statisticsWithoutCurrentSegment = toCopy.statisticsWithoutCurrentSegment;
+        this.currentSegment = new SegmentStatisticUpdater(toCopy.currentSegment);
 
         this.lastTrackPoint = toCopy.lastTrackPoint;
         resetAverageHeartRate();
+
+        addTrackPoint(tmp);
     }
 
     /**

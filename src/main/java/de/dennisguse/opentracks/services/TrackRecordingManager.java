@@ -116,10 +116,9 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     RecordingData getDataForUI() {
-        TrackStatisticsUpdater tmpTrackStatisticsUpdater = new TrackStatisticsUpdater(trackStatisticsUpdater);
         Pair<TrackPoint, SensorDataSet> current = trackPointCreator.createCurrentTrackPoint(lastTrackPointUIWithSpeed, lastTrackPointUIWithAltitude, lastStoredTrackPointWithLocation);
 
-        tmpTrackStatisticsUpdater.addTrackPoint(current.first);
+        TrackStatisticsUpdater tmpTrackStatisticsUpdater = new TrackStatisticsUpdater(trackStatisticsUpdater, current.first);
 
         ALTITUDE_CORRECTION_MANAGER.correctAltitude(context, current.first);
 

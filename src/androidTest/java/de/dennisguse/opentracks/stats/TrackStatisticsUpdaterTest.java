@@ -301,15 +301,36 @@ public class TrackStatisticsUpdaterTest {
         tp4.setSpeed(Speed.of(5f));
         TrackPoint tp5 = new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.ofEpochMilli(5000));
 
-        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(List.of(tp1, tp2,tp3, tp4));
+        TrackStatisticsUpdater initial = new TrackStatisticsUpdater(List.of(tp1, tp2,tp3, tp4));
 
         // when
-        TrackStatisticsUpdater copy = new TrackStatisticsUpdater(subject);
-        subject.addTrackPoint(tp5);
-        copy.addTrackPoint(tp5);
+        TrackStatisticsUpdater subject = new TrackStatisticsUpdater(initial, tp5);
 
         // then
-        assertEquals(Distance.of(55.28713929653168), subject.getTrackStatistics().totalDistance());
+        assertEquals(new Statistics(
+                Instant.ofEpochMilli(1000),
+                Instant.ofEpochMilli(4000),
+                Duration.ofSeconds(3),
+                Duration.ofSeconds(3),
+                Distance.of(55.28713929653168),
+                Speed.of(18.429046432177227),
+                new AltitudeExtremities(5, 5),
+                null,
+                null,
+                null
+        ), initial.getTrackStatistics());
+        assertEquals(new Statistics(
+                Instant.ofEpochMilli(1000),
+                Instant.ofEpochMilli(5000),
+                Duration.ofSeconds(4),
+                Duration.ofSeconds(4),
+                Distance.of(55.28713929653168),
+                Speed.of(18.429046432177227),
+                new AltitudeExtremities(5, 5),
+                null,
+                null,
+                null
+        ), subject.getTrackStatistics());
     }
 
     public TrackPoint createTrackPoint(double latitude, double longitude, Altitude altitude, Instant time) {
