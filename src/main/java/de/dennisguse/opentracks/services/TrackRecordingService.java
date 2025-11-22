@@ -51,7 +51,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private static final Duration RECORDING_DATA_UPDATE_INTERVAL = Duration.ofSeconds(1);
 
     public static final RecordingStatus STATUS_DEFAULT = RecordingStatus.notRecording();
-    public static final RecordingData NOT_RECORDING = new RecordingData(null, null, null, null);
     public static final GpsStatusValue STATUS_GPS_DEFAULT = GpsStatusValue.GPS_NONE;
 
     public TrackPoint getLastStoredTrackPointWithLocation() {
@@ -105,7 +104,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         recordingStatusObservable = new MutableLiveData<>();
         updateRecordingStatus(STATUS_DEFAULT);
         gpsStatusObservable = new MutableLiveData<>(STATUS_GPS_DEFAULT);
-        recordingDataObservable = new MutableLiveData<>(NOT_RECORDING);
+        recordingDataObservable = new MutableLiveData<>(RecordingData.NOT_RECORDING);
 
         trackPointCreator = new TrackPointCreator(this);
         trackRecordingManager = new TrackRecordingManager(this, trackPointCreator, this, handler);

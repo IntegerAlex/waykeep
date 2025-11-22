@@ -21,7 +21,6 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.StatisticsRecordingBinding;
 import de.dennisguse.opentracks.services.RecordingData;
-import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
@@ -46,7 +45,7 @@ public class StatisticsRecordingFragment extends Fragment {
 
     private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
-    private RecordingData recordingData = TrackRecordingService.NOT_RECORDING;
+    private RecordingData recordingData = RecordingData.NOT_RECORDING;
 
     private final List<StatisticViewHolder<?>> viewHolders = new LinkedList<>();
 
@@ -178,7 +177,7 @@ public class StatisticsRecordingFragment extends Fragment {
     }
 
     private void updateDataOnUI() {
-        if (isResumed()) {
+        if (isResumed() && !RecordingData.NOT_RECORDING.equals(recordingData)) {
             viewHolders.forEach(i -> i.onChanged(unitSystem, recordingData));
         }
     }

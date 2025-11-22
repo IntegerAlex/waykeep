@@ -34,7 +34,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
             Pair<String, String> valueAndUnit = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
-                    .build(getContext()).getDistanceParts(data.getStatisticsTrack().totalDistance());
+                    .build(getContext()).getDistanceParts(data.trackStatistics().totalDistance());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -46,7 +46,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.getStatisticsTrack().totalDuration()), null);
+            Pair<String, String> valueAndUnit = new Pair<>(StringUtils.formatElapsedTime(data.trackStatistics().totalDuration()), null);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -58,7 +58,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            String value = StringUtils.formatElapsedTime(data.getStatisticsTrack().movingDuration());
+            String value = StringUtils.formatElapsedTime(data.trackStatistics().movingDuration());
 
             getBinding().statsValue.setText(value);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_moving_time));
@@ -123,7 +123,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -140,7 +140,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().getAverageSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -157,7 +157,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(true)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().maxSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().maxSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -174,7 +174,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -191,7 +191,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().getAverageMovingSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().getAverageMovingSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -236,7 +236,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                     .setReportSpeedOrPace(false)
                     .build(getContext());
 
-            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.getStatisticsTrack().maxSpeed());
+            Pair<String, String> valueAndUnit = speedFormatterSpeed.getSpeedParts(data.trackStatistics().maxSpeed());
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -264,7 +264,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Float gain = data.getStatisticsTrack().altitudeGainLoss() != null ? data.getStatisticsTrack().altitudeGainLoss().gain_m() : null;
+            Float gain = data.trackStatistics().altitudeGainLoss() != null ? data.trackStatistics().altitudeGainLoss().gain_m() : null;
 
             Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), gain, unitSystem);
 
@@ -278,7 +278,7 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Float loss = data.getStatisticsTrack().altitudeGainLoss() != null ? data.getStatisticsTrack().altitudeGainLoss().loss_m() : null;
+            Float loss = data.trackStatistics().altitudeGainLoss() != null ? data.trackStatistics().altitudeGainLoss().loss_m() : null;
 
             Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), loss, unitSystem);
 

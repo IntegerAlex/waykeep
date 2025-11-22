@@ -118,7 +118,7 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
             previousLocationWasAccurate = currentLocationWasAccurate;
         }
 
-        notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(recordingData.getStatisticsTrack().totalDistance())));
+        notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(recordingData.trackStatistics().totalDistance())));
         String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(recordingData.latestTrackPoint().getSpeed());
         notificationBuilder.setContentText(context.getString(R.string.track_speed_notification, formattedSpeed));
         notificationBuilder.setSubText(context.getString(R.string.track_recording_notification_accuracy, formattedAccuracy));
