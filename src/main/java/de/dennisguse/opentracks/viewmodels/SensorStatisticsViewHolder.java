@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import java.time.Instant;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.databinding.StatsSensorItemBinding;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
@@ -36,9 +37,10 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             String sensorName = getContext().getString(R.string.value_unknown);
 
             Pair<String, String> valueAndUnit;
-            if (sensorDataSet != null && sensorDataSet.getHeartRate() != null) {
-                valueAndUnit = StringUtils.getHeartRateParts(getContext(), sensorDataSet.getHeartRate().first);
-                sensorName = sensorDataSet.getHeartRate().second;
+            Pair<HeartRate, String> heartRate;
+            if (sensorDataSet != null && (heartRate = sensorDataSet.getHeartRate()) != null) {
+                valueAndUnit = StringUtils.getHeartRateParts(getContext(), heartRate.first);
+                sensorName = heartRate.second;
             } else {
                 valueAndUnit = StringUtils.getHeartRateParts(getContext(), null);
             }
@@ -46,8 +48,8 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             //TODO Loads preference every time
             HeartRateZones zones = PreferencesUtils.getHeartRateZones();
             int textColor;
-            if (sensorDataSet != null && sensorDataSet.getHeartRate() != null) {
-                textColor = zones.getTextColorForZone(getContext(), sensorDataSet.getHeartRate().first);
+            if (sensorDataSet != null && (heartRate = sensorDataSet.getHeartRate()) != null) {
+                textColor = zones.getTextColorForZone(getContext(), heartRate.first);
             } else {
                 textColor = zones.getTextColorForZone(getContext(), null);
             }

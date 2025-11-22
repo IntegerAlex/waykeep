@@ -161,8 +161,9 @@ public class SensorDataSet {
             trackPoint.setPosition(gps.getAggregatedValue(trackPointCreator.createNow()));
         }
 
-        if (getHeartRate() != null) {
-            trackPoint.setHeartRate(getHeartRate().first);
+        Pair<HeartRate, String> heartRate = getHeartRate();
+        if (heartRate != null) {
+            trackPoint.setHeartRate(heartRate.first);
         }
 
         if (getCadence() != null) {
