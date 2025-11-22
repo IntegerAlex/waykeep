@@ -10,6 +10,7 @@ import android.util.Pair;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SdkSuppress;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,6 +39,8 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 
+//Due to DateTimeFormatter using NBSP, these tests only work in SDK34+
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementUtilsTest {
 
@@ -55,11 +58,6 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceMovingTime(true);
         PreferencesUtils.setVoiceAnnounceAverageSpeedPace(true);
         PreferencesUtils.setVoiceAnnounceLapSpeedPace(true);
-    }
-
-    @Test
-    public void sdkRequirement() {
-        assertFalse("Due to DateTimeFormatter using NBSP, these tests only work in SDK34+", Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE);
     }
 
     @Test
@@ -166,7 +164,7 @@ public class VoiceAnnouncementUtilsTest {
     public void getAnnouncement_withInterval_metric_speed() {
         // given
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
-        
+
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
 
