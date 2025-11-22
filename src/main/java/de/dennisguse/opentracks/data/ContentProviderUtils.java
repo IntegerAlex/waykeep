@@ -288,7 +288,6 @@ public class ContentProviderUtils {
 
     private ContentValues createContentValues(Track track) {
         ContentValues values = new ContentValues();
-        Statistics trackStatistics = track.getStatistics();
 
         if (track.getId() != null) {
             values.put(TracksColumns._ID, track.getId().id());
@@ -300,27 +299,7 @@ public class ContentProviderUtils {
         values.put(TracksColumns.ACTIVITY_TYPE_LOCALIZED, track.getActivityTypeLocalized());
         values.put(TracksColumns.STARTTIME_OFFSET, track.getZoneOffset().getTotalSeconds());
 
-        //TODO Duplicates createContentValues(Statistics trackStatistics)
-        if (trackStatistics.startTime() != null) {
-            values.put(TracksColumns.STARTTIME, trackStatistics.startTime().toEpochMilli());
-        }
-        if (trackStatistics.stopTime() != null) {
-            values.put(TracksColumns.STOPTIME, trackStatistics.stopTime().toEpochMilli());
-        }
-        values.put(TracksColumns.TOTALDISTANCE, trackStatistics.totalDistance().toM());
-        values.put(TracksColumns.TOTALTIME, trackStatistics.totalDuration().toMillis());
-        values.put(TracksColumns.MOVINGTIME, trackStatistics.movingDuration().toMillis());
-        values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
-
-        if (trackStatistics.altitudeExtremities() != null) {
-            values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
-            values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
-        }
-
-        if (trackStatistics.altitudeGainLoss() != null) {
-            values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
-            values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());
-        }
+        values.putAll(createContentValues(track.getStatistics()));
 
         return values;
     }
@@ -341,8 +320,10 @@ public class ContentProviderUtils {
         values.put(TracksColumns.TOTALTIME, trackStatistics.totalDuration().toMillis());
         values.put(TracksColumns.MOVINGTIME, trackStatistics.movingDuration().toMillis());
         values.put(TracksColumns.MAXSPEED, trackStatistics.maxSpeed().toMPS());
-        values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.getMinAltitude());
-        values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.getMaxAltitude());
+        if (trackStatistics.altitudeExtremities() != null) {
+            values.put(TracksColumns.MIN_ALTITUDE, trackStatistics.altitudeExtremities().min_m());
+            values.put(TracksColumns.MAX_ALTITUDE, trackStatistics.altitudeExtremities().max_m());
+        }
         if (trackStatistics.altitudeGainLoss() != null) {
             values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
             values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());

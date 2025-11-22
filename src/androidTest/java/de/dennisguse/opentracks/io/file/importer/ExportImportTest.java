@@ -221,8 +221,8 @@ public class ExportImportTest {
         assertEquals(8540.359, trackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
 
         // Altitude
-        assertEquals(999.122, trackStatistics.getMinAltitude(), 0.01);
-        assertEquals(1020.25, trackStatistics.getMaxAltitude(), 0.01);
+        assertEquals(999.122, trackStatistics.altitudeExtremities().min_m(), 0.01);
+        assertEquals(1020.25, trackStatistics.altitudeExtremities().max_m(), 0.01);
 
         assertEquals(2, trackStatistics.altitudeGainLoss().gain_m(), 0.01);
         assertEquals(2, trackStatistics.altitudeGainLoss().loss_m(), 0.01);
@@ -345,8 +345,8 @@ public class ExportImportTest {
         assertEquals(8540.362, importedTrackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
 
         // Altitude
-        assertEquals(999.122, importedTrackStatistics.getMinAltitude(), 0.01);
-        assertEquals(1020.25, importedTrackStatistics.getMaxAltitude(), 0.01);
+        assertEquals(999.122, importedTrackStatistics.altitudeExtremities().min_m(), 0.01);
+        assertEquals(1020.25, importedTrackStatistics.altitudeExtremities().max_m(), 0.01);
         assertEquals(2, importedTrackStatistics.altitudeGainLoss().gain_m(), 0.01);
         assertEquals(2, importedTrackStatistics.altitudeGainLoss().loss_m(), 0.01);
 
@@ -485,8 +485,8 @@ public class ExportImportTest {
         assertEquals(2077.305, importedTrackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
 
         // Altitude
-        assertEquals(999.099, importedTrackStatistics.getMinAltitude(), 0.01);
-        assertEquals(1020.2, importedTrackStatistics.getMaxAltitude(), 0.01);
+        assertEquals(999.099, importedTrackStatistics.altitudeExtremities().min_m(), 0.01);
+        assertEquals(1020.2, importedTrackStatistics.altitudeExtremities().max_m(), 0.01);
         assertEquals(2, importedTrackStatistics.altitudeGainLoss().gain_m(), 0.01);
         assertEquals(2, importedTrackStatistics.altitudeGainLoss().loss_m(), 0.01);
 

@@ -64,20 +64,6 @@ public record Statistics(
         return Speed.of(totalDistance, movingDuration);
     }
 
-    @Deprecated
-    //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
-    public double getMinAltitude() {
-        if (altitudeExtremities == null) return 0;
-        return altitudeExtremities.min_m();
-    }
-
-    @Deprecated
-    //TODO null should be return (need adjusting ContentPtoviderUtils.createContentValues()
-    public double getMaxAltitude() {
-        if (altitudeExtremities == null) return 0;
-        return altitudeExtremities.max_m();
-    }
-
     /**
      * Combines these statistics with those from another object.
      * This assumes that the time periods covered by each do not intersect.
