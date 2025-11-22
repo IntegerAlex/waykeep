@@ -41,8 +41,7 @@ public class TrackStatisticsUpdater {
 
     private static final String TAG = TrackStatisticsUpdater.class.getSimpleName();
 
-    @NonNull
-    private Statistics statisticsWithoutCurrentSegment;
+    private Statistics statisticsWithoutCurrentSegment = null;
 
     private float averageHeartRateBPM;
     private Duration totalHeartRateDuration = Duration.ZERO;
@@ -56,18 +55,11 @@ public class TrackStatisticsUpdater {
 
     private boolean isIdle;
 
-    @Deprecated
-    public TrackStatisticsUpdater() {
-        this(Statistics.DEFAULT);
-    }
-
     public TrackStatisticsUpdater(@NonNull TrackPoint trackPoint) {
-        this();
         addTrackPoint(trackPoint);
     }
 
     public TrackStatisticsUpdater(List<TrackPoint> trackPoints) {
-        this();
         assert !trackPoints.isEmpty(); //TODO Enforce that this is always true (e.g., import)
 
         trackPoints.forEach(this::addTrackPoint);
@@ -163,10 +155,10 @@ public class TrackStatisticsUpdater {
                 currentSegment.addTotalDistance(movingDistance);
             }
 
-            if (!isIdle) {
-                if (!trackPoint.isSegmentManualStart() && lastTrackPoint != null) {
-                    currentSegment.addMovingTime(trackPoint, lastTrackPoint);
-                }
+            if (!isIdle
+                    && !trackPoint.isSegmentManualStart()
+                    && lastTrackPoint != null) {
+                currentSegment.addMovingTime(trackPoint, lastTrackPoint);
             }
 
             if (trackPoint.isIdleTriggered()) {

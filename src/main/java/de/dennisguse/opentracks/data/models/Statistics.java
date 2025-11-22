@@ -70,7 +70,9 @@ public record Statistics(
      */
     //TODO Should be refactored to append only
     @NonNull
-    public Statistics merge(@NonNull Statistics other) {
+    public Statistics merge(Statistics other) {
+        if (other == null) return this;
+
         HeartRate newAvgHeartRate = avgHeartRate;
         if (avgHeartRate == null) {
             newAvgHeartRate = other.avgHeartRate;

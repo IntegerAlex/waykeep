@@ -107,7 +107,7 @@ public class SegmentStatisticUpdater {
     }
 
     public Statistics merge(Statistics statistics) {
-        return statistics.merge(getStatistics());
+        return getStatistics().merge(statistics);
     }
 
     public Statistics getStatistics() {
