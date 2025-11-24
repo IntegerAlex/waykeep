@@ -130,7 +130,7 @@ public class CustomContentProviderUtilsTest {
     }
 
     private TrackPoint.Id initializeTrack(Track.Id id, int numPoints) {
-        Track track = new Track();
+        Track track = new Track(Statistics.DEFAULT);
         track.setId(id);
         track.setName("Test: " + id.id());
         contentProviderUtils.insertTrack(track);

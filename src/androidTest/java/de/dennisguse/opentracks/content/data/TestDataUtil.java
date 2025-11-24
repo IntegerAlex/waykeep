@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
@@ -34,7 +36,7 @@ public class TestDataUtil {
      * Create a track without any trackPoints.
      */
     public static Track createTrack(Track.Id trackId) {
-        Track track = new Track();
+        Track track = new Track(Statistics.DEFAULT);
         track.setId(trackId);
         track.setName("Test: " + trackId.id());
 

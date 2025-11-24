@@ -40,8 +40,8 @@ public record Statistics(
     @Deprecated
     public static final Statistics DEFAULT =
         new Statistics(
-                null,
-                null,
+                Instant.EPOCH,
+                Instant.EPOCH,
                 Duration.ZERO,
                 Duration.ZERO,
                 Distance.ZERO,
@@ -122,8 +122,8 @@ public record Statistics(
         }
 
         return new Statistics(
-                startTime == null ? other.startTime : startTime.isBefore(other.startTime) ? startTime : other.startTime,
-                stopTime == null ? other.stopTime : stopTime.isAfter(other.stopTime) ? stopTime : other.stopTime,
+                startTime.isBefore(other.startTime) ? startTime : other.startTime,
+                stopTime.isAfter(other.stopTime) ? stopTime : other.stopTime,
                 totalDuration.plus(other.totalDuration),
                 movingDuration.plus(other.movingDuration),
                 totalDistance.plus(other.totalDistance),

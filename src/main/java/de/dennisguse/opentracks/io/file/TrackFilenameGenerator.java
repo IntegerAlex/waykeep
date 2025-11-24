@@ -3,6 +3,7 @@ package de.dennisguse.opentracks.io.file;
 import androidx.annotation.NonNull;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +90,7 @@ public class TrackFilenameGenerator {
     }
 
     public String getExample() {
-        Track track = new Track(new Statistics(Instant.EPOCH, null, null, null, null, null, null, null, null, null));
+        Track track = new Track(ZoneOffset.UTC, Statistics.DEFAULT);
         track.setName("Berlin");
         track.setUuid(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
 

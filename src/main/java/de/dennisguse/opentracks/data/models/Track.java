@@ -55,12 +55,6 @@ public class Track {
     @NonNull
     private Statistics trackStatistics;
 
-    @Deprecated
-    @VisibleForTesting
-    public Track() {
-        this(ZoneOffset.UTC);
-    }
-
     @VisibleForTesting
     public Track(Statistics statistics) {
         this(ZoneOffset.UTC, statistics);
