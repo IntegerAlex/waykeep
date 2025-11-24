@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.R;
@@ -54,7 +55,7 @@ public class TrackImporter {
     private final List<Track.Id> trackIds = new ArrayList<>();
 
     // Current track
-    private Track track;
+    private TrackData trackData;
     private final List<TrackPoint> trackPoints = new LinkedList<>();
     private final List<Marker> markers = new LinkedList<>();
 
@@ -66,11 +67,11 @@ public class TrackImporter {
     }
 
     void newTrack() {
-        if (track != null) {
+        if (trackData != null) {
             finishTrack();
         }
 
-        track = null;
+        trackData = null;
         trackPoints.clear();
         markers.clear();
     }
@@ -87,33 +88,32 @@ public class TrackImporter {
         this.markers.addAll(markers);
     }
 
-    void setTrack(Context context, String name, String uuid, String description, String activityTypeLocalized, String activityTypeId, @Nullable ZoneOffset zoneOffset) {
-        track = new Track(zoneOffset != null ? zoneOffset : ZoneOffset.UTC);
-        track.setName(name != null ? name : "");
+    void setTrackData(Context context, String name, String uuid, String description, String activityTypeLocalized, String activityTypeId, @Nullable ZoneOffset zoneOffset) {
+        trackData = new TrackData();
+        trackData.name = Objects.requireNonNullElse(name, ""); //TODO This should be handled by Track.
+
+        trackData.zoneOffset = Objects.requireNonNullElse(zoneOffset, ZoneOffset.UTC);
 
         try {
-            track.setUuid(UUID.fromString(uuid));
+            trackData.uuid = UUID.fromString(uuid);
         } catch (IllegalArgumentException | NullPointerException e) {
             Log.w(TAG, "could not parse Track UUID, generating a new one.");
-            track.setUuid(UUID.randomUUID());
+            trackData.uuid = UUID.randomUUID();
         }
 
-        track.setDescription(description != null ? description : "");
+        trackData.description = Objects.requireNonNullElse(description, "");  //TODO This should be handled by Track.
 
-        if (activityTypeLocalized != null) {
-            track.setActivityTypeLocalized(activityTypeLocalized);
-        }
-        ActivityType activityType;
+        trackData.activityTypeLocalized = activityTypeLocalized;
+
         if (activityTypeId == null) {
-            activityType = ActivityType.findByLocalizedString(context, activityTypeLocalized);
+            trackData.activityType = ActivityType.findByLocalizedString(context, activityTypeLocalized);
         } else {
-            activityType = ActivityType.findBy(activityTypeId);
+            trackData.activityType = ActivityType.findBy(activityTypeId);
         }
-        track.setActivityType(activityType);
     }
 
     void finish() {
-        if (track != null) {
+        if (trackData != null) {
             finishTrack();
         }
     }
@@ -124,13 +124,13 @@ public class TrackImporter {
         }
 
         // Store Track
-        if (contentProviderUtils.getTrack(track.getUuid()) != null) {
+        if (contentProviderUtils.getTrack(trackData.uuid) != null) {
             if (preventReimport) {
                 throw new ImportAlreadyExistsException(context.getString(R.string.import_prevent_reimport));
             }
 
             //TODO This is a workaround until we have proper UI.
-            track.setUuid(UUID.randomUUID());
+            trackData.uuid = UUID.randomUUID();
         }
 
         trackPoints.sort((o1, o2) -> {
@@ -146,7 +146,12 @@ public class TrackImporter {
         adjustTrackPoints();
 
         TrackStatisticsUpdater updater = new TrackStatisticsUpdater(trackPoints);
-        track.setStatistics(updater.getTrackStatistics());
+        Track track = new Track(trackData.zoneOffset, updater.getTrackStatistics());
+        track.setName(trackData.name);
+        track.setUuid(trackData.uuid);
+        track.setDescription(trackData.description);
+        track.setActivityType(trackData.activityType);
+        track.setActivityTypeLocalized(trackData.activityTypeLocalized);
 
         Track.Id trackId = contentProviderUtils.insertTrack(track);
 
@@ -249,4 +254,14 @@ public class TrackImporter {
         contentProviderUtils.deleteTracks(context, trackIds);
     }
 
+
+    private class TrackData {
+        private String name;
+        private UUID uuid;
+        private String description;
+        private String activityTypeLocalized;
+        private ActivityType activityType;
+
+        private ZoneOffset zoneOffset;
+    }
 }

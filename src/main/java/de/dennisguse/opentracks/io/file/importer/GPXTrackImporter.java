@@ -167,7 +167,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
                     // Backward compatibility: up v4.9.1 as <type> contained localized content.
                     activityTypeLocalized = activityType;
                 }
-                trackImporter.setTrack(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
+                trackImporter.setTrackData(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
                 zoneOffset = null;
             }
             case TAG_TRACK_SEGMENT -> onTrackSegmentEnd();

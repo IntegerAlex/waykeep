@@ -60,11 +60,6 @@ public class Track {
         this(ZoneOffset.UTC, statistics);
     }
 
-    @Deprecated //TODO Remove
-    public Track(@NonNull ZoneOffset zoneOffset) {
-        this(zoneOffset, Statistics.DEFAULT);
-    }
-
     public Track(@NonNull ZoneOffset zoneOffset, @NonNull Statistics trackStatistics) {
         this.zoneOffset = zoneOffset;
         this.trackStatistics = trackStatistics;

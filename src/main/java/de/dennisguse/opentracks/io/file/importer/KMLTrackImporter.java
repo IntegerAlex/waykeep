@@ -170,7 +170,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                     onMarkerEnd();
             case TAG_COORDINATES -> onMarkerLocationEnd();
             case TAG_MULTI_TRACK, TAG_KML22_MULTI_TRACK -> {
-                trackImporter.setTrack(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
+                trackImporter.setTrackData(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
                 zoneOffset = null;
             }
             case TAG_TRACK, TAG_KML22_TRACK -> onTrackSegmentEnd();
