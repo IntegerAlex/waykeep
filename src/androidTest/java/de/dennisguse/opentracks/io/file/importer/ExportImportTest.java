@@ -52,6 +52,7 @@ import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -206,26 +207,20 @@ public class ExportImportTest {
         Statistics trackStatistics = track.getStatistics();
 
         assertEquals(ZoneOffset.of("+01:00"), track.getZoneOffset());
-        assertEquals(Instant.parse("2020-02-02T02:02:02Z"), trackStatistics.startTime());
-        assertEquals(Instant.parse("2020-02-02T02:04:00Z"), trackStatistics.stopTime());
 
-        assertEquals(Duration.ofSeconds(56), trackStatistics.totalDuration());
-        assertEquals(Duration.ofSeconds(26), trackStatistics.movingDuration()); //TODO Likely too low
-
-        // Distance
-        assertEquals(222049.34375, trackStatistics.totalDistance().toM(), 0.01); //TODO Too low
-
-        // Speed
-        assertEquals(22203.7421875, trackStatistics.maxSpeed().toMPS(), 0.01);
-        assertEquals(3965.166, trackStatistics.getAverageSpeed().toMPS(), 0.01);
-        assertEquals(8540.359, trackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
-
-        // Altitude
-        assertEquals(999.122, trackStatistics.altitudeExtremities().min_m(), 0.01);
-        assertEquals(1020.25, trackStatistics.altitudeExtremities().max_m(), 0.01);
-
-        assertEquals(2, trackStatistics.altitudeGainLoss().gain_m(), 0.01);
-        assertEquals(2, trackStatistics.altitudeGainLoss().loss_m(), 0.01);
+        assertEquals(new Statistics(
+                        Instant.parse("2020-02-02T02:02:02Z"),
+                        Instant.parse("2020-02-02T02:04:00Z"),
+                        Duration.ofSeconds(56),
+                        Duration.ofSeconds(26),  //TODO Likely too low
+                        Distance.of(222049.34375), //TODO Too low
+                        Speed.of(22203.734375),
+                        new AltitudeExtremities(999.1229858398438, 1020.25),
+                        new AltitudeGainLoss(2, 2),
+                        null,
+                        null
+                ),
+                trackStatistics);
 
         List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
         new TrackPointAssert().assertEquals(List.of(
@@ -321,35 +316,26 @@ public class ExportImportTest {
         assertEquals(track.getName(), importedTrack.getName());
 
         // 2. trackpoints
-        TrackPointAssert a = new TrackPointAssert();
         List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
-        a.assertEquals(trackPoints, actual);
+        new TrackPointAssert().assertEquals(trackPoints, actual);
 
         // 3. trackstatistics
         Statistics importedTrackStatistics = importedTrack.getStatistics();
 
-        // Time
         assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());
-        assertEquals(Instant.parse("2020-02-02T02:02:02Z"), importedTrackStatistics.startTime());
-        assertEquals(Instant.parse("2020-02-02T02:04:00Z"), importedTrackStatistics.stopTime());
-
-        assertEquals(Duration.ofSeconds(56), importedTrackStatistics.totalDuration());
-        assertEquals(Duration.ofSeconds(26), importedTrackStatistics.movingDuration());
-
-        // Distance
-        assertEquals(222049.421, importedTrackStatistics.totalDistance().toM(), 0.01);
-
-        // Speed
-        assertEquals(22203.7421875, importedTrackStatistics.maxSpeed().toMPS(), 0.01);
-        assertEquals(3965.168, importedTrackStatistics.getAverageSpeed().toMPS(), 0.01);
-        assertEquals(8540.362, importedTrackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
-
-        // Altitude
-        assertEquals(999.122, importedTrackStatistics.altitudeExtremities().min_m(), 0.01);
-        assertEquals(1020.25, importedTrackStatistics.altitudeExtremities().max_m(), 0.01);
-        assertEquals(2, importedTrackStatistics.altitudeGainLoss().gain_m(), 0.01);
-        assertEquals(2, importedTrackStatistics.altitudeGainLoss().loss_m(), 0.01);
-
+        assertEquals(new Statistics(
+                        Instant.parse("2020-02-02T02:02:02Z"),
+                        Instant.parse("2020-02-02T02:04:00Z"),
+                        Duration.ofSeconds(56),
+                        Duration.ofSeconds(26),  //TODO Likely too low
+                        Distance.of(222049.421875), //TODO Too low
+                        Speed.of(22203.7421875),
+                        new AltitudeExtremities(999.1229858398438, 1020.25),
+                        new AltitudeGainLoss(2, 2),
+                        null,
+                        null
+                ),
+                importedTrackStatistics);
 
         // 4. markers
         assertMarkers();
@@ -466,29 +452,22 @@ public class ExportImportTest {
         ), actual);
 
         // 3. trackstatistics
-        Statistics importedTrackStatistics = importedTrack.getStatistics();
-
-        // Time
         assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());
-        assertEquals(Instant.parse("2020-02-02T02:02:03Z"), importedTrackStatistics.startTime());
-        assertEquals(Instant.parse("2020-02-02T02:03:50Z"), importedTrackStatistics.stopTime());
 
-        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.totalDuration());
-        assertEquals(Duration.ofSeconds(107), importedTrackStatistics.movingDuration());
-
-        // Distance
-        assertEquals(222271.734, importedTrackStatistics.totalDistance().toM(), 0.01);
-
-        // Speed
-        assertEquals(2077.305, importedTrackStatistics.maxSpeed().toMPS(), 0.01);
-        assertEquals(2077.305, importedTrackStatistics.getAverageSpeed().toMPS(), 0.01);
-        assertEquals(2077.305, importedTrackStatistics.getAverageMovingSpeed().toMPS(), 0.01);
-
-        // Altitude
-        assertEquals(999.099, importedTrackStatistics.altitudeExtremities().min_m(), 0.01);
-        assertEquals(1020.2, importedTrackStatistics.altitudeExtremities().max_m(), 0.01);
-        assertEquals(2, importedTrackStatistics.altitudeGainLoss().gain_m(), 0.01);
-        assertEquals(2, importedTrackStatistics.altitudeGainLoss().loss_m(), 0.01);
+        Statistics importedTrackStatistics = importedTrack.getStatistics();
+        assertEquals(new Statistics(
+                        Instant.parse("2020-02-02T02:02:03Z"),
+                        Instant.parse("2020-02-02T02:03:50Z"),
+                        Duration.ofSeconds(107),
+                        Duration.ofSeconds(107),
+                        Distance.of(222271.734375),
+                        Speed.of(2077.305908203125),
+                        new AltitudeExtremities(999.0999755859375, 1020.2000122070312),
+                        new AltitudeGainLoss(2, 2),
+                        null,
+                        null
+                ),
+                importedTrackStatistics);
 
         // 4. markers
         assertMarkers();
