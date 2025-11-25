@@ -321,10 +321,6 @@ public class TrackDataHub {
             return;
         }
 
-        TrackPoint.Id lastTrackPointId = contentProviderUtils.getLastTrackPointId(selectedTrackId);
-        int samplingFrequency = -1;
-
-
         TrackPoint.Id next = null;
         if (localLastSeenTrackPointIdId != null) {
             next = new TrackPoint.Id(localLastSeenTrackPointIdId.id() + 1); //TODO startTrackPointId + 1 is an assumption assumption; should be derived from the DB.
@@ -332,9 +328,10 @@ public class TrackDataHub {
 
         TrackPoint trackPoint = null;
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
+            long numTotalPoints = trackPointIterator.getCount();
+            int samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
 
             while (trackPointIterator.hasNext()) {
-
                 if (!isStarted()) {
                     return;
                 }
@@ -353,20 +350,15 @@ public class TrackDataHub {
                     localFirstSeenTrackPointId = trackPointId;
                 }
 
-                if (samplingFrequency == -1) {
-                    long numTotalPoints = Math.max(0L, lastTrackPointId.id() - localFirstSeenTrackPointId.id()); //TODO That is an assumption; should be derived from the DB.
-                    samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
-                }
-
                 if (trackStatisticsUpdater == null) {
                     trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
-                }  else {
+                } else {
                     trackStatisticsUpdater.addTrackPoint(trackPoint);
                 }
                 Statistics statistics = trackStatisticsUpdater.getTrackStatistics();
 
                 // Also include the last point if the selected track is not recording.
-                if ((localNumLoadedTrackPoints % samplingFrequency == 0) || (trackPointId == lastTrackPointId && !isSelectedTrackRecording())) {
+                if ((localNumLoadedTrackPoints % samplingFrequency == 0) || (!trackPointIterator.hasNext() && !isSelectedTrackRecording())) {
                     for (Listener trackDataListener : listeners)
                         trackDataListener.onSampledInTrackPoint(trackPoint, statistics);
                 }

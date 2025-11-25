@@ -27,12 +27,8 @@ class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
         this.contentProviderUtils = contentProviderUtils;
         this.trackId = trackId;
 
-        cursor = getCursor(startTrackPointId);
+        cursor = contentProviderUtils.getTrackPointCursor(trackId, startTrackPointId);
         indexes = new CachedTrackPointsIndexes(cursor);
-    }
-
-    private Cursor getCursor(TrackPoint.Id trackPointId) {
-        return contentProviderUtils.getTrackPointCursor(trackId, trackPointId);
     }
 
     @Override
@@ -50,6 +46,11 @@ class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
             throw new NoSuchElementException();
         }
         return ContentProviderUtils.fillTrackPoint(cursor, indexes);
+    }
+
+    @Override
+    public int getPosition() {
+        return cursor.getPosition();
     }
 
     @VisibleForTesting

@@ -617,7 +617,6 @@ public class ContentProviderUtils {
     }
 
     //TODO Only used for file import; might be better to replace it.
-    //TODO Rename to bulkInsert
     public int bulkInsertTrackPoint(List<TrackPoint> trackPoints, Track.Id trackId) {
         ContentValues[] values = new ContentValues[trackPoints.size()];
         for (int i = 0; i < trackPoints.size(); i++) {
@@ -636,33 +635,20 @@ public class ContentProviderUtils {
     }
 
     /**
-     * Gets the last location id for a track.
-     * Returns -1L if it doesn't exist.
+     * Gets the last valid location for a track.
+     * Returns null if it doesn't exist.
      *
      * @param trackId the track id
      */
-    @Deprecated
-    public TrackPoint.Id getLastTrackPointId(@NonNull Track.Id trackId) {
-        String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") from " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=?)";
+    @VisibleForTesting
+    @Deprecated // Use TrackPointIterator to fetch all TrackPoints and use the last.
+    public TrackPoint getLastValidTrackPoint(Track.Id trackId) {
+        String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") FROM " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TYPE + " IN (" + TrackPoint.Type.SEGMENT_START_AUTOMATIC.type_db + "," + TrackPoint.Type.TRACKPOINT.type_db + "))";
         String[] selectionArgs = new String[]{Long.toString(trackId.id())};
-        try (Cursor cursor = getTrackPointCursor(new String[]{TrackPointsColumns._ID}, selection, selectionArgs, TrackPointsColumns._ID)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                return new TrackPoint.Id(cursor.getLong(cursor.getColumnIndexOrThrow(TrackPointsColumns._ID)));
-            }
-        }
-        return null;
-    }
 
-    /**
-     * Gets the trackPoint id for a location.
-     */
-    @Deprecated
-    public TrackPoint.Id getTrackPointId(Track.Id trackId, Position position) {
-        String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") FROM " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TIME + "=?)";
-        String[] selectionArgs = new String[]{Long.toString(trackId.id()), Long.toString(position.time().toEpochMilli())};
-        try (Cursor cursor = getTrackPointCursor(new String[]{TrackPointsColumns._ID}, selection, selectionArgs, TrackPointsColumns._ID)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                return new TrackPoint.Id(cursor.getLong(cursor.getColumnIndexOrThrow(TrackPointsColumns._ID)));
+        try (Cursor cursor = getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns._ID)) {
+            if (cursor != null && cursor.moveToNext()) {
+                return createTrackPoint(cursor);
             }
         }
         return null;
@@ -696,26 +682,6 @@ public class ContentProviderUtils {
         }
 
         return getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns.DEFAULT_SORT_ORDER);
-    }
-
-    /**
-     * Gets the last valid location for a track.
-     * Returns null if it doesn't exist.
-     *
-     * @param trackId the track id
-     */
-    @VisibleForTesting
-    @Deprecated // Use TrackPointIterator to fetch all TrackPoints and use the last.
-    public TrackPoint getLastValidTrackPoint(Track.Id trackId) {
-        String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") FROM " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TYPE + " IN (" + TrackPoint.Type.SEGMENT_START_AUTOMATIC.type_db + "," + TrackPoint.Type.TRACKPOINT.type_db + "))";
-        String[] selectionArgs = new String[]{Long.toString(trackId.id())};
-
-        try (Cursor cursor = getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns._ID)) {
-            if (cursor != null && cursor.moveToNext()) {
-                return createTrackPoint(cursor);
-            }
-        }
-        return null;
     }
 
     /**

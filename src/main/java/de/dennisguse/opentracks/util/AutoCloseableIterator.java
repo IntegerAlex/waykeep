@@ -8,4 +8,8 @@ public abstract class AutoCloseableIterator<T> implements Iterator<T>, AutoClose
      * Override: AutoClosable.close() throws Exception.
      */
     public abstract void close();
+
+    public abstract int getPosition();
+
+    public abstract int getCount();
 }
