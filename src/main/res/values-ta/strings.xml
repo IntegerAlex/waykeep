@@ -544,4 +544,7 @@
     <string name="settings_night_mode_option_night_dynamic">இரவு (மாறும் நிறம்)</string>
     <string name="settings_night_mode_option_night_oled_dynamic">OLED நட்பு (மாறும் நிறம்)</string>
     <string name="track_edit_time_offset">நேர மண்டல ஈடுசெய்</string>
+    <string name="settings_announcements_segment_average_speed_pace">சராசரி வேகம்/பாய்சல் (பிரிவு)</string>
+    <string name="stats_average_segment_pace">சராசரி பிரிவு வேகம்</string>
+    <string name="stats_elapsed_segment_time">கடந்த பிரிவு நேரம்</string>
 </resources>
