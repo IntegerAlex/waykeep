@@ -125,7 +125,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         }
 
         boolean announce = false;
-        this.trackStatistics = data.track().getStatistics();
+        this.trackStatistics = data.trackStatistics();
         if (trackStatistics.totalDistance().greaterThan(nextTotalDistance)) {
             updateNextTaskDistance();
             announce = true;

@@ -92,12 +92,12 @@ public class IntervalStatisticsUpdater {
      */
     @Nullable
     public Statistics getLastInterval() {
-        if (intervalList.size() == 1 && intervalList.get(0).getDistance().lessThan(distanceInterval)) {
+        if (intervalList.size() == 1 && intervalList.get(0).distance.lessThan(distanceInterval)) {
             return null;
         }
 
         for (int i = intervalList.size() - 1; i >= 0; i--) {
-            if (intervalList.get(i).getDistance().greaterOrEqualThan(distanceInterval)) {
+            if (intervalList.get(i).distance.greaterOrEqualThan(distanceInterval)) {
                 return this.intervalList.get(i).toStatistics();
             }
         }
@@ -141,34 +141,6 @@ public class IntervalStatisticsUpdater {
             avgPower = i.avgPower;
         }
 
-        public Distance getDistance() {
-            return distance;
-        }
-
-        public Speed getSpeed() {
-            return Speed.of(distance, time);
-        }
-
-        public boolean hasGain() {
-            return gain_m != null;
-        }
-
-        public boolean hasAverageHeartRate() {
-            return avgHeartRate != null;
-        }
-
-        public HeartRate getAverageHeartRate() {
-            return avgHeartRate;
-        }
-
-        public boolean hasAveragePower() {
-            return avgPower != null;
-        }
-
-        public Power getAveragePower() {
-            return avgPower;
-        }
-
         private void add(Statistics trackStatistics, @Nullable TrackPoint lastTrackPoint) {
             distance = distance.plus(trackStatistics.totalDistance());
             time = time.plus(trackStatistics.totalDuration());
@@ -181,7 +153,7 @@ public class IntervalStatisticsUpdater {
             if (lastTrackPoint == null) {
                 return;
             }
-            if (hasGain() && lastTrackPoint.hasAltitudeGainLoss()) {
+            if (gain_m != null && lastTrackPoint.hasAltitudeGainLoss()) {
                 gain_m = gain_m - lastTrackPoint.getAltitudeGainLoss().gain_m();
                 loss_m = loss_m - lastTrackPoint.getAltitudeGainLoss().loss_m();
             }
