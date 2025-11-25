@@ -358,24 +358,17 @@ public class TrackDataHub {
                     samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
                 }
 
-                //Prevents a NPE if stop() is happening while notifyTrackPointsTableUpdate()
-                //TODO Check if this NPE is still happening (and if so, fix it properly. Not with currentUpdater.
                 if (trackStatisticsUpdater == null) {
                     trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
                 }  else {
                     trackStatisticsUpdater.addTrackPoint(trackPoint);
                 }
-                TrackStatisticsUpdater currentUpdater = trackStatisticsUpdater;
+                Statistics statistics = trackStatisticsUpdater.getTrackStatistics();
 
                 // Also include the last point if the selected track is not recording.
                 if ((localNumLoadedTrackPoints % samplingFrequency == 0) || (trackPointId == lastTrackPointId && !isSelectedTrackRecording())) {
-                    for (Listener trackDataListener : listeners) {
-                        trackDataListener.onSampledInTrackPoint(trackPoint, currentUpdater.getTrackStatistics());
-                    }
-                } else {
-                    for (Listener trackDataListener : listeners) {
-                        trackDataListener.onSampledOutTrackPoint(trackPoint, currentUpdater.getTrackStatistics());
-                    }
+                    for (Listener trackDataListener : listeners)
+                        trackDataListener.onSampledInTrackPoint(trackPoint, statistics);
                 }
 
                 localNumLoadedTrackPoints++;
@@ -434,14 +427,6 @@ public class TrackDataHub {
          * @param trackPoint the trackPoint
          */
         default void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
-        }
-
-        /**
-         * Called when a sampled out track point is read.
-         *
-         * @param trackPoint the trackPoint
-         */
-        default void onSampledOutTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
         }
 
         /**
