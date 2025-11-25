@@ -635,31 +635,12 @@ public class ContentProviderUtils {
     }
 
     /**
-     * Gets the last valid location for a track.
-     * Returns null if it doesn't exist.
-     *
-     * @param trackId the track id
-     */
-    @VisibleForTesting
-    @Deprecated // Use TrackPointIterator to fetch all TrackPoints and use the last.
-    public TrackPoint getLastValidTrackPoint(Track.Id trackId) {
-        String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") FROM " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TYPE + " IN (" + TrackPoint.Type.SEGMENT_START_AUTOMATIC.type_db + "," + TrackPoint.Type.TRACKPOINT.type_db + "))";
-        String[] selectionArgs = new String[]{Long.toString(trackId.id())};
-
-        try (Cursor cursor = getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns._ID)) {
-            if (cursor != null && cursor.moveToNext()) {
-                return createTrackPoint(cursor);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Creates a {@link TrackPoint} object from a cursor.
      *
      * @param cursor the cursor pointing to the location
      */
-    public TrackPoint createTrackPoint(Cursor cursor) {
+    @VisibleForTesting
+    TrackPoint createTrackPoint(Cursor cursor) {
         return fillTrackPoint(cursor, new CachedTrackPointsIndexes(cursor));
     }
 
@@ -670,7 +651,7 @@ public class ContentProviderUtils {
      * @param startTrackPointId the starting trackPoint id. `null` to ignore
      */
     @NonNull
-    public Cursor getTrackPointCursor(@NonNull Track.Id trackId, TrackPoint.Id startTrackPointId) {
+    Cursor getTrackPointCursor(@NonNull Track.Id trackId, TrackPoint.Id startTrackPointId) {
         String selection;
         String[] selectionArgs;
         if (startTrackPointId != null) {

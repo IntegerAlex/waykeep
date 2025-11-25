@@ -222,7 +222,7 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
         contentProviderUtils.insertMarker(marker);
 
         assertCount(1, 10, 1);
@@ -243,7 +243,7 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         Track track = TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        TrackPoint trackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
+        TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
         contentProviderUtils.insertMarker(marker);
 
@@ -278,7 +278,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId2, 10);
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId3, 10);
 
-        Marker marker = new Marker(trackId1, contentProviderUtils.getLastValidTrackPoint(trackId2));
+        Marker marker = new Marker(trackId1, getLastValidTrackPoint(trackId2));
         contentProviderUtils.insertMarker(marker);
 
         assertCount(3, 30, 1);
@@ -306,12 +306,12 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId3, 10);
 
         // Insert a marker in tracks trackId and trackId + 1.
-        TrackPoint trackPoint1 = contentProviderUtils.getLastValidTrackPoint(trackId1);
+        TrackPoint trackPoint1 = getLastValidTrackPoint(trackId1);
         Marker marker1 = TestDataUtil.createMarkerWithPhoto(context, trackId1, trackPoint1);
         contentProviderUtils.insertMarker(marker1);
         File dir1 = FileUtils.getPhotoDir(context, trackId1);
 
-        TrackPoint trackPoint2 = contentProviderUtils.getLastValidTrackPoint(trackId2);
+        TrackPoint trackPoint2 = getLastValidTrackPoint(trackId2);
         Marker marker2 = TestDataUtil.createMarkerWithPhoto(context, trackId2, trackPoint2);
         contentProviderUtils.insertMarker(marker2);
         File dir2 = FileUtils.getPhotoDir(context, trackId2);
@@ -448,7 +448,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        Marker marker1 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
         marker1.setDescription(TEST_DESC);
         contentProviderUtils.insertMarker(marker1);
 
@@ -475,7 +475,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        TrackPoint trackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
+        TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker1 = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
         contentProviderUtils.insertMarker(marker1);
 
@@ -525,11 +525,11 @@ public class CustomContentProviderUtilsTest {
 //        TestDataUtil.insertTrackWithLocations(contentProviderUtils, track);
 
         // Insert at first.
-        Marker marker1 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
         marker1.setDescription(MOCK_DESC);
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
 
-        Marker marker2 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker2 = new Marker(trackId, getLastValidTrackPoint(trackId));
         marker2.setDescription(MOCK_DESC);
         Marker.Id marker2Id = contentProviderUtils.insertMarker(marker2);
 
@@ -549,10 +549,10 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker1 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
-        Marker marker2 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
-        Marker marker3 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
-        Marker marker4 = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
+        Marker marker2 = new Marker(trackId, getLastValidTrackPoint(trackId));
+        Marker marker3 = new Marker(trackId, getLastValidTrackPoint(trackId));
+        Marker marker4 = new Marker(trackId, getLastValidTrackPoint(trackId));
         contentProviderUtils.insertMarker(marker1);
         contentProviderUtils.insertMarker(marker2);
         contentProviderUtils.insertMarker(marker3);
@@ -570,7 +570,7 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
         marker.setDescription(TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
 
@@ -586,7 +586,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        Marker marker = new Marker(trackId, contentProviderUtils.getLastValidTrackPoint(trackId));
+        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
         marker.setDescription(TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
 
@@ -609,7 +609,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        TrackPoint trackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
+        TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
         marker.setDescription(TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
@@ -644,7 +644,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        TrackPoint trackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
+        TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
         marker.setDescription(TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
@@ -678,7 +678,7 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert two markers with photos.
-        TrackPoint trackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
+        TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
         marker.setDescription(TEST_DESC);
         Marker otherMarker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
@@ -810,19 +810,6 @@ public class CustomContentProviderUtilsTest {
         assertEquals(trackPoint.getHeartRate(), trackPoints.get(10).getHeartRate());
         assertEquals(trackPoint.getCadence(), trackPoints.get(10).getCadence());
         assertEquals(trackPoint.getPower(), trackPoints.get(10).getPower());
-    }
-
-    /**
-     * Tests the method {@link ContentProviderUtils#getLastValidTrackPoint(Track.Id)}.
-     */
-    @Test
-    public void testGetLastValidTrackPoint() {
-        // Insert track, points at first.
-        Track.Id trackId = new Track.Id(System.currentTimeMillis());
-        Track track = TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
-
-        TrackPoint lastTrackPoint = contentProviderUtils.getLastValidTrackPoint(trackId);
-        checkLocation(9, lastTrackPoint.getLocation());
     }
 
     @Test
@@ -1221,5 +1208,20 @@ public class CustomContentProviderUtilsTest {
     @Test
     public void testGetSensorStats_withSeveralRandomStartSegments() {
         testGetSensorStats_randomData(5000, true);
+    }
+
+    private TrackPoint getLastValidTrackPoint(Track.Id trackId) {
+        try (AutoCloseableIterator<TrackPoint> trackPointsCursor = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
+            List<TrackPoint> trackpoints = new ArrayList<>();
+            while (trackPointsCursor.hasNext())
+                trackpoints.add(trackPointsCursor.next());
+            trackpoints = trackpoints.reversed();
+
+            return trackpoints.reversed()
+                    .stream()
+                    .filter(it -> List.of(TrackPoint.Type.TRACKPOINT, TrackPoint.Type.SEGMENT_START_AUTOMATIC).contains(it.getType()))
+                    .findFirst().orElseThrow();
+
+        }
     }
 }

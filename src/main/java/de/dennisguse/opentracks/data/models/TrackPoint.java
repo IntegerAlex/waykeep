@@ -130,6 +130,7 @@ public class TrackPoint {
         return type == Type.SEGMENT_END_MANUAL;
     }
 
+    //TODO Check if naming is correct.
     public boolean wasCreatedManually() {
         return hasLocation() || hasSpeed();
     }
