@@ -704,11 +704,18 @@ public class ContentProviderUtils {
      *
      * @param trackId the track id
      */
-    @Deprecated
+    @VisibleForTesting
+    @Deprecated // Use TrackPointIterator to fetch all TrackPoints and use the last.
     public TrackPoint getLastValidTrackPoint(Track.Id trackId) {
         String selection = TrackPointsColumns._ID + "=(SELECT MAX(" + TrackPointsColumns._ID + ") FROM " + TrackPointsColumns.TABLE_NAME + " WHERE " + TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TYPE + " IN (" + TrackPoint.Type.SEGMENT_START_AUTOMATIC.type_db + "," + TrackPoint.Type.TRACKPOINT.type_db + "))";
         String[] selectionArgs = new String[]{Long.toString(trackId.id())};
-        return findTrackPointBy(selection, selectionArgs);
+
+        try (Cursor cursor = getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns._ID)) {
+            if (cursor != null && cursor.moveToNext()) {
+                return createTrackPoint(cursor);
+            }
+        }
+        return null;
     }
 
     /**
@@ -783,16 +790,6 @@ public class ContentProviderUtils {
      */
     public AutoCloseableIterator<TrackPoint> getTrackPointLocationIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
         return new TrackPointIterator(this, trackId, startTrackPointId);
-    }
-
-    @Deprecated
-    private TrackPoint findTrackPointBy(String selection, String[] selectionArgs) {
-        try (Cursor cursor = getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns._ID)) {
-            if (cursor != null && cursor.moveToNext()) {
-                return createTrackPoint(cursor);
-            }
-        }
-        return null;
     }
 
     /**
