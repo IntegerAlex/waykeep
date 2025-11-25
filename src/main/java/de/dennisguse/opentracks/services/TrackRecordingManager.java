@@ -76,7 +76,6 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         track.setActivityTypeLocalized(activityTypeLocalized);
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
-        track.setStatistics(trackStatisticsUpdater.getTrackStatistics());
         track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
 
         trackId = contentProviderUtils.insertTrack(track);
