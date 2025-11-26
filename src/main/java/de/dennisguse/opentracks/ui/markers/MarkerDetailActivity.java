@@ -68,7 +68,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         Marker marker = contentProviderUtils.getMarker(markerId);
 
         //TODO only load used data: ID + name
-        cursor = contentProviderUtils.getMarkerCursor(marker.getTrackId(), null, -1);
+        cursor = contentProviderUtils.getMarkerCursor(marker.getTrackId(), -1);
         if (cursor == null) {
             finish();
         }

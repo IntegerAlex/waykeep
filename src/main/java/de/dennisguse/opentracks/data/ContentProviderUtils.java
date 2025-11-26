@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
@@ -434,20 +433,16 @@ public class ContentProviderUtils {
     /**
      * The caller owns the returned cursor and is responsible for closing it.
      *
-     * @param trackId     the track id
-     * @param minMarkerId the minimum marker id. null to ignore
-     * @param maxCount    the maximum number of markers to return. -1 for no limit
+     * @param trackId  the track id
+     * @param maxCount the maximum number of markers to return. -1 for no limit
      */
-    public Cursor getMarkerCursor(@NonNull Track.Id trackId, @Nullable Marker.Id minMarkerId, int maxCount) {
+    public Cursor getMarkerCursor(@NonNull Track.Id trackId, int maxCount) {
         String selection;
         String[] selectionArgs;
-        if (minMarkerId != null) {
-            selection = MarkerColumns.TRACKID + "=? AND " + MarkerColumns._ID + ">=?";
-            selectionArgs = new String[]{Long.toString(trackId.id()), Long.toString(minMarkerId.id())};
-        } else {
-            selection = MarkerColumns.TRACKID + "=?";
-            selectionArgs = new String[]{Long.toString(trackId.id())};
-        }
+
+        selection = MarkerColumns.TRACKID + "=?";
+        selectionArgs = new String[]{Long.toString(trackId.id())};
+
         return getMarkerCursor(null, selection, selectionArgs, MarkerColumns._ID, maxCount);
     }
 
@@ -455,7 +450,7 @@ public class ContentProviderUtils {
     @VisibleForTesting
     public List<Marker> getMarkers(Track.Id trackId) {
         ArrayList<Marker> markers = new ArrayList<>();
-        try (Cursor cursor = getMarkerCursor(trackId, null, -1)) {
+        try (Cursor cursor = getMarkerCursor(trackId, -1)) {
             if (cursor.moveToFirst()) {
                 do {
                     markers.add(createMarker(cursor));

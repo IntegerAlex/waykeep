@@ -276,7 +276,7 @@ public class TrackDataHub {
             trackDataListener.clearMarkers();
         }
 
-        try (Cursor cursor = contentProviderUtils.getMarkerCursor(selectedTrackId, null, MAX_DISPLAYED_MARKERS)) {
+        try (Cursor cursor = contentProviderUtils.getMarkerCursor(selectedTrackId, MAX_DISPLAYED_MARKERS)) {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     Marker marker = contentProviderUtils.createMarker(cursor);
