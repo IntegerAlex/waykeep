@@ -434,9 +434,8 @@ public class ContentProviderUtils {
         return new MarkerIterator(this, trackId, -1);
     }
 
-    //TODO Use MarkerIterator instead
-    Cursor getMarkerCursor(@NonNull Track.Id trackId) {
-        return getMarkerCursor(trackId, -1);
+    public AutoCloseableIterator<Marker> getMarkerIterator(@NonNull Track.Id trackId, int maxCount) {
+        return new MarkerIterator(this, trackId, maxCount);
     }
 
     /**
@@ -445,7 +444,7 @@ public class ContentProviderUtils {
      * @param trackId  the track id
      * @param maxCount the maximum number of markers to return. -1 for no limit
      */
-    public Cursor getMarkerCursor(@NonNull Track.Id trackId, int maxCount) {
+    Cursor getMarkerCursor(@NonNull Track.Id trackId, int maxCount) {
         String selection;
         String[] selectionArgs;
 

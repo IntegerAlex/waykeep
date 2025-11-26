@@ -276,20 +276,13 @@ public class TrackDataHub {
             trackDataListener.clearMarkers();
         }
 
-        try (Cursor cursor = contentProviderUtils.getMarkerCursor(selectedTrackId, MAX_DISPLAYED_MARKERS)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Marker marker = contentProviderUtils.createMarker(cursor);
-                    for (Listener trackDataListener : trackDataListeners) {
-                        trackDataListener.onNewMarker(marker);
-                    }
-                } while (cursor.moveToNext());
-            }
+        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(selectedTrackId, MAX_DISPLAYED_MARKERS)) {
+            markerIterator.forEachRemaining(current ->
+                trackDataListeners.forEach(listener -> listener.onNewMarker(current))
+            );
         }
 
-        for (Listener trackDataListener : trackDataListeners) {
-            trackDataListener.onNewMarkersDone();
-        }
+        trackDataListeners.forEach(Listener::onNewMarkersDone);
     }
 
     /**
