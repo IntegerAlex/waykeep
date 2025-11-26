@@ -623,16 +623,6 @@ public class ContentProviderUtils {
     }
 
     /**
-     * Creates a {@link TrackPoint} object from a cursor.
-     *
-     * @param cursor the cursor pointing to the location
-     */
-    @VisibleForTesting
-    TrackPoint createTrackPoint(Cursor cursor) {
-        return fillTrackPoint(cursor, new CachedTrackPointsIndexes(cursor));
-    }
-
-    /**
      * Creates a location cursor. The caller owns the returned cursor and is responsible for closing it.
      *
      * @param trackId           the track id

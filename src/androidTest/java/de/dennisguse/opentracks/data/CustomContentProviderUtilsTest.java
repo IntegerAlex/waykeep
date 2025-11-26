@@ -729,50 +729,6 @@ public class CustomContentProviderUtilsTest {
     }
 
     /**
-     * Tests the method {@link ContentProviderUtils#createTrackPoint(Cursor)}.
-     */
-    //TODO incomplete
-    @Test
-    public void testCreateTrackPoint() {
-        // given
-        when(cursorMock.getColumnIndex(TrackPointsColumns._ID)).thenReturn(1);
-
-        when(cursorMock.getColumnIndexOrThrow(TrackPointsColumns.LONGITUDE)).thenReturn(2);
-        when(cursorMock.isNull(2)).thenReturn(false);
-        int longitude = 11;
-        when(cursorMock.getInt(2)).thenReturn(longitude * 1000000);
-
-        when(cursorMock.getColumnIndexOrThrow(TrackPointsColumns.LATITUDE)).thenReturn(3);
-        when(cursorMock.isNull(3)).thenReturn(false);
-        int latitude = 22;
-        when(cursorMock.getInt(3)).thenReturn(latitude * 1000000);
-
-        when(cursorMock.getColumnIndexOrThrow(TrackPointsColumns.TIME)).thenReturn(4);
-        when(cursorMock.isNull(4)).thenReturn(false);
-        long time = System.currentTimeMillis();
-        when(cursorMock.getLong(4)).thenReturn(time);
-
-        when(cursorMock.getColumnIndexOrThrow(TrackPointsColumns.SPEED)).thenReturn(5);
-        when(cursorMock.isNull(5)).thenReturn(false);
-        float speed = 2.2f;
-        when(cursorMock.getFloat(5)).thenReturn(speed);
-
-        when(cursorMock.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_HEARTRATE)).thenReturn(6);
-        when(cursorMock.isNull(6)).thenReturn(false);
-        when(cursorMock.getFloat(6)).thenReturn(75f);
-
-        // when
-        TrackPoint trackPoint = contentProviderUtils.createTrackPoint(cursorMock);
-
-        // then
-        assertEquals(latitude, trackPoint.getPosition().latitude(), 0.01);
-        assertEquals(longitude, trackPoint.getPosition().longitude(), 0.01);
-        assertEquals(time, trackPoint.getTime().toEpochMilli());
-        assertEquals(speed, trackPoint.getSpeed().toMPS(), 0.01);
-        assertEquals(HeartRate.of(75f), trackPoint.getHeartRate());
-    }
-
-    /**
      * Tests the method
      * {@link ContentProviderUtils#insertTrackPoint(TrackPoint, Track.Id)}.
      */
