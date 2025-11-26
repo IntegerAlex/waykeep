@@ -149,7 +149,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         }
 
         //TODO Avoid reloading (some) TrackPoints just to announce the last interval.
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(data.track().getId(), startTrackPointId)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(data.track().getId(), startTrackPointId)) {
             startTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
             Statistics lastInterval = intervalStatistics.getLastInterval();
             SensorStatistics sensorStatistics = null;

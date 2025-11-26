@@ -33,7 +33,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -727,15 +726,12 @@ public class ContentProviderUtils {
 
     /**
      * Creates a new read-only iterator over a given track's points.
-     * It provides a lightweight way of iterating over long tracks without failing due to the underlying cursor limitations.
-     * Since it's a read-only iterator, {@link Iterator#remove()} always throws {@link UnsupportedOperationException}.
-     * Each call to {@link TrackPointIterator#next()} may advance to the next DB record.
      * When done with iteration, {@link TrackPointIterator#close()} must be called.
      *
      * @param trackId           the track id
      * @param startTrackPointId the starting trackPoint id. `null` to ignore
      */
-    public AutoCloseableIterator<TrackPoint> getTrackPointLocationIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
+    public AutoCloseableIterator<TrackPoint> getTrackPointIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
         return new TrackPointIterator(this, trackId, startTrackPointId);
     }
 

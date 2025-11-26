@@ -327,7 +327,7 @@ public class TrackDataHub {
         }
 
         TrackPoint trackPoint = null;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(selectedTrackId, next)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(selectedTrackId, next)) {
             long numTotalPoints = trackPointIterator.getCount();
             int samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
 

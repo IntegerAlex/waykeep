@@ -93,7 +93,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
     private void loadIntervalStatistics(Track.Id trackId) {
         executor.execute(() -> {
             ContentProviderUtils contentProviderUtils = new ContentProviderUtils(getApplication());
-            try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, lastTrackPointId)) {
+            try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, lastTrackPointId)) {
                 lastTrackPointId = intervalStatistics.addTrackPoints(trackPointIterator);
                 intervalsLiveData.postValue(intervalStatistics.getIntervalList());
             }

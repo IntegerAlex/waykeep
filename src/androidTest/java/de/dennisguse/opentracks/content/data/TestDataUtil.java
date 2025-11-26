@@ -6,7 +6,6 @@ import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +150,7 @@ public class TestDataUtil {
     }
 
     public static List<TrackPoint> getTrackPoints(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointLocationIterator(trackId, null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
             ArrayList<TrackPoint> trackPoints = new ArrayList<>();
             while (trackPointIterator.hasNext()) {
                 trackPoints.add(trackPointIterator.next());
