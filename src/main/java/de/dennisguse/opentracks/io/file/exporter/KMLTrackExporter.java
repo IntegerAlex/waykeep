@@ -136,7 +136,7 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeMarkers(Track track) throws InterruptedException {
         boolean hasMarkers = false;
-        try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId(), -1)) {
+        try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId())) {
             if (cursor != null && cursor.moveToFirst()) {
                 for (int i = 0; i < cursor.getCount(); i++) {
                     if (Thread.interrupted()) {

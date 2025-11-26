@@ -89,7 +89,7 @@ public class KMZTrackExporter implements TrackExporter {
 
     private void addImages(Context context, List<Track> tracks, ZipOutputStream zipOutputStream) throws InterruptedException, IOException {
         for (Track track : tracks) {
-            try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId(), -1)) {
+            try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId())) {
                 if (cursor != null && cursor.moveToFirst()) {
                     for (int i = 0; i < cursor.getCount(); i++) {
                         if (Thread.interrupted()) {

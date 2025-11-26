@@ -255,7 +255,7 @@ public class ContentProviderUtils {
      * @param selectionArgs the selection arguments. Can be null
      * @param sortOrder     the sort order. Can be null
      */
-    public Cursor getTrackCursor(String selection, String[] selectionArgs, String sortOrder) {
+    Cursor getTrackCursor(String selection, String[] selectionArgs, String sortOrder) {
         return contentResolver.query(TracksColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
     }
 
@@ -322,6 +322,7 @@ public class ContentProviderUtils {
         return values;
     }
 
+    //TODO Align with fillTrackPoint
     public Marker createMarker(Cursor cursor) {
         int idIndex = cursor.getColumnIndexOrThrow(MarkerColumns._ID);
         int nameIndex = cursor.getColumnIndexOrThrow(MarkerColumns.NAME);
@@ -430,6 +431,10 @@ public class ContentProviderUtils {
         return null;
     }
 
+    public Cursor getMarkerCursor(@NonNull Track.Id trackId) {
+        return getMarkerCursor(trackId, -1);
+    }
+
     /**
      * The caller owns the returned cursor and is responsible for closing it.
      *
@@ -450,7 +455,7 @@ public class ContentProviderUtils {
     @VisibleForTesting
     public List<Marker> getMarkers(Track.Id trackId) {
         ArrayList<Marker> markers = new ArrayList<>();
-        try (Cursor cursor = getMarkerCursor(trackId, -1)) {
+        try (Cursor cursor = getMarkerCursor(trackId)) {
             if (cursor.moveToFirst()) {
                 do {
                     markers.add(createMarker(cursor));
