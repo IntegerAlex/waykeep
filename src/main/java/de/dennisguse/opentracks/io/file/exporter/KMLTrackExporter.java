@@ -136,21 +136,16 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeMarkers(Track track) throws InterruptedException {
         boolean hasMarkers = false;
-        try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId())) {
-            if (cursor != null && cursor.moveToFirst()) {
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    if (Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-                    if (!hasMarkers) {
-                        writeBeginMarkers(track);
-                        hasMarkers = true;
-                    }
-                    Marker marker = contentProviderUtils.createMarker(cursor);
-                    writeMarker(marker, track.getZoneOffset());
+        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.getId())) {
+            while (markerIterator.hasNext()) {
+                if (Thread.interrupted()) throw new InterruptedException();
 
-                    cursor.moveToNext();
+                if (!hasMarkers) {
+                    writeBeginMarkers(track);
+                    hasMarkers = true;
                 }
+
+                writeMarker(markerIterator.next(), track.getZoneOffset());
             }
         }
         if (hasMarkers) {

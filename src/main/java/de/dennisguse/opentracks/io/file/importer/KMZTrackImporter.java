@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,6 +39,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -188,13 +190,14 @@ public class KMZTrackImporter {
     private void deleteOrphanImages(Track.Id trackId) {
         // 1.- Gets all photo names in the markers of the track identified by id.
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
-        List<Marker> markers = contentProviderUtils.getMarkers(trackId);
         List<String> photosName = new ArrayList<>();
-        for (Marker marker : markers) {
-            if (marker.hasPhoto()) {
-                String photoUrl = Uri.decode(marker.getPhotoUrl().toString()); //TODO Why Uri.decode()?
-                photosName.add(photoUrl.substring(photoUrl.lastIndexOf(File.separatorChar) + 1));
-            }
+        try (AutoCloseableIterator<Marker> markerIterator = new ContentProviderUtils(context).getMarkerIterator(trackId)) {
+            markerIterator.forEachRemaining(marker -> {
+                if (marker.hasPhoto()) {
+                    String photoUrl = Uri.decode(marker.getPhotoUrl().toString()); //TODO Why Uri.decode()?
+                    photosName.add(photoUrl.substring(photoUrl.lastIndexOf(File.separatorChar) + 1));
+                }
+            });
         }
 
         // 2.- Deletes all orphan photos from external storage.

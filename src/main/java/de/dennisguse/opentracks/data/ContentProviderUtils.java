@@ -430,6 +430,11 @@ public class ContentProviderUtils {
         return null;
     }
 
+    public AutoCloseableIterator<Marker> getMarkerIterator(@NonNull Track.Id trackId) {
+        return new MarkerIterator(this, trackId, -1);
+    }
+
+    //TODO Use MarkerIterator instead
     public Cursor getMarkerCursor(@NonNull Track.Id trackId) {
         return getMarkerCursor(trackId, -1);
     }
@@ -731,7 +736,7 @@ public class ContentProviderUtils {
      * @param trackId           the track id
      * @param startTrackPointId the starting trackPoint id. `null` to ignore
      */
-    public AutoCloseableIterator<TrackPoint> getTrackPointIterator(final Track.Id trackId, final TrackPoint.Id startTrackPointId) {
+    public AutoCloseableIterator<TrackPoint> getTrackPointIterator(Track.Id trackId, TrackPoint.Id startTrackPointId) {
         return new TrackPointIterator(this, trackId, startTrackPointId);
     }
 

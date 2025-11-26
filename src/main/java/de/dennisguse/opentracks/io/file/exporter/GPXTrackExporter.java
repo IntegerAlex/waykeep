@@ -238,17 +238,12 @@ public class GPXTrackExporter implements TrackExporter {
     }
 
     private void writeMarkers(Track track) throws InterruptedException {
-        try (Cursor cursor = contentProviderUtils.getMarkerCursor(track.getId())) {
-            if (cursor != null && cursor.moveToFirst()) {
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    if (Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-                    Marker marker = contentProviderUtils.createMarker(cursor);
-                    writeMarker(track.getZoneOffset(), marker);
+        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.getId())) {
+            while (markerIterator.hasNext()) {
+                if (Thread.interrupted()) throw new InterruptedException();
 
-                    cursor.moveToNext();
-                }
+
+                writeMarker(track.getZoneOffset(), markerIterator.next());
             }
         }
     }

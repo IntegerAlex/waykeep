@@ -17,16 +17,10 @@ import de.dennisguse.opentracks.util.AutoCloseableIterator;
 class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
 
     private static final String TAG = TrackPointIterator.class.getSimpleName();
-
-    private final ContentProviderUtils contentProviderUtils;
-    private final Track.Id trackId;
     private final CachedTrackPointsIndexes indexes;
     private Cursor cursor;
 
     TrackPointIterator(ContentProviderUtils contentProviderUtils, Track.Id trackId, TrackPoint.Id startTrackPointId) {
-        this.contentProviderUtils = contentProviderUtils;
-        this.trackId = trackId;
-
         cursor = contentProviderUtils.getTrackPointCursor(trackId, startTrackPointId);
         indexes = new CachedTrackPointsIndexes(cursor);
     }

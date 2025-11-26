@@ -7,6 +7,7 @@ import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 /**
  * A cache of track points indexes.
  */
+//TOOD Check if this actually useful.
 class CachedTrackPointsIndexes {
     final int idIndex;
     final int typeIndex;
