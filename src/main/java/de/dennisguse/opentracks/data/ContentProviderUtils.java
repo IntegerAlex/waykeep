@@ -435,7 +435,7 @@ public class ContentProviderUtils {
     }
 
     //TODO Use MarkerIterator instead
-    public Cursor getMarkerCursor(@NonNull Track.Id trackId) {
+    Cursor getMarkerCursor(@NonNull Track.Id trackId) {
         return getMarkerCursor(trackId, -1);
     }
 
@@ -455,7 +455,19 @@ public class ContentProviderUtils {
         return getMarkerCursor(null, selection, selectionArgs, MarkerColumns._ID, maxCount);
     }
 
-    // TODO Merge with updateMarker
+    /**
+     * @param updateMarker the marker with updated data.
+     * @return true if successful.
+     */
+    public boolean updateMarker(Context context, Marker updateMarker) {
+        Marker savedMarker = getMarker(updateMarker.getId());
+        if (!updateMarker.hasPhoto()) {
+            deleteMarkerPhoto(context, savedMarker);
+        }
+        int rows = contentResolver.update(MarkerColumns.CONTENT_URI, createContentValues(updateMarker), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.getId().id())});
+        return rows == 1;
+    }
+
     public Marker.Id insertMarker(@NonNull Marker marker) {
         marker.setId(null);
         Uri uri = contentResolver.insert(MarkerColumns.CONTENT_URI, createContentValues(marker));
@@ -474,19 +486,6 @@ public class ContentProviderUtils {
                 }
             }
         }
-    }
-
-    /**
-     * @param updateMarker the marker with updated data.
-     * @return true if successful.
-     */
-    public boolean updateMarker(Context context, Marker updateMarker) {
-        Marker savedMarker = getMarker(updateMarker.getId());
-        if (!updateMarker.hasPhoto()) {
-            deleteMarkerPhoto(context, savedMarker);
-        }
-        int rows = contentResolver.update(MarkerColumns.CONTENT_URI, createContentValues(updateMarker), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.getId().id())});
-        return rows == 1;
     }
 
     ContentValues createContentValues(@NonNull Marker marker) {

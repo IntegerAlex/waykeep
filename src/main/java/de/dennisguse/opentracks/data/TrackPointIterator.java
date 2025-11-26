@@ -47,6 +47,11 @@ class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
         return cursor.getPosition();
     }
 
+    @Override
+    public boolean moveToPosition(int position) {
+        return cursor.moveToPosition(position);
+    }
+
     @VisibleForTesting
     public int getCount() {
         return cursor.getCount();

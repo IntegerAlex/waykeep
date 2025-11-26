@@ -47,6 +47,11 @@ class MarkerIterator extends AutoCloseableIterator<Marker> {
         return cursor.getPosition();
     }
 
+    @Override
+    public boolean moveToPosition(int position) {
+        return cursor.moveToPosition(position);
+    }
+
     @VisibleForTesting
     public int getCount() {
         return cursor.getCount();

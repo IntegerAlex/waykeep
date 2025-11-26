@@ -11,5 +11,7 @@ public abstract class AutoCloseableIterator<T> implements Iterator<T>, AutoClose
 
     public abstract int getPosition();
 
+    public abstract boolean moveToPosition(int position);
+
     public abstract int getCount();
 }
