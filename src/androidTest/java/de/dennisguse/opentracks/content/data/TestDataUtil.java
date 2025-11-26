@@ -152,10 +152,16 @@ public class TestDataUtil {
     public static List<TrackPoint> getTrackPoints(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
         try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
             ArrayList<TrackPoint> trackPoints = new ArrayList<>();
-            while (trackPointIterator.hasNext()) {
-                trackPoints.add(trackPointIterator.next());
-            }
+            trackPointIterator.forEachRemaining(trackPoints::add);
             return trackPoints;
+        }
+    }
+
+    public static List<Marker> getMarkers(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
+        try (AutoCloseableIterator<Marker> trackPointIterator = contentProviderUtils.getMarkerIterator(trackId)) {
+            ArrayList<Marker> markers = new ArrayList<>();
+            trackPointIterator.forEachRemaining(markers::add);
+            return markers;
         }
     }
 }

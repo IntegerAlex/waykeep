@@ -453,7 +453,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(marker1);
 
         // Check insert was done.
-        assertEquals(1, contentProviderUtils.getMarkers(trackId).size());
+        assertEquals(1,  TestDataUtil.getMarkers(contentProviderUtils, trackId).size());
 
         // Get marker id that needs to delete.
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
@@ -480,7 +480,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(marker1);
 
         // Check insert was done.
-        assertEquals(1, contentProviderUtils.getMarkers(trackId).size());
+        assertEquals(1, TestDataUtil.getMarkers(contentProviderUtils, trackId).size());
 
         // Get marker id that needs to delete.
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);

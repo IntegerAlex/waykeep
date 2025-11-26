@@ -455,20 +455,6 @@ public class ContentProviderUtils {
         return getMarkerCursor(null, selection, selectionArgs, MarkerColumns._ID, maxCount);
     }
 
-    @Deprecated //TODO Move to test package
-    @VisibleForTesting
-    public List<Marker> getMarkers(Track.Id trackId) {
-        ArrayList<Marker> markers = new ArrayList<>();
-        try (Cursor cursor = getMarkerCursor(trackId)) {
-            if (cursor.moveToFirst()) {
-                do {
-                    markers.add(createMarker(cursor));
-                } while (cursor.moveToNext());
-            }
-        }
-        return markers;
-    }
-
     // TODO Merge with updateMarker
     public Marker.Id insertMarker(@NonNull Marker marker) {
         marker.setId(null);

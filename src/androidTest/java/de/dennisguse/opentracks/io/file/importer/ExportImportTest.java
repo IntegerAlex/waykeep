@@ -195,7 +195,7 @@ public class ExportImportTest {
 
         track = contentProviderUtils.getTrack(trackId);
         trackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
-        markers = contentProviderUtils.getMarkers(trackId);
+        markers =  TestDataUtil.getMarkers(contentProviderUtils, trackId);
     }
 
     @LargeTest
@@ -532,9 +532,9 @@ public class ExportImportTest {
     }
 
     private void assertMarkers() {
-        assertEquals(markers.size(), contentProviderUtils.getMarkers(importTrackId).size());
+        List<Marker> importedMarkers = TestDataUtil.getMarkers(contentProviderUtils, importTrackId);
+        assertEquals(markers.size(),  importedMarkers.size());
 
-        List<Marker> importedMarkers = contentProviderUtils.getMarkers(importTrackId);
         for (int i = 0; i < markers.size(); i++) {
             Marker marker = markers.get(i);
             Marker importMarker = importedMarkers.get(i);
