@@ -32,15 +32,14 @@ import java.util.UUID;
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
-//TODO Do not default initialize attributes; might be confusing for debugging
 public class TrackBuilder {
 
     private Track.Id id;
-    private UUID uuid = UUID.randomUUID();
+    private UUID uuid;
 
-    private String name = "";
-    private String description = "";
-    private String activityTypeLocalized = "";
+    private String name;
+    private String description;
+    private String activityTypeLocalized;
 
     private ActivityType activityType;
 
