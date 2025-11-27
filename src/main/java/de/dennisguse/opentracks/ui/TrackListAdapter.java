@@ -236,19 +236,13 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewBinding.trackListItemCategoryDescription.setText(categoryDescription);
             viewBinding.trackListItemCategoryDescription.setVisibility(categoryDescription.isEmpty() ? View.GONE : View.VISIBLE);
 
-            setSelected(selection.get((int) getId()));
+            setSelected(selection.get((int) trackId.id()));
         }
 
         public void setSelected(boolean isSelected) {
-            selection.put((int) getId(), isSelected);
+            selection.put((int) trackId.id(), isSelected);
             viewBinding.getRoot().setActivated(isSelected);
         }
-
-        //TODO Check if this still required.
-        public long getId() {
-            return trackId.id();
-        }
-
 
         @Override
         public void onClick(View v) {
