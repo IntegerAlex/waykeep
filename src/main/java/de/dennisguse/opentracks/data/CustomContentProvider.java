@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -93,6 +94,7 @@ public class CustomContentProvider extends ContentProvider {
             "AND t." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")";
 
     public CustomContentProvider() {
+        //TODO Add tests for used URIs (incl. Dashboard API)
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath(), UrlType.TRACKPOINTS.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath() + "/#", UrlType.TRACKPOINTS_BY_ID.ordinal());
@@ -170,11 +172,10 @@ public class CustomContentProvider extends ContentProvider {
     public String getType(@NonNull Uri url) {
         return switch (getUrlType(url)) {
             case TRACKPOINTS -> TrackPointsColumns.CONTENT_TYPE;
-            case TRACKPOINTS_BY_ID, TRACKPOINTS_BY_TRACKID -> TrackPointsColumns.CONTENT_ITEMTYPE;
+            case TRACKPOINTS_BY_TRACKID -> TrackPointsColumns.CONTENT_ITEMTYPE;
             case TRACKS -> TracksColumns.CONTENT_TYPE;
-            case TRACKS_BY_ID -> TracksColumns.CONTENT_ITEMTYPE;
             case MARKERS -> MarkerColumns.CONTENT_TYPE;
-            case MARKERS_BY_ID, MARKERS_BY_TRACKID -> MarkerColumns.CONTENT_ITEMTYPE;
+            case MARKERS_BY_TRACKID -> MarkerColumns.CONTENT_ITEMTYPE;
             default -> throw new IllegalArgumentException("Unknown URL " + url);
         };
     }
@@ -289,53 +290,35 @@ public class CustomContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri url, ContentValues values, String where, String[] selectionArgs) {
-        // TODO Use SQLiteQueryBuilder
         String table;
-        String whereClause;
         switch (getUrlType(url)) {
             case TRACKPOINTS -> {
                 table = TrackPointsColumns.TABLE_NAME;
-                whereClause = where;
-            }
-            case TRACKPOINTS_BY_ID -> {
-                table = TrackPointsColumns.TABLE_NAME;
-                whereClause = TrackPointsColumns._ID + "=" + ContentUris.parseId(url);
-                if (!TextUtils.isEmpty(where)) {
-                    whereClause += " AND (" + where + ")";
-                }
             }
             case TRACKS -> {
                 table = TracksColumns.TABLE_NAME;
-                whereClause = where;
-            }
-            case TRACKS_BY_ID -> {
-                table = TracksColumns.TABLE_NAME;
-                whereClause = TracksColumns._ID + "=" + ContentUris.parseId(url);
-                if (!TextUtils.isEmpty(where)) {
-                    whereClause += " AND (" + where + ")";
-                }
             }
             case MARKERS -> {
                 table = MarkerColumns.TABLE_NAME;
-                whereClause = where;
-            }
-            case MARKERS_BY_ID -> {
-                table = MarkerColumns.TABLE_NAME;
-                whereClause = MarkerColumns._ID + "=" + ContentUris.parseId(url);
-                if (!TextUtils.isEmpty(where)) {
-                    whereClause += " AND (" + where + ")";
-                }
             }
             default -> throw new IllegalArgumentException("Unknown url " + url);
         }
+
         int count;
-        try {
-            db.beginTransaction();
-            count = db.update(table, values, whereClause, selectionArgs);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+            queryBuilder.setTables(table);
+            count = queryBuilder.update(db, values, where, selectionArgs);
+        } else {
+            try {
+                db.beginTransaction();
+                count = db.update(table, values, where, selectionArgs);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
+
         getContext().getContentResolver().notifyChange(url, null, false);
         return count;
     }
