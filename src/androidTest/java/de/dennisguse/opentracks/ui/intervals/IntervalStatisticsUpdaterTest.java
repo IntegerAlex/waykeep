@@ -9,10 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.content.data.TestDataUtil;
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
@@ -103,26 +105,34 @@ public class IntervalStatisticsUpdaterTest {
 
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
-            trackPoints.add(TestDataUtil.createTrackPoint(i).setAltitudeGainLoss(null));
+            trackPoints.add(TestDataUtil.createTrackPoint(i)
+                    .setAltitudeGainLoss(null));
         }
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
-        TrackBuilder dummyTrack = new TrackBuilder(trackStatisticsUpdater.getTrackStatistics());
-        dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
-        dummyTrack.setName("Dummy Track Without Elevation Loss");
+        Track dummyTrack = new Track(
+                new Track.Id(System.currentTimeMillis()),
+                null,
+                "Dummy Track Without Elevation Loss",
+                null,
+                "",
+                null,
+                ZoneOffset.UTC,
+                trackStatisticsUpdater.getTrackStatistics()
+        );
 
-        Pair<TrackBuilder, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
+        Pair<Track, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
 
         // when and then
         whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
     private void whenAndThen(int numberOfPoints, float distanceInterval) {
-        Pair<TrackBuilder, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
+        Pair<Track, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
         whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
-    private void whenAndThen(TrackBuilder track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
+    private void whenAndThen(Track track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
         IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(distanceInterval));
 
         intervalStatistics.addTrackPoints(trackPoints.iterator());
@@ -150,9 +160,9 @@ public class IntervalStatisticsUpdaterTest {
         }
 
         // then
-        assertEquals(track.getStatistics().totalDuration().toSeconds(), totalTime, 0.01);
-        assertEquals(track.getStatistics().totalDistance().toM(), totalDistance.toM(), 0.01);
-        assertEquals(intervalList.size(), (int) Math.ceil(track.getStatistics().totalDistance().toM() / distanceInterval));
+        assertEquals(track.statistics().totalDuration().toSeconds(), totalTime, 0.01);
+        assertEquals(track.statistics().totalDistance().toM(), totalDistance.toM(), 0.01);
+        assertEquals(intervalList.size(), (int) Math.ceil(track.statistics().totalDistance().toM() / distanceInterval));
         if (totalGain != null && totalLoss != null) {
             assertEquals(totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
             assertEquals(totalLoss, numberOfPoints * TestDataUtil.ALTITUDE_LOSS, 0.1);
@@ -168,13 +178,23 @@ public class IntervalStatisticsUpdaterTest {
         assertEquals(intervalList.get(intervalList.size() - 1).totalDistance().toM(), totalDistance.toM(), 0.01);
     }
 
-    private static Pair<TrackBuilder, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
+    private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
             trackPoints.add(TestDataUtil.createTrackPoint(i));
         }
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
-        return new Pair<>(new TrackBuilder(trackStatisticsUpdater.getTrackStatistics()), trackPoints);
+        Track track = new Track(
+                null,
+                null,
+                "",
+                "",
+                "",
+                ActivityType.UNKNOWN,
+                ZoneOffset.UTC,
+                trackStatisticsUpdater.getTrackStatistics());
+
+        return new Pair<>(track, trackPoints);
     }
 }

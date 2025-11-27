@@ -128,7 +128,7 @@ public class ContentProviderUtils {
                 null,
                 null
         );
-        
+
         return new Track(
                 new Track.Id(cursor.getLong(idIndex)),
                 UUIDUtils.fromBytes(cursor.getBlob(uuidIndex)),
@@ -251,6 +251,7 @@ public class ContentProviderUtils {
      * @return the content provider URI of the inserted track.
      */
     public Track.Id insertTrack(Track track) {
+        //TODO Unset trackId
         Uri uri = contentResolver.insert(TracksColumns.CONTENT_URI, createContentValues(track));
         return new Track.Id(ContentUris.parseId(uri));
     }

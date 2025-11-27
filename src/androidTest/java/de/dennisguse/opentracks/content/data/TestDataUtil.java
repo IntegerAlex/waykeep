@@ -7,10 +7,13 @@ import android.util.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
@@ -36,11 +39,15 @@ public class TestDataUtil {
      * Create a track without any trackPoints.
      */
     public static Track createTrack(Track.Id trackId) {
-        TrackBuilder track = new TrackBuilder(Statistics.DEFAULT);
-        track.setId(trackId);
-        track.setName("Test: " + trackId.id());
-
-        return track.getTrack();
+        return new Track(
+                trackId,
+                UUID.randomUUID(),
+                "Test: " + trackId.id(),
+                "",
+                "",
+                ActivityType.UNKNOWN,
+                ZoneOffset.UTC,
+                Statistics.DEFAULT);
     }
 
     /**

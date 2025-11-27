@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ import java.util.UUID;
 
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.content.data.TestSensorDataUtil;
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
@@ -130,10 +132,17 @@ public class CustomContentProviderUtilsTest {
     }
 
     private TrackPoint.Id initializeTrack(Track.Id id, int numPoints) {
-        TrackBuilder trackbuilder = new TrackBuilder(Statistics.DEFAULT);
-        trackbuilder.setId(id);
-        trackbuilder.setName("Test: " + id.id());
-        contentProviderUtils.insertTrack(trackbuilder.getTrack());
+        Track createdTrack = new Track(
+                id,
+                UUID.randomUUID(),
+                "Test: " + id,
+                "",
+                "",
+                ActivityType.UNKNOWN,
+                ZoneOffset.UTC,
+                Statistics.DEFAULT);
+
+        contentProviderUtils.insertTrack(createdTrack);
 
         Track track = contentProviderUtils.getTrack(id);
         assertNotNull(track);

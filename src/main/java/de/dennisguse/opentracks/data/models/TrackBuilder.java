@@ -50,13 +50,6 @@ public class TrackBuilder {
     @NonNull
     private Statistics trackStatistics;
 
-    @Deprecated
-    @VisibleForTesting
-    public TrackBuilder(@NonNull Statistics trackStatistics) {
-        this.zoneOffset = ZoneOffset.UTC;
-        this.trackStatistics = trackStatistics;
-    }
-
     public TrackBuilder(Track track) {
         this.id = track.id();
         this.uuid = track.uuid();
@@ -68,58 +61,21 @@ public class TrackBuilder {
         this.trackStatistics = track.statistics();
     }
 
-    /**
-     * May be null if the track was not loaded from the database.
-     */
-    @Nullable
-    @Deprecated
-    public Track.Id getId() {
-        return id;
-    }
-
+    @VisibleForTesting
     public void setId(Track.Id id) {
         this.id = id;
-    }
-
-    @Deprecated
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    @Deprecated
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    @Deprecated
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @Deprecated
-    public String getActivityTypeLocalized() {
-        return activityTypeLocalized;
-    }
-
     public void setActivityTypeLocalized(String activityTypeLocalized) {
         this.activityTypeLocalized = activityTypeLocalized;
-    }
-
-    @Deprecated
-    public ActivityType getActivityType() {
-        return activityType;
     }
 
     public void setActivityType(ActivityType activityType) {
@@ -131,25 +87,8 @@ public class TrackBuilder {
         setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
     }
 
-    @Deprecated
-    public ZoneOffset getZoneOffset() {
-        return zoneOffset;
-    }
-
     public void setZoneOffset(@NonNull ZoneOffset zoneOffset) {
         this.zoneOffset = zoneOffset;
-    }
-
-    @Deprecated
-    public OffsetDateTime getStartTime() {
-        return trackStatistics
-                .startTime().atOffset(zoneOffset);
-    }
-
-    @Deprecated
-    public OffsetDateTime getStopTime() {
-        return trackStatistics
-                .stopTime().atOffset(zoneOffset);
     }
 
     @Deprecated
@@ -173,16 +112,4 @@ public class TrackBuilder {
                 trackStatistics
         );
     }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "Track{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", activityTypeLocalized='" + activityTypeLocalized + '\'' +
-                ", activityType=" + activityType +
-                '}';
-    }
-
 }

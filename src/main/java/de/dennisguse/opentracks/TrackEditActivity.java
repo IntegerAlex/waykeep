@@ -72,9 +72,9 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
         }
         trackBuilder = new TrackBuilder(track);
 
-        viewBinding.trackEditName.setText(trackBuilder.getName());
+        viewBinding.trackEditName.setText(track.name());
 
-        viewBinding.trackEditActivityTypeLocalized.setText(trackBuilder.getActivityTypeLocalized());
+        viewBinding.trackEditActivityTypeLocalized.setText(track.activityTypeLocalized());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, ActivityType.getLocalizedStrings(this));
         viewBinding.trackEditActivityTypeLocalized.setAdapter(adapter);
         viewBinding.trackEditActivityTypeLocalized.setOnItemClickListener((parent, view, position, id) -> {
@@ -93,15 +93,15 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
             activityType = (ActivityType) bundle.getSerializable(ICON_VALUE_KEY);
         }
         if (activityType == null) {
-            activityType = trackBuilder.getActivityType();
+            activityType = track.activityType();
         }
         setActivityTypeIcon(activityType);
         viewBinding.trackEditActivityTypeIcon.setOnClickListener(v -> ChooseActivityTypeDialogFragment.showDialog(getSupportFragmentManager(), this, viewBinding.trackEditActivityTypeLocalized.getText().toString()));
 
-        viewBinding.trackEditDescription.setText(trackBuilder.getDescription());
+        viewBinding.trackEditDescription.setText(track.description());
 
         final ArrayAdapter<ZoneOffset> zoneOffsetAdapter = new ZoneOffsetAdapter(this, android.R.layout.simple_dropdown_item_1line);
-        viewBinding.trackEditTimeOffset.setText(trackBuilder.getZoneOffset().toString());
+        viewBinding.trackEditTimeOffset.setText(track.zoneOffset().toString());
         viewBinding.trackEditTimeOffset.setAdapter(zoneOffsetAdapter);
         viewBinding.trackEditTimeOffset.setOnItemClickListener((parent, view, position, id) -> trackBuilder.setZoneOffset(zoneOffsetAdapter.getItem(position)));
 
