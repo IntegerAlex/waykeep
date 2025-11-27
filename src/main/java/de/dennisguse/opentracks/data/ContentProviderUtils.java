@@ -128,24 +128,17 @@ public class ContentProviderUtils {
                 null,
                 null
         );
-
-        TrackBuilder track = new TrackBuilder(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)), trackStatistics);
-        track.setId(new Track.Id(cursor.getLong(idIndex)));
-        track.setUuid(UUIDUtils.fromBytes(cursor.getBlob(uuidIndex)));
-        if (!cursor.isNull(nameIndex)) {
-            track.setName(cursor.getString(nameIndex));
-        }
-        if (!cursor.isNull(descriptionIndex)) {
-            track.setDescription(cursor.getString(descriptionIndex));
-        }
-        if (!cursor.isNull(activityTypeIndex)) {
-            track.setActivityType(ActivityType.findBy(cursor.getString(activityTypeIndex)));
-        }
-        if (!cursor.isNull(activityTypeLocalizedIndex)) {
-            track.setActivityTypeLocalized(cursor.getString(activityTypeLocalizedIndex));
-        }
-
-        return track.getTrack();
+        
+        return new Track(
+                new Track.Id(cursor.getLong(idIndex)),
+                UUIDUtils.fromBytes(cursor.getBlob(uuidIndex)),
+                !cursor.isNull(nameIndex) ? cursor.getString(nameIndex) : "",
+                !cursor.isNull(descriptionIndex) ? cursor.getString(descriptionIndex) : "",
+                !cursor.isNull(activityTypeLocalizedIndex) ? cursor.getString(activityTypeLocalizedIndex) : "",
+                !cursor.isNull(activityTypeIndex) ? ActivityType.findBy(cursor.getString(activityTypeIndex)) : ActivityType.findBy(null), //TODO Can this happen?
+                ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)),
+                trackStatistics
+        );
     }
 
     @VisibleForTesting

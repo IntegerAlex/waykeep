@@ -52,13 +52,8 @@ public class TrackBuilder {
 
     @Deprecated
     @VisibleForTesting
-    public TrackBuilder(Statistics statistics) {
-        this(ZoneOffset.UTC, statistics);
-    }
-
-    @Deprecated
-    public TrackBuilder(@NonNull ZoneOffset zoneOffset, @NonNull Statistics trackStatistics) {
-        this.zoneOffset = zoneOffset;
+    public TrackBuilder(@NonNull Statistics trackStatistics) {
+        this.zoneOffset = ZoneOffset.UTC;
         this.trackStatistics = trackStatistics;
     }
 

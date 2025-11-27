@@ -12,6 +12,7 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Duration;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
@@ -72,14 +73,20 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         ZoneOffset zoneOffset = ZoneOffset.systemDefault().getRules().getOffset(segmentStartTrackPoint.getTime());
         trackStatisticsUpdater = new TrackStatisticsUpdater(segmentStartTrackPoint);
 
-        TrackBuilder track = new TrackBuilder(zoneOffset, trackStatisticsUpdater.getTrackStatistics());
-
+        Statistics initialStatistics = trackStatisticsUpdater.getTrackStatistics();
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
-        track.setActivityTypeLocalized(activityTypeLocalized);
-        track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
-        track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
+        Track track = new Track(
+                null,
+                UUID.randomUUID(), //TODO This is not really cool: should happen in ContentProviderUtils?
+                TrackNameUtils.getTrackName(context, trackId, initialStatistics.startTime().atOffset(zoneOffset)),
+                "",
+                activityTypeLocalized,
+                ActivityType.findByLocalizedString(context, activityTypeLocalized),
+                zoneOffset,
+                initialStatistics
+        );
 
-        trackId = contentProviderUtils.insertTrack(track.getTrack());
+        trackId = contentProviderUtils.insertTrack(track);
 
         onNewTrackPoint(segmentStartTrackPoint);
 
