@@ -33,7 +33,6 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TestUtil;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -108,7 +107,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ZERO, Duration.ZERO, Distance.ZERO, Speed.ZERO, null, null, null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime))
@@ -122,7 +121,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.ZERO, null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
@@ -197,7 +196,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(pauseTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.ZERO, null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
@@ -212,7 +211,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(resumeTime), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.ZERO, null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
@@ -340,7 +339,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
@@ -348,7 +347,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps2), Duration.ofSeconds(4), Duration.ofSeconds(4), Distance.of(11.113178253173828), Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String gps3 = "2020-02-02T02:02:08Z";
@@ -356,7 +355,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps3), Duration.ofSeconds(6), Duration.ofSeconds(6), Distance.of(22.226356506347656), Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String stopTime = "2020-02-02T02:02:12Z";
@@ -365,7 +364,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(22.226356506347656), Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
@@ -414,21 +413,21 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         Statistics gps1Statistics = new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null);
-        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).getStatistics());
+        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
         sendGPSLocation(trackPointCreator, gps2, 45.00001, 35.0, 1, 15);
 
         // then
-        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).getStatistics());
+        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String gps3 = "2020-02-02T02:02:08Z";
         sendGPSLocation(trackPointCreator, gps3, 45.00002, 35.0, 1, 15);
 
         // then
-        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).getStatistics());
+        assertEquals(gps1Statistics, contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String stopTime = "2020-02-02T02:02:12Z";
@@ -437,7 +436,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(2.222635507583618), Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         new TrackPointAssert().assertEquals(List.of(
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse(startTime)),
@@ -536,7 +535,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         Statistics startStatistics = new Statistics(Instant.parse(startTime), Instant.parse(startTime), Duration.ZERO, Duration.ZERO, Distance.ZERO, Speed.ZERO, null, null, null, null);
-        assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).getStatistics());
+        assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).statistics());
 
 
         // when
@@ -544,7 +543,7 @@ public class TrackRecordingServiceRecordingTest {
         sendGPSLocation(trackPointCreator, gps2, 45.1, 35.0, 100, 15);
 
         // then
-        assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).getStatistics());
+        assertEquals(startStatistics, contentProviderUtils.getTrack(trackId).statistics());
 
 
         // when
@@ -554,7 +553,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.ZERO, Speed.ZERO, null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // then
         new TrackPointAssert().assertEquals(List.of(
@@ -580,7 +579,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps1), Duration.ofSeconds(1), Duration.ofSeconds(1), Distance.ZERO, Speed.of(15), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String gps2 = "2020-02-02T02:02:06Z";
@@ -588,7 +587,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(gps2), Duration.ofSeconds(4), Duration.ofSeconds(4), Distance.of(11113.275390625), Speed.of(2778.31884765625f), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
         // when
         String stopTime = "2020-02-02T02:02:12Z";
@@ -597,7 +596,7 @@ public class TrackRecordingServiceRecordingTest {
 
         // then
         assertEquals(new Statistics(Instant.parse(startTime), Instant.parse(stopTime), Duration.ofSeconds(10), Duration.ofSeconds(10), Distance.of(11113.275390625), Speed.of(1111.3275146484375), null, new AltitudeGainLoss(0, 0), null, null)
-                , contentProviderUtils.getTrack(trackId).getStatistics());
+                , contentProviderUtils.getTrack(trackId).statistics());
 
 
         // then

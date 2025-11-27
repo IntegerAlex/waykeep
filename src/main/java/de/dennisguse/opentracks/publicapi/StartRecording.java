@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.IntentDashboardUtils;
@@ -39,14 +40,14 @@ public class StartRecording extends AbstractAPIActivity {
 
     private void updateTrackMetadata(@NonNull Track.Id trackId, @NonNull Bundle bundle) {
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(this);
-        Track track = contentProviderUtils.getTrack(trackId);
+        TrackBuilder track = new TrackBuilder(contentProviderUtils.getTrack(trackId));
 
         track.setName(bundle.getString(EXTRA_TRACK_NAME, ""));
         track.setDescription(bundle.getString(EXTRA_TRACK_DESCRIPTION, ""));
         track.setActivityType(ActivityType.findBy(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_ID, null)));
         track.setActivityTypeLocalized(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_LOCALIZED, ""));
 
-        contentProviderUtils.updateTrack(track);
+        contentProviderUtils.updateTrack(track.getTrack());
     }
 
     private void startDashboardAPI(@NonNull Track.Id trackId, @NonNull Bundle bundle) {

@@ -19,6 +19,7 @@ import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
@@ -71,14 +72,14 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         ZoneOffset zoneOffset = ZoneOffset.systemDefault().getRules().getOffset(segmentStartTrackPoint.getTime());
         trackStatisticsUpdater = new TrackStatisticsUpdater(segmentStartTrackPoint);
 
-        Track track = new Track(zoneOffset, trackStatisticsUpdater.getTrackStatistics());
+        TrackBuilder track = new TrackBuilder(zoneOffset, trackStatisticsUpdater.getTrackStatistics());
 
         String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         track.setActivityTypeLocalized(activityTypeLocalized);
         track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
         track.setName(TrackNameUtils.getTrackName(context, trackId, track.getStartTime()));
 
-        trackId = contentProviderUtils.insertTrack(track);
+        trackId = contentProviderUtils.insertTrack(track.getTrack());
 
         onNewTrackPoint(segmentStartTrackPoint);
 
@@ -96,7 +97,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return false;
         }
 
-        trackStatisticsUpdater = new TrackStatisticsUpdater(track.getStatistics());
+        trackStatisticsUpdater = new TrackStatisticsUpdater(track.statistics());
         onNewTrackPoint(trackPointCreator.createSegmentStartManual());
 
         reset();
@@ -127,9 +128,10 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return null;
         }
 
-        track.setStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
+        TrackBuilder trackBuilder = new TrackBuilder(track);
+        trackBuilder.setStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
 
-        return new RecordingData(track, current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
+        return new RecordingData(trackBuilder.getTrack(), current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)

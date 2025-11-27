@@ -28,6 +28,7 @@ import java.time.ZoneOffset;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.TrackEditBinding;
 import de.dennisguse.opentracks.fragments.ChooseActivityTypeDialogFragment;
 import de.dennisguse.opentracks.ui.ZoneOffsetAdapter;
@@ -46,7 +47,7 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
     private static final String ICON_VALUE_KEY = "icon_value_key";
 
     private ContentProviderUtils contentProviderUtils;
-    private Track track;
+    private TrackBuilder trackBuilder;
     private ActivityType activityType;
 
     private TrackEditBinding viewBinding;
@@ -63,16 +64,17 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
         }
 
         contentProviderUtils = new ContentProviderUtils(this);
-        track = contentProviderUtils.getTrack(trackId);
+        Track track = contentProviderUtils.getTrack(trackId);
         if (track == null) {
             Log.e(TAG, "No track for " + trackId.id());
             finish();
             return;
         }
+        trackBuilder = new TrackBuilder(track);
 
-        viewBinding.trackEditName.setText(track.getName());
+        viewBinding.trackEditName.setText(trackBuilder.getName());
 
-        viewBinding.trackEditActivityTypeLocalized.setText(track.getActivityTypeLocalized());
+        viewBinding.trackEditActivityTypeLocalized.setText(trackBuilder.getActivityTypeLocalized());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, ActivityType.getLocalizedStrings(this));
         viewBinding.trackEditActivityTypeLocalized.setAdapter(adapter);
         viewBinding.trackEditActivityTypeLocalized.setOnItemClickListener((parent, view, position, id) -> {
@@ -91,25 +93,25 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
             activityType = (ActivityType) bundle.getSerializable(ICON_VALUE_KEY);
         }
         if (activityType == null) {
-            activityType = track.getActivityType();
+            activityType = trackBuilder.getActivityType();
         }
         setActivityTypeIcon(activityType);
         viewBinding.trackEditActivityTypeIcon.setOnClickListener(v -> ChooseActivityTypeDialogFragment.showDialog(getSupportFragmentManager(), this, viewBinding.trackEditActivityTypeLocalized.getText().toString()));
 
-        viewBinding.trackEditDescription.setText(track.getDescription());
+        viewBinding.trackEditDescription.setText(trackBuilder.getDescription());
 
         final ArrayAdapter<ZoneOffset> zoneOffsetAdapter = new ZoneOffsetAdapter(this, android.R.layout.simple_dropdown_item_1line);
-        viewBinding.trackEditTimeOffset.setText(track.getZoneOffset().toString());
+        viewBinding.trackEditTimeOffset.setText(trackBuilder.getZoneOffset().toString());
         viewBinding.trackEditTimeOffset.setAdapter(zoneOffsetAdapter);
-        viewBinding.trackEditTimeOffset.setOnItemClickListener((parent, view, position, id) -> track.setZoneOffset(zoneOffsetAdapter.getItem(position)));
+        viewBinding.trackEditTimeOffset.setOnItemClickListener((parent, view, position, id) -> trackBuilder.setZoneOffset(zoneOffsetAdapter.getItem(position)));
 
         viewBinding.trackEditSave.setOnClickListener(v -> {
-            track.setName(viewBinding.trackEditName.getText().toString());
-            track.setDescription(viewBinding.trackEditDescription.getText().toString());
+            trackBuilder.setName(viewBinding.trackEditName.getText().toString());
+            trackBuilder.setDescription(viewBinding.trackEditDescription.getText().toString());
 
-            track.setActivityTypeLocalizedAndUpdateActivityType(this, viewBinding.trackEditActivityTypeLocalized.getText().toString());
+            trackBuilder.setActivityTypeLocalizedAndUpdateActivityType(this, viewBinding.trackEditActivityTypeLocalized.getText().toString());
 
-            contentProviderUtils.updateTrack(track);
+            contentProviderUtils.updateTrack(trackBuilder.getTrack());
             finish();
         });
 

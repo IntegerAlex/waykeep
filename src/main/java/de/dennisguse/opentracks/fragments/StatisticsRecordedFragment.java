@@ -35,6 +35,7 @@ import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
@@ -42,7 +43,7 @@ import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
- * A fragment to display track statistics to the user for a recorded {@link Track}.
+ * A fragment to display track statistics to the user for a recorded {@link TrackBuilder}.
  *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
@@ -147,7 +148,7 @@ public class StatisticsRecordedFragment extends Fragment {
 
                     sensorStatistics = contentProviderUtils.getSensorStats(trackId);
 
-                    boolean prefsChanged = this.track == null || (!this.track.getActivityTypeLocalized().equals(track.getActivityTypeLocalized()));
+                    boolean prefsChanged = this.track == null || (!this.track.activityTypeLocalized().equals(track.activityTypeLocalized()));
                     this.track = track;
                     if (prefsChanged) {
                         sharedPreferenceChangeListener.onSharedPreferenceChanged(null, getString(R.string.stats_rate_key));
@@ -162,13 +163,13 @@ public class StatisticsRecordedFragment extends Fragment {
     }
 
     private void loadTrackDescription(@NonNull Track track) {
-        viewBinding.statsNameValue.setText(track.getName());
-        viewBinding.statsDescriptionValue.setText(track.getDescription());
-        viewBinding.statsStartDatetimeValue.setText(StringUtils.formatDateTimeWithOffsetIfDifferent(track.getStartTime()));
+        viewBinding.statsNameValue.setText(track.name());
+        viewBinding.statsDescriptionValue.setText(track.description());
+        viewBinding.statsStartDatetimeValue.setText(StringUtils.formatDateTimeWithOffsetIfDifferent(track.startTime()));
     }
 
     private void updateUI() {
-        Statistics trackStatistics = track.getStatistics();
+        Statistics trackStatistics = track.statistics();
         // Set total distance
         {
             Pair<String, String> parts = DistanceFormatter.Builder()
@@ -180,7 +181,7 @@ public class StatisticsRecordedFragment extends Fragment {
         }
 
         // Set activity type
-        viewBinding.statsActivityTypeIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), track.getActivityType().getIconDrawableId()));
+        viewBinding.statsActivityTypeIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), track.activityType().getIconDrawableId()));
 
         // Set time and start datetime
         {

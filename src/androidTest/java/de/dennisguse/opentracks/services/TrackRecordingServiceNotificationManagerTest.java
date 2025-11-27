@@ -16,12 +16,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.ZoneOffset;
+import java.util.UUID;
+
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
 
@@ -53,18 +58,17 @@ public class TrackRecordingServiceNotificationManagerTest {
         TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationCompatBuilder);
         subject.setUnitSystem(UnitSystem.METRIC);
 
-        Track track = new Track(new Statistics(
+        Track track = new Track(
                 null,
-                null,
-                null,
-                null,
-                Distance.ZERO,
-                null,
-                null,
-                null,
-                null,
-                null
-        ));
+                UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"),
+                "Berlin",
+                "",
+                "",
+                ActivityType.CYCLING,
+                ZoneOffset.UTC,
+                Statistics.DEFAULT
+        );
+
         RecordingData data = new RecordingData(track, trackPointMock, null, null);
 
         // when

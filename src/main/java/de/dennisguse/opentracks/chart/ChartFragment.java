@@ -35,6 +35,7 @@ import de.dennisguse.opentracks.data.TrackDataHub;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.ChartBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
@@ -174,14 +175,14 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
     }
 
     @Override
-    public void onTrackUpdated(Track track) {
+    public void onTrackUpdated(@NonNull Track track) {
         if (isResumed()) {
             if (track == null) {
                 activityTypeLocalized = "";
                 return;
             }
 
-            activityTypeLocalized = track.getActivityTypeLocalized();
+            activityTypeLocalized = track.activityTypeLocalized();
             boolean reportSpeed = PreferencesUtils.isReportSpeed(activityTypeLocalized);
             if (reportSpeed != viewBinding.chartView.getReportSpeed()) {
                 viewBinding.chartView.setReportSpeed(reportSpeed);

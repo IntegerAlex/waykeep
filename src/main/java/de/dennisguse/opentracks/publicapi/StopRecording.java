@@ -11,7 +11,7 @@ public class StopRecording extends AbstractAPIActivity {
         RecordingData recordingData = service.getRecordingDataObservable().getValue();
         Track.Id trackId = null;
         if (recordingData != null && recordingData.track() != null) {
-            trackId = recordingData.track().getId();
+            trackId = recordingData.track().id();
         }
 
         service.endCurrentTrack();

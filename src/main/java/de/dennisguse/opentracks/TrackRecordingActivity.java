@@ -33,6 +33,7 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.TrackDataHub;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.TrackRecordingBinding;
 import de.dennisguse.opentracks.fragments.ChooseActivityTypeDialogFragment;
@@ -324,11 +325,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     @Override
     public void onChooseActivityTypeDone(ActivityType activityType) {
-        Track track = contentProviderUtils.getTrack(trackId);
+        TrackBuilder track = new TrackBuilder(contentProviderUtils.getTrack(trackId));
         String activityTypeLocalized = getString(activityType.getLocalizedStringId());
         track.setActivityTypeLocalizedAndUpdateActivityType(this, activityTypeLocalized);
 
-        contentProviderUtils.updateTrack(track);
+        contentProviderUtils.updateTrack(track.getTrack());
     }
 
     private class CustomFragmentPagerAdapter extends FragmentStateAdapter {

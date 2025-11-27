@@ -34,6 +34,7 @@ import de.dennisguse.opentracks.TrackListActivity;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 
 @LargeTest
@@ -51,8 +52,9 @@ public class EspressoAggregatedFilterTest {
     @Before
     public void setUp() {
         Pair<Track, List<TrackPoint>> pair = TestDataUtil.createTrack(new Track.Id(System.currentTimeMillis()), 20);
-        pair.first.setActivityTypeLocalized(CATEGORY);
-        TestDataUtil.insertTrackWithLocations(new ContentProviderUtils(ApplicationProvider.getApplicationContext()), pair.first, pair.second);
+        TrackBuilder trackBuilder = new TrackBuilder(pair.first);
+        trackBuilder.setActivityTypeLocalized(CATEGORY);
+        TestDataUtil.insertTrackWithLocations(new ContentProviderUtils(ApplicationProvider.getApplicationContext()), trackBuilder.getTrack(), pair.second);
     }
 
     @Test

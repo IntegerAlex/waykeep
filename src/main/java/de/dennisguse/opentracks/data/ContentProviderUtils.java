@@ -50,6 +50,7 @@ import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
@@ -93,11 +94,6 @@ public class ContentProviderUtils {
         this.contentResolver = contentResolver;
     }
 
-    /**
-     * Creates a {@link Track} from a cursor.
-     *
-     * @param cursor the cursor pointing to the track
-     */
     public static Track createTrack(Cursor cursor) {
         int idIndex = cursor.getColumnIndexOrThrow(TracksColumns._ID);
         int uuidIndex = cursor.getColumnIndexOrThrow(TracksColumns.UUID);
@@ -133,7 +129,7 @@ public class ContentProviderUtils {
                 null
         );
 
-        Track track = new Track(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)), trackStatistics);
+        TrackBuilder track = new TrackBuilder(ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)), trackStatistics);
         track.setId(new Track.Id(cursor.getLong(idIndex)));
         track.setUuid(UUIDUtils.fromBytes(cursor.getBlob(uuidIndex)));
         if (!cursor.isNull(nameIndex)) {
@@ -149,7 +145,7 @@ public class ContentProviderUtils {
             track.setActivityTypeLocalized(cursor.getString(activityTypeLocalizedIndex));
         }
 
-        return track;
+        return track.getTrack();
     }
 
     @VisibleForTesting
@@ -273,23 +269,23 @@ public class ContentProviderUtils {
      * @param track the track
      */
     public void updateTrack(Track track) {
-        contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(track), TracksColumns._ID + "=?", new String[]{Long.toString(track.getId().id())});
+        contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(track), TracksColumns._ID + "=?", new String[]{Long.toString(track.id().id())});
     }
 
     private ContentValues createContentValues(Track track) {
         ContentValues values = new ContentValues();
 
-        if (track.getId() != null) {
-            values.put(TracksColumns._ID, track.getId().id());
+        if (track.id() != null) {
+            values.put(TracksColumns._ID, track.id().id());
         }
-        values.put(TracksColumns.UUID, UUIDUtils.toBytes(track.getUuid()));
-        values.put(TracksColumns.NAME, track.getName());
-        values.put(TracksColumns.DESCRIPTION, track.getDescription());
-        values.put(TracksColumns.ACTIVITY_TYPE, track.getActivityType() != null ? track.getActivityType().getId() : null);
-        values.put(TracksColumns.ACTIVITY_TYPE_LOCALIZED, track.getActivityTypeLocalized());
-        values.put(TracksColumns.STARTTIME_OFFSET, track.getZoneOffset().getTotalSeconds());
+        values.put(TracksColumns.UUID, UUIDUtils.toBytes(track.uuid()));
+        values.put(TracksColumns.NAME, track.name());
+        values.put(TracksColumns.DESCRIPTION, track.description());
+        values.put(TracksColumns.ACTIVITY_TYPE, track.activityType() != null ? track.activityType().getId() : null);
+        values.put(TracksColumns.ACTIVITY_TYPE_LOCALIZED, track.activityTypeLocalized());
+        values.put(TracksColumns.STARTTIME_OFFSET, track.zoneOffset().getTotalSeconds());
 
-        values.putAll(createContentValues(track.getStatistics()));
+        values.putAll(createContentValues(track.statistics()));
 
         return values;
     }

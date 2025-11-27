@@ -17,7 +17,6 @@
 package de.dennisguse.opentracks.io.file.importer;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 

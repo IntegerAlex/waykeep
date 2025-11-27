@@ -63,6 +63,7 @@ import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
@@ -187,13 +188,12 @@ public class ExportImportTest {
         trackPointCreator.setClock("2020-02-02T02:04:00Z");
         service.endCurrentTrack();
 
-        Track track = contentProviderUtils.getTrack(trackId);
-        track.setActivityType(TRACK_ACTIVITY_TYPE);
-        track.setActivityTypeLocalized(TRACK_ACTIVITY_TYPE_LOCALIZED);
-        track.setDescription(TRACK_DESCRIPTION);
-        contentProviderUtils.updateTrack(track);
+        TrackBuilder trackBuilder = new TrackBuilder(contentProviderUtils.getTrack(trackId));
+        trackBuilder.setActivityType(TRACK_ACTIVITY_TYPE);
+        trackBuilder.setActivityTypeLocalized(TRACK_ACTIVITY_TYPE_LOCALIZED);
+        trackBuilder.setDescription(TRACK_DESCRIPTION);
+        contentProviderUtils.updateTrack(trackBuilder.getTrack());
 
-        track = contentProviderUtils.getTrack(trackId);
         trackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
         markers =  TestDataUtil.getMarkers(contentProviderUtils, trackId);
     }
@@ -204,9 +204,9 @@ public class ExportImportTest {
         setUp();
 
         Track track = contentProviderUtils.getTrack(trackId);
-        Statistics trackStatistics = track.getStatistics();
+        Statistics trackStatistics = track.statistics();
 
-        assertEquals(ZoneOffset.of("+01:00"), track.getZoneOffset());
+        assertEquals(ZoneOffset.of("+01:00"), track.zoneOffset());
 
         assertEquals(new Statistics(
                         Instant.parse("2020-02-02T02:02:02Z"),
@@ -310,19 +310,19 @@ public class ExportImportTest {
         // 1. track
         Track importedTrack = contentProviderUtils.getTrack(importTrackId);
         assertNotNull(importedTrack);
-        assertEquals(track.getActivityType(), importedTrack.getActivityType());
-        assertEquals(track.getActivityTypeLocalized(), importedTrack.getActivityTypeLocalized());
-        assertEquals(track.getDescription(), importedTrack.getDescription());
-        assertEquals(track.getName(), importedTrack.getName());
+        assertEquals(track.activityType(), importedTrack.activityType());
+        assertEquals(track.activityTypeLocalized(), importedTrack.activityTypeLocalized());
+        assertEquals(track.description(), importedTrack.description());
+        assertEquals(track.name(), importedTrack.name());
 
         // 2. trackpoints
         List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
         new TrackPointAssert().assertEquals(trackPoints, actual);
 
         // 3. trackstatistics
-        Statistics importedTrackStatistics = importedTrack.getStatistics();
+        Statistics importedTrackStatistics = importedTrack.statistics();
 
-        assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());
+        assertEquals(track.zoneOffset(), importedTrack.zoneOffset());
         assertEquals(new Statistics(
                         Instant.parse("2020-02-02T02:02:02Z"),
                         Instant.parse("2020-02-02T02:04:00Z"),
@@ -391,10 +391,10 @@ public class ExportImportTest {
         // 1. track
         Track importedTrack = contentProviderUtils.getTrack(importTrackId);
         assertNotNull(importedTrack);
-        assertEquals(track.getActivityType(), importedTrack.getActivityType());
-        assertEquals(track.getActivityTypeLocalized(), importedTrack.getActivityTypeLocalized());
-        assertEquals(track.getDescription(), importedTrack.getDescription());
-        assertEquals(track.getName(), importedTrack.getName());
+        assertEquals(track.activityType(), importedTrack.activityType());
+        assertEquals(track.activityTypeLocalized(), importedTrack.activityTypeLocalized());
+        assertEquals(track.description(), importedTrack.description());
+        assertEquals(track.name(), importedTrack.name());
 
         // 2. trackpoints
         // The GPX exporter does not support exporting TrackPoints without lat/lng.
@@ -452,9 +452,9 @@ public class ExportImportTest {
         ), actual);
 
         // 3. trackstatistics
-        assertEquals(track.getZoneOffset(), importedTrack.getZoneOffset());
+        assertEquals(track.zoneOffset(), importedTrack.zoneOffset());
 
-        Statistics importedTrackStatistics = importedTrack.getStatistics();
+        Statistics importedTrackStatistics = importedTrack.statistics();
         assertEquals(new Statistics(
                         Instant.parse("2020-02-02T02:02:03Z"),
                         Instant.parse("2020-02-02T02:03:50Z"),

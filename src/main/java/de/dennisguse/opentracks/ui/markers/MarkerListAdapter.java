@@ -192,7 +192,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewBinding.markerListItemName.setText(marker.getName());
 
             {
-                ZoneOffset timeZone = new ContentProviderUtils(context).getTrack(marker.getTrackId()).getZoneOffset();
+                ZoneOffset timeZone = new ContentProviderUtils(context).getTrack(marker.getTrackId()).zoneOffset();
                 ListItemUtils.setDateAndTime(context, viewBinding.markerListItemDate, viewBinding.markerListItemTime, marker.getTime(), timeZone);
             }
 

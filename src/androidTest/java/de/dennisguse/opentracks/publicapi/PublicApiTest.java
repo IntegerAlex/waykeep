@@ -19,6 +19,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TestUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 
@@ -49,9 +50,9 @@ public class PublicApiTest {
         List<Track> tracks = new ContentProviderUtils(context).getTracks();
         Assert.assertEquals(1, tracks.size());
         Track track = tracks.get(0);
-        Assert.assertEquals("trackName", track.getName());
-        Assert.assertEquals("activityTypeLocalized", track.getActivityTypeLocalized());
-        Assert.assertEquals("airplane", track.getActivityType().getId());
+        Assert.assertEquals("trackName", track.name());
+        Assert.assertEquals("activityTypeLocalized", track.activityTypeLocalized());
+        Assert.assertEquals("airplane", track.activityType().getId());
     }
 
     @Test

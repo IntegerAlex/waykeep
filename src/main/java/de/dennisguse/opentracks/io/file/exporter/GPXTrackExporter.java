@@ -17,6 +17,7 @@
 package de.dennisguse.opentracks.io.file.exporter;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -128,7 +129,7 @@ public class GPXTrackExporter implements TrackExporter {
 
         LinkedList<TrackPoint> sensorPoints = new LinkedList<>();
 
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.getId(), null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -152,7 +153,7 @@ public class GPXTrackExporter implements TrackExporter {
                         writeOpenSegment();
                         wroteSegment = true;
                         if (trackPoint.hasLocation()) {
-                            trackDistance = trackDistance.plus(writeTrackPoint(track.getZoneOffset(), trackPoint, sensorPoints, trackDistance));
+                            trackDistance = trackDistance.plus(writeTrackPoint(track.zoneOffset(), trackPoint, sensorPoints, trackDistance));
                             sensorPoints.clear();
                         } else {
                             sensorPoints.add(trackPoint);
@@ -165,7 +166,7 @@ public class GPXTrackExporter implements TrackExporter {
                             wroteSegment = true;
                         }
                         if (trackPoint.hasLocation()) {
-                            trackDistance = trackDistance.plus(writeTrackPoint(track.getZoneOffset(), trackPoint, sensorPoints, trackDistance));
+                            trackDistance = trackDistance.plus(writeTrackPoint(track.zoneOffset(), trackPoint, sensorPoints, trackDistance));
                             sensorPoints.clear();
                         }  else {
                             sensorPoints.add(trackPoint);
@@ -238,12 +239,12 @@ public class GPXTrackExporter implements TrackExporter {
     }
 
     private void writeMarkers(Track track) throws InterruptedException {
-        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.getId())) {
+        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
             while (markerIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
 
-                writeMarker(track.getZoneOffset(), markerIterator.next());
+                writeMarker(track.zoneOffset(), markerIterator.next());
             }
         }
     }
@@ -262,19 +263,19 @@ public class GPXTrackExporter implements TrackExporter {
 
     private void writeBeginTrack(Track track) {
         printWriter.println("<trk>");
-        printWriter.println("<name>" + StringUtils.formatCData(track.getName()) + "</name>");
-        printWriter.println("<desc>" + StringUtils.formatCData(track.getDescription()) + "</desc>");
-        printWriter.println("<type>" + StringUtils.formatCData(track.getActivityType().getId()) + "</type>");
+        printWriter.println("<name>" + StringUtils.formatCData(track.name()) + "</name>");
+        printWriter.println("<desc>" + StringUtils.formatCData(track.description()) + "</desc>");
+        printWriter.println("<type>" + StringUtils.formatCData(track.activityType().getId()) + "</type>");
 
         printWriter.println("<extensions>");
         printWriter.println("<topografix:color>c0c0c0</topografix:color>");
-        printWriter.println("<opentracks:trackid>" + track.getUuid() + "</opentracks:trackid>");
+        printWriter.println("<opentracks:trackid>" + track.uuid() + "</opentracks:trackid>");
 
-        if (track.getActivityTypeLocalized() != null || !track.getActivityTypeLocalized().isBlank()) {
-            printWriter.println("<opentracks:typeTranslated>" + StringUtils.formatCData(track.getActivityTypeLocalized()) + "</opentracks:typeTranslated>");
+        if (!TextUtils.isEmpty(track.activityTypeLocalized())) {
+            printWriter.println("<opentracks:typeTranslated>" + StringUtils.formatCData(track.activityTypeLocalized()) + "</opentracks:typeTranslated>");
         }
 
-        Statistics trackStatistics = track.getStatistics();
+        Statistics trackStatistics = track.statistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
         printWriter.println("<gpxtrkx:Distance>" + trackStatistics.totalDistance().toM() + "</gpxtrkx:Distance>");
         printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalDuration().getSeconds() + "</gpxtrkx:TimerTime>");

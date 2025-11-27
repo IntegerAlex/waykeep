@@ -13,7 +13,9 @@ import org.junit.runners.JUnit4;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.AggregatedStatistic;
@@ -26,6 +28,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 
 @RunWith(JUnit4.class)
 public class AggregatedStatisticsTest {
@@ -33,7 +36,15 @@ public class AggregatedStatisticsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     private static void createTrack(Context context, Distance totalDistance, Duration totalTime, String activityTypeLocalized) {
-        Track track = new Track(new Statistics(
+        Track track = new Track(
+                null,
+                UUID.randomUUID(), //TODO Use constant UUID
+                "",
+                "",
+                activityTypeLocalized,
+                ActivityType.findByLocalizedString(context, activityTypeLocalized),
+                ZoneOffset.UTC,
+                new Statistics(
                 Instant.ofEpochMilli(1000),
                 Instant.ofEpochMilli(1000).plus(totalTime),
                 totalTime,
@@ -45,8 +56,6 @@ public class AggregatedStatisticsTest {
                 null,
                 null
         ));
-        track.setActivityType(ActivityType.findByLocalizedString(context, activityTypeLocalized));
-        track.setActivityTypeLocalized(activityTypeLocalized);
 
         new ContentProviderUtils(context).insertTrack(track);
     }

@@ -30,11 +30,11 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
-import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 
 /**
- * Statistical data about a {@link Track}.
+ * Statistical data about a {@link TrackBuilder}.
  * The data in this class should be filled out by {@link TrackStatisticsUpdater}.
  *
  * @author Rodrigo Damazio

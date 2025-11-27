@@ -111,7 +111,7 @@ public class CSVTrackExporter implements TrackExporter {
             boolean headerWritten = false;
 
             for (Track track : tracks) {
-                columns.get(0).extractor = t -> quote(StringUtils.formatDateTimeIso8601(t.getTime(), track.getZoneOffset()));
+                columns.get(0).extractor = t -> quote(StringUtils.formatDateTimeIso8601(t.getTime(), track.zoneOffset()));
 
                 if (!headerWritten) {
                     writeHeader(columns);
@@ -131,7 +131,7 @@ public class CSVTrackExporter implements TrackExporter {
     }
 
     private void writeTrackPoints(List<Column> columns, Track track) throws InterruptedException {
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.getId(), null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 

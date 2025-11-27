@@ -136,7 +136,7 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeMarkers(Track track) throws InterruptedException {
         boolean hasMarkers = false;
-        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.getId())) {
+        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
             while (markerIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -145,7 +145,7 @@ public class KMLTrackExporter implements TrackExporter {
                     hasMarkers = true;
                 }
 
-                writeMarker(markerIterator.next(), track.getZoneOffset());
+                writeMarker(markerIterator.next(), track.zoneOffset());
             }
         }
         if (hasMarkers) {
@@ -157,7 +157,7 @@ public class KMLTrackExporter implements TrackExporter {
         boolean wroteTrack = false;
         boolean wroteSegment = false;
 
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.getId(), null)) {
+        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -171,12 +171,12 @@ public class KMLTrackExporter implements TrackExporter {
                     case SEGMENT_START_MANUAL, SEGMENT_START_AUTOMATIC -> {
                         if (wroteSegment) writeCloseSegment();
                         writeOpenSegment();
-                        writeTrackPoint(track.getZoneOffset(), trackPoint);
+                        writeTrackPoint(track.zoneOffset(), trackPoint);
                         wroteSegment = true;
                     }
                     case SEGMENT_END_MANUAL -> {
                         if (!wroteSegment) writeOpenSegment();
-                        writeTrackPoint(track.getZoneOffset(), trackPoint);
+                        writeTrackPoint(track.zoneOffset(), trackPoint);
                         writeCloseSegment();
                         wroteSegment = false;
                     }
@@ -187,7 +187,7 @@ public class KMLTrackExporter implements TrackExporter {
                             wroteSegment = true;
                         }
 
-                        writeTrackPoint(track.getZoneOffset(), trackPoint);
+                        writeTrackPoint(track.zoneOffset(), trackPoint);
                     }
                     default ->
                             throw new RuntimeException("Exporting this TrackPoint type is not implemented: " + trackPoint.getType());
@@ -239,7 +239,7 @@ public class KMLTrackExporter implements TrackExporter {
         printWriter.println("<visibility>1</visibility>");
 
         Track track = tracks.get(0);
-        printWriter.println("<name>" + StringUtils.formatCData(track.getName()) + "</name>");
+        printWriter.println("<name>" + StringUtils.formatCData(track.name()) + "</name>");
         printWriter.println("<atom:generator>" + StringUtils.formatCData(context.getString(R.string.app_name)) + "</atom:generator>");
 
         writeTrackStyle();
@@ -261,7 +261,7 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeBeginMarkers(Track track) {
         printWriter.println("<Folder>");
-        printWriter.println("<name>" + StringUtils.formatCData(context.getString(R.string.track_markers, track.getName())) + "</name>");
+        printWriter.println("<name>" + StringUtils.formatCData(context.getString(R.string.track_markers, track.name())) + "</name>");
         printWriter.println("<open>1</open>");
     }
 
@@ -291,13 +291,13 @@ public class KMLTrackExporter implements TrackExporter {
     private void writeBeginTrack(Track track) {
         printWriter.println("<Placemark>");
 
-        printWriter.println("<name>" + StringUtils.formatCData(track.getName()) + "</name>");
-        printWriter.println("<description>" + StringUtils.formatCData(track.getDescription()) + "</description>");
-        printWriter.println("<opentracks:trackid>" + track.getUuid() + "</opentracks:trackid>");
+        printWriter.println("<name>" + StringUtils.formatCData(track.name()) + "</name>");
+        printWriter.println("<description>" + StringUtils.formatCData(track.description()) + "</description>");
+        printWriter.println("<opentracks:trackid>" + track.uuid() + "</opentracks:trackid>");
 
         printWriter.println("<styleUrl>#" + TRACK_STYLE + "</styleUrl>");
-        writeActivityType(track.getActivityType());
-        writeTypeLocalized(track.getActivityTypeLocalized());
+        writeActivityType(track.activityType());
+        writeTypeLocalized(track.activityTypeLocalized());
         printWriter.println("<MultiTrack>");
         printWriter.println("<altitudeMode>absolute</altitudeMode>");
         printWriter.println("<interpolate>1</interpolate>");

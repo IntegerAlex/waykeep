@@ -18,6 +18,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
@@ -35,11 +36,11 @@ public class TestDataUtil {
      * Create a track without any trackPoints.
      */
     public static Track createTrack(Track.Id trackId) {
-        Track track = new Track(Statistics.DEFAULT);
+        TrackBuilder track = new TrackBuilder(Statistics.DEFAULT);
         track.setId(trackId);
         track.setName("Test: " + trackId.id());
 
-        return track;
+        return track.getTrack();
     }
 
     /**
@@ -138,7 +139,7 @@ public class TestDataUtil {
      */
     public static void insertTrackWithLocations(ContentProviderUtils contentProviderUtils, Track track, List<TrackPoint> trackPoints) {
         contentProviderUtils.insertTrack(track);
-        contentProviderUtils.bulkInsertTrackPoint(trackPoints, track.getId());
+        contentProviderUtils.bulkInsertTrackPoint(trackPoints, track.id());
     }
 
     public static Marker createMarkerWithPhoto(Context context, Track.Id trackId, TrackPoint trackPoint) throws IOException {

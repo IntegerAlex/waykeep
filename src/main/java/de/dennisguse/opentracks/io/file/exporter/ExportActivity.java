@@ -40,6 +40,7 @@ import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.ExportActivityBinding;
 import de.dennisguse.opentracks.io.file.ErrorListDialog;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
@@ -222,9 +223,9 @@ public class ExportActivity extends AbstractActivity {
         exportTasks = new ArrayList<>();
         if (allInOneFile) {
             String filename = "OpenTracks-Backup";
-            exportTasks.add(new ExportTask(filename, trackFileFormat, tracks.stream().map(Track::getId).toList()));
+            exportTasks.add(new ExportTask(filename, trackFileFormat, tracks.stream().map(Track::id).toList()));
         } else {
-            exportTasks.addAll(tracks.stream().map(it -> new ExportTask(null, trackFileFormat, List.of(it.getId()))).toList());
+            exportTasks.addAll(tracks.stream().map(it -> new ExportTask(null, trackFileFormat, List.of(it.id()))).toList());
         }
         trackExportTotalCount = exportTasks.size();
     }
@@ -362,7 +363,7 @@ public class ExportActivity extends AbstractActivity {
         if (exportTask.isMultiExport()) {
             name = exportTask.getFilename();
         } else {
-            name = contentProviderUtils.getTrack(exportTask.getTrackIds().get(0)).getName();
+            name = contentProviderUtils.getTrack(exportTask.getTrackIds().get(0)).name();
         }
         Log.e(TAG, "Error exporting " + name + ": " + errorMessage);
         trackErrors.add(name);
@@ -402,7 +403,7 @@ public class ExportActivity extends AbstractActivity {
                 if (exportTask.isMultiExport()) {
                     name = exportTask.getFilename();
                 } else {
-                    name = contentProviderUtils.getTrack(exportTask.getTrackIds().get(0)).getName();
+                    name = contentProviderUtils.getTrack(exportTask.getTrackIds().get(0)).name();
                 }
                 viewBinding.exportProgressAlertMsg.setText(getString(R.string.export_track_already_exists_msg, name));
                 setConflictVisibility(View.VISIBLE);

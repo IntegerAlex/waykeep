@@ -35,6 +35,7 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.SensorStatistics;
@@ -51,12 +52,12 @@ class VoiceAnnouncementUtils {
     }
 
     static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable Statistics currentInterval, @Nullable SensorStatistics sensorStatistics) {
-        Statistics trackStatistics = track.getStatistics();
+        Statistics trackStatistics = track.statistics();
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
         if (shouldVoiceAnnounceTime()) {
-            appendTime(builder, track.getStopTime());
+            appendTime(builder, track.stopTime());
         }
 
         Distance totalDistance = trackStatistics.totalDistance();

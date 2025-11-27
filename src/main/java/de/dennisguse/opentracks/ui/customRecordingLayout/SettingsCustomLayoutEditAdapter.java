@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -25,6 +26,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.CustomStatsItemBinding;
 import de.dennisguse.opentracks.services.RecordingData;
@@ -54,7 +56,16 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
                 null,
                 null
         );
-        Track track = new Track(ZoneOffset.UTC, statistics);
+
+        Track track = new Track(
+                null,
+                null,
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                statistics);
 
         Position position = new Position(
                 Instant.ofEpochMilli(0),

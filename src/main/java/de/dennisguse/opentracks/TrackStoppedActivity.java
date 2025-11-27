@@ -14,6 +14,7 @@ import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.TrackStoppedBinding;
 import de.dennisguse.opentracks.fragments.ChooseActivityTypeDialogFragment;
 import de.dennisguse.opentracks.io.file.exporter.ExportUtils;
@@ -46,9 +47,9 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(this);
         Track track = contentProviderUtils.getTrack(trackId);
 
-        viewBinding.trackEditName.setText(track.getName());
+        viewBinding.trackEditName.setText(track.name());
 
-        viewBinding.trackEditActivityType.setText(track.getActivityTypeLocalized());
+        viewBinding.trackEditActivityType.setText(track.activityTypeLocalized());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, ActivityType.getLocalizedStrings(this));
         viewBinding.trackEditActivityType.setAdapter(adapter);
@@ -63,19 +64,19 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             }
         });
 
-        setActivityTypeIcon(track.getActivityType());
+        setActivityTypeIcon(track.activityType());
         viewBinding.trackEditActivityTypeIcon.setOnClickListener(v -> ChooseActivityTypeDialogFragment.showDialog(getSupportFragmentManager(), this, viewBinding.trackEditActivityType.getText().toString()));
 
-        viewBinding.trackEditDescription.setText(track.getDescription());
+        viewBinding.trackEditDescription.setText(track.description());
 
-        viewBinding.time.setText(StringUtils.formatElapsedTime(track.getStatistics().movingDuration()));
+        viewBinding.time.setText(StringUtils.formatElapsedTime(track.statistics().movingDuration()));
 
         {
             Pair<String, String> parts = SpeedFormatter.Builder()
                     .setUnit(PreferencesUtils.getUnitSystem())
                     .setReportSpeedOrPace(PreferencesUtils.isReportSpeed(track))
                     .build(this)
-                    .getSpeedParts(track.getStatistics().getAverageMovingSpeed());
+                    .getSpeedParts(track.statistics().getAverageMovingSpeed());
             viewBinding.speed.setText(parts.first);
             viewBinding.speedUnit.setText(parts.second);
         }
@@ -84,7 +85,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             Pair<String, String> parts = DistanceFormatter.Builder()
                     .setUnit(PreferencesUtils.getUnitSystem())
                     .build(this)
-                    .getDistanceParts(track.getStatistics().totalDistance());
+                    .getDistanceParts(track.statistics().totalDistance());
             viewBinding.distance.setText(parts.first);
             viewBinding.distanceUnit.setText(parts.second);
         }
@@ -104,11 +105,12 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
     }
 
     private void storeTrackMetaData(ContentProviderUtils contentProviderUtils, Track track) {
-        track.setName(viewBinding.trackEditName.getText().toString());
-        track.setDescription(viewBinding.trackEditDescription.getText().toString());
-        track.setActivityTypeLocalizedAndUpdateActivityType(this, viewBinding.trackEditActivityType.getText().toString());
+        TrackBuilder trackBuilder = new TrackBuilder(track);
+        trackBuilder.setName(viewBinding.trackEditName.getText().toString());
+        trackBuilder.setDescription(viewBinding.trackEditDescription.getText().toString());
+        trackBuilder.setActivityTypeLocalizedAndUpdateActivityType(this, viewBinding.trackEditActivityType.getText().toString());
 
-        contentProviderUtils.updateTrack(track);
+        contentProviderUtils.updateTrack(trackBuilder.getTrack());
     }
 
     @NonNull

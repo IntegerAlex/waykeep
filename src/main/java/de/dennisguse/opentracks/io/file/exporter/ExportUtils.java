@@ -25,6 +25,7 @@ import java.util.List;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;

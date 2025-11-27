@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.TimeZone;
@@ -19,6 +20,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TimezoneRule;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 
 @RunWith(Parameterized.class)
 public class TrackFilenameGeneratorTest {
@@ -48,9 +50,16 @@ public class TrackFilenameGeneratorTest {
     @Test
     public void testFilenameTemplate() {
         // given
-        Track track = new Track(new Statistics(Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null, null));
-        track.setName("Best Track");
-        track.setUuid(UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb"));
+        Track track = new Track(
+                null,
+                UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb"),
+                "Best Track",
+                "",
+                "",
+                null,
+                ZoneOffset.UTC,
+                new Statistics(Instant.parse("2020-02-02T02:02:02Z"), Instant.parse("2020-02-02T02:02:02Z"), null, null, null, null, null, null, null, null)
+        );
 
         // when
         String filename = subject.format(track, TrackFileFormat.GPX);

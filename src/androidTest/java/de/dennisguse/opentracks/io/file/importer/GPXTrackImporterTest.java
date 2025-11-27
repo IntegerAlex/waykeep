@@ -32,6 +32,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
@@ -79,11 +80,11 @@ public class GPXTrackImporterTest {
         // 2. track
         Track importedTrack = contentProviderUtils.getTrack(importTrackId);
         assertNotNull(importedTrack);
-        assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
-        assertEquals("the category", importedTrack.getActivityTypeLocalized());
-        assertEquals("the description", importedTrack.getDescription());
-        assertEquals("2021-01-07 22:51", importedTrack.getName());
-        assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
+        assertEquals("the category", importedTrack.activityTypeLocalized());
+        assertEquals("the description", importedTrack.description());
+        assertEquals("2021-01-07 22:51", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
 
         //TODO Check trackstatistics
 
@@ -143,13 +144,13 @@ public class GPXTrackImporterTest {
         // 2. track
         Track importedTrack = contentProviderUtils.getTrack(importTrackId);
         assertNotNull(importedTrack);
-        assertEquals("", importedTrack.getActivityTypeLocalized());
-        assertEquals("", importedTrack.getDescription());
-        assertEquals("20210907_213924.gpx", importedTrack.getName());
-        assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
+        assertEquals("", importedTrack.activityTypeLocalized());
+        assertEquals("", importedTrack.description());
+        assertEquals("20210907_213924.gpx", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
 
         // 3. trackstatistics
-        Statistics trackStatistics = importedTrack.getStatistics();
+        Statistics trackStatistics = importedTrack.statistics();
         assertEquals(0.75, trackStatistics.maxSpeed().toMPS(), 0.01);
         assertEquals(Duration.ofSeconds(101), trackStatistics.movingDuration());
 
@@ -198,13 +199,13 @@ public class GPXTrackImporterTest {
         // 2. track
         Track importedTrack = contentProviderUtils.getTrack(importTrackId);
         assertNotNull(importedTrack);
-        assertEquals("", importedTrack.getActivityTypeLocalized());
-        assertEquals("", importedTrack.getDescription());
-        assertEquals("20210907_213924.gpx", importedTrack.getName());
-        assertEquals(ActivityType.UNKNOWN, importedTrack.getActivityType());
+        assertEquals("", importedTrack.activityTypeLocalized());
+        assertEquals("", importedTrack.description());
+        assertEquals("20210907_213924.gpx", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
 
         // 3. trackstatistics
-        Statistics trackStatistics = importedTrack.getStatistics();
+        Statistics trackStatistics = importedTrack.statistics();
         assertEquals(5.0, trackStatistics.maxSpeed().toMPS(), 0.01);
         assertEquals(Duration.ofSeconds(101), trackStatistics.movingDuration());
 

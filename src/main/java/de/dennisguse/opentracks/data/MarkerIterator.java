@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 class MarkerIterator extends AutoCloseableIterator<Marker> {

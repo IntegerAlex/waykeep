@@ -20,18 +20,21 @@ import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
 import de.dennisguse.opentracks.LocaleRule;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
@@ -62,18 +65,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
-                Distance.of(20000),
-                Speed.of(100),
+        Track track = new Track(
                 null,
                 null,
-                null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -87,18 +98,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed_rounding_check() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1).plusSeconds(1),
-                Distance.of(20000),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1).plusSeconds(1),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -112,18 +131,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_distance_rounding_check() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1),
-                Distance.of(19999),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.of(19999),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -137,18 +164,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_distance_rounding_check_two() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1),
-                Distance.of(19900),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.of(19900),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -177,18 +212,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_pace() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
-                Distance.of(20000),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -217,18 +260,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_speed() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
-                Distance.of(20000),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -242,18 +293,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_speed_1() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1),
-                Distance.ofMile(1.1),
+        Track track = new Track(
                 null,
                 null,
-                null,
-                null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.ofMile(1.1),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -267,18 +326,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_meter_speed_1() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1),
-                Distance.ofMile(1.1),
+        Track track = new Track(
                 null,
                 null,
-                null,
-                null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.ofMile(1.1),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -292,18 +359,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_metric_speed_1() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1),
-                Distance.ofKilometer(1.1),
+        Track track = new Track(
                 null,
                 null,
-                null,
-                null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.ofKilometer(1.1),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -332,18 +407,26 @@ public class VoiceAnnouncementUtilsTest {
 
     @Test
     public void getAnnouncement_imperial_pace() {
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH,
-                Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
-                Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
-                Distance.of(20000),
-                Speed.of(100),
+        Track track = new Track(
                 null,
-                new AltitudeGainLoss(6000, 6000),
                 null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1).plusMinutes(5).plusSeconds(10),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
         Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
@@ -443,18 +526,26 @@ public class VoiceAnnouncementUtilsTest {
         intervalStatistics.addTrackPoints(trackPoints.iterator());
         Statistics lastInterval = intervalStatistics.getLastInterval();
 
-        Track track = new Track(new Statistics(
-                Instant.EPOCH,
-                Instant.EPOCH.plusSeconds(999),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Duration.ofMinutes(16).plusSeconds(39),
-                Distance.of(14208),
-                Speed.of(104),
+        Track track = new Track(
                 null,
                 null,
-                null,
-                null
-        ));
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH.plusSeconds(999),
+                        Duration.ofMinutes(16).plusSeconds(39),
+                        Duration.ofMinutes(16).plusSeconds(39),
+                        Distance.of(14208),
+                        Speed.of(104),
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         return new Pair<>(track, lastInterval);
     }

@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 
 /**
  * Track exporting for exporting track to an {@link OutputStream}.

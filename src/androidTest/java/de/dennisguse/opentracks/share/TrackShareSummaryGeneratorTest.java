@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Locale;
 
 import de.dennisguse.opentracks.LocaleRule;
@@ -40,6 +41,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -63,19 +65,26 @@ public class TrackShareSummaryGeneratorTest {
 
     @Test
     public void testGenerateTrackDescription() {
-        Track track = new Track(new Statistics(
-                START_TIME,
-                START_TIME,
-                Duration.ofSeconds(600),
-                Duration.ofSeconds(300),
-                Distance.of(20000),
-                Speed.of(100),
-                new AltitudeExtremities(-500, 550),
-                new AltitudeGainLoss(6000, 6000),
+        Track track = new Track(
                 null,
-                null
-        ));
-        track.setActivityTypeLocalized("hiking");
+                null,
+                "",
+                "",
+                "hiking",
+                null,
+                ZoneOffset.UTC,
+                new Statistics(
+                        START_TIME,
+                        START_TIME,
+                        Duration.ofSeconds(600),
+                        Duration.ofSeconds(300),
+                        Distance.of(20000),
+                        Speed.of(100),
+                        new AltitudeExtremities(-500, 550),
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
 
         String expected = //"Created by"
                 "OpenTracks (Debug)\n\n"

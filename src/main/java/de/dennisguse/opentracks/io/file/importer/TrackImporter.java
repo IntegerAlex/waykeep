@@ -25,6 +25,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
@@ -146,12 +147,16 @@ public class TrackImporter {
         adjustTrackPoints();
 
         TrackStatisticsUpdater updater = new TrackStatisticsUpdater(trackPoints);
-        Track track = new Track(trackData.zoneOffset, updater.getTrackStatistics());
-        track.setName(trackData.name);
-        track.setUuid(trackData.uuid);
-        track.setDescription(trackData.description);
-        track.setActivityType(trackData.activityType);
-        track.setActivityTypeLocalized(trackData.activityTypeLocalized);
+        Track track = new Track(
+                null,
+                trackData.uuid,
+                trackData.name,
+                trackData.description,
+                trackData.activityTypeLocalized,
+                trackData.activityType,
+                trackData.zoneOffset,
+                updater.getTrackStatistics()
+        );
 
         Track.Id trackId = contentProviderUtils.insertTrack(track);
 

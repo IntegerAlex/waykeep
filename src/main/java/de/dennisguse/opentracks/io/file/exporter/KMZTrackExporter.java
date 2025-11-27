@@ -17,7 +17,6 @@
 package de.dennisguse.opentracks.io.file.exporter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -35,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -90,14 +90,14 @@ public class KMZTrackExporter implements TrackExporter {
 
     private void addImages(Context context, List<Track> tracks, ZipOutputStream zipOutputStream) throws InterruptedException, IOException {
         for (Track track : tracks) {
-            try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.getId())) {
+            try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
                 while (markerIterator.hasNext()) {
                     if (Thread.interrupted()) throw new InterruptedException();
 
                     Marker marker = markerIterator.next();
                     if (marker.hasPhoto()) {
                         Uri uriPhoto = marker.getPhotoUrl();
-                        boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, track.getId(), uriPhoto) != null;
+                        boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, track.id(), uriPhoto) != null;
                         if (existsPhoto) {
                             addImage(context, zipOutputStream, uriPhoto, marker);
                         }

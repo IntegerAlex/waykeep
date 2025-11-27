@@ -2,7 +2,6 @@ package de.dennisguse.opentracks.io.file;
 
 import androidx.annotation.NonNull;
 
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +11,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.util.FileUtils;
 
 public class TrackFilenameGenerator {
@@ -41,11 +42,11 @@ public class TrackFilenameGenerator {
     public String format(@NonNull Track track, @NonNull TrackFileFormat trackFileFormat) {
         Map<String, String> values = new HashMap<>();
 
-        values.put(UUID_KEY, track.getUuid().toString().substring(0, 8));
-        values.put(TRACKNAME_KEY, track.getName());
-        values.put(ACTIVITY_TYPE_KEY, track.getActivityTypeLocalized());
-        values.put(STARTTIME_TIME_KEY, track.getStartTime().toLocalTime().toString());
-        values.put(STARTTIME_DATE_KEY, track.getStartTime().toLocalDate().toString());
+        values.put(UUID_KEY, track.uuid().toString().substring(0, 8));
+        values.put(TRACKNAME_KEY, track.name());
+        values.put(ACTIVITY_TYPE_KEY, track.activityTypeLocalized());
+        values.put(STARTTIME_TIME_KEY, track.startTime().toLocalTime().toString());
+        values.put(STARTTIME_DATE_KEY, track.stopTime().toLocalDate().toString());
 
         return format(format(template, values), trackFileFormat);
     }
@@ -90,9 +91,16 @@ public class TrackFilenameGenerator {
     }
 
     public String getExample() {
-        Track track = new Track(ZoneOffset.UTC, Statistics.DEFAULT);
-        track.setName("Berlin");
-        track.setUuid(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
+        Track track = new Track(
+                null,
+                UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"),
+                "Berlin",
+                "",
+                "",
+                ActivityType.CYCLING,
+                ZoneOffset.UTC,
+                Statistics.DEFAULT
+        );
 
         return format(track, TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES);
     }

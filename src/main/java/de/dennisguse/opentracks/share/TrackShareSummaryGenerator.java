@@ -31,6 +31,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.util.StringUtils;
 
@@ -62,10 +63,10 @@ public class TrackShareSummaryGenerator {
         builder.append(TEXT_LINE_BREAK);
         builder.append(TEXT_LINE_BREAK);
 
-        writeString(track.getName(), builder, R.string.generic_name_line);
-        writeString(track.getActivityTypeLocalized(), builder, R.string.description_activity_type);
-        writeString(track.getDescription(), builder, R.string.generic_description_line);
-        builder.append(generateTrackStatisticsDescription(track.getStatistics()));
+        writeString(track.name(), builder, R.string.generic_name_line);
+        writeString(track.activityTypeLocalized(), builder, R.string.description_activity_type);
+        writeString(track.description(), builder, R.string.generic_description_line);
+        builder.append(generateTrackStatisticsDescription(track.statistics()));
 
         return builder.toString();
     }

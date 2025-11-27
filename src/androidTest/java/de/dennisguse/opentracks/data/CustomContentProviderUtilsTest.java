@@ -54,12 +54,12 @@ import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
-import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
@@ -130,11 +130,12 @@ public class CustomContentProviderUtilsTest {
     }
 
     private TrackPoint.Id initializeTrack(Track.Id id, int numPoints) {
-        Track track = new Track(Statistics.DEFAULT);
-        track.setId(id);
-        track.setName("Test: " + id.id());
-        contentProviderUtils.insertTrack(track);
-        track = contentProviderUtils.getTrack(id);
+        TrackBuilder trackbuilder = new TrackBuilder(Statistics.DEFAULT);
+        trackbuilder.setId(id);
+        trackbuilder.setName("Test: " + id.id());
+        contentProviderUtils.insertTrack(trackbuilder.getTrack());
+
+        Track track = contentProviderUtils.getTrack(id);
         assertNotNull(track);
 
         List<TrackPoint> trackPoints = new ArrayList<>(numPoints);
@@ -196,8 +197,8 @@ public class CustomContentProviderUtilsTest {
         when(cursorMock.getString(columnIndex)).thenReturn(name);
 
         Track track = ContentProviderUtils.createTrack(cursorMock);
-        assertEquals(trackId, track.getId());
-        assertEquals(name, track.getName());
+        assertEquals(trackId, track.id());
+        assertEquals(name, track.name());
     }
 
     private void assertCount(int trackCount, int trackPointCount, int markerCount) {
@@ -241,7 +242,7 @@ public class CustomContentProviderUtilsTest {
     public void testDeleteAllTracks_withMarkerAndPhoto() throws IOException {
         // Insert track, points and marker with photo at first.
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-        Track track = TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
+        TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         TrackPoint trackPoint = getLastValidTrackPoint(trackId);
         Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
@@ -350,7 +351,7 @@ public class CustomContentProviderUtilsTest {
 
         // then
         assertEquals(initialTrackNumber + 1, allTracks.size());
-        assertEquals(trackId, allTracks.get(allTracks.size() - 1).getId());
+        assertEquals(trackId, allTracks.get(allTracks.size() - 1).id());
     }
 
     /**
@@ -377,27 +378,24 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertTrack(track);
 
         // when / then
-        assertNotNull(contentProviderUtils.getTrack(track.getUuid()));
+        assertNotNull(contentProviderUtils.getTrack(track.uuid()));
     }
 
-    /**
-     * Tests the method {@link ContentProviderUtils#updateTrack(Track)}
-     */
     @Test
     public void testUpdateTrack() {
         // given
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-        Track track = TestDataUtil.createTrack(trackId);
+        TrackBuilder track = new TrackBuilder(TestDataUtil.createTrack(trackId));
         String nameOld = "name1";
         String nameNew = "name2";
         track.setName(nameOld);
 
         // when / then
-        contentProviderUtils.insertTrack(track);
-        assertEquals(nameOld, contentProviderUtils.getTrack(trackId).getName());
+        contentProviderUtils.insertTrack(track.getTrack());
+        assertEquals(nameOld, contentProviderUtils.getTrack(trackId).name());
         track.setName(nameNew);
-        contentProviderUtils.updateTrack(track);
-        assertEquals(nameNew, contentProviderUtils.getTrack(trackId).getName());
+        contentProviderUtils.updateTrack(track.getTrack());
+        assertEquals(nameNew, contentProviderUtils.getTrack(trackId).name());
     }
 
     /**
@@ -408,8 +406,10 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         Pair<Track, List<TrackPoint>> track = TestDataUtil.createTrack(trackId, 10);
 
+        TrackBuilder trackBuilder = new TrackBuilder(track.first);
+
         // AverageSpeed
-        track.first.setStatistics(new Statistics(
+        trackBuilder.setStatistics(new Statistics(
                 Instant.ofEpochMilli(1000),
                 Instant.ofEpochMilli(2500),
                 Duration.ofMillis(1500),
@@ -421,7 +421,7 @@ public class CustomContentProviderUtilsTest {
                 null,
                 null
         ));
-        contentProviderUtils.insertTrack(track.first);
+        contentProviderUtils.insertTrack(trackBuilder.getTrack());
 
         Marker marker = new Marker(trackId, track.second.get(0));
         marker.setDescription(TEST_DESC);
@@ -736,7 +736,7 @@ public class CustomContentProviderUtilsTest {
     public void testInsertTrackPoint() {
         // Insert track, point at first.
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-        Track track = TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
+        TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         contentProviderUtils.insertTrackPoint(TestDataUtil.createTrackPoint(22), trackId);
         // when
@@ -750,7 +750,7 @@ public class CustomContentProviderUtilsTest {
     public void testInsertAndLoadTrackPoint() {
         // given
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-        Track track = TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
+        TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         TrackPoint trackPoint = TestDataUtil.createTrackPoint(5);
         trackPoint.setHeartRate(1F);
@@ -776,7 +776,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertTrack(track.first);
 
         List<TrackPoint.Id> trackpointIds = track.second.stream()
-                .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.getId())))
+                .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.id())))
                 .map(TrackPoint.Id::new).toList();
 
         // when
@@ -794,7 +794,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertTrack(track.first);
 
         List<TrackPoint.Id> trackpointIds = track.second.stream()
-                .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.getId())))
+                .map(it -> ContentUris.parseId(contentProviderUtils.insertTrackPoint(it, track.first.id())))
                 .map(TrackPoint.Id::new).toList();
 
         TrackPoint.Id startTrackPointId = trackpointIds.get(0);

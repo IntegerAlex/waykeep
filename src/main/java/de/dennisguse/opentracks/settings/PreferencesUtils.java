@@ -48,6 +48,7 @@ import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
 import de.dennisguse.opentracks.sensors.SensorType;
@@ -252,7 +253,7 @@ public class PreferencesUtils {
     }
 
     public static boolean isReportSpeed(Track track) {
-        return isReportSpeed(track.getActivityTypeLocalized());
+        return isReportSpeed(track.activityTypeLocalized());
     }
 
     private static String getBluetoothSensorAddressNone() {

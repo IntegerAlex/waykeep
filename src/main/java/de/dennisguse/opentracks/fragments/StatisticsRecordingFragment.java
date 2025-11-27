@@ -15,11 +15,11 @@ import androidx.gridlayout.widget.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.StatisticsRecordingBinding;
 import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
@@ -31,7 +31,7 @@ import de.dennisguse.opentracks.viewmodels.Mapping;
 import de.dennisguse.opentracks.viewmodels.StatisticViewHolder;
 
 /**
- * A fragment to display track statistics to the user for a currently recording {@link Track}.
+ * A fragment to display track statistics to the user for a currently recording {@link TrackBuilder}.
  *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
@@ -167,9 +167,9 @@ public class StatisticsRecordingFragment extends Fragment {
 
     private void onRecordingDataChanged(RecordingData recordingData) {
         Track oldTrack = this.recordingData.track();
-        String oldActivityType = oldTrack != null ? oldTrack.getActivityTypeLocalized() : "";
+        String oldActivityType = oldTrack != null ? oldTrack.activityTypeLocalized() : "";
         Track newTrack = recordingData.track();
-        String newActivityType = newTrack != null ? newTrack.getActivityTypeLocalized() : "";
+        String newActivityType = newTrack != null ? newTrack.activityTypeLocalized() : "";
 
         this.recordingData = recordingData;
 

@@ -16,6 +16,7 @@ import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
 
@@ -106,22 +107,22 @@ public class IntervalStatisticsUpdaterTest {
         }
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
-        Track dummyTrack = new Track(trackStatisticsUpdater.getTrackStatistics());
+        TrackBuilder dummyTrack = new TrackBuilder(trackStatisticsUpdater.getTrackStatistics());
         dummyTrack.setId(new Track.Id(System.currentTimeMillis()));
         dummyTrack.setName("Dummy Track Without Elevation Loss");
 
-        Pair<Track, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
+        Pair<TrackBuilder, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
 
         // when and then
         whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
     private void whenAndThen(int numberOfPoints, float distanceInterval) {
-        Pair<Track, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
+        Pair<TrackBuilder, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
         whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
     }
 
-    private void whenAndThen(Track track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
+    private void whenAndThen(TrackBuilder track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
         IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(distanceInterval));
 
         intervalStatistics.addTrackPoints(trackPoints.iterator());
@@ -167,13 +168,13 @@ public class IntervalStatisticsUpdaterTest {
         assertEquals(intervalList.get(intervalList.size() - 1).totalDistance().toM(), totalDistance.toM(), 0.01);
     }
 
-    private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
+    private static Pair<TrackBuilder, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
             trackPoints.add(TestDataUtil.createTrackPoint(i));
         }
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 
-        return new Pair<>(new Track(trackStatisticsUpdater.getTrackStatistics()), trackPoints);
+        return new Pair<>(new TrackBuilder(trackStatisticsUpdater.getTrackStatistics()), trackPoints);
     }
 }
