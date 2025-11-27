@@ -154,11 +154,7 @@ public class ContentProviderUtils {
 
     @VisibleForTesting
     public void deleteAllTracks(Context context) {
-        //TODO Both calls should not be necessary
-        contentResolver.delete(TrackPointsColumns.CONTENT_URI_BY_ID, null, null);
-        contentResolver.delete(MarkerColumns.CONTENT_URI, null, null);
-
-        // Delete tracks last since it triggers a database vaccum call
+        // Delete tracks last since it triggers a database vacuum call
         contentResolver.delete(TracksColumns.CONTENT_URI, null, null);
 
         File dir = FileUtils.getPhotoDir(context);
