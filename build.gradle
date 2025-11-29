@@ -57,6 +57,17 @@ android {
         testInstrumentationRunner 'de.dennisguse.opentracks.TestRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
+    testOptions {
+        managedDevices {
+            localDevices {
+                mediumPhone {
+                    device = "Medium Phone"
+                    apiLevel = 35
+                    systemImageSource = "aosp"
+                }
+            }
+        }
+    }
     signingConfigs {
         nightly {
             if (System.getProperty('nightly_store_file') != null) {
