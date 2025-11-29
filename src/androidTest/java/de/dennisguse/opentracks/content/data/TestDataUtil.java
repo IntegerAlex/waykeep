@@ -21,7 +21,6 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
@@ -92,9 +91,9 @@ public class TestDataUtil {
         );
 
         List<Marker> markers = List.of(
-                new Marker(trackId, trackPoints.get(1), "Marker 1", "Marker description 1", "Marker category 3", "", null),
-                new Marker(trackId, trackPoints.get(4), "Marker 2", "Marker description 2", "Marker category 3", "", null),
-                new Marker(trackId, trackPoints.get(5), "Marker 3", "Marker description 3", "Marker category 3", "", null)
+                new Marker(null, trackId, "Marker 1", "Marker description 1", "Marker category 3", "", trackPoints.get(1).getPosition(),null),
+                new Marker(null, trackId, "Marker 2", "Marker description 2", "Marker category 3", "", trackPoints.get(4).getPosition(), null),
+                new Marker(null, trackId, "Marker 3", "Marker description 3", "Marker category 3", "", trackPoints.get(5).getPosition(), null)
         );
 
         return new TrackData(track, trackPoints, markers);
@@ -150,11 +149,23 @@ public class TestDataUtil {
     }
 
     public static Marker createMarkerWithPhoto(Context context, Track.Id trackId, TrackPoint trackPoint) throws IOException {
+        return createMarkerWithPhoto(context, trackId, trackPoint, "Marker description");
+    }
+
+    public static Marker createMarkerWithPhoto(Context context, Track.Id trackId, TrackPoint trackPoint, String description) throws IOException {
         File dstFile = new File(MarkerUtils.getImageUrl(context, trackId));
         dstFile.createNewFile();
         Uri photoUri = FileUtils.getUriForFile(context, dstFile);
 
-        return new Marker(trackId, trackPoint, "Marker name", "Marker description", "Marker category", "", photoUri);
+        return new Marker(
+                null,
+                trackId,
+                "Marker name",
+                description,
+                "Marker category",
+                "",
+                trackPoint.getPosition(),
+                photoUri);
     }
 
     public static List<TrackPoint> getTrackPoints(ContentProviderUtils contentProviderUtils, Track.Id trackId) {

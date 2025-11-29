@@ -266,11 +266,11 @@ public class KMLTrackExporter implements TrackExporter {
     }
 
     private void writeMarker(Marker marker, ZoneOffset zoneOffset) {
-        boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, marker.getTrackId(), marker.getPhotoUrl()) != null;
-        if (marker.hasPhoto() && exportPhotos && existsPhoto) {
+        boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, marker.trackId(), marker.photoUrl()) != null;
+        if (marker.photoUrl() != null && exportPhotos && existsPhoto) {
             writePhotoOverlay(marker, zoneOffset);
         } else {
-            writePlacemark(marker.getName(), marker.getCategory(), marker.getDescription(), marker.getPosition(), marker.getTime(), zoneOffset);
+            writePlacemark(marker.name(), marker.category(), marker.description(), marker.position(), marker.position().time(), zoneOffset);
         }
     }
 
@@ -428,17 +428,17 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writePhotoOverlay(Marker marker, ZoneOffset zoneOffset) {
         printWriter.println("<PhotoOverlay>");
-        printWriter.println("<name>" + StringUtils.formatCData(marker.getName()) + "</name>");
-        printWriter.println("<description>" + StringUtils.formatCData(marker.getDescription()) + "</description>");
+        printWriter.println("<name>" + StringUtils.formatCData(marker.name()) + "</name>");
+        printWriter.println("<description>" + StringUtils.formatCData(marker.description()) + "</description>");
         printWriter.print("<Camera>");
-        printWriter.print("<longitude>" + marker.getPosition().longitude() + "</longitude>");
-        printWriter.print("<latitude>" + marker.getPosition().latitude() + "</latitude>");
+        printWriter.print("<longitude>" + marker.position().longitude() + "</longitude>");
+        printWriter.print("<latitude>" + marker.position().latitude() + "</latitude>");
         printWriter.print("<altitude>20</altitude>");
         printWriter.print("<tilt>90</tilt>");
         printWriter.println("</Camera>");
-        printWriter.println("<TimeStamp><when>" + getTime(zoneOffset, marker.getTime()) + "</when></TimeStamp>");
+        printWriter.println("<TimeStamp><when>" + getTime(zoneOffset, marker.position().time()) + "</when></TimeStamp>");
         printWriter.println("<styleUrl>#" + MARKER_STYLE + "</styleUrl>");
-        writeTypeLocalized(marker.getCategory());
+        writeTypeLocalized(marker.category());
 
         if (exportPhotos) {
             printWriter.println("<Icon><href>" + KMZTrackExporter.buildKmzImageFilePath(marker) + "</href></Icon>");
@@ -452,7 +452,7 @@ public class KMLTrackExporter implements TrackExporter {
         printWriter.print("<topFov>45</topFov>");
         printWriter.println("</ViewVolume>");
         printWriter.println("<Point>");
-        printWriter.println("<coordinates>" + getCoordinates(marker.getPosition(), ",") + "</coordinates>");
+        printWriter.println("<coordinates>" + getCoordinates(marker.position(), ",") + "</coordinates>");
         printWriter.println("</Point>");
         printWriter.println("</PhotoOverlay>");
     }

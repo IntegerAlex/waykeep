@@ -95,8 +95,8 @@ public class KMZTrackExporter implements TrackExporter {
                     if (Thread.interrupted()) throw new InterruptedException();
 
                     Marker marker = markerIterator.next();
-                    if (marker.hasPhoto()) {
-                        Uri uriPhoto = marker.getPhotoUrl();
+                    if (marker.photoUrl() != null) {
+                        Uri uriPhoto = marker.photoUrl();
                         boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, track.id(), uriPhoto) != null;
                         if (existsPhoto) {
                             addImage(context, zipOutputStream, uriPhoto, marker);
@@ -135,8 +135,8 @@ public class KMZTrackExporter implements TrackExporter {
      * Builds and returns the path for the image that will be saved inside KMZ_IMAGES_DIR for the marker.
      */
     public static String buildKmzImageFilePath(Marker marker) {
-        String ext = FileUtils.getExtension(marker.getPhotoUrl());
+        String ext = FileUtils.getExtension(marker.photoUrl());
         ext = ext == null ? "" : "." + ext;
-        return KMZ_IMAGES_DIR + File.separatorChar + FileUtils.sanitizeFileName(marker.getId().id() + ext);
+        return KMZ_IMAGES_DIR + File.separatorChar + FileUtils.sanitizeFileName(marker.id().id() + ext);
     }
 }

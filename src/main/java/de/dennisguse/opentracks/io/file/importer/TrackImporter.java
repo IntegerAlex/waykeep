@@ -23,6 +23,7 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
@@ -58,7 +59,7 @@ public class TrackImporter {
     // Current track
     private TrackData trackData;
     private final List<TrackPoint> trackPoints = new LinkedList<>();
-    private final List<Marker> markers = new LinkedList<>();
+    private final List<MarkerBuilder> markers = new LinkedList<>();
 
     public TrackImporter(Context context, ContentProviderUtils contentProviderUtils, Distance maxRecordingDistance, boolean preventReimport) {
         this.context = context;
@@ -86,7 +87,7 @@ public class TrackImporter {
     }
 
     void addMarkers(List<Marker> markers) {
-        this.markers.addAll(markers);
+        this.markers.addAll(markers.stream().map(MarkerBuilder::new).toList());
     }
 
     void setTrackData(Context context, String name, String uuid, String description, String activityTypeLocalized, String activityTypeId, @Nullable ZoneOffset zoneOffset) {
@@ -165,10 +166,8 @@ public class TrackImporter {
 
         // Store Markers
         updateMarkers(trackId);
-        for (Marker marker : markers)
-            marker.setTrackId(trackId); //TODO Should happen in bulkInsertMarkers
 
-        contentProviderUtils.bulkInsertMarkers(markers, trackId);
+        contentProviderUtils.bulkInsertMarkers(markers.stream().map(it -> it.getMarker()).toList(), trackId);
 
         //Clear up.
         trackPoints.clear();

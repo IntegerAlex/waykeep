@@ -20,11 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
 
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 
 /**
  * Utilities for creating intents.
@@ -55,9 +57,9 @@ public class IntentUtils {
      */
     public static void showCoordinateOnMap(Context context, Marker marker) {
         //SEE https://developer.android.com/guide/components/intents-common.html#Maps
-        String uri = "geo:0,0?q=" + marker.getPosition().latitude() + "," + marker.getPosition().longitude();
-        if (marker.getName() != null && !marker.getName().isEmpty()) {
-            uri += "(" + marker.getName() + ")";
+        String uri = "geo:0,0?q=" + marker.position().latitude() + "," + marker.position().longitude();
+        if (!TextUtils.isEmpty(marker.name())) {
+            uri += "(" + marker.name() + ")";
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(uri));

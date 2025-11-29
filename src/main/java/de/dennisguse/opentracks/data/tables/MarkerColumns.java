@@ -39,13 +39,14 @@ public interface MarkerColumns extends BaseColumns {
     String NAME = "name"; // marker name
     String DESCRIPTION = "description"; // marker description
     String CATEGORY = "category"; // marker category
+    @Deprecated //TODO Remove: it is always: position
     String ICON = "icon"; // marker icon
     String TRACKID = "trackid"; // track id
     String LONGITUDE = "longitude"; // longitude
     String LATITUDE = "latitude"; // latitude
     String TIME = "time"; // time
     String ALTITUDE = "elevation"; // altitude //TODO RENAME column
-    String ACCURACY = "accuracy"; // accuracy
+    String HORIZONTAL_ACCURACY = "accuracy"; // accuracy
     String BEARING = "bearing"; // bearing
 
     String PHOTOURL = "photoUrl"; // url for the photo
@@ -61,7 +62,7 @@ public interface MarkerColumns extends BaseColumns {
             + LATITUDE + " INTEGER, "
             + TIME + " INTEGER, "
             + ALTITUDE + " FLOAT, "
-            + ACCURACY + " FLOAT, "
+            + HORIZONTAL_ACCURACY + " FLOAT, "
             + BEARING + " FLOAT, "
             + PHOTOURL + " TEXT, "
             + "FOREIGN KEY (" + TRACKID + ") REFERENCES " + TracksColumns.TABLE_NAME + "(" + TracksColumns._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"

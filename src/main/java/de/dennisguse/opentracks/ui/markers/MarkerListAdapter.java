@@ -137,7 +137,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
             for (Marker marker : markers) {
-                selection.put((int) marker.getId().id(), true);
+                selection.put((int) marker.id().id(), true);
             }
         } else {
             selection.clear();
@@ -179,24 +179,24 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public void bind(Marker marker) {
             this.marker = marker;
 
-            viewBinding.markerListItemPhoto.setVisibility(marker.hasPhoto() ? View.VISIBLE : View.GONE);
-            if (marker.hasPhoto()) {
+            viewBinding.markerListItemPhoto.setVisibility(marker.photoUrl() != null ? View.VISIBLE : View.GONE);
+            if (marker.photoUrl() != null) {
                 int height = ThemeUtils.getPhotoHeight(context);
                 ViewGroup.LayoutParams params = viewBinding.markerListItemPhoto.getLayoutParams();
                 params.height = height;
                 viewBinding.markerListItemPhoto.setLayoutParams(params);
 
-                asyncLoadPhoto(viewBinding.markerListItemPhoto, marker.getPhotoUrl(), marker.getId());
+                asyncLoadPhoto(viewBinding.markerListItemPhoto, marker.photoUrl(), marker.id());
             }
 
-            viewBinding.markerListItemName.setText(marker.getName());
+            viewBinding.markerListItemName.setText(marker.name());
 
             {
-                ZoneOffset timeZone = new ContentProviderUtils(context).getTrack(marker.getTrackId()).zoneOffset();
-                ListItemUtils.setDateAndTime(context, viewBinding.markerListItemDate, viewBinding.markerListItemTime, marker.getTime(), timeZone);
+                ZoneOffset timeZone = new ContentProviderUtils(context).getTrack(marker.trackId()).zoneOffset();
+                ListItemUtils.setDateAndTime(context, viewBinding.markerListItemDate, viewBinding.markerListItemTime, marker.position().time(), timeZone);
             }
 
-            String categoryDescription = StringUtils.getCategoryDescription(marker.getCategory(), marker.getDescription());
+            String categoryDescription = StringUtils.getCategoryDescription(marker.category(), marker.description());
             viewBinding.markerListItemTimeDistance.setText(categoryDescription);
 
             setSelected(selection.get((int) getId()));
@@ -208,7 +208,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         public long getId() {
-            return marker.getId().id();
+            return marker.id().id();
         }
 
         @Override
@@ -218,7 +218,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 actionMode.invalidate();
             } else {
                 Intent intent = IntentUtils.newIntent(context, MarkerDetailActivity.class)
-                        .putExtra(MarkerDetailActivity.EXTRA_MARKER_ID, marker.getId());
+                        .putExtra(MarkerDetailActivity.EXTRA_MARKER_ID, marker.id());
                 context.startActivity(intent);
             }
         }

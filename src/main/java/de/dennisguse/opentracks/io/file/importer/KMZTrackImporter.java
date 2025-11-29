@@ -36,6 +36,7 @@ import java.util.zip.ZipInputStream;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -191,8 +192,8 @@ public class KMZTrackImporter {
         List<String> photosName = new ArrayList<>();
         try (AutoCloseableIterator<Marker> markerIterator = new ContentProviderUtils(context).getMarkerIterator(trackId)) {
             markerIterator.forEachRemaining(marker -> {
-                if (marker.hasPhoto()) {
-                    String photoUrl = Uri.decode(marker.getPhotoUrl().toString()); //TODO Why Uri.decode()?
+                if (marker.photoUrl() != null) {
+                    String photoUrl = Uri.decode(marker.photoUrl().toString()); //TODO Why Uri.decode()?
                     photosName.add(photoUrl.substring(photoUrl.lastIndexOf(File.separatorChar) + 1));
                 }
             });

@@ -111,8 +111,8 @@ public class MarkerDetailFragment extends Fragment {
                 }
 
                 if (item.getItemId() == R.id.marker_detail_share) {
-                    if (marker.hasPhoto()) {
-                        Intent intent = ShareUtils.newShareFileIntent(getContext(), marker.getId());
+                    if (marker.photoUrl() != null) {
+                        Intent intent = ShareUtils.newShareFileIntent(getContext(), marker.id());
                         intent = Intent.createChooser(intent, null);
                         startActivity(intent);
                     }
@@ -180,15 +180,15 @@ public class MarkerDetailFragment extends Fragment {
     }
 
     private void updateUi() {
-        if (marker.hasPhoto()) {
-            viewBinding.markerDetailMarkerPhoto.setImageURI(marker.getPhotoUrl());
+        if (marker.photoUrl() != null) {
+            viewBinding.markerDetailMarkerPhoto.setImageURI(marker.photoUrl());
         } else {
             viewBinding.markerDetailMarkerPhoto.setImageDrawable(MarkerUtils.getDefaultPhoto(getContext()));
         }
 
-        viewBinding.markerDetailMarkerCategory.setText(StringUtils.getCategory(marker.getCategory()));
-        viewBinding.markerDetailMarkerDescription.setText(marker.getDescription());
+        viewBinding.markerDetailMarkerCategory.setText(StringUtils.getCategory(marker.category()));
+        viewBinding.markerDetailMarkerDescription.setText(marker.description());
 
-        viewBinding.markerDetailMarkerLocation.setText(StringUtils.formatCoordinate(getContext(), marker.getPosition()));
+        viewBinding.markerDetailMarkerLocation.setText(StringUtils.formatCoordinate(getContext(), marker.position()));
     }
 }

@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.util.FileUtils;
@@ -40,8 +41,8 @@ public class MarkerEditViewModel extends AndroidViewModel {
             markerData = new MutableLiveData<>();
 
             Marker marker = new ContentProviderUtils(getApplication()).getMarker(markerId);
-            if (marker.hasPhoto()) {
-                photoOriginalUri = marker.getPhotoUrl();
+            if (marker.photoUrl() != null) {
+                photoOriginalUri = marker.photoUrl();
             }
 
             markerData.postValue(marker);
@@ -63,20 +64,20 @@ public class MarkerEditViewModel extends AndroidViewModel {
             return;
         }
 
-        File photoFile = MarkerUtils.getPhotoFileIfExists(getApplication(), markerData.getValue().getTrackId(), photoUri);
+        File photoFile = MarkerUtils.getPhotoFileIfExists(getApplication(), markerData.getValue().trackId(), photoUri);
         if (photoFile != null) {
             FileUtils.deleteDirectoryRecurse(photoFile);
         }
     }
 
     private void deletePhoto(Marker marker) {
-        if (marker.hasPhoto()) {
-            deletePhoto(marker.getPhotoUrl());
+        if (marker.photoUrl() != null) {
+            deletePhoto(marker.photoUrl());
         }
     }
 
     public void onPhotoDelete(String name, String category, String description) {
-        Marker marker = getMarker();
+        MarkerBuilder marker = new MarkerBuilder(getMarker());
         if (marker.hasPhoto()) {
             if (!marker.getPhotoUrl().equals(photoOriginalUri)) {
                 deletePhoto(marker.getPhotoUrl());
@@ -85,21 +86,21 @@ public class MarkerEditViewModel extends AndroidViewModel {
             marker.setName(name);
             marker.setCategory(category);
             marker.setDescription(description);
-            markerData.postValue(marker);
+            markerData.postValue(marker.getMarker());
         }
     }
 
     public void onNewCameraPhoto(@NonNull Uri photoUri, String name, String category, String description) {
-        Marker marker = getMarker();
+        MarkerBuilder marker = new MarkerBuilder(getMarker());
         marker.setPhotoUrl(photoUri);
         marker.setName(name);
         marker.setCategory(category);
         marker.setDescription(description);
-        markerData.postValue(marker);
+        markerData.postValue(marker.getMarker());
     }
 
     public void onNewGalleryPhoto(@NonNull Uri srcUri, String name, String category, String description) {
-        Marker marker = getMarker();
+        MarkerBuilder marker = new MarkerBuilder(getMarker());
 
         try (ParcelFileDescriptor parcelFd = getApplication().getContentResolver().openFileDescriptor(srcUri, "r")) {
             FileDescriptor srcFd = parcelFd.getFileDescriptor();
@@ -111,7 +112,8 @@ public class MarkerEditViewModel extends AndroidViewModel {
             marker.setName(name);
             marker.setCategory(category);
             marker.setDescription(description);
-            markerData.postValue(marker);
+
+            markerData.postValue(marker.getMarker());
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             Toast.makeText(getApplication(), R.string.marker_add_canceled, Toast.LENGTH_LONG).show();
@@ -119,15 +121,15 @@ public class MarkerEditViewModel extends AndroidViewModel {
     }
 
     public void onDone(String name, String category, String description) {
-        Marker marker = getMarker();
+        MarkerBuilder marker = new MarkerBuilder(getMarker());
 
         marker.setName(name);
         marker.setCategory(category);
         marker.setDescription(description);
         if (marker.getId() == null) {
-            new ContentProviderUtils(getApplication()).insertMarker(marker);
+            new ContentProviderUtils(getApplication()).insertMarker(marker.getMarker());
         } else {
-            new ContentProviderUtils(getApplication()).updateMarker(getApplication(), marker);
+            new ContentProviderUtils(getApplication()).updateMarker(getApplication(), marker.getMarker());
         }
 
         if (photoOriginalUri != null && (!marker.hasPhoto() || !photoOriginalUri.equals(marker.getPhotoUrl()))) {
@@ -143,7 +145,15 @@ public class MarkerEditViewModel extends AndroidViewModel {
         String name = getApplication().getString(R.string.marker_name_format, nextMarkerNumber + 1);
         String icon = getApplication().getString(R.string.marker_icon_url);
 
-        Marker marker = new Marker(trackId, trackPoint, name, "", "", icon, null);
+        Marker marker = new Marker(
+                null,
+                trackId,
+                name,
+                "",
+                icon,
+                "",
+                trackPoint.getPosition(),
+                null);
 
         if (markerData == null) {
             markerData = new MutableLiveData<>();
@@ -158,7 +168,7 @@ public class MarkerEditViewModel extends AndroidViewModel {
             // it's new marker -> clean all photos.
             deletePhoto(marker);
             deletePhoto(photoOriginalUri);
-        } else if (photoOriginalUri == null || (marker.hasPhoto() && !marker.getPhotoUrl().equals(photoOriginalUri))) {
+        } else if (photoOriginalUri == null || (marker.photoUrl() != null && !marker.photoUrl().equals(photoOriginalUri))) {
             // it's an edit marker -> delete photo if it was empty or it was changed (leaving the original in that case).
             deletePhoto(marker);
         }

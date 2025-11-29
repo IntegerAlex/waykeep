@@ -34,6 +34,7 @@ import java.util.Locale;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
@@ -429,22 +430,16 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             Log.w(TAG, "Marker with invalid coordinates ignored: " + trackPoint.getPosition());
             return;
         }
-        Marker marker = new Marker(null, trackPoint);
-
-        if (name != null) {
-            marker.setName(name);
-        }
-        if (description != null) {
-            marker.setDescription(description);
-        }
-        if (markerType != null) {
-            marker.setCategory(markerType);
-        }
-
-        if (photoUrl != null) {
-            marker.setPhotoUrl(photoUrl);
-        }
-        markers.add(marker);
+        markers.add(new Marker(
+                null,
+                null,
+                name != null ? name : "",
+                description != null ? description : "",
+                markerType != null ? markerType : "",
+                null,
+                trackPoint.getPosition(),
+                photoUrl
+        ));
     }
 
     private String createErrorMessage(String message) {

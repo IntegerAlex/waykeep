@@ -47,6 +47,7 @@ import java.time.Instant;
 import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
@@ -181,11 +182,11 @@ public class MarkerEditActivity extends AbstractActivity {
 
     private void loadMarkerData(Marker data) {
         marker = data;
-        viewBinding.markerEditName.setText(marker.getName());
-        viewBinding.markerEditMarkerType.setText(marker.getCategory());
-        viewBinding.markerEditDescription.setText(marker.getDescription());
-        if (marker.hasPhoto()) {
-            setMarkerImageView(marker.getPhotoUrl());
+        viewBinding.markerEditName.setText(marker.name());
+        viewBinding.markerEditMarkerType.setText(marker.category());
+        viewBinding.markerEditDescription.setText(marker.description());
+        if (marker.photoUrl() != null) {
+            setMarkerImageView(marker.photoUrl());
         } else {
             viewBinding.markerEditPhoto.setImageDrawable(null);
         }
@@ -247,7 +248,7 @@ public class MarkerEditActivity extends AbstractActivity {
      * If a photo is set then one's options are shown, otherwise another ones are shown.
      */
     private void hideAndShowOptions() {
-        boolean isPhotoSet = (marker != null && marker.hasPhoto());
+        boolean isPhotoSet = (marker != null && marker.photoUrl() != null);
         if (insertPhotoMenuItem != null && insertGalleryImgMenuItem != null) {
             insertPhotoMenuItem.setVisible(!isPhotoSet);
             insertGalleryImgMenuItem.setVisible(!isPhotoSet);
@@ -259,7 +260,7 @@ public class MarkerEditActivity extends AbstractActivity {
      * Returns the trackId; either from track or marker.
      */
     private Track.Id getTrackId() {
-        return trackId == null ? marker.getTrackId() : trackId;
+        return trackId == null ? marker.trackId() : trackId;
     }
 
     private void setMarkerImageView(@NonNull Uri uri) {

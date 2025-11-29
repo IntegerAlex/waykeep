@@ -57,6 +57,7 @@ import de.dennisguse.opentracks.data.models.AltitudeExtremities;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
@@ -232,8 +233,16 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
-        contentProviderUtils.insertMarker(marker);
+        contentProviderUtils.insertMarker(new Marker(
+                null,
+                trackId,
+                "",
+                "",
+                "",
+                "",
+                getLastValidTrackPoint(trackId).getPosition(),
+                null
+        ));
 
         assertCount(1, 10, 1);
 
@@ -258,7 +267,7 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(marker);
 
         assertCount(1, 10, 1);
-        assertTrue(marker.hasPhoto());
+        assertNotNull(marker.photoUrl());
         File dir = FileUtils.getPhotoDir(context, trackId);
         assertTrue(dir.isDirectory());
         assertEquals(1, dir.list().length);
@@ -288,8 +297,16 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId2, 10);
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId3, 10);
 
-        Marker marker = new Marker(trackId1, getLastValidTrackPoint(trackId2));
-        contentProviderUtils.insertMarker(marker);
+        contentProviderUtils.insertMarker(new Marker(
+                null,
+                trackId1,
+                "",
+                "",
+                "",
+                "",
+                getLastValidTrackPoint(trackId1).getPosition(),
+                null
+        ));
 
         assertCount(3, 30, 1);
 
@@ -328,7 +345,7 @@ public class CustomContentProviderUtilsTest {
 
         // Check.
         assertCount(3, 30, 2);
-        assertTrue(marker1.hasPhoto());
+        assertNotNull(marker1.photoUrl());
         assertTrue(dir1.isDirectory());
         assertEquals(1, dir1.list().length);
         assertTrue(dir1.exists());
@@ -407,9 +424,6 @@ public class CustomContentProviderUtilsTest {
         assertEquals(nameNew, contentProviderUtils.getTrack(trackId).name());
     }
 
-    /**
-     * Tests the method {@link ContentProviderUtils#createContentValues(Marker)}.
-     */
     @Test
     public void testCreateContentValues_marker() {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
@@ -432,15 +446,15 @@ public class CustomContentProviderUtilsTest {
         ));
         contentProviderUtils.insertTrack(trackBuilder.getTrack());
 
-        Marker marker = new Marker(trackId, track.second.get(0));
+        MarkerBuilder marker = new MarkerBuilder(trackId, track.second.get(0));
         marker.setDescription(TEST_DESC);
-        contentProviderUtils.insertMarker(marker);
+        contentProviderUtils.insertMarker(marker.getMarker());
 
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(contentResolverMock);
 
         Marker.Id markerId = new Marker.Id(System.currentTimeMillis());
         marker.setId(markerId);
-        ContentValues contentValues = contentProviderUtils.createContentValues(marker);
+        ContentValues contentValues = contentProviderUtils.createContentValues(marker.getMarker(), trackId);
         assertEquals(markerId.id(), contentValues.get(MarkerColumns._ID));
         assertEquals((int) (TestDataUtil.INITIAL_LONGITUDE * 1000000), contentValues.get(MarkerColumns.LONGITUDE));
         assertEquals(TEST_DESC, contentValues.get(MarkerColumns.DESCRIPTION));
@@ -457,15 +471,19 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        marker1.setDescription(TEST_DESC);
-        contentProviderUtils.insertMarker(marker1);
+        Marker.Id marker1Id = contentProviderUtils.insertMarker(new Marker(
+                null,
+                trackId,
+                "",
+                TEST_DESC,
+                "",
+                "",
+                getLastValidTrackPoint(trackId).getPosition(),
+                null
+        ));
 
         // Check insert was done.
-        assertEquals(1,  TestDataUtil.getMarkers(contentProviderUtils, trackId).size());
-
-        // Get marker id that needs to delete.
-        Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
+        assertEquals(1, TestDataUtil.getMarkers(contentProviderUtils, trackId).size());
 
         // Delete
         contentProviderUtils.deleteMarker(context, marker1Id);
@@ -495,7 +513,7 @@ public class CustomContentProviderUtilsTest {
         Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
 
         // Check marker has photo and it's in the external storage.
-        assertTrue(marker1.hasPhoto());
+        assertNotNull(marker1.photoUrl());
         File dir = FileUtils.getPhotoDir(context, trackId);
         assertTrue(dir.isDirectory());
         assertEquals(1, dir.list().length);
@@ -534,20 +552,33 @@ public class CustomContentProviderUtilsTest {
 //        TestDataUtil.insertTrackWithLocations(contentProviderUtils, track);
 
         // Insert at first.
-        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        marker1.setDescription(MOCK_DESC);
-        Marker.Id marker1Id = contentProviderUtils.insertMarker(marker1);
-
-        Marker marker2 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        marker2.setDescription(MOCK_DESC);
-        Marker.Id marker2Id = contentProviderUtils.insertMarker(marker2);
+        Marker.Id marker1Id = contentProviderUtils.insertMarker(new Marker(
+                null,
+                trackId,
+                "",
+                MOCK_DESC,
+                "",
+                "",
+                getLastValidTrackPoint(trackId).getPosition(),
+                null
+        ));
+        Marker.Id marker2Id = contentProviderUtils.insertMarker(new Marker(
+                null,
+                trackId,
+                "",
+                MOCK_DESC,
+                "",
+                "",
+                getLastValidTrackPoint(trackId).getPosition(),
+                null
+        ));
 
         // Delete
         assertNotNull(contentProviderUtils.getMarker(marker1Id));
         contentProviderUtils.deleteMarker(context, marker1Id);
         assertNull(contentProviderUtils.getMarker(marker1Id));
 
-        assertEquals(MOCK_DESC, contentProviderUtils.getMarker(marker2Id).getDescription());
+        assertEquals(MOCK_DESC, contentProviderUtils.getMarker(marker2Id).description());
     }
 
     /**
@@ -558,14 +589,18 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker1 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        Marker marker2 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        Marker marker3 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        Marker marker4 = new Marker(trackId, getLastValidTrackPoint(trackId));
-        contentProviderUtils.insertMarker(marker1);
-        contentProviderUtils.insertMarker(marker2);
-        contentProviderUtils.insertMarker(marker3);
-        contentProviderUtils.insertMarker(marker4);
+        for (int i = 0; i < 4; i++) {
+            contentProviderUtils.insertMarker(new Marker(
+                    null,
+                    trackId,
+                    "",
+                    MOCK_DESC,
+                    "",
+                    "",
+                    getLastValidTrackPoint(trackId).getPosition(),
+                    null
+            ));
+        }
 
         assertEquals(Integer.valueOf(4), contentProviderUtils.getNextMarkerNumber(trackId));
     }
@@ -579,11 +614,19 @@ public class CustomContentProviderUtilsTest {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
-        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
-        marker.setDescription(TEST_DESC);
-        Marker.Id markerId = contentProviderUtils.insertMarker(marker);
+        Marker.Id markerId = contentProviderUtils.insertMarker(
+                new Marker(
+                        null,
+                        trackId,
+                        "",
+                        TEST_DESC,
+                        "",
+                        "",
+                        getLastValidTrackPoint(trackId).getPosition(),
+                        null
+                ));
 
-        assertEquals(TEST_DESC, contentProviderUtils.getMarker(markerId).getDescription());
+        assertEquals(TEST_DESC, contentProviderUtils.getMarker(markerId).description());
     }
 
     /**
@@ -595,16 +638,31 @@ public class CustomContentProviderUtilsTest {
         TestDataUtil.createTrackAndInsert(contentProviderUtils, trackId, 10);
 
         // Insert at first.
-        Marker marker = new Marker(trackId, getLastValidTrackPoint(trackId));
-        marker.setDescription(TEST_DESC);
-        Marker.Id markerId = contentProviderUtils.insertMarker(marker);
+        Marker.Id markerId = contentProviderUtils.insertMarker(
+                new Marker(
+                        null,
+                        trackId,
+                        "",
+                        TEST_DESC,
+                        "",
+                        "",
+                        getLastValidTrackPoint(trackId).getPosition(),
+                        null
+                ));
 
         // Update
-        marker = contentProviderUtils.getMarker(markerId);
-        marker.setDescription(TEST_DESC_NEW);
-        contentProviderUtils.updateMarker(context, marker);
+        contentProviderUtils.updateMarker(context, new Marker(
+                markerId,
+                trackId,
+                "",
+                TEST_DESC_NEW,
+                "",
+                "",
+                getLastValidTrackPoint(trackId).getPosition(),
+                null
+        ));
 
-        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).getDescription());
+        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).description());
     }
 
     /**
@@ -619,9 +677,7 @@ public class CustomContentProviderUtilsTest {
 
         // Insert at first.
         TrackPoint trackPoint = getLastValidTrackPoint(trackId);
-        Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
-        marker.setDescription(TEST_DESC);
-        Marker.Id markerId = contentProviderUtils.insertMarker(marker);
+        Marker.Id markerId = contentProviderUtils.insertMarker(TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint, TEST_DESC));
 
         File dir = new File(FileUtils.getPhotoDir(context), "" + trackId.id());
         assertTrue(dir.exists());
@@ -629,14 +685,13 @@ public class CustomContentProviderUtilsTest {
         assertEquals(1, dir.list().length);
 
         // Update
-        marker = contentProviderUtils.getMarker(markerId);
+        MarkerBuilder marker = new MarkerBuilder(contentProviderUtils.getMarker(markerId));
         marker.setName(TEST_NAME_NEW);
         marker.setDescription(TEST_DESC_NEW);
-        contentProviderUtils.updateMarker(context, marker);
+        contentProviderUtils.updateMarker(context, marker.getMarker());
 
-        assertEquals(TEST_NAME_NEW, contentProviderUtils.getMarker(markerId).getName());
-        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).getDescription());
-        assertTrue(marker.hasPhoto());
+        assertEquals(TEST_NAME_NEW, contentProviderUtils.getMarker(markerId).name());
+        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).description());
         assertTrue(dir.exists());
         assertTrue(dir.isDirectory());
         assertEquals(1, dir.list().length);
@@ -654,8 +709,7 @@ public class CustomContentProviderUtilsTest {
 
         // Insert at first.
         TrackPoint trackPoint = getLastValidTrackPoint(trackId);
-        Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
-        marker.setDescription(TEST_DESC);
+        Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint, TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
 
         File dir = new File(FileUtils.getPhotoDir(context), "" + trackId.id());
@@ -664,15 +718,14 @@ public class CustomContentProviderUtilsTest {
         assertEquals(1, dir.list().length);
 
         // Update
-        marker = contentProviderUtils.getMarker(markerId);
-        marker.setName(TEST_NAME_NEW);
-        marker.setDescription(TEST_DESC_NEW);
-        marker.setPhotoUrl(null);
-        contentProviderUtils.updateMarker(context, marker);
+        MarkerBuilder markerBuilder = new MarkerBuilder(contentProviderUtils.getMarker(markerId));
+        markerBuilder.setName(TEST_NAME_NEW);
+        markerBuilder.setDescription(TEST_DESC_NEW);
+        markerBuilder.setPhotoUrl(null);
+        contentProviderUtils.updateMarker(context, markerBuilder.getMarker());
 
-        assertEquals(TEST_NAME_NEW, contentProviderUtils.getMarker(markerId).getName());
-        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).getDescription());
-        assertFalse(marker.hasPhoto());
+        assertEquals(TEST_NAME_NEW, contentProviderUtils.getMarker(markerId).name());
+        assertEquals(TEST_DESC_NEW, contentProviderUtils.getMarker(markerId).description());
         assertFalse(dir.exists());
     }
 
@@ -688,10 +741,8 @@ public class CustomContentProviderUtilsTest {
 
         // Insert two markers with photos.
         TrackPoint trackPoint = getLastValidTrackPoint(trackId);
-        Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
-        marker.setDescription(TEST_DESC);
-        Marker otherMarker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint);
-        otherMarker.setDescription(TEST_DESC);
+        Marker marker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint, TEST_DESC);
+        Marker otherMarker = TestDataUtil.createMarkerWithPhoto(context, trackId, trackPoint, TEST_DESC);
         Marker.Id markerId = contentProviderUtils.insertMarker(marker);
         contentProviderUtils.insertMarker(otherMarker);
 
@@ -701,12 +752,14 @@ public class CustomContentProviderUtilsTest {
         assertEquals(2, dir.list().length);
 
         // Update one marker deleting photo.
-        marker = contentProviderUtils.getMarker(markerId);
-        marker.setPhotoUrl(null);
-        contentProviderUtils.updateMarker(context, marker);
+        MarkerBuilder markerBuilder = new MarkerBuilder(contentProviderUtils.getMarker(markerId));
+        markerBuilder.setPhotoUrl(null);
+        contentProviderUtils.updateMarker(context, markerBuilder.getMarker());
 
-        assertEquals(TEST_DESC, contentProviderUtils.getMarker(markerId).getDescription());
-        assertFalse(marker.hasPhoto());
+        // then
+        marker = contentProviderUtils.getMarker(markerId);
+        assertEquals(TEST_DESC, contentProviderUtils.getMarker(markerId).description());
+        assertNull(marker.photoUrl());
         assertTrue(dir.exists());
         assertTrue(dir.isDirectory());
         assertEquals(1, dir.list().length);

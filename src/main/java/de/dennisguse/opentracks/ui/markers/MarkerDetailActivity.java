@@ -67,14 +67,14 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(this);
         Marker marker = contentProviderUtils.getMarker(markerId);
 
-        markerAutoCloseableIterator = contentProviderUtils.getMarkerIterator(marker.getTrackId());
+        markerAutoCloseableIterator = contentProviderUtils.getMarkerIterator(marker.trackId());
         if (markerAutoCloseableIterator == null) {
             finish();
         }
 
         int markerIndex = -1;
         while (markerAutoCloseableIterator.hasNext()) {
-            if (markerId.equals(markerAutoCloseableIterator.next().getId())) {
+            if (markerId.equals(markerAutoCloseableIterator.next().id())) {
                 markerIndex = markerAutoCloseableIterator.getPosition();
                 break;
             }
@@ -124,7 +124,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         @NonNull
         public Fragment createFragment(int position) {
             markerAutoCloseableIterator.moveToPosition(position);
-            return MarkerDetailFragment.newInstance(markerAutoCloseableIterator.next().getId());
+            return MarkerDetailFragment.newInstance(markerAutoCloseableIterator.next().id());
         }
 
         @Override
@@ -135,7 +135,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         @Nullable
         public CharSequence getPageTitle(int position) {
             markerAutoCloseableIterator.moveToPosition(position);
-            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerAutoCloseableIterator.next().getName());
+            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerAutoCloseableIterator.next().name());
         }
     }
 }

@@ -58,6 +58,7 @@ import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
@@ -152,7 +153,17 @@ public class ExportImportTest {
         Distance sensorDistance = Distance.of(10); // recording distance interval
 
         sendLocation(trackPointCreator, "2020-02-02T02:02:03Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 1f);
-        contentProviderUtils.insertMarker(new Marker(trackId, service.getLastStoredTrackPointWithLocation(), "Marker 1", "Marker 1 desc", "Marker 1 category", null, null));
+        contentProviderUtils.insertMarker(
+                new Marker(
+                        null,
+                        trackId,
+                        "Marker 1",
+                        "Marker 1 desc",
+                        "Marker 1 category",
+                        null,
+                        service.getLastStoredTrackPointWithLocation().getPosition(),
+                        null
+                ));
 
         // A sensor-only TrackPoint
         trackPointCreator.setClock("2020-02-02T02:02:04Z");
@@ -166,7 +177,17 @@ public class ExportImportTest {
         mockSensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f, null); // Distance will be added to next TrackPoint
 
         sendLocation(trackPointCreator, "2020-02-02T02:02:17Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 0f);
-        contentProviderUtils.insertMarker(new Marker(trackId, service.getLastStoredTrackPointWithLocation(), "Marker 2", "Marker 2 desc", "Marker 2 category", null, null));
+        contentProviderUtils.insertMarker(
+                new Marker(
+                        null,
+                        trackId,
+                        "Marker 2",
+                        "Marker 2 desc",
+                        "Marker 2 category",
+                        null,
+                        service.getLastStoredTrackPointWithLocation().getPosition(),
+                        null
+                ));
 
         trackPointCreator.setClock("2020-02-02T02:02:18Z");
         trackPointCreator.getSensorManager().sensorDataSet = new SensorDataSet(trackPointCreator);
@@ -195,7 +216,7 @@ public class ExportImportTest {
         contentProviderUtils.updateTrack(trackBuilder.getTrack());
 
         trackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
-        markers =  TestDataUtil.getMarkers(contentProviderUtils, trackId);
+        markers = TestDataUtil.getMarkers(contentProviderUtils, trackId);
     }
 
     @LargeTest
@@ -533,20 +554,20 @@ public class ExportImportTest {
 
     private void assertMarkers() {
         List<Marker> importedMarkers = TestDataUtil.getMarkers(contentProviderUtils, importTrackId);
-        assertEquals(markers.size(),  importedMarkers.size());
+        assertEquals(markers.size(), importedMarkers.size());
 
         for (int i = 0; i < markers.size(); i++) {
             Marker marker = markers.get(i);
             Marker importMarker = importedMarkers.get(i);
-            assertEquals(marker.getCategory(), importMarker.getCategory());
-            assertEquals(marker.getDescription(), importMarker.getDescription());
+            assertEquals(marker.category(), importMarker.category());
+            assertEquals(marker.description(), importMarker.description());
             // assertEquals(marker.getIcon(), importMarker.getIcon()); // TODO for KML
-            assertEquals(marker.getName(), importMarker.getName());
-            assertFalse(importMarker.hasPhoto());
+            assertEquals(marker.name(), importMarker.name());
+            assertNull(importMarker.photoUrl());
 
-            assertEquals(marker.getPosition().latitude(), importMarker.getPosition().latitude(), 0.001);
-            assertEquals(marker.getPosition().longitude(), importMarker.getPosition().longitude(), 0.001);
-            assertEquals(marker.getPosition().altitude().toM(), importMarker.getPosition().altitude().toM(), 0.1);
+            assertEquals(marker.position().latitude(), importMarker.position().latitude(), 0.001);
+            assertEquals(marker.position().longitude(), importMarker.position().longitude(), 0.001);
+            assertEquals(marker.position().altitude().toM(), importMarker.position().altitude().toM(), 0.1);
         }
     }
 

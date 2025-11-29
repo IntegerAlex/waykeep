@@ -35,6 +35,7 @@ import java.util.Locale;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
@@ -263,12 +264,16 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
         position = position.with(whenList.get(0));
 
-        Marker marker = new Marker(null, new TrackPoint(TrackPoint.Type.TRACKPOINT, position)); //TODO Creating marker without need
-        marker.setName(name != null ? name : "");
-        marker.setDescription(description != null ? description : "");
-        marker.setCategory(activityTypeLocalized != null ? activityTypeLocalized : "");
-        marker.setPhotoUrl(photoUrl);
-        markers.add(marker);
+        markers.add(new Marker(
+                null,
+                null,
+                name != null ? name : "",
+                description != null ? description : "",
+                activityTypeLocalized != null ? activityTypeLocalized : "",
+                null,
+                position,
+                photoUrl
+        ));
 
         name = null;
         description = null;

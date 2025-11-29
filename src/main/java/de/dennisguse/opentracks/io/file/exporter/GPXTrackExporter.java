@@ -250,14 +250,14 @@ public class GPXTrackExporter implements TrackExporter {
     }
 
     private void writeMarker(ZoneOffset zoneOffset, Marker marker) {
-        printWriter.println("<wpt " + formatLocation(marker.getPosition()) + ">");
-        if (marker.hasAltitude()) {
-            printWriter.println("<ele>" + ALTITUDE_FORMAT.format(marker.getAltitude().toM()) + "</ele>");
+        printWriter.println("<wpt " + formatLocation(marker.position()) + ">");
+        if (marker.position().hasAltitude()) {
+            printWriter.println("<ele>" + ALTITUDE_FORMAT.format(marker.position().altitude().toM()) + "</ele>");
         }
-        printWriter.println("<time>" + StringUtils.formatDateTimeIso8601(marker.getTime(), zoneOffset) + "</time>");
-        printWriter.println("<name>" + StringUtils.formatCData(marker.getName()) + "</name>");
-        printWriter.println("<desc>" + StringUtils.formatCData(marker.getDescription()) + "</desc>");
-        printWriter.println("<type>" + StringUtils.formatCData(marker.getCategory()) + "</type>"); //TODO This is localized; may be better to export in English only. See #1608
+        printWriter.println("<time>" + StringUtils.formatDateTimeIso8601(marker.position().time(), zoneOffset) + "</time>");
+        printWriter.println("<name>" + StringUtils.formatCData(marker.name()) + "</name>");
+        printWriter.println("<desc>" + StringUtils.formatCData(marker.description()) + "</desc>");
+        printWriter.println("<type>" + StringUtils.formatCData(marker.category()) + "</type>"); //TODO This is localized; may be better to export in English only. See #1608
         printWriter.println("</wpt>");
     }
 

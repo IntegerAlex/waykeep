@@ -50,7 +50,6 @@ import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
@@ -319,7 +318,7 @@ public class ContentProviderUtils {
         int latitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.LATITUDE);
         int timeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.TIME);
         int altitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.ALTITUDE);
-        int accuracyIndex = cursor.getColumnIndexOrThrow(MarkerColumns.ACCURACY);
+        int accuracyIndex = cursor.getColumnIndexOrThrow(MarkerColumns.HORIZONTAL_ACCURACY);
         int bearingIndex = cursor.getColumnIndexOrThrow(MarkerColumns.BEARING);
         int photoUrlIndex = cursor.getColumnIndexOrThrow(MarkerColumns.PHOTOURL);
 
@@ -353,37 +352,27 @@ public class ContentProviderUtils {
                 bearing,
                 null);
 
-        Track.Id trackId = new Track.Id(cursor.getLong(trackIdIndex));
-        Marker marker = new Marker(trackId, position);
-
-        if (!cursor.isNull(idIndex)) {
-            marker.setId(new Marker.Id(cursor.getLong(idIndex)));
-        }
-        if (!cursor.isNull(nameIndex)) {
-            marker.setName(cursor.getString(nameIndex));
-        }
-        if (!cursor.isNull(descriptionIndex)) {
-            marker.setDescription(cursor.getString(descriptionIndex));
-        }
-        if (!cursor.isNull(categoryIndex)) {
-            marker.setCategory(cursor.getString(categoryIndex));
-        }
-        if (!cursor.isNull(iconIndex)) {
-            marker.setIcon(cursor.getString(iconIndex));
-        }
+        Uri photoUrl = null;
         if (!cursor.isNull(photoUrlIndex)) {
-            String photoUrl = cursor.getString(photoUrlIndex);
-            if (photoUrl.isEmpty()) {
+            if (cursor.getString(photoUrlIndex).isEmpty()) {
                 // Before v4.18.0: a marker without a picture as URL ""
                 // TODO Data should be migrated.
-                marker.setPhotoUrl(null);
+                photoUrl = null;
             } else {
-                marker.setPhotoUrl(Uri.parse(cursor.getString(photoUrlIndex)));
+                photoUrl = Uri.parse(cursor.getString(photoUrlIndex));
             }
         }
 
-
-        return marker;
+        return new Marker(
+                new Marker.Id(cursor.getLong(idIndex)),
+                new Track.Id(cursor.getLong(trackIdIndex)),
+                !cursor.isNull(nameIndex) ? cursor.getString(nameIndex) : "",
+                !cursor.isNull(descriptionIndex) ? cursor.getString(descriptionIndex) : "",
+                !cursor.isNull(categoryIndex) ? cursor.getString(categoryIndex) : "",
+                !cursor.isNull(iconIndex) ? cursor.getString(iconIndex) : "",
+                position,
+                photoUrl
+        );
     }
 
     public void deleteMarker(Context context, Marker.Id markerId) {
@@ -445,24 +434,26 @@ public class ContentProviderUtils {
      * @return true if successful.
      */
     public boolean updateMarker(Context context, Marker updateMarker) {
-        Marker savedMarker = getMarker(updateMarker.getId());
-        if (!updateMarker.hasPhoto()) {
+        Marker savedMarker = getMarker(updateMarker.id());
+        if (updateMarker.photoUrl() == null) {
             deleteMarkerPhoto(context, savedMarker);
         }
-        int rows = contentResolver.update(MarkerColumns.CONTENT_URI, createContentValues(updateMarker), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.getId().id())});
+        int rows = contentResolver.update(MarkerColumns.CONTENT_URI, createContentValues(updateMarker, updateMarker.trackId()), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.id().id())});
         return rows == 1;
     }
 
     public Marker.Id insertMarker(@NonNull Marker marker) {
-        marker.setId(null);
-        Uri uri = contentResolver.insert(MarkerColumns.CONTENT_URI, createContentValues(marker));
+        assert marker.id() == null;
+        assert marker.trackId() != null;
+
+        Uri uri = contentResolver.insert(MarkerColumns.CONTENT_URI, createContentValues(marker, marker.trackId()));
         return new Marker.Id(ContentUris.parseId(uri));
     }
 
     private void deleteMarkerPhoto(Context context, Marker marker) {
-        if (marker != null && marker.hasPhoto()) {
-            Uri uri = marker.getPhotoUrl();
-            File file = MarkerUtils.buildInternalPhotoFile(context, marker.getTrackId(), uri);
+        if (marker != null && marker.photoUrl() != null) {
+            Uri uri = marker.photoUrl();
+            File file = MarkerUtils.buildInternalPhotoFile(context, marker.trackId(), uri);
             if (file.exists()) {
                 File parent = file.getParentFile();
                 file.delete();
@@ -473,33 +464,33 @@ public class ContentProviderUtils {
         }
     }
 
-    ContentValues createContentValues(@NonNull Marker marker) {
+    ContentValues createContentValues(@NonNull Marker marker, @NonNull Track.Id trackId) {
         ContentValues values = new ContentValues();
 
-        if (marker.getId() != null) {
-            values.put(MarkerColumns._ID, marker.getId().id());
+        if (marker.id() != null) {
+            values.put(MarkerColumns._ID, marker.id().id());
         }
-        values.put(MarkerColumns.NAME, marker.getName());
-        values.put(MarkerColumns.DESCRIPTION, marker.getDescription());
-        values.put(MarkerColumns.CATEGORY, marker.getCategory());
-        values.put(MarkerColumns.ICON, marker.getIcon());
-        values.put(MarkerColumns.TRACKID, marker.getTrackId().id());
-        values.put(MarkerColumns.LONGITUDE, (int) (marker.getPosition().longitude() * 1E6));
-        values.put(MarkerColumns.LATITUDE, (int) (marker.getPosition().latitude() * 1E6));
-        values.put(MarkerColumns.TIME, marker.getTime().toEpochMilli());
-        if (marker.hasAltitude()) {
-            values.put(MarkerColumns.ALTITUDE, marker.getAltitude().toM());
+        values.put(MarkerColumns.TRACKID, trackId.id());
+
+        values.put(MarkerColumns.NAME, marker.name());
+        values.put(MarkerColumns.DESCRIPTION, marker.description());
+        values.put(MarkerColumns.CATEGORY, marker.category());
+        values.put(MarkerColumns.ICON, marker.icon());
+
+        values.put(MarkerColumns.LONGITUDE, (int) (marker.position().longitude() * 1E6));
+        values.put(MarkerColumns.LATITUDE, (int) (marker.position().latitude() * 1E6));
+        values.put(MarkerColumns.TIME, marker.position().time().toEpochMilli());
+        if (marker.position().hasAltitude()) {
+            values.put(MarkerColumns.ALTITUDE, marker.position().altitude().toM());
         }
-        if (marker.hasAccuracy()) {
-            values.put(MarkerColumns.ACCURACY, marker.getAccuracy().toM());
+        if (marker.position().hasHorizontalAccuracy()) {
+            values.put(MarkerColumns.HORIZONTAL_ACCURACY, marker.position().horizontalAccuracy().toM());
         }
-        if (marker.hasBearing()) {
-            values.put(MarkerColumns.BEARING, marker.getBearing());
+        if (marker.position().hasBearing()) {
+            values.put(MarkerColumns.BEARING, marker.position().bearing());
         }
 
-        if (marker.hasPhoto()) {
-            values.put(MarkerColumns.PHOTOURL, marker.getPhotoUrl().toString());
-        }
+        values.put(MarkerColumns.PHOTOURL, marker.photoUrl() != null ? marker.photoUrl().toString() : null);
         return values;
     }
 
@@ -603,7 +594,7 @@ public class ContentProviderUtils {
     public int bulkInsertMarkers(List<Marker> markers, Track.Id trackId) {
         ContentValues[] values = new ContentValues[markers.size()];
         for (int i = 0; i < markers.size(); i++) {
-            values[i] = createContentValues(markers.get(i));
+            values[i] = createContentValues(markers.get(i), trackId);
         }
         return contentResolver.bulkInsert(MarkerColumns.CONTENT_URI, values);
     }
