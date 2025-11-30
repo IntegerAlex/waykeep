@@ -19,10 +19,7 @@ package de.dennisguse.opentracks.data.models;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
@@ -34,8 +31,8 @@ import java.util.UUID;
  */
 public class TrackBuilder {
 
-    private Track.Id id;
-    private UUID uuid;
+    private final Track.Id id;
+    private final UUID uuid;
 
     private String name;
     private String description;
@@ -58,11 +55,6 @@ public class TrackBuilder {
         this.activityType = track.activityType();
         this.zoneOffset = track.zoneOffset();
         this.trackStatistics = track.statistics();
-    }
-
-    @VisibleForTesting
-    public void setId(Track.Id id) {
-        this.id = id;
     }
 
     public void setName(String name) {

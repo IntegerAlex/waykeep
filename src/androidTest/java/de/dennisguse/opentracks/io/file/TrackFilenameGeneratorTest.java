@@ -20,7 +20,6 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TimezoneRule;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackBuilder;
 
 @RunWith(Parameterized.class)
 public class TrackFilenameGeneratorTest {

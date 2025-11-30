@@ -19,7 +19,6 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TestUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 

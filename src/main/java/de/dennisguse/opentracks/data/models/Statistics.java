@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
 
 public record Statistics(
         @NonNull

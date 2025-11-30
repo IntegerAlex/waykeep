@@ -23,7 +23,6 @@ import java.util.concurrent.TimeoutException;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.services.TrackRecordingService;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
 
 @RunWith(AndroidJUnit4.class)
 public class VoiceAnnouncementManagerTest {

@@ -26,7 +26,6 @@ import android.util.Log;
 import androidx.documentfile.provider.DocumentFile;
 
 import de.dennisguse.opentracks.data.models.Marker;
-import de.dennisguse.opentracks.data.models.MarkerBuilder;
 
 /**
  * Utilities for creating intents.

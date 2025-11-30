@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.util.FileUtils;
 
 public class TrackFilenameGenerator {

@@ -52,7 +52,6 @@ public class EspressoDeleteTrackTest {
         onView(allOf(withParent(withId(R.id.track_list)), withParentIndex(0))).perform(longClick());
 
         // open menu and delete selected track
-        //TODO openActionBarOverflowOrOptionsMenu(); doesn't work
         onView(
                 allOf(withContentDescription("More options"),
                         childAtPosition(
