@@ -91,9 +91,9 @@ public class TestDataUtil {
         );
 
         List<Marker> markers = List.of(
-                new Marker(null, trackId, "Marker 1", "Marker description 1", "Marker category 3", "", trackPoints.get(1).getPosition(),null),
-                new Marker(null, trackId, "Marker 2", "Marker description 2", "Marker category 3", "", trackPoints.get(4).getPosition(), null),
-                new Marker(null, trackId, "Marker 3", "Marker description 3", "Marker category 3", "", trackPoints.get(5).getPosition(), null)
+                new Marker(null, trackId, "Marker 1", "Marker description 1", "Marker category 3", trackPoints.get(1).getPosition(),null),
+                new Marker(null, trackId, "Marker 2", "Marker description 2", "Marker category 3", trackPoints.get(4).getPosition(), null),
+                new Marker(null, trackId, "Marker 3", "Marker description 3", "Marker category 3", trackPoints.get(5).getPosition(), null)
         );
 
         return new TrackData(track, trackPoints, markers);
@@ -163,7 +163,6 @@ public class TestDataUtil {
                 "Marker name",
                 description,
                 "Marker category",
-                "",
                 trackPoint.getPosition(),
                 photoUri);
     }

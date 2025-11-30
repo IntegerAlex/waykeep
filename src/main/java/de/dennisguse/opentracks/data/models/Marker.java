@@ -24,8 +24,6 @@ public record Marker(
         String description,
         @NonNull
         String category,
-        @NonNull
-        String icon,
 
         //Some data might not be used.
         Position position,

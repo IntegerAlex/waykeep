@@ -143,14 +143,12 @@ public class MarkerEditViewModel extends AndroidViewModel {
             nextMarkerNumber = 1;
         }
         String name = getApplication().getString(R.string.marker_name_format, nextMarkerNumber + 1);
-        String icon = getApplication().getString(R.string.marker_icon_url);
 
         Marker marker = new Marker(
                 null,
                 trackId,
                 name,
                 "",
-                icon,
                 "",
                 trackPoint.getPosition(),
                 null);

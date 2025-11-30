@@ -312,7 +312,6 @@ public class ContentProviderUtils {
         int nameIndex = cursor.getColumnIndexOrThrow(MarkerColumns.NAME);
         int descriptionIndex = cursor.getColumnIndexOrThrow(MarkerColumns.DESCRIPTION);
         int categoryIndex = cursor.getColumnIndexOrThrow(MarkerColumns.CATEGORY);
-        int iconIndex = cursor.getColumnIndexOrThrow(MarkerColumns.ICON);
         int trackIdIndex = cursor.getColumnIndexOrThrow(MarkerColumns.TRACKID);
         int longitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.LONGITUDE);
         int latitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.LATITUDE);
@@ -369,7 +368,6 @@ public class ContentProviderUtils {
                 !cursor.isNull(nameIndex) ? cursor.getString(nameIndex) : "",
                 !cursor.isNull(descriptionIndex) ? cursor.getString(descriptionIndex) : "",
                 !cursor.isNull(categoryIndex) ? cursor.getString(categoryIndex) : "",
-                !cursor.isNull(iconIndex) ? cursor.getString(iconIndex) : "",
                 position,
                 photoUrl
         );
@@ -475,7 +473,6 @@ public class ContentProviderUtils {
         values.put(MarkerColumns.NAME, marker.name());
         values.put(MarkerColumns.DESCRIPTION, marker.description());
         values.put(MarkerColumns.CATEGORY, marker.category());
-        values.put(MarkerColumns.ICON, marker.icon());
 
         values.put(MarkerColumns.LONGITUDE, (int) (marker.position().longitude() * 1E6));
         values.put(MarkerColumns.LATITUDE, (int) (marker.position().latitude() * 1E6));

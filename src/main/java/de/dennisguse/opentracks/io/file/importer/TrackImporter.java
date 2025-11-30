@@ -227,11 +227,8 @@ public class TrackImporter {
      */
     private void updateMarkers(Track.Id trackId) {
         markers.forEach(marker -> {
-            if (marker.hasPhoto()) {
+            if (marker.hasPhoto())
                 marker.setPhotoUrl(getInternalPhotoUrl(trackId, marker.getPhotoUrl()));
-            }
-
-            marker.setIcon(context.getString(R.string.marker_icon_url)); //TODO Why?
         });
     }
 

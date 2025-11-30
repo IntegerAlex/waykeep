@@ -39,8 +39,6 @@ public interface MarkerColumns extends BaseColumns {
     String NAME = "name"; // marker name
     String DESCRIPTION = "description"; // marker description
     String CATEGORY = "category"; // marker category
-    @Deprecated //TODO Remove: it is always: position
-    String ICON = "icon"; // marker icon
     String TRACKID = "trackid"; // track id
     String LONGITUDE = "longitude"; // longitude
     String LATITUDE = "latitude"; // latitude
@@ -56,7 +54,6 @@ public interface MarkerColumns extends BaseColumns {
             + NAME + " TEXT, "
             + DESCRIPTION + " TEXT, "
             + CATEGORY + " TEXT, "
-            + ICON + " TEXT, "
             + TRACKID + " INTEGER NOT NULL, "
             + LONGITUDE + " INTEGER, "
             + LATITUDE + " INTEGER, "

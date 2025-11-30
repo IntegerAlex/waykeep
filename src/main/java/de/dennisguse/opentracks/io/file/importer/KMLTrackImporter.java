@@ -35,7 +35,6 @@ import java.util.Locale;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
-import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
@@ -270,7 +269,6 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 name != null ? name : "",
                 description != null ? description : "",
                 activityTypeLocalized != null ? activityTypeLocalized : "",
-                null,
                 position,
                 photoUrl
         ));

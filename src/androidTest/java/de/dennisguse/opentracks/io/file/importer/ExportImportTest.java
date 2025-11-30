@@ -58,7 +58,6 @@ import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
-import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
@@ -160,7 +159,6 @@ public class ExportImportTest {
                         "Marker 1",
                         "Marker 1 desc",
                         "Marker 1 category",
-                        null,
                         service.getLastStoredTrackPointWithLocation().getPosition(),
                         null
                 ));
@@ -184,7 +182,6 @@ public class ExportImportTest {
                         "Marker 2",
                         "Marker 2 desc",
                         "Marker 2 category",
-                        null,
                         service.getLastStoredTrackPointWithLocation().getPosition(),
                         null
                 ));
@@ -561,7 +558,6 @@ public class ExportImportTest {
             Marker importMarker = importedMarkers.get(i);
             assertEquals(marker.category(), importMarker.category());
             assertEquals(marker.description(), importMarker.description());
-            // assertEquals(marker.getIcon(), importMarker.getIcon()); // TODO for KML
             assertEquals(marker.name(), importMarker.name());
             assertNull(importMarker.photoUrl());
 

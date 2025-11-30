@@ -22,9 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import java.time.Instant;
-import java.util.Objects;
-
 /**
  * NOTE: A marker is indirectly (via it's {@link Position}) assigned to one {@link TrackPoint} via position.time.
  *
@@ -38,13 +35,12 @@ public final class MarkerBuilder {
     private String name;
     private String description;
     private String category;
-    private String icon;
     private final Track.Id trackId;
 
     //Some data might not be used.
     private final Position position;
 
-    private Uri photoUrl = null;
+    private Uri photoUrl;
 
     @VisibleForTesting
     public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint) {
@@ -53,7 +49,6 @@ public final class MarkerBuilder {
         this.name = "";
         this.description = "";
         this.category = "";
-        this.icon = "";
         this.photoUrl = null;
 
         if (!trackPoint.hasLocation())
@@ -62,12 +57,11 @@ public final class MarkerBuilder {
         this.position = trackPoint.getPosition();
     }
 
-    public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String category, String icon, Uri photoUrl) {
+    public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String category, Uri photoUrl) {
         this(trackId, trackPoint);
         this.name = name;
         this.description = description;
         this.category = category;
-        this.icon = icon;
         this.photoUrl = photoUrl;
     }
 
@@ -77,7 +71,6 @@ public final class MarkerBuilder {
         this.name = marker.name();
         this.description = marker.description();
         this.category = marker.category();
-        this.icon = marker.icon();
         this.position = marker.position();
         this.photoUrl = marker.photoUrl();
     }
@@ -113,10 +106,6 @@ public final class MarkerBuilder {
         this.category = category;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public Track.Id getTrackId() {
         return trackId;
     }
@@ -140,7 +129,6 @@ public final class MarkerBuilder {
                 name,
                 description,
                 category,
-                icon,
                 position,
                 photoUrl
         );

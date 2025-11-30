@@ -239,7 +239,6 @@ public class CustomContentProviderUtilsTest {
                 "",
                 "",
                 "",
-                "",
                 getLastValidTrackPoint(trackId).getPosition(),
                 null
         ));
@@ -300,7 +299,6 @@ public class CustomContentProviderUtilsTest {
         contentProviderUtils.insertMarker(new Marker(
                 null,
                 trackId1,
-                "",
                 "",
                 "",
                 "",
@@ -477,7 +475,6 @@ public class CustomContentProviderUtilsTest {
                 "",
                 TEST_DESC,
                 "",
-                "",
                 getLastValidTrackPoint(trackId).getPosition(),
                 null
         ));
@@ -558,7 +555,6 @@ public class CustomContentProviderUtilsTest {
                 "",
                 MOCK_DESC,
                 "",
-                "",
                 getLastValidTrackPoint(trackId).getPosition(),
                 null
         ));
@@ -567,7 +563,6 @@ public class CustomContentProviderUtilsTest {
                 trackId,
                 "",
                 MOCK_DESC,
-                "",
                 "",
                 getLastValidTrackPoint(trackId).getPosition(),
                 null
@@ -596,7 +591,6 @@ public class CustomContentProviderUtilsTest {
                     "",
                     MOCK_DESC,
                     "",
-                    "",
                     getLastValidTrackPoint(trackId).getPosition(),
                     null
             ));
@@ -621,7 +615,6 @@ public class CustomContentProviderUtilsTest {
                         "",
                         TEST_DESC,
                         "",
-                        "",
                         getLastValidTrackPoint(trackId).getPosition(),
                         null
                 ));
@@ -645,7 +638,6 @@ public class CustomContentProviderUtilsTest {
                         "",
                         TEST_DESC,
                         "",
-                        "",
                         getLastValidTrackPoint(trackId).getPosition(),
                         null
                 ));
@@ -656,7 +648,6 @@ public class CustomContentProviderUtilsTest {
                 trackId,
                 "",
                 TEST_DESC_NEW,
-                "",
                 "",
                 getLastValidTrackPoint(trackId).getPosition(),
                 null

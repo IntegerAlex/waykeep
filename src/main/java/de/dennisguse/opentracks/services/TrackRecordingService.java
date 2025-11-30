@@ -37,7 +37,6 @@ import java.time.Duration;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
-import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
@@ -253,7 +252,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         Marker marker = new Marker(
                 null,
                 recordingStatus.trackId(),
-                "",
                 "",
                 "",
                 "",
