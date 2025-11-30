@@ -77,6 +77,7 @@ public class TrackStatisticsUpdater {
         this.currentSegment = new SegmentStatisticUpdater(toCopy.currentSegment);
 
         this.lastTrackPoint = toCopy.lastTrackPoint;
+        this.isIdle = toCopy.isIdle;
         resetAverageHeartRate();
 
         addTrackPoint(tmp);
