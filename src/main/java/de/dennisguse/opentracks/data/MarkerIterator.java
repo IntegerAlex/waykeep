@@ -24,6 +24,12 @@ class MarkerIterator extends AutoCloseableIterator<Marker> {
         cursor = contentProviderUtils.getMarkerCursor(trackId, maxCount);
     }
 
+    @NonNull
+    @Override
+    public Marker get() {
+        return contentProviderUtils.createMarker(cursor);
+    }
+
     @Override
     public boolean hasNext() {
         if (cursor == null) {
@@ -38,7 +44,7 @@ class MarkerIterator extends AutoCloseableIterator<Marker> {
         if (cursor == null || !cursor.moveToNext()) {
             throw new NoSuchElementException();
         }
-        return contentProviderUtils.createMarker(cursor);
+        return get();
     }
 
     @Override

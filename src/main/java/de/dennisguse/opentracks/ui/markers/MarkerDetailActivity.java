@@ -123,7 +123,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         @NonNull
         public Fragment createFragment(int position) {
             markerAutoCloseableIterator.moveToPosition(position);
-            return MarkerDetailFragment.newInstance(markerAutoCloseableIterator.next().id());
+            return MarkerDetailFragment.newInstance(markerAutoCloseableIterator.get(position).id());
         }
 
         @Override
@@ -133,8 +133,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
 
         @Nullable
         public CharSequence getPageTitle(int position) {
-            markerAutoCloseableIterator.moveToPosition(position);
-            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerAutoCloseableIterator.next().name());
+            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerAutoCloseableIterator.get().name());
         }
     }
 }

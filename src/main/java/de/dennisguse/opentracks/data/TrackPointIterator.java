@@ -35,11 +35,17 @@ class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
 
     @Override
     @NonNull
+    public TrackPoint get() {
+        return ContentProviderUtils.fillTrackPoint(cursor, indexes);
+    }
+
+    @Override
+    @NonNull
     public TrackPoint next() {
         if (cursor == null || !cursor.moveToNext()) {
             throw new NoSuchElementException();
         }
-        return ContentProviderUtils.fillTrackPoint(cursor, indexes);
+        return get();
     }
 
     @Override
