@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import java.time.Instant;
 
-//TODO Use everywhere instead of android.location.Location.
 public record Position(
         @Nullable Instant time,
         @Nullable Double latitude,

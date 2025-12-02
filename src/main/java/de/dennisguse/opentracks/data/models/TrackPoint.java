@@ -15,7 +15,6 @@
  */
 package de.dennisguse.opentracks.data.models;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -157,12 +156,6 @@ public class TrackPoint {
         return this;
     }
 
-    @Deprecated
-    @NonNull
-    public Location getLocation() {
-        return getPosition().toLocation();
-    }
-
     public boolean hasAltitudeGainLoss() {
         return altitudeGainLoss != null;
     }
@@ -268,34 +261,18 @@ public class TrackPoint {
             throw new RuntimeException("Cannot compute distance.");
         }
 
-        return Distance.of(getLocation().distanceTo(previous.getLocation()));
+        return Distance.of(getPosition().toLocation().distanceTo(previous.getPosition().toLocation()));
     }
 
     public boolean fulfillsAccuracy(Distance thresholdHorizontalAccuracy) {
         return position.fulfillsAccuracy(thresholdHorizontalAccuracy);
     }
 
-    public Optional<Float> bearingTo(@NonNull Position dest) {
-        if (!dest.hasLocation() || !hasLocation()) {
-            return Optional.empty();
-        }
-        return bearingTo(dest.toLocation());
-    }
-
     public Optional<Float> bearingTo(@NonNull TrackPoint dest) {
         if (!dest.hasLocation() || !hasLocation()) {
             return Optional.empty();
         }
-        return bearingTo(dest.getLocation());
-    }
-
-    //TODO Bearing requires a location; what do we do if we don't have any?
-    @Deprecated
-    public Optional<Float> bearingTo(@NonNull Location dest) {
-        if (!hasLocation()) {
-            return Optional.empty();
-        }
-        return Optional.of(getLocation().bearingTo(dest));
+        return Optional.of(getPosition().toLocation().bearingTo(dest.getPosition().toLocation()));
     }
 
     // Sensor data

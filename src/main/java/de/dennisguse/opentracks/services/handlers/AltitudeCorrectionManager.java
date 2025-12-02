@@ -28,7 +28,7 @@ public class AltitudeCorrectionManager {
         // AltitudeConverterCompat uses internally a RoomDatabase that cannot be access from main thread and thus fails on version <= 34.
         Thread t = new Thread(() -> {
             try {
-                Location loc = trackPoint.getLocation();
+                Location loc = trackPoint.getPosition().toLocation();
                 AltitudeConverterCompat.addMslAltitudeToLocation(context, loc);
                 trackPoint.setAltitude(Altitude.EGM2008.of(LocationCompat.getMslAltitudeMeters(loc)));
             } catch (IOException e) {

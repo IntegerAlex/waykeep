@@ -37,7 +37,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.FileDescriptor;
@@ -61,13 +60,14 @@ public class MarkerEditActivity extends AbstractActivity {
 
     public static final String EXTRA_TRACK_ID = "track_id";
     public static final String EXTRA_MARKER_ID = "marker_id";
+    //TODO Check if we can send a position instead.
     public static final String EXTRA_LOCATION = "location";
 
     private static final String CAMERA_PHOTO_URI_KEY = "camera_photo_uri_key";
 
     private static final String TAG = MarkerEditActivity.class.getSimpleName();
     private Track.Id trackId;
-    private Location location;
+    private Position position;
     private Marker.Id markerId;
     private Marker marker;
 
@@ -97,7 +97,7 @@ public class MarkerEditActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
 
         trackId = getIntent().getParcelableExtra(EXTRA_TRACK_ID);
-        location = getIntent().getParcelableExtra(EXTRA_LOCATION);
+        Location location = getIntent().getParcelableExtra(EXTRA_LOCATION);
         markerId = getIntent().getParcelableExtra(EXTRA_MARKER_ID);
         if ((trackId == null || location == null) && markerId == null) {
             throw new IllegalStateException("TrackId and Location must be provided or an existing markerId");
@@ -139,8 +139,7 @@ public class MarkerEditActivity extends AbstractActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     switch (result.getResultCode()) {
-                        case RESULT_CANCELED ->
-                                Toast.makeText(this, R.string.marker_add_photo_canceled, Toast.LENGTH_LONG).show();
+                        case RESULT_CANCELED -> Toast.makeText(this, R.string.marker_add_photo_canceled, Toast.LENGTH_LONG).show();
                         case RESULT_OK -> viewModel.onNewCameraPhoto(cameraPhotoUri,
                                 viewBinding.markerEditName.getText().toString(),
                                 viewBinding.markerEditMarkerType.getText().toString(),
@@ -162,17 +161,14 @@ public class MarkerEditActivity extends AbstractActivity {
                 });
 
         if (isNewMarker) {
-            createNewMarker().observe(this, this::loadMarkerData);
+            TrackPoint trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, Position.of(location, Instant.now()));
+            viewModel.createNewMarker(trackId, trackPoint)
+                    .observe(this, this::loadMarkerData);
         } else {
             loadMarkerData(markerId);
         }
 
         setSupportActionBar(viewBinding.bottomAppBarLayout.bottomAppBar);
-    }
-
-    private LiveData<Marker> createNewMarker() {
-        TrackPoint trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, Position.of(location, Instant.now()));
-        return viewModel.createNewMarker(trackId, trackPoint);
     }
 
     private void loadMarkerData(Marker.Id markerId) {
@@ -198,7 +194,7 @@ public class MarkerEditActivity extends AbstractActivity {
         super.onDestroy();
 
         trackId = null;
-        location = null;
+        position = null;
         markerId = null;
         viewBinding = null;
         viewModel = null;

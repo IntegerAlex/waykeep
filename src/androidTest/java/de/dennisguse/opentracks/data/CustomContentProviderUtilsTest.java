@@ -27,7 +27,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.location.Location;
 import android.util.Pair;
 
 import androidx.test.core.app.ApplicationProvider;
@@ -861,22 +860,13 @@ public class CustomContentProviderUtilsTest {
             TrackPoint trackPoint = trackPointIterator.next();
             assertEquals(startTrackPointId.id() + i, trackPoint.getId().id());
 
-            checkLocation(i, trackPoint.getLocation());
+            Position position = trackPoint.getPosition();
+            assertEquals(TestDataUtil.INITIAL_LATITUDE + i / 10000.0, position.latitude(), 0.01);
+            assertEquals(TestDataUtil.INITIAL_LONGITUDE - i / 10000.0, position.longitude(), 0.01);
+            assertEquals(i / 100.0, position.horizontalAccuracy().distance_m(), 0.01);
+            assertEquals(i * TestDataUtil.ALTITUDE_INTERVAL, position.altitude().toM(), 0.01);
         }
         assertFalse(trackPointIterator.hasNext());
-    }
-
-    /**
-     * Checks the value of a location.
-     *
-     * @param i        the index of this location which created in the method {@link TestDataUtil#createTrack(Track.Id, int)}
-     * @param location the location to be checked
-     */
-    private void checkLocation(int i, Location location) {
-        assertEquals(TestDataUtil.INITIAL_LATITUDE + (double) i / 10000.0, location.getLatitude(), 0.01);
-        assertEquals(TestDataUtil.INITIAL_LONGITUDE - (double) i / 10000.0, location.getLongitude(), 0.01);
-        assertEquals((float) i / 100.0f, location.getAccuracy(), 0.01);
-        assertEquals(i * TestDataUtil.ALTITUDE_INTERVAL, location.getAltitude(), 0.01);
     }
 
     @Test
