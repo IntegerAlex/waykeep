@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Iterator;
 
+//TODO All children use a cursor. Move this shared functionality here.
 public abstract class AutoCloseableIterator<T> implements Iterator<T>, AutoCloseable {
 
     /**

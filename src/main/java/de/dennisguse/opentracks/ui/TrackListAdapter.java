@@ -1,7 +1,6 @@
 package de.dennisguse.opentracks.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -15,24 +14,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.TrackRecordingActivity;
-import de.dennisguse.opentracks.data.models.ActivityType;
-import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.TrackListIterator;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.databinding.TrackListItemBinding;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.ListItemUtils;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.IntentUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
@@ -44,7 +39,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final SparseBooleanArray selection = new SparseBooleanArray();
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
-    private Cursor cursor;
+    private AutoCloseableIterator<TrackListIterator.Item> cursor;
     private boolean selectionMode = false;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
     private ActionMode actionMode;
@@ -79,7 +74,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public long getItemId(int position) {
         cursor.moveToPosition(position);
-        return cursor.getLong(cursor.getColumnIndexOrThrow(TracksColumns._ID));
+        return cursor.get().id().id();
     }
 
     @Override
@@ -90,7 +85,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return cursor.getCount();
     }
 
-    public void swapData(Cursor cursor) {
+    public void swapData(AutoCloseableIterator<TrackListIterator.Item> cursor) {
         this.cursor = cursor;
         this.notifyDataSetChanged();
     }
@@ -138,12 +133,11 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
-            final int idIndex = cursor.getColumnIndexOrThrow(TracksColumns._ID);
-
-            cursor.moveToFirst();
-            do {
-                selection.put((int) cursor.getLong(idIndex), true);
-            } while (cursor.moveToNext());
+            cursor.moveToPosition(-1);
+            while (cursor.hasNext()) {
+                selection.put((int) cursor.get().id().id(), true);
+                cursor.next();
+            }
         } else {
             selection.clear();
         }
@@ -182,30 +176,11 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
-        public void bind(Cursor cursor) {
-            final int idIndex = cursor.getColumnIndexOrThrow(TracksColumns._ID);
-            final int nameIndex = cursor.getColumnIndexOrThrow(TracksColumns.NAME);
-            final int descriptionIndex = cursor.getColumnIndexOrThrow(TracksColumns.DESCRIPTION);
-            final int activityTypeIndex = cursor.getColumnIndexOrThrow(TracksColumns.ACTIVITY_TYPE);
-            final int activityTypeLocalizedIndex = cursor.getColumnIndexOrThrow(TracksColumns.ACTIVITY_TYPE_LOCALIZED);
-            final int startTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.STARTTIME);
-            final int startTimeOffsetIndex = cursor.getColumnIndexOrThrow(TracksColumns.STARTTIME_OFFSET);
-            final int totalDistanceIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE);
-            final int totalTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALTIME);
-            final int markerCountIndex = cursor.getColumnIndexOrThrow(TracksColumns.MARKER_COUNT);
+        public void bind(AutoCloseableIterator<TrackListIterator.Item> cursor) {
+            TrackListIterator.Item tracksListItem = cursor.get();
+            trackId = tracksListItem.id();
 
-            ActivityType activityType = ActivityType.findBy(cursor.getString(activityTypeIndex));
-            String name = cursor.getString(nameIndex);
-            int markerCount = cursor.getInt(markerCountIndex);
-            Duration totalTime = Duration.ofMillis(cursor.getLong(totalTimeIndex));
-            Distance totalDistance = Distance.of(cursor.getFloat(totalDistanceIndex));
-            Instant startTime = Instant.ofEpochMilli(cursor.getLong(startTimeIndex));
-            ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex));
-            String activityTypeLocalized = cursor.getString(activityTypeLocalizedIndex);
-            String description = cursor.getString(descriptionIndex);
-            trackId = new Track.Id(cursor.getLong(idIndex));
-
-            int iconId = activityType.getIconDrawableId();
+            int iconId = tracksListItem.activityType().getIconDrawableId();
             int iconDesc = R.string.image_track;
 
             boolean isRecordingThisTrackRecording = trackId.equals(recordingStatus.trackId());
@@ -217,26 +192,26 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewBinding.trackListItemIcon.setImageResource(iconId);
             viewBinding.trackListItemIcon.setContentDescription(context.getString(iconDesc));
 
-            viewBinding.trackListItemName.setText(name);
+            viewBinding.trackListItemName.setText(tracksListItem.name());
 
-            String timeDistanceText = ListItemUtils.getTimeDistanceText(context, unitSystem, isRecordingThisTrackRecording, totalTime, totalDistance, markerCount);
+            String timeDistanceText = ListItemUtils.getTimeDistanceText(context, unitSystem, isRecordingThisTrackRecording, tracksListItem.totalTime(), tracksListItem.totalDistance(), tracksListItem.markerCount());
             viewBinding.trackListItemTimeDistance.setText(timeDistanceText);
 
-            viewBinding.trackListItemMarkerCountIcon.setVisibility(markerCount > 0 ? View.VISIBLE : View.GONE);
-            viewBinding.trackListItemMarkerCount.setText(markerCount > 0 ? Integer.toString(markerCount) : null);
+            viewBinding.trackListItemMarkerCountIcon.setVisibility(tracksListItem.markerCount() > 0 ? View.VISIBLE : View.GONE);
+            viewBinding.trackListItemMarkerCount.setText(tracksListItem.markerCount() > 0 ? Integer.toString(tracksListItem.markerCount()) : null);
 
             if (!recordingStatus.isRecording()) {
-                ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, startTime, zoneOffset);
+                ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, tracksListItem.startTime(), tracksListItem.zoneOffset());
             } else {
                 viewBinding.trackListItemDate.setText(null);
                 viewBinding.trackListItemTime.setText(null);
             }
 
-            viewBinding.trackListItemActivityTypeLocalized.setText(activityTypeLocalized);
-            viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(activityTypeLocalized) ? View.GONE : View.VISIBLE);
+            viewBinding.trackListItemActivityTypeLocalized.setText(tracksListItem.activityTypeLocalized());
+            viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(tracksListItem.activityTypeLocalized()) ? View.GONE : View.VISIBLE);
 
-            viewBinding.trackListItemDescription.setText(description);
-            viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
+            viewBinding.trackListItemDescription.setText(tracksListItem.description());
+            viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(tracksListItem.description()) ? View.GONE : View.VISIBLE);
 
             setSelected(selection.get((int) trackId.id()));
         }

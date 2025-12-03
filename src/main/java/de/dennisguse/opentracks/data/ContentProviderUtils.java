@@ -180,14 +180,12 @@ public class ContentProviderUtils {
         return tracks;
     }
 
-    //TODO Implement someting like TrackPointIterator: just as a cursor
-    public Cursor searchTracks(String searchQuery) {
+    public AutoCloseableIterator<TrackListIterator.Item> searchTracks(String searchQuery) {
         // Needed, because MARKER_COUNT is a virtual column and has to be explicitly requested.
-        // Used only be TrackListAdapter
         final String[] PROJECTION = new String[]{
                 TracksColumns._ID,
                 TracksColumns.NAME,
-                TracksColumns.DESCRIPTION, //TODO Needed?
+                TracksColumns.DESCRIPTION,
                 TracksColumns.ACTIVITY_TYPE,
                 TracksColumns.ACTIVITY_TYPE_LOCALIZED,
                 TracksColumns.STARTTIME,
@@ -208,7 +206,7 @@ public class ContentProviderUtils {
             selectionArgs = new String[]{"%" + searchQuery + "%", "%" + searchQuery + "%", "%" + searchQuery + "%"};
         }
 
-        return contentResolver.query(TracksColumns.CONTENT_URI, PROJECTION, selection, selectionArgs, sortOrder);
+        return new TrackListIterator(contentResolver.query(TracksColumns.CONTENT_URI, PROJECTION, selection, selectionArgs, sortOrder));
     }
 
     public Track getTrack(@NonNull Track.Id trackId) {
@@ -508,6 +506,7 @@ public class ContentProviderUtils {
         return contentResolver.query(MarkerColumns.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
     }
 
+    //TODO Use AutoCloseableIterator<Marker>
     public List<Marker> searchMarkers(Track.Id trackId, String query) {
         String selection = null;
         String[] selectionArgs = null;

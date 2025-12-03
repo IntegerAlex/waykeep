@@ -19,7 +19,6 @@ package de.dennisguse.opentracks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.Cursor;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -46,6 +45,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.TrackListIterator;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.TrackListBinding;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
@@ -63,6 +63,7 @@ import de.dennisguse.opentracks.ui.aggregatedStatistics.ConfirmDeleteDialogFragm
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.RecyclerViewSwipeDeleteCallback;
+import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.IntentDashboardUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
@@ -311,7 +312,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         viewBinding.trackListToolbar.setTitle(Objects.requireNonNullElseGet(searchQuery, () -> getString(R.string.app_name)));
 
-        Cursor tracks = new ContentProviderUtils(this).searchTracks(searchQuery);
+        AutoCloseableIterator<TrackListIterator.Item> tracks = new ContentProviderUtils(this).searchTracks(searchQuery);
 
         adapter.swapData(tracks);
     }
