@@ -30,7 +30,6 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -49,6 +48,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.databinding.MarkerEditBinding;
 
 /**
@@ -111,8 +111,7 @@ public class MarkerEditActivity extends AbstractActivity {
         hasCamera = getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
 
         // Setup UI elements
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.marker_types, android.R.layout.simple_dropdown_item_1line);
-        viewBinding.markerEditMarkerType.setAdapter(adapter);
+        viewBinding.markerEditMarkerType.setAdapter(MarkerColumns.getTypes(this));
         viewBinding.markerEditPhotoDelete.setOnClickListener(v -> viewModel.onPhotoDelete(viewBinding.markerEditName.getText().toString(),
                 viewBinding.markerEditMarkerType.getText().toString(),
                 viewBinding.markerEditDescription.getText().toString()));

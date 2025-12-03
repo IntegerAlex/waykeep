@@ -16,9 +16,12 @@
 
 package de.dennisguse.opentracks.data.tables;
 
+import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.widget.ArrayAdapter;
 
+import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 
 /**
@@ -66,4 +69,8 @@ public interface MarkerColumns extends BaseColumns {
             + ")";
 
     String CREATE_TABLE_INDEX = "CREATE INDEX " + TABLE_NAME + "_" + TRACKID + "_index ON " + TABLE_NAME + "(" + TRACKID + ")";
+
+    static ArrayAdapter<CharSequence> getTypes(Context context) {
+        return ArrayAdapter.createFromResource(context, R.array.marker_types, android.R.layout.simple_dropdown_item_1line);
+    }
 }
