@@ -174,14 +174,6 @@ public class StringUtils {
         return new Pair<>(value, context.getString(R.string.sensor_unit_power));
     }
 
-    @Deprecated //TODO Move to strings.xml
-    public static String getCategory(String category) {
-        if (category == null || category.isEmpty()) {
-            return null;
-        }
-        return "[" + category + "]";
-    }
-
     @Deprecated //TODO use separate UI elements rather than concatenating strings.
     public static String getCategoryDescription(String category, String description) {
         if (category == null || category.isEmpty()) {
@@ -189,7 +181,7 @@ public class StringUtils {
         }
 
         StringBuilder builder = new StringBuilder();
-        builder.append(getCategory(category));
+        builder.append(category);
         if (description != null && !description.isEmpty()) {
             builder.append(" ").append(description);
         }

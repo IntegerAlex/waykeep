@@ -186,7 +186,7 @@ public class MarkerDetailFragment extends Fragment {
             viewBinding.markerDetailMarkerPhoto.setImageDrawable(MarkerUtils.getDefaultPhoto(getContext()));
         }
 
-        viewBinding.markerDetailMarkerCategory.setText(StringUtils.getCategory(marker.category()));
+        viewBinding.markerDetailMarkerCategory.setText(marker.category());
         viewBinding.markerDetailMarkerDescription.setText(marker.description());
 
         viewBinding.markerDetailMarkerLocation.setText(StringUtils.formatCoordinate(getContext(), marker.position()));
