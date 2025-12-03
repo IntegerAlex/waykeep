@@ -35,7 +35,6 @@ import de.dennisguse.opentracks.ui.util.ExecutorListViewService;
 import de.dennisguse.opentracks.ui.util.ListItemUtils;
 import de.dennisguse.opentracks.ui.util.ThemeUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
-import de.dennisguse.opentracks.util.StringUtils;
 
 public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
 
@@ -196,8 +195,8 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ListItemUtils.setDateAndTime(context, viewBinding.markerListItemDate, viewBinding.markerListItemTime, marker.position().time(), timeZone);
             }
 
-            String categoryDescription = StringUtils.getCategoryDescription(marker.category(), marker.description());
-            viewBinding.markerListItemTimeDistance.setText(categoryDescription);
+            viewBinding.markerListItemDescription.setText(marker.description());
+            viewBinding.markerListItemCategory.setText(marker.category());
 
             setSelected(selection.get((int) getId()));
         }

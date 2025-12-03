@@ -174,20 +174,6 @@ public class StringUtils {
         return new Pair<>(value, context.getString(R.string.sensor_unit_power));
     }
 
-    @Deprecated //TODO use separate UI elements rather than concatenating strings.
-    public static String getCategoryDescription(String category, String description) {
-        if (category == null || category.isEmpty()) {
-            return description;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(category);
-        if (description != null && !description.isEmpty()) {
-            builder.append(" ").append(description);
-        }
-        return builder.toString();
-    }
-
     /**
      * Formats the given text as a XML CDATA element.
      * This includes adding the starting and ending CDATA tags.
