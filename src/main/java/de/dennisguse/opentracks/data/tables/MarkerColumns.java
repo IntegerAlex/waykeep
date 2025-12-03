@@ -38,7 +38,7 @@ public interface MarkerColumns extends BaseColumns {
     // Columns
     String NAME = "name"; // marker name
     String DESCRIPTION = "description"; // marker description
-    String CATEGORY = "category"; // marker category
+    String TYPE_LOCALIZED = "category";
     String TRACKID = "trackid"; // track id
     String LONGITUDE = "longitude"; // longitude
     String LATITUDE = "latitude"; // latitude
@@ -53,7 +53,7 @@ public interface MarkerColumns extends BaseColumns {
             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NAME + " TEXT, "
             + DESCRIPTION + " TEXT, "
-            + CATEGORY + " TEXT, "
+            + TYPE_LOCALIZED + " TEXT, "
             + TRACKID + " INTEGER NOT NULL, "
             + LONGITUDE + " INTEGER, "
             + LATITUDE + " INTEGER, "

@@ -256,7 +256,7 @@ public class GPXTrackExporter implements TrackExporter {
         printWriter.println("<time>" + StringUtils.formatDateTimeIso8601(marker.position().time(), zoneOffset) + "</time>");
         printWriter.println("<name>" + StringUtils.formatCData(marker.name()) + "</name>");
         printWriter.println("<desc>" + StringUtils.formatCData(marker.description()) + "</desc>");
-        printWriter.println("<type>" + StringUtils.formatCData(marker.category()) + "</type>"); //TODO This is localized; may be better to export in English only. See #1608
+        printWriter.println("<type>" + StringUtils.formatCData(marker.typeLocalized()) + "</type>"); //TODO This is localized; may be better to export in English only. See #1608
         printWriter.println("</wpt>");
     }
 

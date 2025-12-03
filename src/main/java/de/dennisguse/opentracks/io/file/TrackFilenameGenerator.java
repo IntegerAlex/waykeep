@@ -20,7 +20,7 @@ public class TrackFilenameGenerator {
 
     public static final String UUID_KEY = "{uuid}";
     public static final String TRACKNAME_KEY = "{name}";
-    public static final String ACTIVITY_TYPE_KEY = "{category}";
+    public static final String ACTIVITY_TYPE_KEY = "{typeLocalized}";
     public static final String STARTTIME_TIME_KEY = "{time}";
     public static final String STARTTIME_DATE_KEY = "{date}";
 

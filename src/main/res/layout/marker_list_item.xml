@@ -44,7 +44,7 @@
 
     <!-- Total time and distance -->
     <TextView
-        android:id="@+id/marker_list_item_category"
+        android:id="@+id/marker_list_item_type_localized"
         style='?attr/textAppearanceBodySmall'
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         app:layout_constraintStart_toStartOf="@+id/marker_list_item_name"
-        app:layout_constraintTop_toBottomOf="@+id/marker_list_item_category"
+        app:layout_constraintTop_toBottomOf="@+id/marker_list_item_type_localized"
         tools:text="Some wonderful mountain" />
 
     <!-- Time -->
@@ -82,7 +82,7 @@
         app:barrierDirection="bottom"
         app:layout_constraintTop_toBottomOf="@+id/marker_list_item_description"
 
-        app:constraint_referenced_ids="marker_list_item_photo,marker_list_item_name,marker_list_item_date,marker_list_item_category" />
+        app:constraint_referenced_ids="marker_list_item_photo,marker_list_item_name,marker_list_item_date,marker_list_item_type_localized" />
 
     <!-- Bottom Line -->
     <View

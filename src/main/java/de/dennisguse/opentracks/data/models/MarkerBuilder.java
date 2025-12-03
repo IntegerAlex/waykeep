@@ -34,7 +34,7 @@ public final class MarkerBuilder {
     private Marker.Id id;
     private String name;
     private String description;
-    private String category;
+    private String typeLocalized;
     private final Track.Id trackId;
 
     //Some data might not be used.
@@ -48,7 +48,7 @@ public final class MarkerBuilder {
         this.trackId = trackId;
         this.name = "";
         this.description = "";
-        this.category = "";
+        this.typeLocalized = "";
         this.photoUrl = null;
 
         if (!trackPoint.hasLocation())
@@ -57,11 +57,11 @@ public final class MarkerBuilder {
         this.position = trackPoint.getPosition();
     }
 
-    public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String category, Uri photoUrl) {
+    public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String typeLocalized, Uri photoUrl) {
         this(trackId, trackPoint);
         this.name = name;
         this.description = description;
-        this.category = category;
+        this.typeLocalized = typeLocalized;
         this.photoUrl = photoUrl;
     }
 
@@ -70,7 +70,7 @@ public final class MarkerBuilder {
         this.trackId = marker.trackId();
         this.name = marker.name();
         this.description = marker.description();
-        this.category = marker.category();
+        this.typeLocalized = marker.typeLocalized();
         this.position = marker.position();
         this.photoUrl = marker.photoUrl();
     }
@@ -102,8 +102,8 @@ public final class MarkerBuilder {
         this.description = description;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setTypeLocalized(String typeLocalized) {
+        this.typeLocalized = typeLocalized;
     }
 
     public Track.Id getTrackId() {
@@ -128,7 +128,7 @@ public final class MarkerBuilder {
                 trackId,
                 name,
                 description,
-                category,
+                typeLocalized,
                 position,
                 photoUrl
         );

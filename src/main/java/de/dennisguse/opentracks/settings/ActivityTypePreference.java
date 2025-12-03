@@ -101,8 +101,8 @@ public class ActivityTypePreference extends DialogPreference {
         }
 
         private void showIconSelectDialog() {
-            String category = PreferencesUtils.getDefaultActivityTypeLocalized();
-            ChooseActivityTypeDialogFragment.showDialog(getActivity().getSupportFragmentManager(), getContext(), category);
+            String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
+            ChooseActivityTypeDialogFragment.showDialog(getActivity().getSupportFragmentManager(), getContext(), activityTypeLocalized);
         }
 
         @Override

@@ -157,7 +157,7 @@ public class ExportImportTest {
                         trackId,
                         "Marker 1",
                         "Marker 1 desc",
-                        "Marker 1 category",
+                        "Marker 1 typeLocalized",
                         service.getLastStoredTrackPointWithLocation().getPosition(),
                         null
                 ));
@@ -180,7 +180,7 @@ public class ExportImportTest {
                         trackId,
                         "Marker 2",
                         "Marker 2 desc",
-                        "Marker 2 category",
+                        "Marker 2 typeLocalized",
                         service.getLastStoredTrackPointWithLocation().getPosition(),
                         null
                 ));
@@ -555,7 +555,7 @@ public class ExportImportTest {
         for (int i = 0; i < markers.size(); i++) {
             Marker marker = markers.get(i);
             Marker importMarker = importedMarkers.get(i);
-            assertEquals(marker.category(), importMarker.category());
+            assertEquals(marker.typeLocalized(), importMarker.typeLocalized());
             assertEquals(marker.description(), importMarker.description());
             assertEquals(marker.name(), importMarker.name());
             assertNull(importMarker.photoUrl());

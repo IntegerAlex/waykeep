@@ -311,7 +311,7 @@ public class ContentProviderUtils {
         int idIndex = cursor.getColumnIndexOrThrow(MarkerColumns._ID);
         int nameIndex = cursor.getColumnIndexOrThrow(MarkerColumns.NAME);
         int descriptionIndex = cursor.getColumnIndexOrThrow(MarkerColumns.DESCRIPTION);
-        int categoryIndex = cursor.getColumnIndexOrThrow(MarkerColumns.CATEGORY);
+        int typeLocalizedIndex = cursor.getColumnIndexOrThrow(MarkerColumns.TYPE_LOCALIZED);
         int trackIdIndex = cursor.getColumnIndexOrThrow(MarkerColumns.TRACKID);
         int longitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.LONGITUDE);
         int latitudeIndex = cursor.getColumnIndexOrThrow(MarkerColumns.LATITUDE);
@@ -367,7 +367,7 @@ public class ContentProviderUtils {
                 new Track.Id(cursor.getLong(trackIdIndex)),
                 !cursor.isNull(nameIndex) ? cursor.getString(nameIndex) : "",
                 !cursor.isNull(descriptionIndex) ? cursor.getString(descriptionIndex) : "",
-                !cursor.isNull(categoryIndex) ? cursor.getString(categoryIndex) : "",
+                !cursor.isNull(typeLocalizedIndex) ? cursor.getString(typeLocalizedIndex) : "",
                 position,
                 photoUrl
         );
@@ -472,7 +472,7 @@ public class ContentProviderUtils {
 
         values.put(MarkerColumns.NAME, marker.name());
         values.put(MarkerColumns.DESCRIPTION, marker.description());
-        values.put(MarkerColumns.CATEGORY, marker.category());
+        values.put(MarkerColumns.TYPE_LOCALIZED, marker.typeLocalized());
 
         values.put(MarkerColumns.LONGITUDE, (int) (marker.position().longitude() * 1E6));
         values.put(MarkerColumns.LATITUDE, (int) (marker.position().latitude() * 1E6));
@@ -521,7 +521,7 @@ public class ContentProviderUtils {
         } else {
             selection = MarkerColumns.NAME + " LIKE ? OR " +
                     MarkerColumns.DESCRIPTION + " LIKE ? OR " +
-                    MarkerColumns.CATEGORY + " LIKE ?";
+                    MarkerColumns.TYPE_LOCALIZED + " LIKE ?";
             selectionArgs = new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
             sortOrder = MarkerColumns.DEFAULT_SORT_ORDER + " DESC";
         }

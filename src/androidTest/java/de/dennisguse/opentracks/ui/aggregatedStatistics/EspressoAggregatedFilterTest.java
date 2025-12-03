@@ -41,7 +41,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 @RunWith(AndroidJUnit4.class)
 public class EspressoAggregatedFilterTest {
 
-    private final String CATEGORY = "category";
+    private final String ACTIVITY_TYPE_LOCALIZED = "activityTypeLocalized";
 
     @Rule
     public ActivityScenarioRule<TrackListActivity> mActivityTestRule = new ActivityScenarioRule<>(TrackListActivity.class);
@@ -53,7 +53,7 @@ public class EspressoAggregatedFilterTest {
     public void setUp() {
         Pair<Track, List<TrackPoint>> pair = TestDataUtil.createTrack(new Track.Id(System.currentTimeMillis()), 20);
         TrackBuilder trackBuilder = new TrackBuilder(pair.first);
-        trackBuilder.setActivityTypeLocalized(CATEGORY);
+        trackBuilder.setActivityTypeLocalized(ACTIVITY_TYPE_LOCALIZED);
         TestDataUtil.insertTrackWithLocations(new ContentProviderUtils(ApplicationProvider.getApplicationContext()), trackBuilder.getTrack(), pair.second);
     }
 
@@ -69,9 +69,9 @@ public class EspressoAggregatedFilterTest {
         onView(withId(R.id.bottom_app_bar)).check(matches(hasDescendant(withId(R.id.aggregated_statistics_filter))));
         onView(withId(R.id.aggregated_statistics_filter)).perform(click());
 
-        // check there's a checkbox with CATEGORY text
+        // check there's a checkbox with ACTIVITY_TYPE_LOCALIZED text
         ViewInteraction checkBox = onView(
-                allOf(withId(R.id.filter_dialog_check_button), withText(CATEGORY),
+                allOf(withId(R.id.filter_dialog_check_button), withText(ACTIVITY_TYPE_LOCALIZED),
                         withParent(allOf(withId(R.id.filter_items),
                                 withParent(IsInstanceOf.instanceOf(android.view.ViewGroup.class)))),
                         isDisplayed()));

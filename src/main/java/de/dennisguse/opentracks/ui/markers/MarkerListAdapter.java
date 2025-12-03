@@ -196,7 +196,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
 
             viewBinding.markerListItemDescription.setText(marker.description());
-            viewBinding.markerListItemCategory.setText(marker.category());
+            viewBinding.markerListItemTypeLocalized.setText(marker.typeLocalized());
 
             setSelected(selection.get((int) getId()));
         }

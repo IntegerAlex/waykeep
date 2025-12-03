@@ -76,7 +76,7 @@ public class MarkerEditViewModel extends AndroidViewModel {
         }
     }
 
-    public void onPhotoDelete(String name, String category, String description) {
+    public void onPhotoDelete(String name, String typeLocalized, String description) {
         MarkerBuilder marker = new MarkerBuilder(getMarker());
         if (marker.hasPhoto()) {
             if (!marker.getPhotoUrl().equals(photoOriginalUri)) {
@@ -84,22 +84,22 @@ public class MarkerEditViewModel extends AndroidViewModel {
             }
             marker.setPhotoUrl(null);
             marker.setName(name);
-            marker.setCategory(category);
+            marker.setTypeLocalized(typeLocalized);
             marker.setDescription(description);
             markerData.postValue(marker.getMarker());
         }
     }
 
-    public void onNewCameraPhoto(@NonNull Uri photoUri, String name, String category, String description) {
+    public void onNewCameraPhoto(@NonNull Uri photoUri, String name, String typeLocalized, String description) {
         MarkerBuilder marker = new MarkerBuilder(getMarker());
         marker.setPhotoUrl(photoUri);
         marker.setName(name);
-        marker.setCategory(category);
+        marker.setTypeLocalized(typeLocalized);
         marker.setDescription(description);
         markerData.postValue(marker.getMarker());
     }
 
-    public void onNewGalleryPhoto(@NonNull Uri srcUri, String name, String category, String description) {
+    public void onNewGalleryPhoto(@NonNull Uri srcUri, String name, String typeLocalized, String description) {
         MarkerBuilder marker = new MarkerBuilder(getMarker());
 
         try (ParcelFileDescriptor parcelFd = getApplication().getContentResolver().openFileDescriptor(srcUri, "r")) {
@@ -110,7 +110,7 @@ public class MarkerEditViewModel extends AndroidViewModel {
             Uri photoUri = FileUtils.getUriForFile(getApplication(), dstFile);
             marker.setPhotoUrl(photoUri);
             marker.setName(name);
-            marker.setCategory(category);
+            marker.setTypeLocalized(typeLocalized);
             marker.setDescription(description);
 
             markerData.postValue(marker.getMarker());
@@ -120,11 +120,11 @@ public class MarkerEditViewModel extends AndroidViewModel {
         }
     }
 
-    public void onDone(String name, String category, String description) {
+    public void onDone(String name, String typeLocalized, String description) {
         MarkerBuilder marker = new MarkerBuilder(getMarker());
 
         marker.setName(name);
-        marker.setCategory(category);
+        marker.setTypeLocalized(typeLocalized);
         marker.setDescription(description);
         if (marker.getId() == null) {
             new ContentProviderUtils(getApplication()).insertMarker(marker.getMarker());

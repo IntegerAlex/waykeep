@@ -23,7 +23,7 @@ public record Marker(
         @NonNull
         String description,
         @NonNull
-        String category,
+        String typeLocalized,
 
         //Some data might not be used.
         Position position,

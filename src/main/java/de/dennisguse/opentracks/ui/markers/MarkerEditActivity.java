@@ -178,7 +178,7 @@ public class MarkerEditActivity extends AbstractActivity {
     private void loadMarkerData(Marker data) {
         marker = data;
         viewBinding.markerEditName.setText(marker.name());
-        viewBinding.markerEditMarkerType.setText(marker.category());
+        viewBinding.markerEditMarkerType.setText(marker.typeLocalized());
         viewBinding.markerEditDescription.setText(marker.description());
         if (marker.photoUrl() != null) {
             setMarkerImageView(marker.photoUrl());

@@ -266,10 +266,10 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeMarker(Marker marker, ZoneOffset zoneOffset) {
         boolean existsPhoto = MarkerUtils.buildInternalPhotoFile(context, marker.trackId(), marker.photoUrl()) != null;
-        if (marker.photoUrl() != null && exportPhotos && existsPhoto) {
+        if (exportPhotos && existsPhoto) {
             writePhotoOverlay(marker, zoneOffset);
         } else {
-            writePlacemark(marker.name(), marker.category(), marker.description(), marker.position(), marker.position().time(), zoneOffset);
+            writePlacemark(marker.name(), marker.typeLocalized(), marker.description(), marker.position(), marker.position().time(), zoneOffset);
         }
     }
 
@@ -437,7 +437,7 @@ public class KMLTrackExporter implements TrackExporter {
         printWriter.println("</Camera>");
         printWriter.println("<TimeStamp><when>" + getTime(zoneOffset, marker.position().time()) + "</when></TimeStamp>");
         printWriter.println("<styleUrl>#" + MARKER_STYLE + "</styleUrl>");
-        writeTypeLocalized(marker.category());
+        writeTypeLocalized(marker.typeLocalized());
 
         if (exportPhotos) {
             printWriter.println("<Icon><href>" + KMZTrackExporter.buildKmzImageFilePath(marker) + "</href></Icon>");

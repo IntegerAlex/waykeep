@@ -142,7 +142,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     public void startElement(String uri, String localName, String tag, Attributes attributes) throws SAXException {
         switch (tag) {
             case TAG_PLACEMARK, TAG_PHOTO_OVERLAY ->
-                // Note that a track is contained in a Placemark, calling onMarkerStart will clear various track variables like name, category, and description.
+                // Note that a track is contained in a Placemark, calling onMarkerStart will clear various track variables like name, typeLocalized, and description.
                     onMarkerStart();
             case TAG_MULTI_TRACK, TAG_KML22_MULTI_TRACK -> trackImporter.newTrack();
             case TAG_TRACK, TAG_KML22_TRACK -> {

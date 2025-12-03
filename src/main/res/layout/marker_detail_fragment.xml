@@ -27,7 +27,7 @@ limitations under the License.
         tools:text="Marker Location" />
 
     <TextView
-        android:id="@+id/marker_detail_marker_category"
+        android:id="@+id/marker_detail_marker_type_localized"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Marker Category" />
