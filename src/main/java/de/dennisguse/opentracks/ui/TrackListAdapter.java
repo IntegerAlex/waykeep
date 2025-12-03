@@ -2,6 +2,7 @@ package de.dennisguse.opentracks.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +34,6 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.ListItemUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
-import de.dennisguse.opentracks.util.StringUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
 
@@ -232,9 +232,11 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 viewBinding.trackListItemTime.setText(null);
             }
 
-            String categoryDescription = StringUtils.getCategoryDescription(activityTypeLocalized, description);
-            viewBinding.trackListItemCategoryDescription.setText(categoryDescription);
-            viewBinding.trackListItemCategoryDescription.setVisibility(categoryDescription.isEmpty() ? View.GONE : View.VISIBLE);
+            viewBinding.trackListItemActivityTypeLocalized.setText(activityTypeLocalized);
+            viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(activityTypeLocalized) ? View.GONE : View.VISIBLE);
+
+            viewBinding.trackListItemDescription.setText(description);
+            viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
 
             setSelected(selection.get((int) trackId.id()));
         }

@@ -97,15 +97,27 @@
 
     <!-- Category and description -->
     <TextView
-        android:id="@+id/track_list_item_category_description"
+        android:id="@+id/track_list_item_activity_type_localized"
+        style="?attr/textAppearanceBodySmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
+        app:layout_constraintTop_toBottomOf="@id/track_list_item_barrier"
+        tools:text="Cycling" />
+
+    <TextView
+        android:id="@+id/track_list_item_description"
         style="?attr/textAppearanceBodySmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_barrier"
+        app:layout_constraintStart_toStartOf="@id/track_list_item_activity_type_localized"
+        app:layout_constraintTop_toBottomOf="@id/track_list_item_activity_type_localized"
         tools:text="Description" />
 
     <!-- Bottom Line -->
@@ -115,6 +127,6 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/track_list_item_category_description" />
+        app:layout_constraintTop_toBottomOf="@+id/track_list_item_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
