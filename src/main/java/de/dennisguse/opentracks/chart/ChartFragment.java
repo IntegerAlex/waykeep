@@ -32,7 +32,6 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.TrackDataHub;
-import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
@@ -216,27 +215,6 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             //Avoid ConcurrentModificationException exception
             viewBinding.chartView.addChartPoints(Collections.unmodifiableList(pendingPoints));
             pendingPoints.clear();
-            runOnUiThread(updateChart);
-        }
-    }
-
-    @Override
-    public void clearMarkers() {
-        if (isResumed()) {
-            viewBinding.chartView.clearMarker();
-        }
-    }
-
-    @Override
-    public void onNewMarker(@NonNull Marker marker) {
-        if (isResumed()) {
-            viewBinding.chartView.addMarker(marker);
-        }
-    }
-
-    @Override
-    public void onNewMarkersDone() {
-        if (isResumed()) {
             runOnUiThread(updateChart);
         }
     }

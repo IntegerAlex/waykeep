@@ -45,10 +45,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.stats.ExtremityMonitor;
-import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.ui.util.ThemeUtils;
 import de.dennisguse.opentracks.util.StringUtils;
 
@@ -74,9 +72,6 @@ public class ChartView extends View {
     private static final int SPACER = 4;
     private static final int Y_AXIS_OFFSET = 16;
 
-    //TODO Determine from actual size of the used drawable
-    private static final float MARKER_X_ANCHOR = 13f / 48f;
-
     static {
         X_FRACTION_FORMAT.setMaximumFractionDigits(1);
         X_FRACTION_FORMAT.setMinimumFractionDigits(1);
@@ -89,17 +84,12 @@ public class ChartView extends View {
     private final ChartValueSeries heartRateSeries;
 
     private final LinkedList<ChartPoint> chartPoints = new LinkedList<>();
-    private final List<Marker> markers = new LinkedList<>();
     private final ExtremityMonitor xExtremityMonitor = new ExtremityMonitor();
     private final int backgroundColor;
     private final Paint axisPaint;
     private final Paint xAxisMarkerPaint;
     private final Paint gridPaint;
-    private final Paint markerPaint;
     private final Drawable pointer;
-    private final Drawable markerPin;
-    private final int markerWidth;
-    private final int markerHeight;
     private final Scroller scroller;
     private double maxX = 1.0;
     private int zoomLevel = 1;
@@ -333,17 +323,8 @@ public class ChartView extends View {
         gridPaint.setAntiAlias(false);
         gridPaint.setPathEffect(new DashPathEffect(new float[]{3, 2}, 0));
 
-        markerPaint = new Paint();
-        markerPaint.setStyle(Style.STROKE);
-        markerPaint.setAntiAlias(false);
-
         pointer = ContextCompat.getDrawable(context, R.drawable.ic_logo_color_24dp);
         pointer.setBounds(0, 0, pointer.getIntrinsicWidth(), pointer.getIntrinsicHeight());
-
-        markerPin = MarkerUtils.getDefaultPhoto(context);
-        markerWidth = markerPin.getIntrinsicWidth();
-        markerHeight = markerPin.getIntrinsicHeight();
-        markerPin.setBounds(0, 0, markerWidth, markerHeight);
 
         scroller = new Scroller(context);
         setFocusable(true);
@@ -465,18 +446,6 @@ public class ChartView extends View {
      */
     public void resetScroll() {
         scrollTo(0, 0);
-    }
-
-    public void addMarker(Marker marker) {
-        synchronized (markers) {
-            markers.add(marker);
-        }
-    }
-
-    public void clearMarker() {
-        synchronized (markers) {
-            markers.clear();
-        }
     }
 
     private boolean canZoomIn() {

@@ -30,11 +30,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
@@ -91,7 +89,6 @@ public class TrackDataHub {
 
     // Registered listeners
     private ContentObserver tracksTableObserver;
-    private ContentObserver markersTableObserver;
     private ContentObserver trackPointsTableObserver;
 
     public TrackDataHub(Context context) {
@@ -126,14 +123,6 @@ public class TrackDataHub {
         };
         contentResolver.registerContentObserver(TracksColumns.CONTENT_URI, false, tracksTableObserver);
 
-        markersTableObserver = new ContentObserver(handler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                notifyMarkersTableUpdate(listeners);
-            }
-        };
-        contentResolver.registerContentObserver(MarkerColumns.CONTENT_URI, false, markersTableObserver);
-
         trackPointsTableObserver = new ContentObserver(handler) {
             @Override
             public void onChange(boolean selfChange) {
@@ -152,7 +141,6 @@ public class TrackDataHub {
         //Unregister listeners
         ContentResolver contentResolver = context.getContentResolver();
         contentResolver.unregisterContentObserver(tracksTableObserver);
-        contentResolver.unregisterContentObserver(markersTableObserver);
         contentResolver.unregisterContentObserver(trackPointsTableObserver);
 
         if (handlerThread != null) {
@@ -219,7 +207,6 @@ public class TrackDataHub {
             listener.clearTrackPoints();
         }
         notifyTrackPointsTableUpdate(true, listeners);
-        notifyMarkersTableUpdate(listeners);
     }
 
     /**
@@ -240,9 +227,6 @@ public class TrackDataHub {
             resetSamplingState();
         }
         notifyTrackPointsTableUpdate(isOnlyListener, trackDataListeners);
-
-        //Markers
-        notifyMarkersTableUpdate(trackDataListeners);
     }
 
     /**
@@ -258,30 +242,6 @@ public class TrackDataHub {
         for (Listener trackDataListener : trackDataListeners) {
             trackDataListener.onTrackUpdated(track);
         }
-    }
-
-    /**
-     * Notifies marker table update.
-     * Currently, reloads all the markers up to {@link #MAX_DISPLAYED_MARKERS}. To be run in the {@link #handler} thread.
-     *
-     * @param trackDataListeners the track data listeners to notify
-     */
-    private void notifyMarkersTableUpdate(Set<Listener> trackDataListeners) {
-        if (trackDataListeners.isEmpty()) {
-            return;
-        }
-
-        for (Listener trackDataListener : trackDataListeners) {
-            trackDataListener.clearMarkers();
-        }
-
-        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(selectedTrackId, MAX_DISPLAYED_MARKERS)) {
-            markerIterator.forEachRemaining(current ->
-                trackDataListeners.forEach(listener -> listener.onNewMarker(current))
-            );
-        }
-
-        trackDataListeners.forEach(Listener::onNewMarkersDone);
     }
 
     /**
@@ -417,27 +377,6 @@ public class TrackDataHub {
          * Called when finish sending new track points.
          */
         default void onNewTrackPointsDone() {
-        }
-
-        /**
-         * Called to clear previously sent markers.
-         */
-        default void clearMarkers() {
-        }
-
-        /**
-         * Called when a new marker is read.
-         *
-         * @param marker the marker
-         */
-        default void onNewMarker(@NonNull Marker marker) {
-        }
-
-        /**
-         * Called when finish sending new markers.
-         * This gets called after every batch of calls to {@link #clearMarkers()} and {@link #onNewMarker(Marker)}.
-         */
-        default void onNewMarkersDone() {
         }
     }
 }
