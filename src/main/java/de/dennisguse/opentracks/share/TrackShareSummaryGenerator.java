@@ -17,6 +17,7 @@
 package de.dennisguse.opentracks.share;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import androidx.annotation.VisibleForTesting;
@@ -71,7 +72,7 @@ public class TrackShareSummaryGenerator {
     }
 
     private void writeString(String text, StringBuilder builder, int resId) {
-        if (text == null || text.isEmpty()) {
+        if (TextUtils.isEmpty(text)) {
             text = context.getString(R.string.value_unknown);
         }
         builder.append(context.getString(resId, text));

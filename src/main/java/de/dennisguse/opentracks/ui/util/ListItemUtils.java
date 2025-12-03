@@ -17,6 +17,7 @@
 package de.dennisguse.opentracks.ui.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import java.time.Duration;
@@ -49,16 +50,17 @@ public class ListItemUtils {
      */
     private static String getTimeDistance(String totalTime, String totalDistance) {
         StringBuilder builder = new StringBuilder();
-        if (totalTime != null && !totalTime.isEmpty()) {
+        if (!TextUtils.isEmpty(totalTime)) {
             if (builder.length() != 0) {
                 builder.append(" ‧ ");
             }
             builder.append(totalTime);
         }
-        if (totalDistance != null && !totalDistance.isEmpty()) {
+        if (!TextUtils.isEmpty(totalDistance)) {
             if (builder.length() != 0) {
                 builder.append(" ");
             }
+            //TODO Use strings.xml
             builder.append("(").append(totalDistance).append(")");
         }
         return builder.toString();
