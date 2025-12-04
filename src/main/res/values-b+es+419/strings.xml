@@ -481,4 +481,6 @@
     <string name="description_pace_nautical">Cadencia (min/NM)</string>
     <string name="description_speed_nautical">Velocidad (nudos)</string>
     <string name="image_discard">Descartar</string>
+    <string name="menu_export_all_one_file">Exportar todo (un archivo para todas las pistas)</string>
+    <string name="permission_recording_failed">OpenTracks requiere permisos adicionales para acceder a tu ubicación y a tus dispositivos cercanos.</string>
 </resources>
