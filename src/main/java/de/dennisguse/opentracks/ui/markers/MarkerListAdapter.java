@@ -28,6 +28,7 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.databinding.MarkerListItemBinding;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
@@ -42,7 +43,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final AppCompatActivity context;
     private final RecyclerView recyclerView;
-    private List<Marker> markers;
+    private MarkerIterator markerIterator;
     private final SparseBooleanArray selection;
     private boolean selectionMode;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
@@ -52,10 +53,10 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final LruCache<Marker.Id, Bitmap> memoryCache;
 
-    public MarkerListAdapter(AppCompatActivity context, RecyclerView recyclerView, List<Marker> markers) {
+    public MarkerListAdapter(AppCompatActivity context, RecyclerView recyclerView, MarkerIterator markerIterator) {
         this.context = context;
         this.recyclerView = recyclerView;
-        this.markers = markers;
+        this.markerIterator = markerIterator;
 
         selection = new SparseBooleanArray();
         selectionMode = false;
@@ -87,19 +88,19 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
 
-        viewHolder.bind(markers.get(position));
+        viewHolder.bind(markerIterator.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if (markers == null) {
+        if (markerIterator == null) {
             return 0;
         }
-        return markers.size();
+        return markerIterator.getCount();
     }
 
-    public void swapData(List<Marker> markers) {
-        this.markers = markers;
+    public void swapData(MarkerIterator markers) {
+        this.markerIterator = markers;
         this.notifyDataSetChanged();
     }
 
@@ -135,8 +136,10 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
-            for (Marker marker : markers) {
-                selection.put((int) marker.id().id(), true);
+            markerIterator.moveToPosition(-1);
+            while (markerIterator.hasNext()) {
+                selection.put((int) markerIterator.get().id().id(), true);
+                markerIterator.next();
             }
         } else {
             selection.clear();

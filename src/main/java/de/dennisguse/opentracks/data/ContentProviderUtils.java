@@ -506,8 +506,7 @@ public class ContentProviderUtils {
         return contentResolver.query(MarkerColumns.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
     }
 
-    //TODO Use AutoCloseableIterator<Marker>
-    public List<Marker> searchMarkers(Track.Id trackId, String query) {
+    public MarkerIterator searchMarkers(Track.Id trackId, String query) {
         String selection = null;
         String[] selectionArgs = null;
         String sortOrder = null;
@@ -525,15 +524,7 @@ public class ContentProviderUtils {
             sortOrder = MarkerColumns.DEFAULT_SORT_ORDER + " DESC";
         }
 
-        ArrayList<Marker> markers = new ArrayList<>();
-        try (Cursor cursor = getMarkerCursor(null, selection, selectionArgs, sortOrder, -1)) {
-            if (cursor.moveToFirst()) {
-                do {
-                    markers.add(createMarker(cursor));
-                } while (cursor.moveToNext());
-            }
-        }
-        return markers;
+        return new MarkerIterator(this, getMarkerCursor(null, selection, selectionArgs, sortOrder, -1));
     }
 
     /**

@@ -26,12 +26,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import java.util.List;
 import java.util.Objects;
 
 import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.MarkerListBinding;
@@ -243,11 +243,11 @@ public class MarkerListActivity extends AbstractActivity implements DeleteMarker
 
         viewBinding.markerListToolbar.setTitle(Objects.requireNonNullElseGet(searchQuery, () -> getString(R.string.menu_markers)));
 
-        List<Marker> markers = contentProviderUtils.searchMarkers(trackId, searchQuery);
+        MarkerIterator markers = contentProviderUtils.searchMarkers(trackId, searchQuery);
 
         adapter.swapData(markers);
 
-        if (markers.isEmpty()) {
+        if (markers.getCount() == 0) {
             viewBinding.markerListEmpty.setVisibility(View.VISIBLE);
             viewBinding.markerList.setVisibility(View.GONE);
         } else {

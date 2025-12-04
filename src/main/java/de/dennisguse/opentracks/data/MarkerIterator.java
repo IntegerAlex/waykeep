@@ -11,12 +11,17 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
-class MarkerIterator extends AutoCloseableIterator<Marker> {
+public class MarkerIterator extends AutoCloseableIterator<Marker> {
 
     private static final String TAG = MarkerIterator.class.getSimpleName();
 
     private final ContentProviderUtils contentProviderUtils;
     private Cursor cursor;
+
+    MarkerIterator(ContentProviderUtils contentProviderUtils, Cursor cursor) {
+        this.contentProviderUtils = contentProviderUtils;
+        this.cursor = cursor;
+    }
 
     MarkerIterator(ContentProviderUtils contentProviderUtils, Track.Id trackId, int maxCount) {
         this.contentProviderUtils = contentProviderUtils;
