@@ -33,13 +33,14 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
+import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -128,7 +129,7 @@ public class GPXTrackExporter implements TrackExporter {
 
         LinkedList<TrackPoint> sensorPoints = new LinkedList<>();
 
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
+        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -238,7 +239,7 @@ public class GPXTrackExporter implements TrackExporter {
     }
 
     private void writeMarkers(Track track) throws InterruptedException {
-        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
+        try (MarkerIterator markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
             while (markerIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 

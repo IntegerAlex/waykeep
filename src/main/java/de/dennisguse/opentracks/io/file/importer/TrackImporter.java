@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -134,15 +135,7 @@ public class TrackImporter {
             trackData.uuid = UUID.randomUUID();
         }
 
-        trackPoints.sort((o1, o2) -> {
-            if (o1.getTime().isBefore(o2.getTime())) {
-                return -1;
-            }
-            if (o1.getTime().isAfter(o2.getTime())) {
-                return 1;
-            }
-            return 0;
-        });
+        trackPoints.sort(Comparator.comparing(TrackPoint::getTime));
 
         adjustTrackPoints();
 

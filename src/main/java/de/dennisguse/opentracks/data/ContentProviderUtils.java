@@ -56,7 +56,6 @@ import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -180,7 +179,7 @@ public class ContentProviderUtils {
         return tracks;
     }
 
-    public AutoCloseableIterator<TrackListIterator.Item> searchTracks(String searchQuery) {
+    public TrackListIterator searchTracks(String searchQuery) {
         // Needed, because MARKER_COUNT is a virtual column and has to be explicitly requested.
         final String[] PROJECTION = new String[]{
                 TracksColumns._ID,
@@ -401,11 +400,11 @@ public class ContentProviderUtils {
         return null;
     }
 
-    public AutoCloseableIterator<Marker> getMarkerIterator(@NonNull Track.Id trackId) {
+    public MarkerIterator getMarkerIterator(@NonNull Track.Id trackId) {
         return new MarkerIterator(this, trackId, -1);
     }
 
-    public AutoCloseableIterator<Marker> getMarkerIterator(@NonNull Track.Id trackId, int maxCount) {
+    public MarkerIterator getMarkerIterator(@NonNull Track.Id trackId, int maxCount) {
         return new MarkerIterator(this, trackId, maxCount);
     }
 
@@ -674,7 +673,7 @@ public class ContentProviderUtils {
      * @param trackId           the track id
      * @param startTrackPointId the starting trackPoint id. `null` to ignore
      */
-    public AutoCloseableIterator<TrackPoint> getTrackPointIterator(Track.Id trackId, TrackPoint.Id startTrackPointId) {
+    public TrackPointIterator getTrackPointIterator(Track.Id trackId, TrackPoint.Id startTrackPointId) {
         return new TrackPointIterator(this, trackId, startTrackPointId);
     }
 

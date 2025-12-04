@@ -32,10 +32,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -89,7 +89,7 @@ public class KMZTrackExporter implements TrackExporter {
 
     private void addImages(Context context, List<Track> tracks, ZipOutputStream zipOutputStream) throws InterruptedException, IOException {
         for (Track track : tracks) {
-            try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
+            try (MarkerIterator markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
                 while (markerIterator.hasNext()) {
                     if (Thread.interrupted()) throw new InterruptedException();
 

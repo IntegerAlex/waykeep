@@ -35,13 +35,14 @@ import java.util.Objects;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
+import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**
@@ -135,7 +136,7 @@ public class KMLTrackExporter implements TrackExporter {
 
     private void writeMarkers(Track track) throws InterruptedException {
         boolean hasMarkers = false;
-        try (AutoCloseableIterator<Marker> markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
+        try (MarkerIterator markerIterator = contentProviderUtils.getMarkerIterator(track.id())) {
             while (markerIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -156,7 +157,7 @@ public class KMLTrackExporter implements TrackExporter {
         boolean wroteTrack = false;
         boolean wroteSegment = false;
 
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
+        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointIterator(track.id(), null)) {
             while (trackPointIterator.hasNext()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 

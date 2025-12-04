@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
+import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -23,7 +25,6 @@ import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 public class TestDataUtil {
@@ -168,7 +169,7 @@ public class TestDataUtil {
     }
 
     public static List<TrackPoint> getTrackPoints(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
+        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
             ArrayList<TrackPoint> trackPoints = new ArrayList<>();
             trackPointIterator.forEachRemaining(trackPoints::add);
             return trackPoints;
@@ -176,7 +177,7 @@ public class TestDataUtil {
     }
 
     public static List<Marker> getMarkers(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
-        try (AutoCloseableIterator<Marker> trackPointIterator = contentProviderUtils.getMarkerIterator(trackId)) {
+        try (MarkerIterator trackPointIterator = contentProviderUtils.getMarkerIterator(trackId)) {
             ArrayList<Marker> markers = new ArrayList<>();
             trackPointIterator.forEachRemaining(markers::add);
             return markers;

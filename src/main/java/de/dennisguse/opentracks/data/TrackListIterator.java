@@ -3,12 +3,10 @@ package de.dennisguse.opentracks.data;
 import android.database.Cursor;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.NoSuchElementException;
 
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -18,12 +16,8 @@ import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.Item> {
 
-    private static final String TAG = TrackListIterator.class.getSimpleName();
-
-    private Cursor cursor;
-
     TrackListIterator(Cursor cursor) {
-        this.cursor = cursor;
+        super(cursor);
     }
 
     @NonNull
@@ -52,51 +46,6 @@ public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.I
                 Distance.of(cursor.getFloat(totalDistanceIndex)),
                 cursor.getInt(markerCountIndex)
         );
-    }
-
-    @Override
-    public boolean hasNext() {
-        if (cursor == null) {
-            return false;
-        }
-        return !cursor.isLast() && !cursor.isAfterLast();
-    }
-
-    @Override
-    @NonNull
-    public Item next() {
-        if (cursor == null || !cursor.moveToNext()) {
-            throw new NoSuchElementException();
-        }
-        return get();
-    }
-
-    @Override
-    public int getPosition() {
-        return cursor.getPosition();
-    }
-
-    @Override
-    public boolean moveToPosition(int position) {
-        return cursor.moveToPosition(position);
-    }
-
-    @VisibleForTesting
-    public int getCount() {
-        return cursor.getCount();
-    }
-
-    @Override
-    public void close() {
-        if (cursor != null) {
-            cursor.close();
-            cursor = null;
-        }
-    }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
     }
 
     public record Item(
@@ -128,7 +77,6 @@ public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.I
             Distance totalDistance,
 
             int markerCount
-
     ) {
     }
 }

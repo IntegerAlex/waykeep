@@ -39,7 +39,6 @@ import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * Track data hub.
@@ -279,7 +278,7 @@ public class TrackDataHub {
         }
 
         TrackPoint trackPoint = null;
-        try (AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(selectedTrackId, next)) {
+        try (TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointIterator(selectedTrackId, next)) {
             long numTotalPoints = trackPointIterator.getCount();
             int samplingFrequency = 1 + (int) (numTotalPoints / targetNumPoints);
 

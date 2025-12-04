@@ -27,7 +27,6 @@ import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.ListItemUtils;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.IntentUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
@@ -39,7 +38,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final SparseBooleanArray selection = new SparseBooleanArray();
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
-    private AutoCloseableIterator<TrackListIterator.Item> cursor;
+    private TrackListIterator cursor;
     private boolean selectionMode = false;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
     private ActionMode actionMode;
@@ -85,7 +84,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return cursor.getCount();
     }
 
-    public void swapData(AutoCloseableIterator<TrackListIterator.Item> cursor) {
+    public void swapData(TrackListIterator cursor) {
         this.cursor = cursor;
         this.notifyDataSetChanged();
     }
@@ -176,7 +175,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
-        public void bind(AutoCloseableIterator<TrackListIterator.Item> cursor) {
+        public void bind(TrackListIterator cursor) {
             TrackListIterator.Item tracksListItem = cursor.get();
             trackId = tracksListItem.id();
 

@@ -35,9 +35,8 @@ import java.util.zip.ZipInputStream;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
-import de.dennisguse.opentracks.data.models.Marker;
+import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Track;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -189,7 +188,7 @@ public class KMZTrackImporter {
         // 1.- Gets all photo names in the markers of the track identified by id.
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
         List<String> photosName = new ArrayList<>();
-        try (AutoCloseableIterator<Marker> markerIterator = new ContentProviderUtils(context).getMarkerIterator(trackId)) {
+        try (MarkerIterator markerIterator = new ContentProviderUtils(context).getMarkerIterator(trackId)) {
             markerIterator.forEachRemaining(marker -> {
                 if (marker.photoUrl() != null) {
                     String photoUrl = Uri.decode(marker.photoUrl().toString()); //TODO Why Uri.decode()?

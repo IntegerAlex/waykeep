@@ -67,7 +67,6 @@ import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.stats.SensorStatistics;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 import de.dennisguse.opentracks.util.FileUtils;
 
 /**
@@ -119,7 +118,7 @@ public class CustomContentProviderUtilsTest {
     private void testIterator(Track.Id trackId, int numPoints) {
         TrackPoint.Id lastPointId = initializeTrack(trackId, numPoints);
         List<TrackPoint> locations = new ArrayList<>(numPoints);
-        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointIterator(trackId, null)) {
+        try (TrackPointIterator it = contentProviderUtils.getTrackPointIterator(trackId, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 assertNotNull(trackPoint);
@@ -165,7 +164,7 @@ public class CustomContentProviderUtilsTest {
         // Load all inserted trackPoints.
         TrackPoint.Id lastPointId = null;
         int counter = 0;
-        try (AutoCloseableIterator<TrackPoint> it = contentProviderUtils.getTrackPointIterator(id, null)) {
+        try (TrackPointIterator it = contentProviderUtils.getTrackPointIterator(id, null)) {
             while (it.hasNext()) {
                 TrackPoint trackPoint = it.next();
                 lastPointId = trackPoint.getId();
@@ -852,7 +851,7 @@ public class CustomContentProviderUtilsTest {
         TrackPoint.Id startTrackPointId = trackpointIds.get(0);
 
         // when
-        AutoCloseableIterator<TrackPoint> trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, trackpointIds.get(0));
+        TrackPointIterator trackPointIterator = contentProviderUtils.getTrackPointIterator(trackId, trackpointIds.get(0));
 
         // then
         for (int i = 0; i < trackpointIds.size(); i++) {
@@ -1210,7 +1209,7 @@ public class CustomContentProviderUtilsTest {
     }
 
     private TrackPoint getLastValidTrackPoint(Track.Id trackId) {
-        try (AutoCloseableIterator<TrackPoint> trackPointsCursor = contentProviderUtils.getTrackPointIterator(trackId, null)) {
+        try (TrackPointIterator trackPointsCursor = contentProviderUtils.getTrackPointIterator(trackId, null)) {
             List<TrackPoint> trackpoints = new ArrayList<>();
             while (trackPointsCursor.hasNext())
                 trackpoints.add(trackPointsCursor.next());

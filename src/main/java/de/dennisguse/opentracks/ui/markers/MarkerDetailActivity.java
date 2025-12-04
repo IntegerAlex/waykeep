@@ -30,10 +30,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.databinding.MarkerDetailActivityBinding;
 import de.dennisguse.opentracks.ui.markers.DeleteMarkerDialogFragment.DeleteMarkerCaller;
-import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 /**
  * An activity to display marker detail info.
@@ -50,7 +50,7 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
 
     private MarkerDetailActivityBinding viewBinding;
 
-    private AutoCloseableIterator<Marker> markerAutoCloseableIterator;
+    private MarkerIterator markerIterator;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -66,15 +66,15 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(this);
         Marker marker = contentProviderUtils.getMarker(markerId);
 
-        markerAutoCloseableIterator = contentProviderUtils.getMarkerIterator(marker.trackId());
-        if (markerAutoCloseableIterator == null) {
+        markerIterator = contentProviderUtils.getMarkerIterator(marker.trackId());
+        if (markerIterator == null) {
             finish();
         }
 
         int markerIndex = -1;
-        while (markerAutoCloseableIterator.hasNext()) {
-            if (markerId.equals(markerAutoCloseableIterator.next().id())) {
-                markerIndex = markerAutoCloseableIterator.getPosition();
+        while (markerIterator.hasNext()) {
+            if (markerId.equals(markerIterator.next().id())) {
+                markerIndex = markerIterator.getPosition();
                 break;
             }
         }
@@ -104,8 +104,8 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         super.onDestroy();
         viewBinding = null;
 
-        if (markerAutoCloseableIterator != null) markerAutoCloseableIterator.close();
-        markerAutoCloseableIterator = null;
+        if (markerIterator != null) markerIterator.close();
+        markerIterator = null;
     }
 
     @Override
@@ -122,18 +122,18 @@ public class MarkerDetailActivity extends AbstractActivity implements DeleteMark
         @Override
         @NonNull
         public Fragment createFragment(int position) {
-            markerAutoCloseableIterator.moveToPosition(position);
-            return MarkerDetailFragment.newInstance(markerAutoCloseableIterator.get(position).id());
+            markerIterator.moveToPosition(position);
+            return MarkerDetailFragment.newInstance(markerIterator.get(position).id());
         }
 
         @Override
         public int getItemCount() {
-            return markerAutoCloseableIterator.getCount();
+            return markerIterator.getCount();
         }
 
         @Nullable
         public CharSequence getPageTitle(int position) {
-            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerAutoCloseableIterator.get().name());
+            return getString(R.string.marker_detail_title, position + 1, getItemCount(), markerIterator.get().name());
         }
     }
 }
