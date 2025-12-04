@@ -303,7 +303,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
         if (accuracyHorizontal != null) {
             try {
-                accuracyHorizontalParsed = Distance.of(accuracyHorizontal);
+                accuracyHorizontalParsed = Distance.of(Float.parseFloat(accuracyHorizontal));
             } catch (NumberFormatException e) {
                 throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse accuracy_horizontal: %s", sensorDistance)), e);
             }
@@ -318,7 +318,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
         if (accuracyVertical != null) {
             try {
-                accuracyVerticalParsed = Distance.of(accuracyVertical);
+                accuracyVerticalParsed = Distance.of(Float.parseFloat(accuracyVertical));
             } catch (NumberFormatException e) {
                 throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse accuracy_vertical: %s", accuracyVertical)), e);
             }
@@ -378,7 +378,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
         if (sensorDistance != null) {
             try {
-                trackPoint.setSensorDistance(Distance.of(sensorDistance));
+                trackPoint.setSensorDistance(Distance.of(Float.parseFloat(sensorDistance)));
             } catch (NumberFormatException e) {
                 throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse distance: %s", sensorDistance)), e);
             }

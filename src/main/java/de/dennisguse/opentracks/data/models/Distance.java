@@ -20,10 +20,6 @@ public record Distance(double distance_m) {
         }
     }
 
-    @Deprecated //TODO Remove
-    public static Distance of(String distance_m) {
-        return of(Float.parseFloat(distance_m));
-    }
     @Nullable
     public static Distance ofOrNull(Double distance_m) {
         if (distance_m == null) {
