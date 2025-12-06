@@ -3,6 +3,8 @@ package de.dennisguse.opentracks.ui.customRecordingLayout;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class DataField implements Parcelable {
@@ -88,6 +90,7 @@ public class DataField implements Parcelable {
         return Objects.hash(key, isVisible, isPrimary, isWide);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "DataField{" +

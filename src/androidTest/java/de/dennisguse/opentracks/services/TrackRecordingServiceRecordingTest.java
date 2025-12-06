@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
 import androidx.core.location.LocationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -738,6 +739,7 @@ public class TrackRecordingServiceRecordingTest {
                 return true;
             }
 
+            @NonNull
             @Override
             public AltitudeGainLoss getAggregatedValue(Instant now) {
                 return new AltitudeGainLoss(altitudeGain, altitudeGain);

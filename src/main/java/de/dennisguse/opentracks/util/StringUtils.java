@@ -216,7 +216,7 @@ public class StringUtils {
                 .setUnit(unitSystem)
                 .build(context);
 
-        Distance distance = altitude_m != null ? Distance.of(altitude_m) : Distance.of((Double) null);
+        Distance distance = altitude_m != null ? Distance.of(altitude_m) : Distance.of(null);
         return formatter.getDistanceParts(distance);
     }
 

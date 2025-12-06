@@ -112,8 +112,7 @@ The API is disabled by default to protect the user's privacy, but it can easily 
 `Classes`:
 * **Start a recording:**  `de.dennisguse.opentracks.publicapi.StartRecording`
     * Set track data: `TRACK_NAME`, `TRACK_DESCRIPTION`, `TRACK_CATEGORY`, and `TRACK_ICON` (
-      non-localized identifier
-      see [/src/main/java/de/dennisguse/opentracks/util/TrackIconUtils.java#L38](/src/main/java/de/dennisguse/opentracks/util/TrackIconUtils.java#L38)).
+      see `ActivityType.id` defined in [/src/main/java/de/dennisguse/opentracks/util/TrackIconUtils.java#L38](/src/main/java/de/dennisguse/opentracks/data/model/ActivityType.java)).
       NOTE: if `TRACK_ICON` is not present, `TRACK_CATEGORY` will be used to determine the icon (
       localized).
     * Send recorded data to another application via _Dashboard API_: `STATS_TARGET_PACKAGE` and

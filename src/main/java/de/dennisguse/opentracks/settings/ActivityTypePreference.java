@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
@@ -71,7 +72,7 @@ public class ActivityTypePreference extends DialogPreference {
         }
 
         @Override
-        protected void onBindDialogView(View view) {
+        protected void onBindDialogView(@NonNull View view) {
             super.onBindDialogView(view);
 
             final Context context = getActivity();

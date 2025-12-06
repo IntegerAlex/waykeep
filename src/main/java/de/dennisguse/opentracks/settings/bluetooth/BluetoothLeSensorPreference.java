@@ -17,6 +17,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
@@ -234,7 +235,7 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
 
         //Behave like ListPreferenceDialogFragmentCompat, but uses a custom listAdapter.
         @Override
-        protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+        protected void onPrepareDialogBuilder(@NonNull AlertDialog.Builder builder) {
             super.onPrepareDialogBuilder(builder);
 
             builder.setSingleChoiceItems(listAdapter, selectedEntryIndex,

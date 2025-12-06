@@ -3,6 +3,7 @@ package de.dennisguse.opentracks.settings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -48,7 +49,7 @@ public class DefaultsSettingsFragment extends PreferenceFragmentCompat implement
     }
 
     @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
+    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
         DialogFragment dialogFragment = null;
         if (preference instanceof ActivityTypePreference) {
             activityPreferenceDialog = ActivityTypePreference.ActivityPreferenceDialog.newInstance(preference.getKey());

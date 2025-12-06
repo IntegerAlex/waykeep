@@ -118,7 +118,7 @@ public class ChartView extends View {
     private final GestureDetectorCompat detectorScrollFlingTab = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener() {
 
         @Override
-        public boolean onDown(MotionEvent e) {
+        public boolean onDown(@NonNull MotionEvent e) {
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
             }
@@ -126,7 +126,7 @@ public class ChartView extends View {
         }
 
         @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
             if (Math.abs(distanceX) > 0) {
                 int availableToScroll = effectiveWidth * (zoomLevel - 1) - getScrollX();
                 if (availableToScroll > 0) {
@@ -137,7 +137,7 @@ public class ChartView extends View {
         }
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
             fling((int) -velocityX);
             return true;
         }
@@ -147,7 +147,7 @@ public class ChartView extends View {
     private final ScaleGestureDetector detectorZoom = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+        public boolean onScale(@NonNull ScaleGestureDetector detector) {
             float scaleFactor = detector.getScaleFactor();
             if (scaleFactor >= 1.1f) {
                 zoomIn();
