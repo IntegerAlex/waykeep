@@ -526,42 +526,53 @@ public class ContentProviderUtils {
         return new MarkerIterator(this, getMarkerCursor(null, selection, selectionArgs, sortOrder, -1));
     }
 
-    /**
-     * Fills a {@link TrackPoint} from a cursor.
-     *
-     * @param cursor  the cursor pointing to a trackPoint.
-     * @param indexes the cached trackPoints indexes
-     */
-    static TrackPoint fillTrackPoint(Cursor cursor, CachedTrackPointsIndexes indexes) {
+    static TrackPoint fillTrackPoint(Cursor cursor) {
+        int idIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns._ID);
+        int typeIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.TYPE);
+        int longitudeIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.LONGITUDE);
+        int latitudeIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.LATITUDE);
+        int timeIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.TIME);
+        int altitudeIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE);
+        int accuracyIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.HORIZONTAL_ACCURACY);
+        int accuracyVerticalIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.VERTICAL_ACCURACY);
+        int speedIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SPEED);
+        int bearingIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.BEARING);
+        int sensorHeartRateIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_HEARTRATE);
+        int sensorCadenceIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_CADENCE);
+        int sensorDistanceIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_DISTANCE);
+        int sensorPowerIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_POWER);
+        int altitudeGainIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_GAIN);
+        int altitudeLossIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_LOSS);
+
         TrackPoint trackPoint = new TrackPoint(
-                new TrackPoint.Id(cursor.getInt(indexes.idIndex)),
-                TrackPoint.Type.getById(cursor.getInt(indexes.typeIndex)),
+                new TrackPoint.Id(cursor.getInt(idIndex)),
+                TrackPoint.Type.getById(cursor.getInt(typeIndex)),
                 new Position(
-                        Instant.ofEpochMilli(cursor.getLong(indexes.timeIndex)),
-                        !cursor.isNull(indexes.latitudeIndex) ? ((double) cursor.getInt(indexes.latitudeIndex)) / 1E6 : null,
-                        !cursor.isNull(indexes.longitudeIndex) ? ((double) cursor.getInt(indexes.longitudeIndex)) / 1E6 : null,
-                        !cursor.isNull(indexes.accuracyIndex) ? Distance.of(cursor.getFloat(indexes.accuracyIndex)) : null,
-                        !cursor.isNull(indexes.altitudeIndex) ? Altitude.WGS84.of(cursor.getFloat(indexes.altitudeIndex)) : null,
-                        !cursor.isNull(indexes.accuracyVerticalIndex) ? Distance.of(cursor.getFloat(indexes.accuracyVerticalIndex)) : null,
-                        !cursor.isNull(indexes.bearingIndex) ? cursor.getFloat(indexes.bearingIndex) : null,
-                        !cursor.isNull(indexes.speedIndex) ? Speed.of(cursor.getFloat(indexes.speedIndex)) : null
+                        Instant.ofEpochMilli(cursor.getLong(timeIndex)),
+                        !cursor.isNull(latitudeIndex) ? ((double) cursor.getInt(latitudeIndex)) / 1E6 : null,
+                        !cursor.isNull(longitudeIndex) ? ((double) cursor.getInt(longitudeIndex)) / 1E6 : null,
+                        !cursor.isNull(accuracyIndex) ? Distance.of(cursor.getFloat(accuracyIndex)) : null,
+                        !cursor.isNull(altitudeIndex) ? Altitude.WGS84.of(cursor.getFloat(altitudeIndex)) : null,
+                        !cursor.isNull(accuracyVerticalIndex) ? Distance.of(cursor.getFloat(accuracyVerticalIndex)) : null,
+                        !cursor.isNull(bearingIndex) ? cursor.getFloat(bearingIndex) : null,
+                        !cursor.isNull(speedIndex) ? Speed.of(cursor.getFloat(speedIndex)) : null
                 ));
 
-        if (!cursor.isNull(indexes.sensorHeartRateIndex)) {
-            trackPoint.setHeartRate(cursor.getFloat(indexes.sensorHeartRateIndex));
+        if (!cursor.isNull(sensorHeartRateIndex)) {
+            trackPoint.setHeartRate(cursor.getFloat(sensorHeartRateIndex));
         }
-        if (!cursor.isNull(indexes.sensorCadenceIndex)) {
-            trackPoint.setCadence(cursor.getFloat(indexes.sensorCadenceIndex));
+        if (!cursor.isNull(sensorCadenceIndex)) {
+            trackPoint.setCadence(cursor.getFloat(sensorCadenceIndex));
         }
-        if (!cursor.isNull(indexes.sensorDistanceIndex)) {
-            trackPoint.setSensorDistance(Distance.of(cursor.getFloat(indexes.sensorDistanceIndex)));
+        if (!cursor.isNull(sensorDistanceIndex)) {
+            trackPoint.setSensorDistance(Distance.of(cursor.getFloat(sensorDistanceIndex)));
         }
-        if (!cursor.isNull(indexes.sensorPowerIndex)) {
-            trackPoint.setPower(cursor.getFloat(indexes.sensorPowerIndex));
+        if (!cursor.isNull(sensorPowerIndex)) {
+            trackPoint.setPower(cursor.getFloat(sensorPowerIndex));
         }
 
-        if (!cursor.isNull(indexes.altitudeGainIndex) && !cursor.isNull(indexes.altitudeLossIndex)) {
-            trackPoint.setAltitudeGainLoss(cursor.getFloat(indexes.altitudeGainIndex), cursor.getFloat(indexes.altitudeLossIndex));
+        if (!cursor.isNull(altitudeGainIndex) && !cursor.isNull(altitudeLossIndex)) {
+            trackPoint.setAltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex));
         }
 
         return trackPoint;

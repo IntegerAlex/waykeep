@@ -8,16 +8,13 @@ import de.dennisguse.opentracks.util.AutoCloseableIterator;
 
 public class TrackPointIterator extends AutoCloseableIterator<TrackPoint> {
 
-    private final CachedTrackPointsIndexes indexes;
-
     TrackPointIterator(ContentProviderUtils contentProviderUtils, Track.Id trackId, TrackPoint.Id startTrackPointId) {
         super(contentProviderUtils.getTrackPointCursor(trackId, startTrackPointId));
-        indexes = new CachedTrackPointsIndexes(cursor);
     }
 
     @Override
     @NonNull
     public TrackPoint get() {
-        return ContentProviderUtils.fillTrackPoint(cursor, indexes);
+        return ContentProviderUtils.fillTrackPoint(cursor);
     }
 }
