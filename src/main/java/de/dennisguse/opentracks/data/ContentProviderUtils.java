@@ -54,7 +54,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
-import de.dennisguse.opentracks.stats.SensorStatistics;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
 

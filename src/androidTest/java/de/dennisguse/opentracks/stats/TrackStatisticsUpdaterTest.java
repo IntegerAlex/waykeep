@@ -25,6 +25,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 
 @RunWith(AndroidJUnit4.class)
 public class TrackStatisticsUpdaterTest {

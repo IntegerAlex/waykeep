@@ -14,7 +14,7 @@
  * the License.
  */
 
-package de.dennisguse.opentracks.stats;
+package de.dennisguse.opentracks.data.statistics;
 
 import androidx.annotation.NonNull;
 

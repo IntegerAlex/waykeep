@@ -13,7 +13,7 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 
 public class IntervalStatisticsUpdater {
     private TrackStatisticsUpdater trackStatisticsUpdater;

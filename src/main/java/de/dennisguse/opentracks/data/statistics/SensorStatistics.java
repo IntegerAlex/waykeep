@@ -1,4 +1,4 @@
-package de.dennisguse.opentracks.stats;
+package de.dennisguse.opentracks.data.statistics;
 
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.HeartRate;

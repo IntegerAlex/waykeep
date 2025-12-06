@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +27,7 @@ import de.dennisguse.opentracks.data.models.MarkerBuilder;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
 

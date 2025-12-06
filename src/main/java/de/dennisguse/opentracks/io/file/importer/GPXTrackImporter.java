@@ -38,7 +38,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.data.statistics.SegmentStatisticUpdater;
 import de.dennisguse.opentracks.util.StringUtils;
 
 /**

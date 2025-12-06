@@ -37,7 +37,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SensorStatistics;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 
 //Due to DateTimeFormatter using NBSP, these tests only work in SDK34+

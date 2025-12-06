@@ -36,7 +36,7 @@ import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.services.RecordingData;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.stats.SensorStatistics;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 
 /**

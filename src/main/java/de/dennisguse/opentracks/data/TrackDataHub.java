@@ -38,7 +38,7 @@ import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 
 /**
  * Track data hub.

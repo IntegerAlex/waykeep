@@ -46,7 +46,7 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.ExtremityMonitor;
+import de.dennisguse.opentracks.data.statistics.ExtremityMonitor;
 import de.dennisguse.opentracks.ui.util.ThemeUtils;
 import de.dennisguse.opentracks.util.StringUtils;
 

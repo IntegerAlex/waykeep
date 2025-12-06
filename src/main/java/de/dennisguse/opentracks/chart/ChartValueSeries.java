@@ -29,7 +29,7 @@ import androidx.core.content.ContextCompat;
 import java.text.NumberFormat;
 
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.ExtremityMonitor;
+import de.dennisguse.opentracks.data.statistics.ExtremityMonitor;
 
 /**
  * This class encapsulates the meta data for one series of the chart values.

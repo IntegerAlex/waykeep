@@ -38,8 +38,8 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.ChartBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.stats.SegmentStatisticUpdater;
-import de.dennisguse.opentracks.stats.TrackStatisticsUpdater;
+import de.dennisguse.opentracks.data.statistics.SegmentStatisticUpdater;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 
 /**
  * A fragment to display track chart to the user.
