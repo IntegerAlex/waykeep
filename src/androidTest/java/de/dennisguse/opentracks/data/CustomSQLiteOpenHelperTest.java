@@ -100,18 +100,18 @@ public class CustomSQLiteOpenHelperTest {
         // Open database with SQL upgrade
         Map<String, String> tableByUpgrade;
         Map<String, String> indicesByUpgrade;
-        try (SQLiteDatabase dbUpgraded = new CustomSQLiteOpenHelper(context, DATABASE_NAME).getReadableDatabase()) {
-            tableByUpgrade = getSQL(dbUpgraded, "table");
-            indicesByUpgrade = getSQL(dbUpgraded, "index");
+        try (CustomSQLiteOpenHelper dbUpgraded = new CustomSQLiteOpenHelper(context, DATABASE_NAME)) {
+            tableByUpgrade = getSQL(dbUpgraded.getReadableDatabase(), "table");
+            indicesByUpgrade = getSQL(dbUpgraded.getReadableDatabase(), "index");
         }
         context.deleteDatabase(DATABASE_NAME);
 
         // Open database via creation script
         Map<String, String> tablesByCreate;
         Map<String, String> indicesByCreate;
-        try (SQLiteDatabase dbCreated = new CustomSQLiteOpenHelper(context, DATABASE_NAME).getReadableDatabase()) {
-            tablesByCreate = getSQL(dbCreated, "table");
-            indicesByCreate = getSQL(dbCreated, "index");
+        try (CustomSQLiteOpenHelper dbCreated = new CustomSQLiteOpenHelper(context, DATABASE_NAME)) {
+            tablesByCreate = getSQL(dbCreated.getReadableDatabase(), "table");
+            indicesByCreate = getSQL(dbCreated.getReadableDatabase(), "index");
         }
 
 
@@ -134,14 +134,16 @@ public class CustomSQLiteOpenHelperTest {
     @Test
     public void onDowngrade_ToVersion23() {
         // Create most recent database schema
-        new CustomSQLiteOpenHelper(context, DATABASE_NAME).getReadableDatabase().close();
+        try(CustomSQLiteOpenHelper db = new  CustomSQLiteOpenHelper(context, DATABASE_NAME)) {
+            db.getReadableDatabase();
+        }
 
         // Downgrade schema to version 23 (base version)
         Map<String, String> tablesByDowngrade;
         Map<String, String> indicesByDowngrade;
-        try (SQLiteDatabase db = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 23).getReadableDatabase()) {
-            tablesByDowngrade = getSQL(db, "table");
-            indicesByDowngrade = getSQL(db, "index");
+        try (CustomSQLiteOpenHelper db = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 23)) {
+            tablesByDowngrade = getSQL(db.getReadableDatabase(), "table");
+            indicesByDowngrade = getSQL(db.getReadableDatabase(), "index");
         }
 
         // then - verify table structure
@@ -155,9 +157,9 @@ public class CustomSQLiteOpenHelperTest {
 
     @Test
     public void track_uuid_unique() {
-        try (SQLiteDatabase db = new CustomSQLiteOpenHelper(context, DATABASE_NAME).getWritableDatabase()) {
-            db.execSQL("INSERT INTO tracks (uuid) VALUES (0x00)");
-            db.execSQL("INSERT INTO tracks (uuid) VALUES (0x00)");
+        try (CustomSQLiteOpenHelper db = new CustomSQLiteOpenHelper(context, DATABASE_NAME)) {
+            db.getWritableDatabase().execSQL("INSERT INTO tracks (uuid) VALUES (0x00)");
+            db.getWritableDatabase().execSQL("INSERT INTO tracks (uuid) VALUES (0x00)");
             fail("unique constraint not enforced");
         } catch (SQLiteConstraintException e) {
             assertTrue(e.getMessage().contains("UNIQUE constraint failed: tracks.uuid"));
@@ -168,7 +170,8 @@ public class CustomSQLiteOpenHelperTest {
     public void upgrade_data_to_30() {
         // given: a track in version 29
         createVersion23();
-        try (SQLiteDatabase db29 = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 29).getWritableDatabase()) {
+        try (CustomSQLiteOpenHelper db = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 29)) {
+            SQLiteDatabase db29 = db.getWritableDatabase();
             db29.beginTransaction();
             db29.execSQL("INSERT INTO tracks (_id) VALUES (1)");
 
@@ -201,7 +204,8 @@ public class CustomSQLiteOpenHelperTest {
         }
 
         // when / then
-        try (SQLiteDatabase db30 = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 30).getWritableDatabase()) {
+        try (CustomSQLiteOpenHelper db = new CustomSQLiteOpenHelper(context, DATABASE_NAME, 30)) {
+            SQLiteDatabase db30 = db.getWritableDatabase();
             {
                 // Track 1
                 SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
@@ -261,7 +265,7 @@ public class CustomSQLiteOpenHelperTest {
 
     private void createVersion23() {
         // Manually create database schema with version 23 (base version)
-        SQLiteDatabase dbBase = new SQLiteOpenHelper(context, DATABASE_NAME, null, 23) {
+        try(SQLiteOpenHelper dbBase = new SQLiteOpenHelper(context, DATABASE_NAME, null, 23) {
             @Override
             public void onCreate(SQLiteDatabase db) {
             }
@@ -269,12 +273,10 @@ public class CustomSQLiteOpenHelperTest {
             @Override
             public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             }
-        }.getWritableDatabase();
-
-        dbBase.execSQL(TRACKS_CREATE_TABLE_V23);
-        dbBase.execSQL(TRACKPOINTS_CREATE_TABLE_V23);
-        dbBase.execSQL(WAYPOINTS_CREATE_TABLE_V23);
-
-        dbBase.close();
+        }) {
+            dbBase.getWritableDatabase().execSQL(TRACKS_CREATE_TABLE_V23);
+            dbBase.getWritableDatabase().execSQL(TRACKPOINTS_CREATE_TABLE_V23);
+            dbBase.getWritableDatabase().execSQL(WAYPOINTS_CREATE_TABLE_V23);
+        }
     }
 }

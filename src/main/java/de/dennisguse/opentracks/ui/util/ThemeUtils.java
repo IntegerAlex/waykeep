@@ -42,27 +42,21 @@ public class ThemeUtils {
     }
 
     public static int getFontSizeSmallInPx(Context context) {
-        TypedArray typedArray = context.obtainStyledAttributes(R.style.TextAppearance_MaterialComponents_Body2, new int[]{android.R.attr.textSize});
-        int fontSize = typedArray.getDimensionPixelSize(0, 12);
-        typedArray.recycle();
-        return fontSize;
+        try(TypedArray typedArray = context.obtainStyledAttributes(R.style.TextAppearance_MaterialComponents_Body2, new int[]{android.R.attr.textSize})) {
+            return typedArray.getDimensionPixelSize(0, 12);
+        }
     }
 
     public static int getFontSizeMediumInPx(Context context) {
-        TypedArray typedArray = context.obtainStyledAttributes(R.style.TextAppearance_MaterialComponents_Body1, new int[]{android.R.attr.textSize});
-        int fontSize = typedArray.getDimensionPixelSize(0, 15);
-        typedArray.recycle();
-        return fontSize;
+        try(TypedArray typedArray = context.obtainStyledAttributes(R.style.TextAppearance_MaterialComponents_Body1, new int[]{android.R.attr.textSize})) {
+            return typedArray.getDimensionPixelSize(0, 15);
+        }
     }
 
-    /**
-     * Gets the photo height.
-     */
     public static int getPhotoHeight(Context context) {
-        int[] attrs = new int[]{android.R.attr.listPreferredItemHeight};
-        TypedArray typeArray = context.obtainStyledAttributes(attrs);
-        int height = typeArray.getDimensionPixelSize(0, 128);
-        typeArray.recycle();
-        return 2 * height;
+        try(TypedArray typeArray = context.obtainStyledAttributes(new int[]{android.R.attr.listPreferredItemHeight})) {
+            int height = typeArray.getDimensionPixelSize(0, 128);
+            return 2 * height;
+        }
     }
 }

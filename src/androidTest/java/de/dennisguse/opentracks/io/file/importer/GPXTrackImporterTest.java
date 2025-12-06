@@ -314,19 +314,19 @@ public class GPXTrackImporterTest {
         // given
         XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
         InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone);
-        InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone);
+        try(InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone)) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            // when
+            // 1. import
+            importTrackId = importer.importFile(inputStream).get(0);
+            Track importedTrack = contentProviderUtils.getTrack(importTrackId);
 
-        // when
-        // 1. import
-        importTrackId = importer.importFile(inputStream).get(0);
-        Track importedTrack = contentProviderUtils.getTrack(importTrackId);
+            TrackExporter trackExporter = TrackFileFormat.GPX.createTrackExporter(context, contentProviderUtils);
+            trackExporter.writeTrack(List.of(importedTrack), outputStream);
 
-        TrackExporter trackExporter = TrackFileFormat.GPX.createTrackExporter(context, contentProviderUtils);
-        trackExporter.writeTrack(List.of(importedTrack), outputStream);
-
-        // then
-        assertEquals(new String(inputStreamExpected.readAllBytes(), StandardCharsets.UTF_8), outputStream.toString());
+            // then
+            assertEquals(new String(inputStreamExpected.readAllBytes(), StandardCharsets.UTF_8), outputStream.toString());
+        }
     }
 }

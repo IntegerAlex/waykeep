@@ -189,16 +189,10 @@ public class FileUtils {
         return name;
     }
 
-    /**
-     * Copy a File (src) to a File (dst).
-     *
-     * @param src source file.
-     * @param dst destination file.
-     */
     public static void copy(FileDescriptor src, File dst) {
-        try (FileChannel in = new FileInputStream(src).getChannel();
-             FileChannel out = new FileOutputStream(dst).getChannel()) {
-            in.transferTo(0, in.size(), out);
+        try (FileInputStream in = new FileInputStream(src);
+             FileOutputStream out = new FileOutputStream(dst)) {
+            in.getChannel().transferTo(0, in.getChannel().size(), out.getChannel());
         } catch (Exception e) {
             // post to log
             Log.e(TAG, e.getMessage());
