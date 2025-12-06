@@ -40,8 +40,7 @@ _OpenTracks_ is a sport tracking application that completely respects your priva
     </tr>
 </table>
 
-Translations are hosted on <a href="https://translate.codeberg.org/engage/opentracks/">
-translate.codeberg.org/projects/opentracks/</a>.
+Translations are hosted on <a href="https://translate.codeberg.org/engage/opentracks/">translate.codeberg.org/projects/opentracks/</a>.
 <a href="https://translate.codeberg.org/engage/opentracks/">
 <img src="https://translate.codeberg.org/widget/opentracks/opentracks-src-main-res-values-strings-xml-main/horizontal-auto.svg" alt="Translation status" />
 </a>
@@ -133,6 +132,10 @@ adb shell am start -n "de.dennisguse.opentracks.playstore/de.dennisguse.opentrac
 ```
 
 ## File formats compatibility with open-source software
+
+KML/KMZ can be used to export indoor activities (no GPS present).
+GPX exports only those points that have a GPS coordinate present (sensor data is aggregated though).
+
 |                                                           | [GPX 1.1](https://www.topografix.com/GPX/1/1/)                                 | [KML 2.3](https://docs.opengeospatial.org/is/12-007r2/12-007r2.html) | [KMZ 2.3](https://docs.opengeospatial.org/is/12-007r2/12-007r2.html) |
 |-----------------------------------------------------------|--------------------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------|
 | [OpenLayers 7.1.0](https://openlayers.org/)               | ?                                                                              | [no](https://github.com/openlayers/openlayers/issues/14104)          | [no](https://github.com/openlayers/openlayers/issues/14104)          |
