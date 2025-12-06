@@ -42,10 +42,17 @@ public class StartRecording extends AbstractAPIActivity {
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(this);
         TrackBuilder track = new TrackBuilder(contentProviderUtils.getTrack(trackId));
 
-        track.setName(bundle.getString(EXTRA_TRACK_NAME, ""));
-        track.setDescription(bundle.getString(EXTRA_TRACK_DESCRIPTION, ""));
-        track.setActivityType(ActivityType.findBy(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_ID, null)));
-        track.setActivityTypeLocalized(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_LOCALIZED, ""));
+        if (bundle.getString(EXTRA_TRACK_NAME) != null)
+            track.setName(bundle.getString(EXTRA_TRACK_NAME));
+
+        if (bundle.getString(EXTRA_TRACK_DESCRIPTION) != null)
+            track.setDescription(bundle.getString(EXTRA_TRACK_DESCRIPTION));
+
+        if (bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_ID) != null)
+            track.setActivityType(ActivityType.findBy(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_ID)));
+
+        if (bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_LOCALIZED) != null)
+            track.setActivityTypeLocalized(bundle.getString(EXTRA_TRACK_ACTIVITY_TYPE_LOCALIZED));
 
         contentProviderUtils.updateTrack(track.getTrack());
     }
