@@ -41,37 +41,32 @@ public class TrackSelection implements ContentProviderUtils.ContentProviderSelec
     }
 
     @Override
-    public SelectionData buildSelection() {
+    public ContentProviderUtils.SelectionData buildSelection() {
         String selection = "";
-        String[] selectionArgs;
-        ArrayList<String> fromToArgs = new ArrayList<>();
+        List<String> selectionArgs = new ArrayList<>();
 
         // Builds selection.
         if (!trackIds.isEmpty()) {
             selection = String.format(TracksColumns._ID + " IN (%s)", TextUtils.join(",", Collections.nCopies(trackIds.size(), "?")));
+            selectionArgs.addAll(trackIds.stream().map(id -> Long.toString(id.id())).toList());
         }
         if (!categories.isEmpty()) {
             selection += selection.isEmpty() ? "" : " AND ";
             selection += String.format(TracksColumns.ACTIVITY_TYPE_LOCALIZED + " IN (%s)", TextUtils.join(",", Collections.nCopies(categories.size(), "?")));
+            selectionArgs.addAll(categories);
         }
+
         if (from != null && to != null) {
             selection += selection.isEmpty() ? "" : " AND ";
             selection += TracksColumns.STARTTIME + " BETWEEN ? AND ?";
-            fromToArgs.add(Long.toString(from.toEpochMilli()));
-            fromToArgs.add(Long.toString(to.toEpochMilli()));
+            selectionArgs.add(Long.toString(from.toEpochMilli()));
+            selectionArgs.add(Long.toString(to.toEpochMilli()));
         }
 
         if (selection.isEmpty()) {
-            return new SelectionData();
+            return new ContentProviderUtils.SelectionData(null, null);
         }
 
-        // Builds selection arguments.
-        ArrayList<String> args = new ArrayList<>();
-        args.addAll(trackIds.stream().map(id -> Long.toString(id.id())).toList());
-        args.addAll(categories);
-        args.addAll(fromToArgs);
-        selectionArgs = args.toArray(String[]::new);
-
-        return new SelectionData(selection, selectionArgs);
+        return new ContentProviderUtils.SelectionData(selection, selectionArgs);
     }
 }

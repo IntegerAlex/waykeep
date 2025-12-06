@@ -757,7 +757,7 @@ public class ContentProviderUtils {
     @NonNull
     public List<AggregatedStatistic> getAggregatedStatisticsForTracks(ContentProviderSelectionInterface selection) {
         SelectionData data = selection.buildSelection();
-        try (Cursor cursor = contentResolver.query(TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS, null, data.selection(), data.selectionArgs(), null)) {
+        try (Cursor cursor = contentResolver.query(TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS, null, data.selection(), data.getSelectionArgs(), null)) {
             ArrayList<AggregatedStatistic> aggregatedStatistics = new ArrayList<>(cursor.getCount());
             while (cursor.moveToNext()) {
                 aggregatedStatistics.add(new AggregatedStatistic(
@@ -769,6 +769,17 @@ public class ContentProviderUtils {
                 ));
             }
             return aggregatedStatistics;
+        }
+    }
+
+    public record SelectionData(
+            String selection,
+            List<String> selectionArgs
+    ) {
+
+        public String[] getSelectionArgs() {
+            if (selectionArgs == null) return null;
+            return selectionArgs.toArray(String[]::new);
         }
     }
 }
