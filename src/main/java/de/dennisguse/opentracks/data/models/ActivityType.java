@@ -41,7 +41,7 @@ public enum ActivityType {
     KITE_SURFING("kite surfing", R.string.activity_type_kite_surfing, ActivityIcon.ICON_UNKNOWN, true),
     LAND_SAILING("land sailing", R.string.activity_type_land_sailing, ActivityIcon.ICON_UNKNOWN, true),
     MIXED_TYPE("mixed type", R.string.activity_type_mixed_type, ActivityIcon.ICON_UNKNOWN, true),
-    MOTOR_BIKE("motor bike", R.string.activity_type_motor_bike, R.drawable.ic_activity_mtb_24dp, true),
+    MOTOR_BIKE("motor bike", R.string.activity_type_motor_bike, R.drawable.ic_activity_motorbike_24dp, true),
     MOTOR_BOATING("motor boating", R.string.activity_type_motor_boating, R.drawable.ic_activity_boat_24dp, true),
     MOUNTAIN_BIKING("mountain biking", R.string.activity_type_mountain_biking, R.drawable.ic_activity_mtb_24dp, true),
     OFF_TRAIL_HIKING("off trail hiking", R.string.activity_type_off_trail_hiking, R.drawable.ic_activity_walk_24dp, false),
