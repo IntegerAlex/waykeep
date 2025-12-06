@@ -173,24 +173,6 @@ public class TrackImporter {
      * NOTE: Modifies content of trackPoints.
      */
     private void adjustTrackPoints() {
-        for (int i = 0; i < trackPoints.size(); i++) {
-            TrackPoint current = trackPoints.get(i);
-
-            if (current.hasLocation()) {
-                Instant time = current.getTime();
-                if (current.getPosition().latitude() == 100) {
-                    //TODO Remove by 31st December 2021.
-                    trackPoints.set(i, new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, time));
-                } else if (current.getPosition().latitude() == 200) {
-                    //TODO Remove by 31st December 2021.
-                    trackPoints.set(i, new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, time));
-                    //TODO Delete location
-                } else if (!current.getPosition().hasValidLocation()) {
-                    throw new ImportParserException("Invalid location detected: " + current);
-                }
-            }
-        }
-
         for (int i = 1; i < trackPoints.size(); i++) {
             TrackPoint previous = trackPoints.get(i - 1);
             TrackPoint current = trackPoints.get(i);
