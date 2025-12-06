@@ -167,7 +167,7 @@ public class MarkerDetailFragment extends Fragment {
 
     private void updateMenuItems() {
         if (shareMarkerImageMenuItem != null) { // MenuProvider might not yet been initialized.
-//            shareMarkerImageMenuItem.setEnabled(marker.hasPhoto());
+            shareMarkerImageMenuItem.setEnabled(marker.photoUrl() != null);
         }
     }
 
