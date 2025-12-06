@@ -159,7 +159,7 @@ public class TrackImporter {
         // Store Markers
         updateMarkers(trackId);
 
-        contentProviderUtils.bulkInsertMarkers(markers.stream().map(it -> it.getMarker()).toList(), trackId);
+        contentProviderUtils.bulkInsertMarkers(markers.stream().map(MarkerBuilder::getMarker).toList(), trackId);
 
         //Clear up.
         trackPoints.clear();
@@ -248,7 +248,7 @@ public class TrackImporter {
     }
 
 
-    private class TrackData {
+    private static class TrackData {
         private String name;
         private UUID uuid;
         private String description;

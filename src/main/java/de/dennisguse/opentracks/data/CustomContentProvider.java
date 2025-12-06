@@ -292,15 +292,9 @@ public class CustomContentProvider extends ContentProvider {
     public int update(@NonNull Uri url, ContentValues values, String where, String[] selectionArgs) {
         String table;
         switch (getUrlType(url)) {
-            case TRACKPOINTS -> {
-                table = TrackPointsColumns.TABLE_NAME;
-            }
-            case TRACKS -> {
-                table = TracksColumns.TABLE_NAME;
-            }
-            case MARKERS -> {
-                table = MarkerColumns.TABLE_NAME;
-            }
+            case TRACKPOINTS -> table = TrackPointsColumns.TABLE_NAME;
+            case TRACKS -> table = TracksColumns.TABLE_NAME;
+            case MARKERS -> table = MarkerColumns.TABLE_NAME;
             default -> throw new IllegalArgumentException("Unknown url " + url);
         }
 

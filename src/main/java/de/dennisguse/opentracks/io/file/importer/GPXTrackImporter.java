@@ -326,7 +326,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
 
         if (speed != null) {
             try {
-                speedParsed = Speed.of(speed);
+                speedParsed = Speed.of(Float.parseFloat(speed));
             } catch (NumberFormatException e) {
                 throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse speed: %s", speed)), e);
             }

@@ -6,7 +6,7 @@ import de.dennisguse.opentracks.settings.UnitSystem;
 
 public record Speed(double speed_mps) {
 
-    public static Speed ZERO = Speed.of(0);
+    public static final Speed ZERO = Speed.of(0);
 
     public static Speed of(Distance distance, Duration duration) {
         if (duration.isZero()) {
@@ -18,11 +18,6 @@ public record Speed(double speed_mps) {
 
     public static Speed of(double speed_mps) {
         return new Speed(speed_mps);
-    }
-
-    @Deprecated //TODO Remove
-    public static Speed of(String speed_mps) {
-        return of(Float.parseFloat(speed_mps));
     }
 
     public static Speed ofKMH(double speed_kmh) {
