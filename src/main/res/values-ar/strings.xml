@@ -540,8 +540,6 @@ limitations under the License.
     <string name="stats_coordinates">خط العرض/خط الطول</string>
     <string name="track_delete_not_recording">لا يمكن حذف هذا المسار لأنه يتم تسجيله حاليًا.</string>
     <string name="interval_list_empty_message">لا توجد فواصل بعد</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s، %2$s</string>
     <string name="settings_locale_system_default">النظام الافتراضي</string>
     <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {كيلومتر واحد في الساعة} other {{n,number,#.0} كيلومترات في الساعة} }</string>
     <string name="lap_speed">سرعة الدورة</string>

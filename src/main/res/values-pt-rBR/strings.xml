@@ -397,8 +397,6 @@
     <string name="settings_all_reset">Redefinir</string>
     <string name="stats_coordinates">Latitude/Longitude</string>
     <string name="stats_sensors_power">Poder</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="field_set_primary">Primário</string>
     <string name="field_set_secondary">Secundário</string>
     <string name="field_remove_from_layout">Remover</string>

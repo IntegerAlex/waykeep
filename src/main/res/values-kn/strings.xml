@@ -388,8 +388,6 @@
     <string name="unit_minute_per_kilometer">ನಿಮಿಷ/ಕಿಮೀ</string>
     <string name="unit_minute_per_mile">ನಿಮಿಷ/ಮೈ</string>
     <string name="unit_minute_per_nautical_mile">ನಿಮಿಷ/NM</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="value_integer_feet_excellent_gps">%1$d ಅಡಿ (ಅತ್ಯುತ್ತಮ GPS)</string>
     <string name="value_integer_feet_recommended">%1$d ಅಡಿ (ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ)</string>
     <string name="value_integer_kilometer_hour">%1$d ಕಿಮೀ/ಗಂ</string>

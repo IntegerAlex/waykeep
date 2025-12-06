@@ -468,8 +468,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="settings_export_section">Uitvoer</string>
     <string name="settings_generic_sensor">Generiek</string>
     <string name="export_dir_not_writable">" (geen schrijfrecht!)"</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/u (aanbevolen)</string>
     <string name="settings_gps_sensor">GPS</string>
     <string name="export_cannot_write_to_dir">Geen schrijfrecht in export map.</string>

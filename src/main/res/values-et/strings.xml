@@ -446,8 +446,6 @@ limitations under the License.
     <string name="settings_import_section">Import</string>
     <string name="permission_bluetooth_failed">OpenTracks vajab Bluetooth-i kasutamiseks luba.</string>
     <string name="permission_bluetooth_failed_rejected">Peate Opentracks\'ile süsteemiseadetes andma käsitsi loa lähedalasuvatele seadmetele.</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="field_set_primary">Esmane</string>
     <string name="generic_choose_an_option">Valige suvand</string>
     <string name="settings_layout_reset_done">Kõik paigutusseaded on muudetud vaikeväärtusteks</string>

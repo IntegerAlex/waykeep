@@ -449,7 +449,6 @@ GPS gailuak datu okerrak salatzen baditu (adibidez, kokapena, abiadura, kota), O
     <string name="stats_custom_layout_default_layout">Diseinu Lehenetsia</string>
     <string name="settings_layout_reset">Berrezarri Diseinu Pertsonalizatua</string>
     <string name="settings_layout_reset_confirm_title">Diseinuak berrezarri\?</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="field_remove_from_layout">Kendu</string>
     <string name="export_cannot_write_to_dir">Ezin izan da direktorioa esportatu.</string>
     <string name="export_dir_not_writable">" (idatzi ezin dena).)"</string>
@@ -502,7 +501,6 @@ GPS gailuak datu okerrak salatzen baditu (adibidez, kokapena, abiadura, kota), O
     <string name="aggregated_stats_filter_no_results">Ez dago jarduerarik zehaztutako iragazkiarentzat</string>
     <string name="field_set_secondary">Bigarren mailakoa</string>
     <string name="field_set_primary">Nagusia</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="generic_undo">Desegin</string>
     <string name="no_compatible_file_manager_installed">Fitxategi-kudeatzaile bateragarririk ez da instalatu</string>
 </resources>

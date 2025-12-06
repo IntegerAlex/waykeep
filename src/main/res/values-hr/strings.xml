@@ -449,7 +449,6 @@ limitations under the License.
     <string name="no_compatible_gallery_installed">Nije instalirana nijedna kompatibilna aplikacija galerije slika</string>
     <string name="generic_show_errors">Pokaži greške</string>
     <string name="show_on_dashboard_not_installed">Nije instalirana nijedna aplikacija koja podržava API OpenTracks kontrolne ploče.</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="settings_sensor_bluetooth_service_filter_off">Prikaži sve dostupne Bluetooth uređaje</string>
     <string name="custom_layout_select_layout">Odaberi raspored</string>
     <string name="settings_activity_defaults_category">Standardne vrijednosti aktivnosti</string>
@@ -476,7 +475,6 @@ limitations under the License.
     <string name="lap_speed">Brzina runde</string>
     <string name="always">Uvijek</string>
     <string name="settings_sensor_wheel_circumference">Opseg kotača (mm)</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="lap_time">Vrijeme runde</string>
     <string name="help_track_map_title">Kako prikazati rutu na karti\?</string>
     <string name="track_discarding">Odbacivanje rute</string>

@@ -387,8 +387,6 @@
     <string name="value_integer_kilometer_hour">%1$d km/u</string>
     <string name="value_float_kilometer_hour">%1$.1f km/u</string>
     <string name="value_integer_feet_excellent_gps">%1$d tr (GPS ar fheabhas)</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="unit_minute_per_nautical_mile">nóim/NM</string>
     <string name="value_integer_meter_excellent_gps">%1$d m (GPS ar fheabhas)</string>
     <string name="value_integer_meter_poor_gps">%1$d m (GPS go dona)</string>

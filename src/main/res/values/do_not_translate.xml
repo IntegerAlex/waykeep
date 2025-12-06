@@ -31,6 +31,9 @@ limitations under the License.
     <string name="altitude_with_unit" translatable="false">%1$s %2$s</string>
     <string name="time" translatable="false">%1$d:%2$02d</string>
 
+    <string name="location_coordinate" translatable="false">%1$s°</string>
+    <string name="location_latitude_longitude" translatable="false">%1$.5f, %2$.5f</string>
+
     <!-- List here all used libraries (will be shown in the about activity -->
     <string name="third_party_libraries" translatable="false">
         <a href="https://developer.android.com/topic/libraries/support-library/">Google\'s androidX support</a> (Apache License, Version 2.0) \n

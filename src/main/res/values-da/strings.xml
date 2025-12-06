@@ -493,8 +493,6 @@ limitations under the License.
     <string name="settings_sensor_bluetooth_service_filter_on">Vis kun Bluetooth-enheder, der annoncerer de krævede tjenester</string>
     <string name="aggregated_stats_filter_no_results">Der er ingen aktiviteter for det angivne filter</string>
     <string name="value_float_kilometer_hour">%1$.1f km/h</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="generic_undo">Fortryd</string>
     <string name="menu_select_layout">Vælg layout</string>
     <string name="settings_ui_summary">Udseende, registreringslayout, tema</string>

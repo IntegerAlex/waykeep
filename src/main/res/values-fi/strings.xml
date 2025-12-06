@@ -474,8 +474,6 @@ limitations under the License.
     <string name="settings_cycling_sensor">Pyöräily</string>
     <string name="settings_generic_sensor">Yleinen</string>
     <string name="permission_bluetooth_failed">OpenTracks tarvitsee luvan käyttääkseen Bluetoothia.</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="generic_yesterday">Eilen</string>
     <string name="settings_ui_title">Käyttöliittymä</string>
     <string name="settings_import_export_summary">Tuo, vie, automaattinen vienti</string>

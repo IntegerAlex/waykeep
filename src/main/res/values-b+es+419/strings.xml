@@ -398,11 +398,9 @@
     <string name="field_set_secondary">Secundario</string>
     <string name="description_speed_source_gps">GPS</string>
     <string name="menu_voice_rate">Velocidad de la voz</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="settings_layout_reset_confirm_message">Todos los ajustes de diseño se revertirán a los valores predeterminados. Esto no eliminará ningún recorrido en el dispositivo.</string>
     <string name="settings_sensor_running_speed_and_cadence">Distancia, velocidad y cadencia</string>
     <string name="stats_coordinates">Latitud/Longitud</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="generic_choose_an_option">Selecciona una opción</string>
     <string name="settings_sensor_cycling_distance_speed">Distancia y velocidad</string>
     <string name="settings_sensor_cycling_cadence">Cadencia</string>

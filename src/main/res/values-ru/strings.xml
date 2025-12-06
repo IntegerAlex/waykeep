@@ -506,8 +506,6 @@ limitations under the License.
     <string name="settings_public_api_dashboard_enabled_summary_on">Приложение, запустившее запись, также может просматривать записанные данные.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">Записанные данные не будут автоматически доступны другим приложениям.</string>
     <string name="stats_coordinates">Широта/долгота</string>
-    <string name="location_coordinate">%1$s°</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="value_float_kilometer_hour">%1$.1f км/ч</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f км/ч (рекомендуется)</string>
     <string name="field_set_secondary">Дополнительная</string>

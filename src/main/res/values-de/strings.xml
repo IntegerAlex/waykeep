@@ -581,7 +581,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="no_compatible_camera_installed">Keine kompatible Kamera-Anwendung installiert</string>
     <string name="no_compatible_gallery_installed">Keine kompatible Bildergalerie Anwendung installiert</string>
     <string name="show_on_dashboard_not_installed">Es ist keine Anwendung installiert, die die OpenTracks Dashboard API unterstützt.</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="settings_stats_units_nautical">Nautisches Maß (NM, ft)</string>
     <string name="unit_minute_per_nautical_mile">min/NM</string>
     <string name="voice_on_device_speaker_title">Verwende den Lautsprecher des Gerätes</string>
@@ -589,7 +588,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="voice_per_nautical_mile">pro nautische Meile</string>
     <string name="show_on_dashboard">OpenTracks Dashboard API</string>
     <string name="introduction_osm_dashboard">OpenTracks selbst stellt keine Karte bereit. Bitte installieren Sie OSMDashboard, um Ihre Aufnahmen auf einer Karte anzuzeigen.</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>
     <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 nautische Meile} other {{n,number,#.0} nautische Meilen} }</string>
     <string name="value_float_knots">%1$.1f Knoten</string>

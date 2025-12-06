@@ -144,7 +144,7 @@ public class StringUtils {
     }
 
     public static String formatCoordinate(Context context, Position position) {
-        return context.getString(R.string.location_latitude_longitude, Location.convert(position.latitude(), Location.FORMAT_DEGREES), Location.convert(position.longitude(), Location.FORMAT_DEGREES));
+        return context.getString(R.string.location_latitude_longitude,position.latitude(), position.longitude());
     }
 
     public static Pair<String, String> getHeartRateParts(Context context, HeartRate heartrate) {

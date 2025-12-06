@@ -300,7 +300,6 @@
     <string name="settings_public_api_enabled_summary_on">Outras aplicações instaladas podem iniciar ou interromper gravações.</string>
     <string name="track_recording_notification_accuracy">Precisão da localização: %1$s</string>
     <string name="unit_nautical_mile">NM</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="value_integer_knots">%1$d nós</string>
     <string name="average_heart_rate">Frequência cardíaca média</string>
     <string name="current_heart_rate">Frequência cardíaca atual</string>
@@ -472,7 +471,6 @@
     <string name="aggregated_stats_filter_no_results">Não há atividades para o filtro especificado</string>
     <string name="interval_list_empty_message">Não há nenhum intervalo ainda</string>
     <string name="unit_knots">kn</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="unit_minute_per_nautical_mile">min/NM</string>
     <string name="value_float_kilometer_hour">%1$.1f km/h</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/h (Recomendado)</string>

@@ -443,7 +443,6 @@ limitations under the License.
     <string name="stats_custom_layout_default_layout">Predvolené rozloženie</string>
     <string name="stats_coordinates">Zemepisná šírka/dĺžka územia</string>
     <string name="description_speed_source_gps">GPS</string>
-    <string name="location_coordinate">%1$s°</string>
     <string name="permission_bluetooth_failed">OpenTracks vyžaduje povolenie na používanie Bluetooth.</string>
     <string name="settings_sensor_wheel_circumference">Obvod kolesa (mm)</string>
     <string name="settings_sensor_bluetooth_service_filter_on">Zobrazenie iba zariadení Bluetooth, ktoré oznamujú požadované služby</string>
@@ -457,7 +456,6 @@ limitations under the License.
     <string name="track_delete_not_recording">Túto stopu nie je možné vymazať, pretože je práve nahraná.</string>
     <string name="value_float_mile_hour_recommended">%1$.1f míľ/h (odporúčané)</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/h (odporúčané)</string>
-    <string name="location_latitude_longitude">%1$s, %2$s</string>
     <string name="aggregated_stats_filter_no_results">Pre zadaný filter neexistujú žiadne aktivity</string>
     <string name="track_detail_intervals_tab">Intervaly</string>
     <string name="share_image_subject">Rád by som sa s vami podelil o jeden obrázok</string>
