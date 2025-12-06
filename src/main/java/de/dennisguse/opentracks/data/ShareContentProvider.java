@@ -52,7 +52,6 @@ public class ShareContentProvider extends CustomContentProvider {
     private static final int URI_GPX = 0;
     private static final int URI_KML_WITH_TRACKDETAIL_SENSORDATA = 3;
 
-    private static final int URI_KMZ_WITH_TRACKDETAIL_AND_SENSORDATA = 6;
     private static final int URI_KMZ_WITH_TRACKDETAIL_SENSORDATA_AND_PICTURES = 7;
     private static final int URI_CSV = 8;
 
@@ -64,7 +63,6 @@ public class ShareContentProvider extends CustomContentProvider {
 
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.TABLE_NAME + "/" + TrackFileFormat.KML_WITH_TRACKDETAIL_AND_SENSORDATA.getPreferenceId() + "/*/*", URI_KML_WITH_TRACKDETAIL_SENSORDATA);
 
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.TABLE_NAME + "/" + TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA.getPreferenceId() + "/*/*", URI_KMZ_WITH_TRACKDETAIL_AND_SENSORDATA);
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.TABLE_NAME + "/" + TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES.getPreferenceId() + "/*/*", URI_KMZ_WITH_TRACKDETAIL_SENSORDATA_AND_PICTURES);
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.TABLE_NAME + "/" + TrackFileFormat.CSV.getPreferenceId() + "/*/*", URI_CSV);
     }
@@ -133,8 +131,6 @@ public class ShareContentProvider extends CustomContentProvider {
             case URI_GPX -> TrackFileFormat.GPX;
             case URI_KML_WITH_TRACKDETAIL_SENSORDATA ->
                     TrackFileFormat.KML_WITH_TRACKDETAIL_AND_SENSORDATA;
-            case URI_KMZ_WITH_TRACKDETAIL_AND_SENSORDATA ->
-                    TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA;
             case URI_KMZ_WITH_TRACKDETAIL_SENSORDATA_AND_PICTURES ->
                     TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES;
             case URI_CSV -> TrackFileFormat.CSV;

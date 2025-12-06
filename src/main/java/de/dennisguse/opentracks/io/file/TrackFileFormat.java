@@ -41,45 +41,18 @@ public enum TrackFileFormat {
         }
     },
 
-    @Deprecated //TODO Check if we really need this
-    KMZ_WITH_TRACKDETAIL_AND_SENSORDATA("KMZ_WITH_TRACKDETAIL_AND_SENSORDATA") {
-
-        private static final boolean exportPhotos = false;
-
-        @Override
-        public TrackExporter createTrackExporter(@NonNull Context context, @NonNull ContentProviderUtils contentProviderUtils) {
-            KMLTrackExporter exporter = new KMLTrackExporter(context, contentProviderUtils, exportPhotos);
-            return new KMZTrackExporter(context, contentProviderUtils, exporter, exportPhotos);
-        }
-
-        @Override
-        public String getMimeType() {
-            return "application/vnd.google-earth.kmz";
-        }
-
-        public String getExtension() {
-            return "kmz";
-        }
-
-        @Override
-        public boolean includesPhotos() {
-            return exportPhotos;
-        }
-    },
-
     KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES("KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES") {
 
         private static final boolean exportPhotos = true;
 
         @Override
         public TrackExporter createTrackExporter(@NonNull Context context, @NonNull ContentProviderUtils contentProviderUtils) {
-            KMLTrackExporter exporter = new KMLTrackExporter(context, contentProviderUtils, exportPhotos);
-            return new KMZTrackExporter(context, contentProviderUtils, exporter, exportPhotos);
+            return new KMZTrackExporter(context, contentProviderUtils, exportPhotos);
         }
 
         @Override
         public String getMimeType() {
-            return KMZ_WITH_TRACKDETAIL_AND_SENSORDATA.getMimeType();
+            return "application/vnd.google-earth.kmz";
         }
 
         public String getExtension() {

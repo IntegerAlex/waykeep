@@ -220,6 +220,10 @@ public class KMLTrackExporter implements TrackExporter {
         printWriter = null;
     }
 
+    boolean isExportPhotos() {
+        return exportPhotos;
+    }
+
     private void writeHeader(List<Track> tracks) {
         printWriter.println(
                 """

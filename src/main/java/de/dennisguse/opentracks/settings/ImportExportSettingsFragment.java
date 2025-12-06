@@ -48,7 +48,6 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
     private void setExportTrackFileFormatOptions() {
         Map<String, String> options = TrackFileFormat.toPreferenceIdLabelMap(getResources(),
                 TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES,
-                TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA,
                 TrackFileFormat.KML_WITH_TRACKDETAIL_AND_SENSORDATA,
                 TrackFileFormat.GPX,
                 TrackFileFormat.CSV);

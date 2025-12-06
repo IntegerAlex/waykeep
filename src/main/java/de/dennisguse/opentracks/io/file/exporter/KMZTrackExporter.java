@@ -54,14 +54,12 @@ public class KMZTrackExporter implements TrackExporter {
     private final ContentProviderUtils contentProviderUtils;
     private final KMLTrackExporter fileTrackExporter;
 
-    private final boolean exportPhotos;
     private final Context context;
 
-    public KMZTrackExporter(Context context, ContentProviderUtils contentProviderUtils, KMLTrackExporter trackExporter, boolean exportPhotos) {
+    public KMZTrackExporter(Context context, ContentProviderUtils contentProviderUtils, boolean exportPhotos) {
         this.context = context;
         this.contentProviderUtils = contentProviderUtils;
-        this.fileTrackExporter = trackExporter;
-        this.exportPhotos = exportPhotos;
+        this.fileTrackExporter =  new KMLTrackExporter(context, contentProviderUtils, exportPhotos);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class KMZTrackExporter implements TrackExporter {
             }
 
             // Add photos
-            if (exportPhotos) addImages(context, tracks ,zipOutputStream);
+            if (fileTrackExporter.isExportPhotos()) addImages(context, tracks ,zipOutputStream);
             return true;
         } catch (InterruptedException | IOException e) {
             Log.e(TAG, "Unable to write track", e);
