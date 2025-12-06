@@ -67,7 +67,6 @@ public class MarkerEditActivity extends AbstractActivity {
 
     private static final String TAG = MarkerEditActivity.class.getSimpleName();
     private Track.Id trackId;
-    private Position position;
     private Marker.Id markerId;
     private Marker marker;
 
@@ -193,7 +192,6 @@ public class MarkerEditActivity extends AbstractActivity {
         super.onDestroy();
 
         trackId = null;
-        position = null;
         markerId = null;
         viewBinding = null;
         viewModel = null;

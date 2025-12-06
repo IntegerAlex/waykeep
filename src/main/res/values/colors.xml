@@ -45,8 +45,6 @@ limitations under the License.
 
     <color name="stats_separator">#99999999</color> <!-- light gray -->
     <color name="text_gradient_center">#B2000000</color> <!-- black 70% opacity -->
-    <color name="text_gradient_end">#00000000</color> <!-- black 0% opacity -->
-    <color name="text_gradient_start">#FF000000</color> <!-- black 100% opacity -->
 
     <color name="splashscreen_background">#272727</color>
 

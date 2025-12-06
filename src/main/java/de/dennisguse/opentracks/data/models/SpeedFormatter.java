@@ -12,7 +12,7 @@ import de.dennisguse.opentracks.util.StringUtils;
 
 public class SpeedFormatter {
 
-    private final int DECIMAL_PLACES = 1;
+    private static final int DECIMAL_PLACES = 1;
 
     private final Resources resources;
 
