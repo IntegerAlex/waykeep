@@ -450,7 +450,7 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="generic_show_errors">Afficher les erreurs</string>
     <string name="generic_separator_done_total">/</string>
     <string name="generic_skip">Ignorer</string>
-    <string name="generic_open_track">Voie ouverte</string>
+    <string name="generic_open_track">Ouvrir le tracé</string>
     <string name="gps_disabled_msg">GPS désactivé</string>
     <string name="gps_fixed_and_ready">GPS fixe et prêt</string>
     <string name="import_thread_interrupted">Fil interrompu</string>
@@ -638,7 +638,7 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="settings_recording_title">Enregistrement</string>
     <string name="settings_theme_switch_restart">Les changements de thème peuvent nécessiter un redémarrage manuel.</string>
     <string name="settings_ui_dynamic_colors_summary">Utiliser des couleurs dynamiques définies par l\'utilisateur (Android 12+ uniquement ; requiert un redémarrage manuel)</string>
-    <string name="settings_recording_idle_timeout_title">Délai avant mise en veille</string>
+    <string name="settings_recording_idle_timeout_title">Délai d\'inactivité</string>
     <string name="settings_night_mode_option_night_oled">Compatible OLED</string>
     <string name="settings_announcements_unit">Unité de Distance/Vitesse</string>
     <string name="value_internal_sensor">Capteur interne</string>
@@ -674,4 +674,7 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="settings_night_mode_option_system_dynamic">Système (couleurs dynamiques)</string>
     <string name="settings_night_mode_option_day_dynamic">Jour (couleurs dynamiques)</string>
     <string name="settings_night_mode_option_night_dynamic">Nuit (couleurs dynamiques)</string>
+    <string name="stats_elapsed_segment_time">Durée sur ce segment</string>
+    <string name="stats_average_segment_pace">Allure sur ce segment</string>
+    <string name="settings_announcements_segment_average_speed_pace">Allure/vitesse moyenne sur ce segment</string>
 </resources>
