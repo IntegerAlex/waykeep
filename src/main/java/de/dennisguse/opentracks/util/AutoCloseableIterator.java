@@ -29,6 +29,10 @@ public abstract class AutoCloseableIterator<T> implements Iterator<T>, AutoClose
         return cursor.getPosition();
     }
 
+    public final boolean moveToFirst() {
+        return cursor.moveToFirst();
+    }
+
     public final boolean moveToPosition(int position) {
         return cursor.moveToPosition(position);
     }

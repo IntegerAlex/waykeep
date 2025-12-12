@@ -38,7 +38,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final SparseBooleanArray selection = new SparseBooleanArray();
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
-    private TrackListIterator cursor;
+    private TrackListIterator trackIterator;
     private boolean selectionMode = false;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
     private ActionMode actionMode;
@@ -66,26 +66,26 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
 
-        cursor.moveToPosition(position);
-        viewHolder.bind(cursor);
+        trackIterator.moveToPosition(position);
+        viewHolder.bind(trackIterator);
     }
 
     @Override
     public long getItemId(int position) {
-        cursor.moveToPosition(position);
-        return cursor.get().id().id();
+        trackIterator.moveToPosition(position);
+        return trackIterator.get().id().id();
     }
 
     @Override
     public int getItemCount() {
-        if (cursor == null) {
+        if (trackIterator == null) {
             return 0;
         }
-        return cursor.getCount();
+        return trackIterator.getCount();
     }
 
     public void swapData(TrackListIterator cursor) {
-        this.cursor = cursor;
+        this.trackIterator = cursor;
         this.notifyDataSetChanged();
     }
 
@@ -132,10 +132,10 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
-            cursor.moveToPosition(-1);
-            while (cursor.hasNext()) {
-                selection.put((int) cursor.get().id().id(), true);
-                cursor.next();
+            trackIterator.moveToFirst();
+            while (trackIterator.hasNext()) {
+                selection.put((int) trackIterator.get().id().id(), true);
+                trackIterator.next();
             }
         } else {
             selection.clear();

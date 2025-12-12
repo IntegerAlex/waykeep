@@ -136,7 +136,7 @@ public class MarkerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
-            markerIterator.moveToPosition(-1);
+            markerIterator.moveToFirst();
             while (markerIterator.hasNext()) {
                 selection.put((int) markerIterator.get().id().id(), true);
                 markerIterator.next();
