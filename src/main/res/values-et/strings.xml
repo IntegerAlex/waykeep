@@ -246,9 +246,9 @@ limitations under the License.
     <string name="settings_recording_track_name_number_option">Number</string>
     <string name="settings_recording_track_name_title">Raja vaikenimi</string>
     <!-- Settings Reset -->
-    <string name="settings_reset_confirm_message">Taastatakse kõikide seadete vaikeväärtus.</string>
-    <string name="settings_reset_confirm_title">Kas lähtestada kohe?</string>
-    <string name="settings_reset_done">Kõik seaded on taastatud vaikeväärtustena</string>
+    <string name="settings_reset_confirm_message">Taastatakse kõikide seadistuste vaikeväärtus.</string>
+    <string name="settings_reset_confirm_title">Kas lähtestame kohe?</string>
+    <string name="settings_reset_done">Kõik seadistused on taastatud vaikeväärtustena</string>
     <!-- Settings Sensor -->
     <!-- Settings Stats -->
     <string name="settings_stats_rate_title">Eelistatud määr</string>
@@ -449,7 +449,7 @@ limitations under the License.
     <string name="field_set_primary">Esmane</string>
     <string name="generic_choose_an_option">Valige suvand</string>
     <string name="settings_layout_reset_done">Kõik paigutusseaded on muudetud vaikeväärtusteks</string>
-    <string name="settings_all_reset">Lähtestage</string>
+    <string name="settings_all_reset">Lähtesta</string>
     <string name="settings_defaults_title">Vaikeühikud ja -tegevused</string>
     <string name="settings_defaults_summary">Eelistatud Ühikud, Vaiketegevused, Raja Vaikenimi</string>
     <string name="settings_ui_title">Kasutajaliides</string>
@@ -502,4 +502,7 @@ limitations under the License.
     <string name="export_cannot_write_to_dir">Ei saa kirjutada ekspordikataloogi.</string>
     <string name="generic_yesterday">Eile</string>
     <string name="no_compatible_file_manager_installed">Ühilduv failihaldur ei ole paigaldatud</string>
+    <string name="settings_announcements_average_heart_rate">Keskmine pulss</string>
+    <string name="settings_announcements_lap_heart_rate">Pulss ringi ajal</string>
+    <string name="settings_announcements_average_speed_pace">Keskmine kiirus/samm</string>
 </resources>
