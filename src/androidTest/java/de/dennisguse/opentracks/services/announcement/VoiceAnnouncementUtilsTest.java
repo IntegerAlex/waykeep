@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -34,10 +33,11 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
+import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.ui.intervals.IntervalStatisticsUpdater;
 
 //Due to DateTimeFormatter using NBSP, these tests only work in SDK34+
@@ -84,8 +84,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
@@ -117,8 +124,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
@@ -150,8 +164,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
@@ -183,8 +204,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
@@ -198,8 +226,15 @@ public class VoiceAnnouncementUtilsTest {
         // given
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, null).toString();
@@ -231,8 +266,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, false, null, null).toString();
@@ -246,8 +288,15 @@ public class VoiceAnnouncementUtilsTest {
         // given
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, false, data.second, null).toString();
@@ -279,8 +328,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_FEET, true, null, null).toString();
@@ -312,8 +368,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_FEET, true, null, null).toString();
@@ -345,8 +408,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_METER, true, null, null).toString();
@@ -378,8 +448,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
@@ -393,8 +470,15 @@ public class VoiceAnnouncementUtilsTest {
         // given
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.IMPERIAL_FEET, true, data.second, null).toString();
@@ -426,8 +510,15 @@ public class VoiceAnnouncementUtilsTest {
                         null
                 ));
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.IMPERIAL_FEET, false, null, null).toString();
@@ -441,8 +532,15 @@ public class VoiceAnnouncementUtilsTest {
         // given
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.IMPERIAL_FEET, false, data.second, null).toString();
@@ -461,8 +559,15 @@ public class VoiceAnnouncementUtilsTest {
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();
@@ -487,8 +592,15 @@ public class VoiceAnnouncementUtilsTest {
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
-        SensorDataSet dataSet = Mockito.mock(SensorDataSet.class);
-        Mockito.when(dataSet.getHeartRate()).thenReturn(new Pair<>(HeartRate.of(60), "unused"));
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null,
+                null,
+                null
+        );
 
         // when
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();

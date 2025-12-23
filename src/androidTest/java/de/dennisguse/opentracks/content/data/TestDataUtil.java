@@ -17,9 +17,13 @@ import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
@@ -92,9 +96,9 @@ public class TestDataUtil {
         );
 
         List<Marker> markers = List.of(
-                new Marker(null, trackId, "Marker 1", "Marker description 1", "Marker typeLocalized 3", trackPoints.get(1).getPosition(), null),
-                new Marker(null, trackId, "Marker 2", "Marker description 2", "Marker typeLocalized 3", trackPoints.get(4).getPosition(), null),
-                new Marker(null, trackId, "Marker 3", "Marker description 3", "Marker typeLocalized 3", trackPoints.get(5).getPosition(), null)
+                new Marker(null, trackId, "Marker 1", "Marker description 1", "Marker typeLocalized 3", trackPoints.get(1).position(), null),
+                new Marker(null, trackId, "Marker 2", "Marker description 2", "Marker typeLocalized 3", trackPoints.get(4).position(), null),
+                new Marker(null, trackId, "Marker 3", "Marker description 3", "Marker typeLocalized 3", trackPoints.get(5).position(), null)
         );
 
         return new TrackData(track, trackPoints, markers);
@@ -112,8 +116,10 @@ public class TestDataUtil {
         return pair.first;
     }
 
-    public static TrackPoint createTrackPoint(int i) {
-        TrackPoint trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT,
+    public static TrackPoint createTrackPoint(int i, TrackPoint.Type type, AltitudeGainLoss altitudeGainLoss) {
+        return new TrackPoint(
+                null,
+                type,
                 new Position(
                         Instant.ofEpochSecond(i),
                         INITIAL_LATITUDE + (double) i / 10000.0,
@@ -123,20 +129,23 @@ public class TestDataUtil {
                         null,
                         null,
                         Speed.of(5f + (i / 10f))
-                ));
-
-        trackPoint.setHeartRate(100f + i % 80);
-        trackPoint.setCadence(300f + i);
-        trackPoint.setPower(400f + i);
-        trackPoint.setAltitudeGainLoss(ALTITUDE_GAIN, ALTITUDE_LOSS);
-        return trackPoint;
+                ),
+                null,
+                HeartRate.of(100f + i % 80),
+                Cadence.of(300f + i),
+                Power.of(400f + i),
+                altitudeGainLoss
+        );
     }
 
     public static TrackPoint createTrackPoint(int i, TrackPoint.Type type) {
-        TrackPoint trackPoint = createTrackPoint(i);
-        trackPoint.setType(type);
-        return trackPoint;
+        return createTrackPoint(i, TrackPoint.Type.TRACKPOINT, new AltitudeGainLoss(ALTITUDE_GAIN, ALTITUDE_LOSS));
     }
+
+    public static TrackPoint createTrackPoint(int i) {
+        return createTrackPoint(i, TrackPoint.Type.TRACKPOINT);
+    }
+
 
     /**
      * Inserts a track with locations into the database.
@@ -164,7 +173,7 @@ public class TestDataUtil {
                 "Marker name",
                 description,
                 "Marker typeLocalized",
-                trackPoint.getPosition(),
+                trackPoint.position(),
                 photoUri);
     }
 

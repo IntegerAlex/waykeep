@@ -124,20 +124,20 @@ public class GpsManager implements SensorConnector, LocationListenerCompat, GpsS
     @Override
     public void onLocationChanged(@NonNull Location location) {
         // Send each update to the status; please note that this TrackPoint is not stored.
-        TrackPoint trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, Position.of(location, trackPointCreator.createNow()));
-        gpsStatusManager.onNewTrackPoint(trackPoint);
+        Position position = Position.of(location, trackPointCreator.createNow());
+        gpsStatusManager.onNewTrackPoint(new TrackPoint(TrackPoint.Type.TRACKPOINT, position));
 
-        if (!trackPoint.getPosition().hasValidLocation()) {
-            Log.w(TAG, "Ignore newTrackPoint. location is invalid.");
+        if (!position.hasValidLocation()) {
+            Log.w(TAG, "Ignore newTrackPoint. Location is invalid.");
             return;
         }
 
-        if (!trackPoint.getPosition().fulfillsAccuracy(thresholdHorizontalAccuracy)) {
+        if (!position.fulfillsAccuracy(thresholdHorizontalAccuracy)) {
             Log.d(TAG, "Ignore newTrackPoint. Poor accuracy.");
             return;
         }
 
-        observer.onChange(new Raw<>(observer.getNow(), Position.of(location)));
+        observer.onChange(new Raw<>(observer.getNow(), position));
     }
 
     @Override

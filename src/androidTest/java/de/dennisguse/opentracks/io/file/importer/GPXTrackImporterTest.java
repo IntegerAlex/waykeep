@@ -27,8 +27,12 @@ import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
@@ -193,51 +197,81 @@ public class GPXTrackImporterTest {
         TrackPointAssert a = new TrackPointAssert()
                 .setDelta(0.05); // speed is not fully
         a.assertEquals(List.of(
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:03Z"),
                                 3d, 14d, Distance.of(10),
                                 Altitude.WGS84.of(10), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(1, 1),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:17Z"),
                                 3d, 14.001, Distance.of(10),
                                 Altitude.WGS84.of(10), null,
                                 null,
-                                Speed.of(5)))
-                        .setAltitudeGainLoss(1, 1)
-                        .setSensorDistance(Distance.of(12))
-                        .setHeartRate(69)
-                        .setPower(50f)
-                        .setCadence(3f),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                                Speed.of(5)),
+                        Distance.of(12),
+                        HeartRate.of(69),
+                        Cadence.of(3),
+                        Power.of(50),
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:21Z"),
                                 3d, 14.002, Distance.of(10),
                                 Altitude.WGS84.of(10), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:22Z"),
                                 3d, 16d, Distance.of(10),
                                 Altitude.WGS84.of(10), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
                                 3d, 16.001, Distance.of(10),
                                 Altitude.WGS84.of(10), null,
                                 null,
-                                Speed.of(10)))
-                        .setAltitudeGainLoss(0, 0)
-                        .setSpeed(Speed.of(15))
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                )
         ), actual);
     }
 
@@ -247,7 +281,7 @@ public class GPXTrackImporterTest {
         // given
         XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
         InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone);
-        try(InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone)) {
+        try (InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone)) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             // when

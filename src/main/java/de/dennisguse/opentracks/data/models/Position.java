@@ -17,8 +17,9 @@ public record Position(
         @Nullable Float bearing,
         @Nullable Speed speed
 ) {
+    @Deprecated
     public static Position empty() {
-        return of((Instant) null);
+        return of(null);
     }
 
     public static Position of(@NonNull Instant time) {
@@ -32,10 +33,6 @@ public record Position(
                 null,
                 null
         );
-    }
-
-    public static Position of(@NonNull Location location) {
-        return of(location, Instant.ofEpochMilli(location.getTime()));
     }
 
     public static Position of(@NonNull Location location, @NonNull Instant time) {
@@ -132,9 +129,8 @@ public record Position(
         return new Position(time, latitude, longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
     }
 
-    //TODO Use double
-    public Position withCoordinates(Double latitude, Double longitude) {
-        return new Position(time, latitude, longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
+    public Position withCoordinates(Position position) {
+        return new Position(time, position.latitude, position.longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
     }
 
     //TODO Use float

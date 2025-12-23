@@ -32,9 +32,13 @@ import java.util.List;
 import java.util.Locale;
 
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
@@ -265,8 +269,8 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             return;
         }
 
-        TrackPoint first = currentSegment.getFirst();
-        first.setType(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
+        TrackPoint first = currentSegment.removeFirst();
+        currentSegment.addFirst(first.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC));
 
         trackImporter.addTrackPoints(currentSegment);
         currentSegment.clear();
@@ -332,59 +336,70 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             }
         }
 
-        TrackPoint trackPoint = new TrackPoint(
-                TrackPoint.Type.TRACKPOINT,
-                new Position(
-                parsedTime.toInstant(),
-                latitudeParsed,
-                longitudeParsed,
-                accuracyHorizontalParsed,
-                altitudeParsed,
-                accuracyVerticalParsed,
-                null,
-                speedParsed
-        ));
-
-        if (heartrate != null) {
-            try {
-                trackPoint.setHeartRate(Float.parseFloat(heartrate));
-            } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse heart rate: %s", heartrate)), e);
-            }
-        }
-
-        if (cadence != null) {
-            try {
-                trackPoint.setCadence(Float.parseFloat(cadence));
-            } catch (Exception e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse cadence: %s", cadence)), e);
-            }
-        }
-
-        if (power != null) {
-            try {
-                trackPoint.setPower(Float.parseFloat(power));
-            } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse power: %s", power)), e);
-            }
-        }
-
-        if (gain != null && loss != null) {
-            try {
-                trackPoint.setAltitudeGainLoss(Float.parseFloat(gain), Float.parseFloat(loss));
-            } catch (NumberFormatException e) {
-                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s or los: %s", gain, loss)), e);
-            }
-        }
+        Distance parsedSensorDistance = null;
         if (sensorDistance != null) {
             try {
-                trackPoint.setSensorDistance(Distance.of(Float.parseFloat(sensorDistance)));
+                parsedSensorDistance = Distance.of(Float.parseFloat(sensorDistance));
             } catch (NumberFormatException e) {
                 throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse distance: %s", sensorDistance)), e);
             }
         }
 
-        return trackPoint;
+        HeartRate parsedHeartRate = null;
+        if (heartrate != null) {
+            try {
+                parsedHeartRate = HeartRate.of(Float.parseFloat(heartrate));
+            } catch (NumberFormatException e) {
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse heart rate: %s", heartrate)), e);
+            }
+        }
+
+        Cadence parsedCadence = null;
+        if (cadence != null) {
+            try {
+                parsedCadence = Cadence.of(Float.parseFloat(cadence));
+            } catch (Exception e) {
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse cadence: %s", cadence)), e);
+            }
+        }
+
+        Power parsedPower = null;
+        if (power != null) {
+            try {
+                parsedPower = Power.of(Float.parseFloat(power));
+            } catch (NumberFormatException e) {
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse power: %s", power)), e);
+            }
+        }
+
+        AltitudeGainLoss altitudeGainLoss = null;
+        if (gain != null && loss != null) {
+            try {
+                altitudeGainLoss = new AltitudeGainLoss(Float.parseFloat(gain), Float.parseFloat(loss));
+            } catch (NumberFormatException e) {
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude gain: %s or los: %s", gain, loss)), e);
+            }
+        }
+
+        return new TrackPoint(
+                null,
+                TrackPoint.Type.TRACKPOINT,
+                new Position(
+                        parsedTime.toInstant(),
+                        latitudeParsed,
+                        longitudeParsed,
+                        accuracyHorizontalParsed,
+                        altitudeParsed,
+                        accuracyVerticalParsed,
+                        null,
+                        speedParsed
+                ),
+                parsedSensorDistance,
+                parsedHeartRate,
+                parsedCadence,
+                parsedPower,
+                altitudeGainLoss
+        );
     }
 
     private void onTrackPointStart(Attributes attributes) {
@@ -425,8 +440,8 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
 
         TrackPoint trackPoint = createTrackPoint();
 
-        if (!trackPoint.hasLocation()) {
-            Log.w(TAG, "Marker with invalid coordinates ignored: " + trackPoint.getPosition());
+        if (!trackPoint.position().hasLocation()) {
+            Log.w(TAG, "Marker with invalid coordinates ignored: " + trackPoint.position());
             return;
         }
         markers.add(new Marker(
@@ -435,7 +450,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 name != null ? name : "",
                 description != null ? description : "",
                 markerType != null ? markerType : "",
-                trackPoint.getPosition(),
+                trackPoint.position(),
                 photoUrl
         ));
     }

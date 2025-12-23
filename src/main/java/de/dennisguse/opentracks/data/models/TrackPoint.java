@@ -22,23 +22,168 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.time.Instant;
-import java.util.Optional;
 
 /**
  * Sensor and/or location information for a specific point in time.
  * <p>
  * Time is created using the {@link de.dennisguse.opentracks.services.handlers.MonotonicClock}, because system time jump backwards.
- * GPS time is ignored as for non-GPS events, we could not create GPS-based timestamps.
+ * GPS time is ignored as for non-GPS events, we cannot create GPS-based timestamps.
  */
-//TODO Should be a record (with final properties)
-public class TrackPoint {
+public record TrackPoint(
 
-    @Nullable
-    private final TrackPoint.Id id;
+        @Nullable
+        TrackPoint.Id id,
 
-    //Requires: position.time must be non-null
+        @NonNull
+        TrackPoint.Type type,
+
+        //Requires: position.time must be non-null
+        @NonNull
+        Position position,
+
+        Distance sensorDistance,
+        HeartRate heartRate,
+        Cadence cadence,
+        Power power,
+        AltitudeGainLoss altitudeGainLoss
+) {
+
+    public TrackPoint(Type type, Position position) {
+        this(
+                null,
+                type,
+                position,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Deprecated //TOOD Private?
+    public TrackPoint(Type type, Instant now) {
+        this(
+                null,
+                type,
+                Position.of(now),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static TrackPoint createSegmentStartManualWithTime(Instant time) {
+        return new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, time);
+    }
+
+    public static TrackPoint with(TrackPoint trackPoint, Altitude.EGM2008 correctAltitude) {
+        return new TrackPoint(
+                trackPoint.id,
+                trackPoint.type,
+                new Position(
+                        trackPoint.position.time(),
+                        trackPoint.position.latitude(),
+                        trackPoint.position.longitude(),
+                        trackPoint.position.horizontalAccuracy(),
+                        correctAltitude,
+                        trackPoint.position.verticalAccuracy(),
+                        trackPoint.position.bearing(),
+                        trackPoint.position.speed()
+                ),
+                trackPoint.sensorDistance,
+                trackPoint.heartRate,
+                trackPoint.cadence,
+                trackPoint.power,
+                trackPoint.altitudeGainLoss
+        );
+    }
+
+    public TrackPoint with(Type newType) {
+        return new TrackPoint(
+                id,
+                newType,
+                position,
+                sensorDistance,
+                heartRate,
+                cadence,
+                power,
+                altitudeGainLoss
+        );
+    }
+
+    public TrackPoint with(Position newPosition) {
+        return new TrackPoint(
+                id,
+                type,
+                newPosition,
+                sensorDistance,
+                heartRate,
+                cadence,
+                power,
+                altitudeGainLoss
+        );
+    }
+
     @NonNull
-    private Position position;
+    public Instant getTime() {
+        return position.time();
+    }
+
+
+    public TrackPoint minusCumulativeSensorData(@NonNull TrackPoint lastTrackPoint) {
+        Distance newSensorDistance = sensorDistance;
+        if (sensorDistance != null && lastTrackPoint.sensorDistance != null) {
+            newSensorDistance = sensorDistance.minus(lastTrackPoint.sensorDistance);
+        }
+        AltitudeGainLoss newAltitudeGainLoss = altitudeGainLoss;
+        if (altitudeGainLoss != null && lastTrackPoint.altitudeGainLoss() != null) {
+            newAltitudeGainLoss = new AltitudeGainLoss(
+                    altitudeGainLoss.gain_m() - lastTrackPoint.altitudeGainLoss.gain_m(),
+                    altitudeGainLoss.loss_m() - lastTrackPoint.altitudeGainLoss.loss_m());
+        }
+        return new TrackPoint(
+                id,
+                type,
+                position,
+                newSensorDistance,
+                heartRate,
+                cadence,
+                power,
+                newAltitudeGainLoss
+        );
+    }
+
+    @NonNull
+    public Distance distanceToPrevious(@NonNull TrackPoint previous) {
+        if (sensorDistance() != null) {
+            return sensorDistance();
+        }
+        return distanceToPreviousFromLocation(previous);
+    }
+
+    @NonNull
+    public Distance distanceToPreviousFromLocation(@NonNull TrackPoint previous) {
+        if (!position.hasLocation() || !previous.position().hasLocation()) {
+            throw new RuntimeException("Cannot compute distance.");
+        }
+
+        return Distance.of(position().toLocation().distanceTo(previous.position().toLocation()));
+    }
+
+    public boolean isIdleTriggered() {
+        return type == TrackPoint.Type.IDLE;
+    }
+
+    public boolean isSegmentManualStart() {
+        return type == TrackPoint.Type.SEGMENT_START_MANUAL;
+    }
+
+    public boolean isSegmentManualEnd() {
+        return type == TrackPoint.Type.SEGMENT_END_MANUAL;
+    }
 
     public enum Type {
         SEGMENT_START_MANUAL(-2), //Start of a segment due to user interaction (start, resume)
@@ -73,298 +218,6 @@ public class TrackPoint {
 
             throw new RuntimeException("unknown id: " + id);
         }
-    }
-
-    @NonNull
-    private Type type;
-
-    private Distance sensorDistance;
-    private HeartRate heartRate = null;
-    private Cadence cadence = null;
-    private Power power = null;
-    private AltitudeGainLoss altitudeGainLoss = null;
-
-    public TrackPoint(@Nullable TrackPoint.Id id, @NonNull Type type, @NonNull Position position) {
-        this.id = id;
-        this.type = type;
-        this.position = position;
-    }
-
-    public TrackPoint(@NonNull Type type, @NonNull Instant time) {
-        this(null, type, Position.of(time));
-    }
-
-    public TrackPoint(@NonNull Type type, @NonNull Position position) {
-        this(null, type, position);
-    }
-
-    public static TrackPoint createSegmentStartManualWithTime(Instant time) {
-        return new TrackPoint(Type.SEGMENT_START_MANUAL, time);
-    }
-
-    public static TrackPoint createSegmentEndWithTime(Instant time) {
-        return new TrackPoint(Type.SEGMENT_END_MANUAL, time);
-    }
-
-    @NonNull
-    public Type getType() {
-        return type;
-    }
-
-    @Deprecated //Should not be needed.
-    public TrackPoint setType(@NonNull Type type) {
-        this.type = type;
-        return this;
-    }
-
-    public boolean isIdleTriggered() {
-        return type == Type.IDLE;
-    }
-
-    public boolean isSegmentManualStart() {
-        return type == Type.SEGMENT_START_MANUAL;
-    }
-
-    public boolean isSegmentManualEnd() {
-        return type == Type.SEGMENT_END_MANUAL;
-    }
-
-    //TODO Check if naming is correct.
-    public boolean wasCreatedManually() {
-        return hasLocation() || hasSpeed();
-    }
-
-    /**
-     * May be null if the track was not loaded from the database.
-     */
-    @Nullable
-    public TrackPoint.Id getId() {
-        return id;
-    }
-
-    public boolean hasLocation() {
-        return position.hasLocation();
-    }
-
-    @NonNull
-    public Position getPosition() {
-        return position;
-    }
-
-    public TrackPoint setPosition(Position position) {
-        this.position = position.with(this.position.time());
-        return this;
-    }
-
-    public boolean hasAltitudeGainLoss() {
-        return altitudeGainLoss != null;
-    }
-
-    public AltitudeGainLoss getAltitudeGainLoss() {
-        return altitudeGainLoss;
-    }
-
-    public TrackPoint setAltitudeGainLoss(AltitudeGainLoss altitudeGainLoss) {
-        this.altitudeGainLoss = altitudeGainLoss;
-        return this;
-    }
-
-    public TrackPoint setAltitudeGainLoss(float altitudeGain_m, float altitudeLoss_m) {
-        setAltitudeGainLoss(new AltitudeGainLoss(altitudeGain_m, altitudeLoss_m));
-        return this;
-    }
-
-    @NonNull
-    public Instant getTime() {
-        return position.time();
-    }
-
-    public boolean hasAltitude() {
-        return position.hasAltitude();
-    }
-
-    public Altitude getAltitude() {
-        return position.altitude();
-    }
-
-    @Deprecated
-    public TrackPoint setAltitude(Altitude altitude) {
-        position = position.with(altitude);
-        return this;
-    }
-
-    public boolean hasSpeed() {
-        return position.hasSpeed();
-    }
-
-    public Speed getSpeed() {
-        return position.speed();
-    }
-
-    @Deprecated
-    public TrackPoint setSpeed(Speed speed) {
-        this.position = position.with(speed);
-        return this;
-    }
-
-    public boolean hasBearing() {
-        return position.hasBearing();
-    }
-
-    public float getBearing() {
-        return position.bearing();
-    }
-
-    public TrackPoint setBearing(Float bearing) {
-        this.position = this.position.withBearing(bearing);
-        return this;
-    }
-
-    public boolean hasHorizontalAccuracy() {
-        return position.hasHorizontalAccuracy();
-    }
-
-    public Distance getHorizontalAccuracy() {
-        return position.horizontalAccuracy();
-    }
-
-    @Deprecated
-    public TrackPoint setHorizontalAccuracy(Distance horizontalAccuracy) {
-        this.position = this.position.withHorizontalAccuracy(horizontalAccuracy);
-        return this;
-    }
-
-    public boolean hasVerticalAccuracy() {
-        return position.hasVerticalAccuracy();
-    }
-
-    public Distance getVerticalAccuracy() {
-        return position.verticalAccuracy();
-    }
-
-    public TrackPoint setVerticalAccuracy(Distance verticalAccuracy) {
-        this.position = this.position.withVerticalAccuracy(verticalAccuracy);
-        return this;
-    }
-
-    @NonNull
-    public Distance distanceToPrevious(@NonNull TrackPoint previous) {
-        if (hasSensorDistance()) {
-            return getSensorDistance();
-        }
-        return distanceToPreviousFromLocation(previous);
-    }
-
-    @NonNull
-    public Distance distanceToPreviousFromLocation(@NonNull TrackPoint previous) {
-        if (!hasLocation() || hasLocation() != previous.hasLocation()) {
-            throw new RuntimeException("Cannot compute distance.");
-        }
-
-        return Distance.of(getPosition().toLocation().distanceTo(previous.getPosition().toLocation()));
-    }
-
-    public boolean fulfillsAccuracy(Distance thresholdHorizontalAccuracy) {
-        return position.fulfillsAccuracy(thresholdHorizontalAccuracy);
-    }
-
-    public Optional<Float> bearingTo(@NonNull TrackPoint dest) {
-        if (!dest.hasLocation() || !hasLocation()) {
-            return Optional.empty();
-        }
-        return Optional.of(getPosition().toLocation().bearingTo(dest.getPosition().toLocation()));
-    }
-
-    // Sensor data
-    public boolean hasSensorDistance() {
-        return sensorDistance != null;
-    }
-
-    public Distance getSensorDistance() {
-        return sensorDistance;
-    }
-
-    public TrackPoint setSensorDistance(Distance distance_m) {
-        this.sensorDistance = distance_m;
-        return this;
-    }
-
-    public TrackPoint minusCumulativeSensorData(@NonNull TrackPoint lastTrackPoint) {
-        if (hasSensorDistance() && lastTrackPoint.hasSensorDistance()) {
-            sensorDistance = sensorDistance.minus(lastTrackPoint.getSensorDistance());
-        }
-        if (hasAltitudeGainLoss() && lastTrackPoint.hasAltitudeGainLoss()) {
-            altitudeGainLoss = new AltitudeGainLoss(
-                    altitudeGainLoss.gain_m() - lastTrackPoint.altitudeGainLoss.gain_m(),
-                    altitudeGainLoss.loss_m() - lastTrackPoint.altitudeGainLoss.loss_m());
-        }
-        return this;
-    }
-
-    public boolean hasHeartRate() {
-        return heartRate != null;
-    }
-
-    public HeartRate getHeartRate() {
-        return heartRate;
-    }
-
-    public TrackPoint setHeartRate(HeartRate heartRate) {
-        this.heartRate = heartRate;
-        return this;
-    }
-
-    public TrackPoint setHeartRate(float heartRate) {
-        return setHeartRate(HeartRate.of(heartRate));
-    }
-
-    public boolean hasCadence() {
-        return cadence != null;
-    }
-
-    public Cadence getCadence() {
-        return cadence;
-    }
-
-    public TrackPoint setCadence(Cadence cadence) {
-        this.cadence = cadence;
-        return this;
-    }
-
-    public TrackPoint setCadence(float cadence) {
-        return setCadence(Cadence.of(cadence));
-    }
-
-    public boolean hasPower() {
-        return power != null;
-    }
-
-    public Power getPower() {
-        return power;
-    }
-
-    public TrackPoint setPower(Power power) {
-        this.power = power;
-        return this;
-    }
-
-    public TrackPoint setPower(float power) {
-        return setPower(Power.of(power));
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "TrackPoint{" +
-                "id=" + id +
-                ", type=" + type +
-                ", position=" + position +
-                ", sensorDistance=" + sensorDistance +
-                ", heartRate=" + heartRate +
-                ", cadence=" + cadence +
-                ", power=" + power +
-                ", altitudeGainLoss=" + altitudeGainLoss +
-                '}';
     }
 
     public record Id(long id) implements Parcelable {

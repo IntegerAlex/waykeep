@@ -104,8 +104,7 @@ public class IntervalStatisticsUpdaterTest {
 
         ArrayList<TrackPoint> trackPoints = new ArrayList<>();
         for (int i = 0; i < numberOfPoints; i++) {
-            trackPoints.add(TestDataUtil.createTrackPoint(i)
-                    .setAltitudeGainLoss(null));
+            trackPoints.add(TestDataUtil.createTrackPoint(i, TrackPoint.Type.TRACKPOINT, null));
         }
         TrackStatisticsUpdater trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoints);
 

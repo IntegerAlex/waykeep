@@ -150,7 +150,7 @@ public class MarkerEditViewModel extends AndroidViewModel {
                 name,
                 "",
                 "",
-                trackPoint.getPosition(),
+                trackPoint.position(),
                 null);
 
         if (markerData == null) {

@@ -11,9 +11,9 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
-import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
+import de.dennisguse.opentracks.sensors.sensorData.SensorDataAggregator;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.util.SystemUtils;
@@ -24,7 +24,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     //TODO Should be final and not be visible for testing
     @VisibleForTesting
-    public SensorDataSet sensorDataSet;
+    public SensorDataAggregator sensorDataAggregator;
 
     private PowerManager.WakeLock wakeLock;
 
@@ -34,23 +34,23 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         @Override
         public void onConnect(Aggregator<?, ?> aggregator) {
-            sensorDataSet.add(aggregator);
+            sensorDataAggregator.add(aggregator);
         }
 
         @Override
         public void onChange(Raw<?> data) {
-            sensorDataSet.update(data);
-            observer.onChange(new SensorDataSet(sensorDataSet));
+            sensorDataAggregator.update(data);
+            observer.onChange();
         }
 
         @Override
         public void onDisconnect(Aggregator<?, ?> aggregator) {
-            sensorDataSet.add(aggregator);
+            sensorDataAggregator.add(aggregator);
         }
 
         @Override
         public void onRemove(Aggregator<?, ?> aggregator) {
-            sensorDataSet.remove(aggregator);
+            sensorDataAggregator.remove(aggregator);
         }
 
         @Override
@@ -67,7 +67,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     public SensorManager(TrackPointCreator observer) {
         this.observer = observer;
-        this.sensorDataSet = new SensorDataSet(observer);
+        this.sensorDataAggregator = new SensorDataAggregator();
     }
 
     public void start(Context context, Handler handler) {
@@ -100,12 +100,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         gpsManager.stop(context);
         gpsManager = null;
 
-        sensorDataSet.clear();
+        sensorDataAggregator.clear();
     }
 
-    public SensorDataSet fill(TrackPoint trackPoint) {
-        sensorDataSet.fillTrackPoint(trackPoint);
-        return new SensorDataSet(sensorDataSet);
+    public SensorDataSet getSensorDataSet(Instant now) {
+        return sensorDataAggregator.getSensorData(now);
     }
 
     public void reset() {
@@ -113,7 +112,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             Log.d(TAG, "No recording running and no reset necessary.");
             return;
         }
-        sensorDataSet.reset();
+        sensorDataAggregator.reset();
     }
 
     @VisibleForTesting

@@ -19,22 +19,22 @@ public class AltitudeCorrectionManager {
 
     private static final String TAG = AltitudeCorrectionManager.class.getSimpleName();
 
-    public void correctAltitude(Context context, TrackPoint trackPoint) {
-        if (!trackPoint.hasLocation() || !trackPoint.hasAltitude()) {
-            return;
+    public TrackPoint correctAltitude(Context context, TrackPoint trackPoint) {
+        if (!trackPoint.position().hasLocation() || !trackPoint.position().hasAltitude()) {
+            return trackPoint;
         }
 
-        // TODO The following is doing IO and should not be done in main thread.
+        final TrackPoint[] newTrackPoint = {null}; //TODO this is kind of ugly
         // AltitudeConverterCompat uses internally a RoomDatabase that cannot be access from main thread and thus fails on version <= 34.
         Thread t = new Thread(() -> {
-            try {
-                Location loc = trackPoint.getPosition().toLocation();
-                AltitudeConverterCompat.addMslAltitudeToLocation(context, loc);
-                trackPoint.setAltitude(Altitude.EGM2008.of(LocationCompat.getMslAltitudeMeters(loc)));
-            } catch (IOException e) {
-                Log.w(TAG, "Android's AltitudeConverterCompat failed with " + e.getMessage());
-            }
-        });
+                try {
+                    Location loc = trackPoint.position().toLocation();
+                    AltitudeConverterCompat.addMslAltitudeToLocation(context, loc);
+                    newTrackPoint[0] = TrackPoint.with(trackPoint, Altitude.EGM2008.of(LocationCompat.getMslAltitudeMeters(loc)));
+                } catch (IOException e) {
+                    Log.w(TAG, "Android's AltitudeConverterCompat failed with " + e.getMessage());
+                }
+            });
         t.start();
 
         try {
@@ -42,5 +42,7 @@ public class AltitudeCorrectionManager {
         } catch (InterruptedException e) {
             Log.w(TAG, "Android's AltitudeConverterCompat failed with " + e.getMessage());
         }
+
+        return newTrackPoint[0];
     }
 }

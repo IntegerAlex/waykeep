@@ -176,21 +176,19 @@ public class TrackImporter {
             TrackPoint previous = trackPoints.get(i - 1);
             TrackPoint current = trackPoints.get(i);
 
-            if (current.hasSensorDistance() || (previous.hasLocation() && current.hasLocation())) {
+            if (current.sensorDistance() != null || (previous.position().hasLocation() && current.position().hasLocation())) {
+                TrackPoint newCurrent = current;
+
                 Distance distanceToPrevious = current.distanceToPrevious(previous);
-                if (!current.hasSpeed()) {
+                if (!current.position().hasSpeed()) {
                     Duration timeDifference = Duration.between(previous.getTime(), current.getTime());
-                    current.setSpeed(Speed.of(distanceToPrevious, timeDifference));
+                    newCurrent = newCurrent.with(newCurrent.position().with(Speed.of(distanceToPrevious, timeDifference)));
                 }
 
-                if (!current.hasBearing()) {
-                    previous.bearingTo(current)
-                            .ifPresent(current::setBearing);
+                if (current.type().equals(TrackPoint.Type.TRACKPOINT) && distanceToPrevious.greaterThan(maxRecordingDistance)) {
+                    newCurrent = newCurrent.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
                 }
-
-                if (current.getType().equals(TrackPoint.Type.TRACKPOINT) && distanceToPrevious.greaterThan(maxRecordingDistance)) {
-                    current.setType(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
-                }
+                trackPoints.set(i, newCurrent);
             }
         }
     }

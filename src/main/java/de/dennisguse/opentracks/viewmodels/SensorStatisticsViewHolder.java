@@ -3,10 +3,7 @@ package de.dennisguse.opentracks.viewmodels;
 import android.util.Pair;
 import android.view.LayoutInflater;
 
-import java.time.Instant;
-
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.databinding.StatsSensorItemBinding;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
@@ -37,10 +34,9 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             String sensorName = getContext().getString(R.string.value_unknown);
 
             Pair<String, String> valueAndUnit;
-            Pair<HeartRate, String> heartRate;
-            if (sensorDataSet != null && (heartRate = sensorDataSet.getHeartRate()) != null) {
-                valueAndUnit = StringUtils.getHeartRateParts(getContext(), heartRate.first);
-                sensorName = heartRate.second;
+            if (sensorDataSet != null && sensorDataSet.heartRate() != null) {
+                valueAndUnit = StringUtils.getHeartRateParts(getContext(), sensorDataSet.heartRate().data());
+                sensorName = sensorDataSet.heartRate().sensorNameOrAddress();
             } else {
                 valueAndUnit = StringUtils.getHeartRateParts(getContext(), null);
             }
@@ -48,8 +44,8 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             //TODO Loads preference every time
             HeartRateZones zones = PreferencesUtils.getHeartRateZones();
             int textColor;
-            if (sensorDataSet != null && (heartRate = sensorDataSet.getHeartRate()) != null) {
-                textColor = zones.getTextColorForZone(getContext(), heartRate.first);
+            if (sensorDataSet != null && sensorDataSet.heartRate() != null) {
+                textColor = zones.getTextColorForZone(getContext(), sensorDataSet.heartRate().data());
             } else {
                 textColor = zones.getTextColorForZone(getContext(), null);
             }
@@ -72,9 +68,9 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             String sensorName = getContext().getString(R.string.value_unknown);
 
             Pair<String, String> valueAndUnit;
-            if (sensorDataSet != null && sensorDataSet.getCadence() != null) {
-                valueAndUnit = StringUtils.getCadenceParts(getContext(), sensorDataSet.getCadence().first);
-                sensorName = sensorDataSet.getCadence().second;
+            if (sensorDataSet != null && sensorDataSet.cadence() != null) {
+                valueAndUnit = StringUtils.getCadenceParts(getContext(), sensorDataSet.cadence().data());
+                sensorName = sensorDataSet.cadence().sensorNameOrAddress();
             } else {
                 valueAndUnit = StringUtils.getCadenceParts(getContext(), null);
             }
@@ -95,9 +91,9 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             String sensorName = getContext().getString(R.string.value_unknown);
 
             Pair<String, String> valueAndUnit;
-            if (sensorDataSet != null && sensorDataSet.getCyclingPower() != null) {
-                valueAndUnit = StringUtils.getPowerParts(getContext(), sensorDataSet.getCyclingPower().getAggregatedValue(Instant.now())); //TODO Use MonotonicClock
-                sensorName = sensorDataSet.getCyclingPower().getSensorNameOrAddress();
+            if (sensorDataSet != null && sensorDataSet.power() != null) {
+                valueAndUnit = StringUtils.getPowerParts(getContext(), sensorDataSet.power().data());
+                sensorName = sensorDataSet.power().sensorNameOrAddress();
             } else {
                 valueAndUnit = StringUtils.getCadenceParts(getContext(), null);
             }

@@ -18,7 +18,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.TtsSpan;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,9 +34,10 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
+import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.settings.UnitSystem;
-import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.util.StringUtils;
 
 class VoiceAnnouncementUtils {
@@ -160,9 +160,9 @@ class VoiceAnnouncementUtils {
             }
         }
 
-        Pair<HeartRate, String> heartrate = sensorDataSet.getHeartRate();
-        if (shouldVoiceAnnounceHeartRateCurrent() && heartrate != null && heartrate.first != null && heartrate.first.isValid()) { //TODO Check has an announcable value?
-            int averageHeartRate = Math.round(heartrate.first.getBPM());
+        SensorData<HeartRate> heartrate = sensorDataSet.heartRate();
+        if (shouldVoiceAnnounceHeartRateCurrent() && heartrate != null && heartrate.data().isValid()) { //TODO Check has an announceable value?
+            int averageHeartRate = Math.round(heartrate.data().getBPM());
 
             builder.append(" ")
                     .append(context.getString(R.string.current_heart_rate));

@@ -109,17 +109,17 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
                 .build(context);
 
         //TODO The decision if a trackpoint is not accurate enough should happen in the TrackRecordingManager (via RecordingData).
-        if (recordingData.latestTrackPoint().hasHorizontalAccuracy()) {
-            formattedAccuracy = formatter.formatDistance(recordingData.latestTrackPoint().getHorizontalAccuracy());
+        if (recordingData.latestTrackPoint().position().hasHorizontalAccuracy()) {
+            formattedAccuracy = formatter.formatDistance(recordingData.latestTrackPoint().position().horizontalAccuracy());
 
-            boolean currentLocationWasAccurate = recordingData.latestTrackPoint().getHorizontalAccuracy().lessThan(thresholdHorizontalAccuracy);
+            boolean currentLocationWasAccurate = recordingData.latestTrackPoint().position().horizontalAccuracy().lessThan(thresholdHorizontalAccuracy);
             boolean shouldAlert = !currentLocationWasAccurate && previousLocationWasAccurate;
             notificationBuilder.setOnlyAlertOnce(!shouldAlert);
             previousLocationWasAccurate = currentLocationWasAccurate;
         }
 
         notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(recordingData.trackStatistics().totalDistance())));
-        String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(recordingData.latestTrackPoint().getSpeed());
+        String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(recordingData.latestTrackPoint().position().speed());
         notificationBuilder.setContentText(context.getString(R.string.track_speed_notification, formattedSpeed));
         notificationBuilder.setSubText(context.getString(R.string.track_recording_notification_accuracy, formattedAccuracy));
         updateNotification();

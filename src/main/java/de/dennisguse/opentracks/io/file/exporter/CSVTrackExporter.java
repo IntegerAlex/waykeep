@@ -90,20 +90,20 @@ public class CSVTrackExporter implements TrackExporter {
     public boolean writeTrack(@NonNull List<Track> tracks, @NonNull OutputStream outputStream) {
         List<Column> columns = List.of(
                 new Column("time", null),
-                new Column("trackpoint_type", t -> quote(t.getType().name())),
-                new Column("latitude", t -> t.hasLocation() ? COORDINATE_FORMAT.format(t.getPosition().latitude()) : ""),
-                new Column("longitude", t -> t.hasLocation() ? COORDINATE_FORMAT.format(t.getPosition().longitude()) : ""),
-                new Column("altitude", t -> t.hasAltitude() ? ALTITUDE_FORMAT.format(t.getAltitude().toM()) : ""),
-                new Column("accuracy_horizontal", t -> t.hasHorizontalAccuracy() ? DISTANCE_FORMAT.format(t.getHorizontalAccuracy().toM()) : ""),
-                new Column("accuracy_vertical", t -> t.hasVerticalAccuracy() ? DISTANCE_FORMAT.format(t.getVerticalAccuracy().toM()) : ""),
+                new Column("trackpoint_type", t -> quote(t.type().name())),
+                new Column("latitude", t -> t.position().hasLocation() ? COORDINATE_FORMAT.format(t.position().latitude()) : ""),
+                new Column("longitude", t -> t.position().hasLocation() ? COORDINATE_FORMAT.format(t.position().longitude()) : ""),
+                new Column("altitude", t -> t.position().hasAltitude() ? ALTITUDE_FORMAT.format(t.position().altitude().toM()) : ""),
+                new Column("accuracy_horizontal", t -> t.position().hasHorizontalAccuracy() ? DISTANCE_FORMAT.format(t.position().horizontalAccuracy().toM()) : ""),
+                new Column("accuracy_vertical", t -> t.position().hasVerticalAccuracy() ? DISTANCE_FORMAT.format(t.position().verticalAccuracy().toM()) : ""),
 
-                new Column("speed", t -> t.hasSpeed() ? SPEED_FORMAT.format(t.getSpeed().toKMH()) : ""),
-                new Column("altitude_gain", t -> t.hasAltitudeGainLoss() ? ALTITUDE_FORMAT.format(t.getAltitudeGainLoss().gain_m()) : ""),
-                new Column("altitude_loss", t -> t.hasAltitudeGainLoss() ? ALTITUDE_FORMAT.format(t.getAltitudeGainLoss().loss_m()) : ""),
-                new Column("sensor_distance", t -> t.hasSensorDistance() ? DISTANCE_FORMAT.format(t.getSensorDistance().toM()) : ""),
-                new Column("heartrate", t -> t.hasHeartRate() ? HEARTRATE_FORMAT.format(t.getHeartRate().getBPM()) : ""),
-                new Column("cadence", t -> t.hasCadence() ? CADENCE_FORMAT.format(t.getCadence().getRPM()) : ""),
-                new Column("power", t -> t.hasPower() ? POWER_FORMAT.format(t.getPower().getW()) : ""));
+                new Column("speed", t -> t.position().hasSpeed() ? SPEED_FORMAT.format(t.position().speed().toKMH()) : ""),
+                new Column("altitude_gain", t -> t.altitudeGainLoss() != null ? ALTITUDE_FORMAT.format(t.altitudeGainLoss().gain_m()) : ""),
+                new Column("altitude_loss", t -> t.altitudeGainLoss() != null ? ALTITUDE_FORMAT.format(t.altitudeGainLoss().loss_m()) : ""),
+                new Column("sensor_distance", t -> t.sensorDistance() != null ? DISTANCE_FORMAT.format(t.sensorDistance().toM()) : ""),
+                new Column("heartrate", t -> t.heartRate() != null ? HEARTRATE_FORMAT.format(t.heartRate().getBPM()) : ""),
+                new Column("cadence", t -> t.cadence() != null ? CADENCE_FORMAT.format(t.cadence().getRPM()) : ""),
+                new Column("power", t -> t.power() != null ? POWER_FORMAT.format(t.power().getW()) : ""));
 
         try {
             prepare(outputStream);

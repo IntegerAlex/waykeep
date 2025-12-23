@@ -3,7 +3,6 @@ package de.dennisguse.opentracks.services.handlers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
 import de.dennisguse.opentracks.sensors.SensorManager;
@@ -55,15 +55,6 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
         sensorManager.reset();
     }
 
-    private SensorDataSet addSensorData(TrackPoint trackPoint) {
-        if (!isStarted()) {
-            Log.w(TAG, "Not started, should not be called.");
-            return null;
-        }
-
-        return sensorManager.fill(trackPoint);
-    }
-
     public void stop() {
         sensorManager.stop(context);
         this.context = null;
@@ -72,13 +63,8 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     /**
      * Got a new TrackPoint from Bluetooth only; contains no GPS location.
      */
-    public synchronized void onChange(@NonNull SensorDataSet unused) {
-        onNewTrackPoint(new TrackPoint(TrackPoint.Type.TRACKPOINT, createNow()));
-    }
-
-    @VisibleForTesting
-    public void onNewTrackPoint(@NonNull TrackPoint trackPoint) {
-        addSensorData(trackPoint);
+    public synchronized void onChange() {
+        TrackPoint trackPoint = createTrackPoint(TrackPoint.Type.TRACKPOINT);
 
         boolean stored = service.newTrackPoint(trackPoint, PreferencesUtils.getThresholdHorizontalAccuracy());  //TODO Cache preference for performance
         if (stored) {
@@ -91,38 +77,71 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public synchronized TrackPoint createSegmentEnd() {
-        TrackPoint segmentEnd = TrackPoint.createSegmentEndWithTime(createNow());
-        addSensorData(segmentEnd);
+        TrackPoint segmentEnd = createTrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL);
         reset();
         return segmentEnd;
     }
 
     public synchronized TrackPoint createIdle() {
-        TrackPoint idle = new TrackPoint(TrackPoint.Type.IDLE, createNow());
-        addSensorData(idle);
+        TrackPoint idle = createTrackPoint(TrackPoint.Type.IDLE);
         reset();
         return idle;
     }
 
     public Pair<TrackPoint, SensorDataSet> createCurrentTrackPoint(@Nullable TrackPoint lastTrackPointUISpeed, @Nullable TrackPoint lastTrackPointUIAltitude, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
-        TrackPoint currentTrackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, createNow());
+        Instant now = createNow();
+        SensorDataSet sensorDataSet = sensorManager.getSensorDataSet(now);
 
-        SensorDataSet sensorDataSet = addSensorData(currentTrackPoint);
+        Position position = sensorDataSet.position().data();
 
-        if (!currentTrackPoint.hasLocation() && lastStoredTrackPointWithLocation != null && lastStoredTrackPointWithLocation.hasLocation()) {
+        if (!position.hasLocation()
+                && lastStoredTrackPointWithLocation != null
+                && lastStoredTrackPointWithLocation.position().hasLocation()) {
             //We are taking the coordinates from the last stored TrackPoint, so the distance is monotonously increasing.
-            currentTrackPoint.setPosition(lastStoredTrackPointWithLocation.getPosition());
+            position = position.withCoordinates(lastStoredTrackPointWithLocation.position());
         }
 
-        if (lastTrackPointUISpeed != null) {
-            currentTrackPoint.setSpeed(lastTrackPointUISpeed.getSpeed());
-        }
+        if (lastTrackPointUISpeed != null)
+            position.with(lastTrackPointUISpeed.position().speed());
 
-        if (lastTrackPointUIAltitude != null) {
-            currentTrackPoint.setAltitude(lastTrackPointUIAltitude.getAltitude());
-        }
+        if (lastTrackPointUIAltitude != null)
+            position.with(lastTrackPointUIAltitude.position().altitude());
+
+        TrackPoint currentTrackPoint = new TrackPoint(
+                null,
+                TrackPoint.Type.TRACKPOINT,
+                position,
+                sensorDataSet.distance() != null ? sensorDataSet.distance().data() : null,
+                sensorDataSet.heartRate() != null ? sensorDataSet.heartRate().data() : null,
+                sensorDataSet.cadence() != null ? sensorDataSet.cadence().data() : null,
+                sensorDataSet.power() != null ? sensorDataSet.power().data() : null,
+                sensorDataSet.altitudeGainLoss() != null ? sensorDataSet.altitudeGainLoss().data() : null
+        );
 
         return new Pair<>(currentTrackPoint, sensorDataSet);
+    }
+
+    private TrackPoint createTrackPoint(TrackPoint.Type type) {
+        Instant now = createNow();
+
+        SensorDataSet sensorDataSet = sensorManager.getSensorDataSet(now);
+
+        Position position = sensorDataSet.position().data();
+        if (sensorDataSet.speed() != null) {
+            position = position.with(sensorDataSet.speed().data());
+        }
+
+        return
+                new TrackPoint(
+                        null,
+                        type,
+                        position,
+                        sensorDataSet.distance() != null ? sensorDataSet.distance().data() : null,
+                        sensorDataSet.heartRate() != null ? sensorDataSet.heartRate().data() : null,
+                        sensorDataSet.cadence() != null ? sensorDataSet.cadence().data() : null,
+                        sensorDataSet.power() != null ? sensorDataSet.power().data() : null,
+                        sensorDataSet.altitudeGainLoss() != null ? sensorDataSet.altitudeGainLoss().data() : null
+                );
     }
 
     public Instant createNow() {

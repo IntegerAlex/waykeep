@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.TestUtil;
 import de.dennisguse.opentracks.TrackListActivity;
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
@@ -47,7 +48,7 @@ public class EspressoAggregatedFilterTest {
     public ActivityScenarioRule<TrackListActivity> mActivityTestRule = new ActivityScenarioRule<>(TrackListActivity.class);
 
     @Rule
-    public GrantPermissionRule mGrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+    public GrantPermissionRule mGrantPermissionRule = TestUtil.createGrantPermissionRule();
 
     @Before
     public void setUp() {

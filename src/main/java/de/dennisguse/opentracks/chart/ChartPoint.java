@@ -27,8 +27,8 @@ public record ChartPoint(
                 chartByDistance
                         ? trackStatistics.totalDistance().toKM_Miles(unitSystem)
                         : trackStatistics.totalDuration().toMillis(),
-                trackPoint.hasAltitude()
-                        ? Distance.of(trackPoint.getAltitude().toM()).toM_FT(unitSystem)
+                trackPoint.position().hasAltitude()
+                        ? Distance.of(trackPoint.position().altitude().toM()).toM_FT(unitSystem)
                         : null,
                 smoothedSpeed != null
                         ? smoothedSpeed.to(unitSystem)
@@ -36,14 +36,14 @@ public record ChartPoint(
                 smoothedSpeed != null
                         ? smoothedSpeed.toPace(unitSystem).toSeconds() / 60d
                         : null,
-                trackPoint.hasHeartRate()
-                        ? (double) trackPoint.getHeartRate().getBPM()
+                trackPoint.heartRate() != null
+                        ? (double) trackPoint.heartRate().getBPM()
                         : null,
-                trackPoint.hasCadence()
-                        ? (double) trackPoint.getCadence().getRPM()
+                trackPoint.cadence() != null
+                        ? (double) trackPoint.cadence().getRPM()
                         : null,
-                trackPoint.hasPower()
-                        ? (double) trackPoint.getPower().getW()
+                trackPoint.power() != null
+                        ? (double) trackPoint.power().getW()
                         : null
         );
     }

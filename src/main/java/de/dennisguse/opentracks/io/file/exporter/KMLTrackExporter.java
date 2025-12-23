@@ -95,7 +95,7 @@ public class KMLTrackExporter implements TrackExporter {
     private final List<Float> powerList = new ArrayList<>();
     private final List<Float> cadenceList = new ArrayList<>();
     private final List<Float> heartRateList = new ArrayList<>();
-    private final List<Float> altitudeGainList = new ArrayList<>();
+    private final List<Float> altitudeGainList = new ArrayList<>(); //TODO Join with altitudeLossList
     private final List<Float> altitudeLossList = new ArrayList<>();
     private final List<Float> accuracyHorizontal = new ArrayList<>();
     private final List<Float> accuracyVertical = new ArrayList<>();
@@ -167,7 +167,7 @@ public class KMLTrackExporter implements TrackExporter {
                     wroteTrack = true;
                 }
 
-                switch (trackPoint.getType()) {
+                switch (trackPoint.type()) {
                     case SEGMENT_START_MANUAL, SEGMENT_START_AUTOMATIC -> {
                         if (wroteSegment) writeCloseSegment();
                         writeOpenSegment();
@@ -190,7 +190,7 @@ public class KMLTrackExporter implements TrackExporter {
                         writeTrackPoint(track.zoneOffset(), trackPoint);
                     }
                     default ->
-                            throw new RuntimeException("Exporting this TrackPoint type is not implemented: " + trackPoint.getType());
+                            throw new RuntimeException("Exporting this TrackPoint type is not implemented: " + trackPoint.type());
                 }
             }
 
@@ -370,28 +370,28 @@ public class KMLTrackExporter implements TrackExporter {
     void writeTrackPoint(ZoneOffset zoneOffset, TrackPoint trackPoint) {
         printWriter.println("<when>" + getTime(zoneOffset, trackPoint.getTime()) + "</when>");
 
-        trackpointTypeList.add(trackPoint.getType());
+        trackpointTypeList.add(trackPoint.type());
 
-        if (trackPoint.hasLocation()) {
-            printWriter.println("<coord>" + getCoordinates(trackPoint.getPosition(), " ") + "</coord>");
+        if (trackPoint.position().hasLocation()) {
+            printWriter.println("<coord>" + getCoordinates(trackPoint.position(), " ") + "</coord>");
         } else {
             printWriter.println("<coord/>");
         }
-        speedList.add(trackPoint.hasSpeed() ? (float) trackPoint.getSpeed().toMPS() : null);
+        speedList.add(trackPoint.position().hasSpeed() ? (float) trackPoint.position().speed().toMPS() : null);
 
-        distanceList.add(trackPoint.hasSensorDistance() ? (float) trackPoint.getSensorDistance().toM() : null);
-        heartRateList.add(trackPoint.hasHeartRate() ? trackPoint.getHeartRate().getBPM() : null);
-        cadenceList.add(trackPoint.hasCadence() ? trackPoint.getCadence().getRPM() : null);
-        powerList.add(trackPoint.hasPower() ? trackPoint.getPower().getW() : null);
-        if (trackPoint.hasAltitudeGainLoss()) {
-            altitudeGainList.add(trackPoint.getAltitudeGainLoss().loss_m());
-            altitudeLossList.add(trackPoint.getAltitudeGainLoss().loss_m());
+        distanceList.add(trackPoint.sensorDistance() != null ? (float) trackPoint.sensorDistance().toM() : null);
+        heartRateList.add(trackPoint.heartRate() != null ? trackPoint.heartRate().getBPM() : null);
+        cadenceList.add(trackPoint.cadence() != null ? trackPoint.cadence().getRPM() : null);
+        powerList.add(trackPoint.power() != null ? trackPoint.power().getW() : null);
+        if (trackPoint.altitudeGainLoss() != null) {
+            altitudeGainList.add(trackPoint.altitudeGainLoss().loss_m());
+            altitudeLossList.add(trackPoint.altitudeGainLoss().loss_m());
         } else {
             altitudeGainList.add(null);
             altitudeLossList.add(null);
         }
-        accuracyHorizontal.add(trackPoint.hasHorizontalAccuracy() ? (float) trackPoint.getHorizontalAccuracy().toM() : null);
-        accuracyVertical.add(trackPoint.hasVerticalAccuracy() ? (float) trackPoint.getVerticalAccuracy().toM() : null);
+        accuracyHorizontal.add(trackPoint.position().hasHorizontalAccuracy() ? (float) trackPoint.position().horizontalAccuracy().toM() : null);
+        accuracyVertical.add(trackPoint.position().hasVerticalAccuracy() ? (float) trackPoint.position().verticalAccuracy().toM() : null);
     }
 
     private void writeSimpleArraySensorData(List<Float> list, String name) {

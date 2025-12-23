@@ -111,32 +111,32 @@ public class TrackStatisticsUpdater {
         currentSegment.updateTotalTime(trackPoint.getTime());
 
         // Process sensor data: barometer
-        if (trackPoint.hasAltitudeGainLoss()) {
-            currentSegment.addTotalAltitudeGainLoss(trackPoint.getAltitudeGainLoss());
+        if (trackPoint.altitudeGainLoss() != null) {
+            currentSegment.addTotalAltitudeGainLoss(trackPoint.altitudeGainLoss());
         }
 
-        //Update absolute (GPS-based) altitude
-        if (trackPoint.hasAltitude()) {
-            currentSegment.updateAltitudeExtremities(trackPoint.getAltitude());
+        // Update absolute (GPS-based) altitude
+        if (trackPoint.position().hasAltitude()) {
+            currentSegment.updateAltitudeExtremities(trackPoint.position().altitude());
         }
 
         // Update heart rate
-        if (trackPoint.hasHeartRate() && lastTrackPoint != null) {
+        if (trackPoint.heartRate() != null && lastTrackPoint != null) {
             Duration trackPointDuration = Duration.between(lastTrackPoint.getTime(), trackPoint.getTime());
             Duration newTotalDuration = totalHeartRateDuration.plus(trackPointDuration);
 
-            averageHeartRateBPM = (totalHeartRateDuration.toMillis() * averageHeartRateBPM + trackPointDuration.toMillis() * trackPoint.getHeartRate().getBPM()) / newTotalDuration.toMillis();
+            averageHeartRateBPM = (totalHeartRateDuration.toMillis() * averageHeartRateBPM + trackPointDuration.toMillis() * trackPoint.heartRate().getBPM()) / newTotalDuration.toMillis();
             totalHeartRateDuration = newTotalDuration;
 
             currentSegment.setAverageHeartRate(HeartRate.of(averageHeartRateBPM));
         }
 
         // Update power
-        if (trackPoint.hasPower() && lastTrackPoint != null) {
+        if (trackPoint.power() != null && lastTrackPoint != null) {
             Duration trackPointDuration = Duration.between(lastTrackPoint.getTime(), trackPoint.getTime());
             Duration newTotalDuration = totalPowerDuration.plus(trackPointDuration);
 
-            averagePowerW = (totalPowerDuration.toMillis() * averagePowerW + trackPointDuration.toMillis() * trackPoint.getPower().getW()) / newTotalDuration.toMillis();
+            averagePowerW = (totalPowerDuration.toMillis() * averagePowerW + trackPointDuration.toMillis() * trackPoint.power().getW()) / newTotalDuration.toMillis();
             totalPowerDuration = newTotalDuration;
 
             currentSegment.setAveragePower(Power.of(averagePowerW));
@@ -145,11 +145,11 @@ public class TrackStatisticsUpdater {
         {
             // Update total distance
             Distance movingDistance = null;
-            if (trackPoint.hasSensorDistance()) {
-                movingDistance = trackPoint.getSensorDistance();
+            if (trackPoint.sensorDistance() != null) {
+                movingDistance = trackPoint.sensorDistance();
             } else if (lastTrackPoint != null
-                    && lastTrackPoint.hasLocation()
-                    && trackPoint.hasLocation()) {
+                    && lastTrackPoint.position().hasLocation()
+                    && trackPoint.position().hasLocation()) {
                 // GPS-based distance/speed
                 movingDistance = trackPoint.distanceToPrevious(lastTrackPoint);
             }
@@ -173,7 +173,7 @@ public class TrackStatisticsUpdater {
                 }
             }
 
-            if (trackPoint.hasSpeed()) {
+            if (trackPoint.position().hasSpeed()) {
                 updateSpeed(trackPoint);
             }
         }
@@ -205,7 +205,7 @@ public class TrackStatisticsUpdater {
      * Updates a speed reading while assuming the user is moving.
      */
     private void updateSpeed(@NonNull TrackPoint trackPoint) {
-        Speed currentSpeed = trackPoint.getSpeed();
+        Speed currentSpeed = trackPoint.position().speed();
         if (currentSpeed.greaterThan(currentSegment.getMaxSpeed())) {
             currentSegment.setMaxSpeed(currentSpeed);
         }
@@ -215,8 +215,8 @@ public class TrackStatisticsUpdater {
     @Override
     public String toString() {
         return "TrackStatisticsUpdater{" +
-                "segmentStatisticUpdater=" + statisticsWithoutCurrentSegment +
-                ", currentSegment=" + currentSegment +
+                "currentSegment=" + currentSegment +
+                ", segmentStatisticUpdater=" + statisticsWithoutCurrentSegment +
                 ", lastTrackPoint=" + lastTrackPoint +
                 '}';
     }

@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.dennisguse.opentracks.data.models.Altitude;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 
@@ -20,7 +24,9 @@ public class TestSensorDataUtil {
         sensorDataList.add(new TestSensorDataUtil.SensorData(time, hr, cadence, power, type));
         int i = trackPointList.size() + 1;
 
-        TrackPoint tp = new TrackPoint(type,
+        TrackPoint tp = new TrackPoint(
+                null,
+                type,
                 new Position(
                         time,
                         TestDataUtil.INITIAL_LATITUDE + (double) i / 10000.0,
@@ -30,18 +36,14 @@ public class TestSensorDataUtil {
                         null,
                         null,
                         Speed.of(5f + (i / 10f))
-                )
+                ),
+                null,
+                HeartRate.ofOrNull(hr),
+                cadence != null ? Cadence.of(cadence) : null,
+                power != null ? Power.of(power) : null,
+                new AltitudeGainLoss(3, 3)
         );
-        if (hr != null) {
-            tp.setHeartRate(hr);
-        }
-        if (cadence != null) {
-            tp.setCadence(cadence);
-        }
-        if (power != null) {
-            tp.setPower(power);
-        }
-        tp.setAltitudeGainLoss(3, 3);
+
         trackPointList.add(tp);
     }
 

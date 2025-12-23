@@ -154,7 +154,7 @@ public class SegmentStatisticUpdater {
         Duration movingDuration = Duration.between(lastTrackPoint.getTime(), trackPoint.getTime());
 
         if (movingDuration.isNegative()) {
-            throw new RuntimeException("Moving time cannot be negative");
+            throw new RuntimeException("Moving time cannot be negative: " + lastTrackPoint.getTime() + " is after " + trackPoint.getTime());
         }
         this.movingDuration = this.movingDuration.plus(movingDuration);
     }

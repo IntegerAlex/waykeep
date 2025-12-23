@@ -76,7 +76,7 @@ public class IntervalStatisticsUpdater {
             }
         }
 
-        return trackPoint != null ? trackPoint.getId() : null;
+        return trackPoint != null ? trackPoint.id() : null;
     }
 
     public List<Statistics> getIntervalList() {
@@ -152,9 +152,9 @@ public class IntervalStatisticsUpdater {
             if (lastTrackPoint == null) {
                 return;
             }
-            if (gain_m != null && lastTrackPoint.hasAltitudeGainLoss()) {
-                gain_m = gain_m - lastTrackPoint.getAltitudeGainLoss().gain_m();
-                loss_m = loss_m - lastTrackPoint.getAltitudeGainLoss().loss_m();
+            if (gain_m != null && lastTrackPoint.altitudeGainLoss() != null) {
+                gain_m = gain_m - lastTrackPoint.altitudeGainLoss().gain_m();
+                loss_m = loss_m - lastTrackPoint.altitudeGainLoss().loss_m();
             }
         }
 

@@ -26,7 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,7 +73,7 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpee
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
-import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
+import de.dennisguse.opentracks.sensors.sensorData.SensorDataAggregator;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 
@@ -123,11 +122,13 @@ public class ExportImportTest {
     private TrackImporter trackImporter;
 
     @Before
-    public void fileSetup() throws IOException {
+    public void fileSetup() throws IOException, TimeoutException {
         tmpFile = File.createTempFile("test", "test", context.getFilesDir());
         tmpFileUri = Uri.fromFile(tmpFile);
 
         trackImporter = new TrackImporter(context, contentProviderUtils, Distance.of(200), true);
+
+        setUp();
     }
 
     @After
@@ -158,7 +159,15 @@ public class ExportImportTest {
                         "Marker 1",
                         "Marker 1 desc",
                         "Marker 1 typeLocalized",
-                        service.getLastStoredTrackPointWithLocation().getPosition(),
+                        new Position(
+                              Instant.parse("2020-02-02T02:02:03Z"),
+                                3.1234567, 14.0014567,
+                                Distance.of(10),
+                                Altitude.WGS84.of(1020.25),
+                                Distance.of(13),
+                                null,
+                                Speed.of(15)
+                        ),
                         null
                 ));
 
@@ -166,7 +175,7 @@ public class ExportImportTest {
         trackPointCreator.setClock("2020-02-02T02:02:04Z");
         mockSensorData(trackPointCreator, 15f, sensorDistance, 66f, 3f, 50f, 1f);
 
-        trackPointCreator.setClock("2020-02-02T02:02:14Z");
+        trackPointCreator.setClock("2020-02-02T02:02:14Z"); //ignored
         mockSensorData(trackPointCreator, 15f, null, 67f, 3f, 50f, null);
         trackPointCreator.setClock("2020-02-02T02:02:15Z");
         mockSensorData(trackPointCreator, null, null, 68f, 3f, 50f, null);
@@ -181,12 +190,12 @@ public class ExportImportTest {
                         "Marker 2",
                         "Marker 2 desc",
                         "Marker 2 typeLocalized",
-                        service.getLastStoredTrackPointWithLocation().getPosition(),
+                        service.getLastStoredTrackPointWithLocation().position(),
                         null
                 ));
 
         trackPointCreator.setClock("2020-02-02T02:02:18Z");
-        trackPointCreator.getSensorManager().sensorDataSet = new SensorDataSet(trackPointCreator);
+        trackPointCreator.getSensorManager().sensorDataAggregator = new SensorDataAggregator();
         service.endCurrentTrack();
 
         trackPointCreator.setClock("2020-02-02T02:03:20Z");
@@ -201,7 +210,7 @@ public class ExportImportTest {
 
         sendLocation(trackPointCreator, "2020-02-02T02:03:50Z", 3.1234567, 16.001, 10, 27, 15, 999.123, 0f);
 
-        trackPointCreator.getSensorManager().sensorDataSet = new SensorDataSet(trackPointCreator);
+        trackPointCreator.getSensorManager().sensorDataAggregator = new SensorDataAggregator();
         trackPointCreator.setClock("2020-02-02T02:04:00Z");
         service.endCurrentTrack();
 
@@ -218,12 +227,125 @@ public class ExportImportTest {
     @LargeTest
     @Test
     public void track() throws TimeoutException {
-        setUp();
-
         Track track = contentProviderUtils.getTrack(trackId);
         Statistics trackStatistics = track.statistics();
 
         assertEquals(ZoneOffset.of("+01:00"), track.zoneOffset());
+
+        List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
+        new TrackPointAssert().assertEquals(List.of(
+                new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse("2020-02-02T02:02:02Z")),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2020-02-02T02:02:03Z"),
+                                3.123456, 14.001456, Distance.of(10),
+                                Altitude.WGS84.of(1020.25), null,
+                                null,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2020-02-02T02:02:04Z"),
+                                null, null, null,
+                                null, null,
+                                null,
+                                Speed.of(15)),
+                        Distance.of(10),
+                        HeartRate.of(66),
+                        Cadence.of(3),
+                        Power.of(50),
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        Position.of(Instant.parse("2020-02-02T02:02:15Z")),
+                        null,
+                        HeartRate.of(68),
+                        Cadence.of(3),
+                        Power.of(50),
+                        null
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2020-02-02T02:02:17Z"),
+                                3.123456, 14.001456, Distance.of(10),
+                                Altitude.WGS84.of(1020.25), null,
+                                null,
+                                Speed.of(5)),
+                        Distance.of(2),
+                        HeartRate.of(69),
+                        Cadence.of(3),
+                        Power.of(50),
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:02:18Z")),
+                new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse("2020-02-02T02:03:20Z")),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2020-02-02T02:03:21Z"),
+                                3.123456, 14.002456, Distance.of(10),
+                                Altitude.WGS84.of(999.1229858398438), null,
+                                null,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                        new Position(Instant.parse("2020-02-02T02:03:22Z"),
+                                3.123456, 16d, Distance.of(10),
+                                Altitude.WGS84.of(999.1229858398438), null,
+                                null,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.IDLE,
+                        Position.of(Instant.parse("2020-02-02T02:03:30Z")),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2020-02-02T02:03:50Z"),
+                                3.123456, 16.001, Distance.of(10),
+                                Altitude.WGS84.of(999.1229858398438), null,
+                                null, Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)),
+                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:04:00Z"))
+        ), actual);
 
         assertEquals(new Statistics(
                         Instant.parse("2020-02-02T02:02:02Z"),
@@ -238,77 +360,12 @@ public class ExportImportTest {
                         null
                 ),
                 trackStatistics);
-
-        List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
-        new TrackPointAssert().assertEquals(List.of(
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse("2020-02-02T02:02:02Z")),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                        new Position(
-                                Instant.parse("2020-02-02T02:02:03Z"),
-                                3.123456, 14.001456, Distance.of(10),
-                                Altitude.WGS84.of(1020.25), null,
-                                null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(1, 1),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                        Instant.parse("2020-02-02T02:02:04Z"))
-                        .setSensorDistance(Distance.of(10))
-                        .setSpeed(Speed.of(15))
-                        .setHeartRate(HeartRate.of(66))
-                        .setCadence(3)
-                        .setPower(50).setAltitudeGainLoss(1, 1),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT, Instant.parse("2020-02-02T02:02:15Z"))
-                        .setHeartRate(HeartRate.of(68))
-                        .setCadence(3)
-                        .setPower(50),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                        new Position(
-                                Instant.parse("2020-02-02T02:02:17Z"),
-                                3.123456, 14.001456, Distance.of(10),
-                                Altitude.WGS84.of(1020.25), null,
-                                null,
-                                Speed.of(5)))
-                        .setSensorDistance(Distance.of(2))
-                        .setAltitudeGainLoss(0, 0)
-                        .setHeartRate(HeartRate.of(69))
-                        .setCadence(3)
-                        .setPower(50),
-                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:02:18Z")),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse("2020-02-02T02:03:20Z")),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                        new Position(
-                                Instant.parse("2020-02-02T02:03:21Z"),
-                                3.123456, 14.002456, Distance.of(10),
-                                Altitude.WGS84.of(999.1229858398438), null,
-                                null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
-                        new Position(Instant.parse("2020-02-02T02:03:22Z"),
-                                3.123456, 16d, Distance.of(10),
-                                Altitude.WGS84.of(999.1229858398438), null,
-                                null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.IDLE, Instant.parse("2020-02-02T02:03:30Z"))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                        new Position(
-                                Instant.parse("2020-02-02T02:03:50Z"),
-                                3.123456, 16.001, Distance.of(10),
-                                Altitude.WGS84.of(999.1229858398438), null,
-                                null, Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:04:00Z"))
-        ), actual);
     }
 
     //TODO Does not test marker images
     @LargeTest
     @Test
     public void kmz_with_trackdetail_and_sensordata() throws TimeoutException, IOException {
-        setUp();
-
         // given
         Track track = contentProviderUtils.getTrack(trackId);
 
@@ -361,8 +418,6 @@ public class ExportImportTest {
     @LargeTest
     @Test(expected = ImportAlreadyExistsException.class)
     public void kml_with_trackdetail_and_sensordata_duplicate_trackUUID() throws TimeoutException, IOException {
-        setUp();
-
         // given
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean(context.getString(R.string.import_prevent_reimport_key), true);
@@ -387,8 +442,6 @@ public class ExportImportTest {
     @LargeTest
     @Test
     public void gpx() throws TimeoutException, IOException {
-        setUp();
-
         // given
         Track track = contentProviderUtils.getTrack(trackId);
 
@@ -421,51 +474,81 @@ public class ExportImportTest {
                 .setDelta(0.05); // speed is not fully
         List<TrackPoint> actual = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
         a.assertEquals(List.of(
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:03Z"),
                                 3.123456, 14.001456d, Distance.of(10),
                                 Altitude.WGS84.of(1020.2), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(1, 1),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:02:17Z"),
                                 3.123456, 14.001456, Distance.of(10),
                                 Altitude.WGS84.of(1020.2), null,
                                 null,
-                                Speed.of(5)))
-                        .setAltitudeGainLoss(1, 1)
-                        .setSensorDistance(Distance.of(12))
-                        .setHeartRate(69)
-                        .setPower(50f)
-                        .setCadence(3f),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                                Speed.of(5)),
+                        Distance.of(12),
+                        HeartRate.of(69),
+                        Cadence.of(3),
+                        Power.of(50),
+                        new AltitudeGainLoss(1, 1)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:21Z"),
                                 3.123456, 14.002456, Distance.of(10),
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_START_AUTOMATIC,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:22Z"),
                                 3.123456, 16d, Distance.of(10),
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
-                                Speed.of(15)))
-                        .setAltitudeGainLoss(0, 0),
-                new TrackPoint(TrackPoint.Type.TRACKPOINT,
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                ),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.TRACKPOINT,
                         new Position(
                                 Instant.parse("2020-02-02T02:03:50Z"),
                                 3.123456, 16.001, Distance.of(10),
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
-                                Speed.of(10)))
-                        .setAltitudeGainLoss(0, 0)
-                        .setSpeed(Speed.of(15))
+                                Speed.of(15)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0)
+                )
         ), actual);
 
         // 3. trackstatistics
@@ -493,8 +576,6 @@ public class ExportImportTest {
     @LargeTest
     @Test(expected = ImportAlreadyExistsException.class)
     public void gpx_duplicate_trackUUID() throws TimeoutException, IOException {
-        setUp();
-
         // given
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean(context.getString(R.string.import_prevent_reimport_key), true);
@@ -521,8 +602,6 @@ public class ExportImportTest {
     @LargeTest
     @Test
     public void csv_export_only() throws TimeoutException, IOException {
-        setUp();
-
         // given
         Track track = contentProviderUtils.getTrack(trackId);
 
@@ -567,16 +646,16 @@ public class ExportImportTest {
     }
 
     private void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain) {
-        SensorDataSet sensorDataSet = trackPointCreator.getSensorManager().sensorDataSet;
+        SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
         cyclingPower.add(new Raw<>(trackPointCreator.createNow(), new BluetoothHandlerManagerCyclingPower.Data(Power.of(power), null)));
-        sensorDataSet.add(cyclingPower);
+        sensorDataAggregator.add(cyclingPower);
 
 
         AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
         avgHeartRate.add(new Raw<>(trackPointCreator.createNow(), HeartRate.of(heartRate)));
-        sensorDataSet.add(avgHeartRate);
+        sensorDataAggregator.add(avgHeartRate);
 
         AggregatorCyclingCadence cyclingCadence = new AggregatorCyclingCadence("", "") {
             @NonNull
@@ -590,33 +669,52 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorDataSet.add(cyclingCadence);
+        sensorDataAggregator.add(cyclingCadence);
 
         if (distance != null && speed != null) {
-            AggregatorCyclingDistanceSpeed distanceSpeed = Mockito.mock(AggregatorCyclingDistanceSpeed.class);
-            Mockito.when(distanceSpeed.hasReceivedData()).thenReturn(true);
-            Mockito.when(distanceSpeed.getAggregatedValue(Mockito.any())).thenReturn(new AggregatorCyclingDistanceSpeed.Data(null, distance, Speed.of(speed)));
-            sensorDataSet.add(distanceSpeed);
+            AggregatorCyclingDistanceSpeed aggregatorCyclingDistanceSpeed = new AggregatorCyclingDistanceSpeed("", "") {
+                @NonNull
+                @Override
+                public Data getAggregatedValue(Instant now) {
+                    return new AggregatorCyclingDistanceSpeed.Data(null, distance, Speed.of(speed));
+                }
+
+                @Override
+                public boolean hasReceivedData() {
+                    return true;
+                }
+            };
+            sensorDataAggregator.add(aggregatorCyclingDistanceSpeed);
         } else {
-            sensorDataSet.add(new AggregatorCyclingDistanceSpeed("", ""));
+            sensorDataAggregator.add(new AggregatorCyclingDistanceSpeed("", ""));
         }
 
         mockAltitudeChange(trackPointCreator, altitudeGain);
 
-        trackPointCreator.onChange(sensorDataSet);
+        trackPointCreator.onChange();
     }
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, Float altitudeGain) {
-        SensorDataSet sensorDataSet = trackPointCreator.getSensorManager().sensorDataSet;
+        SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
 
-        if (altitudeGain != null) {
-            AggregatorBarometer barometer = Mockito.mock(AggregatorBarometer.class);
-            Mockito.when(barometer.hasReceivedData()).thenReturn(true);
-            Mockito.when(barometer.getAggregatedValue(Mockito.any())).thenReturn(new AltitudeGainLoss(altitudeGain, altitudeGain));
-            sensorDataSet.add(barometer);
-        } else {
-            sensorDataSet.add(new AggregatorBarometer("test", null));
+        if (altitudeGain == null) {
+            sensorDataAggregator.add(new AggregatorBarometer("test", null));
+            return;
         }
+
+        AggregatorBarometer aggregatorBarometer = new AggregatorBarometer("", "") {
+            @NonNull
+            @Override
+            public AltitudeGainLoss getAggregatedValue(Instant now) {
+                return new AltitudeGainLoss(altitudeGain, altitudeGain);
+            }
+
+            @Override
+            public boolean hasReceivedData() {
+                return true;
+            }
+        };
+        sensorDataAggregator.add(aggregatorBarometer);
     }
 
     private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {

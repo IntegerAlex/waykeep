@@ -16,57 +16,45 @@ public class TrackPointAssert {
     public void assertEquals(TrackPoint expected, TrackPoint actual) {
         Assert.assertEquals("time", expected.getTime(), actual.getTime());
 
-        Assert.assertEquals("type", expected.getType(), actual.getType());
+        Assert.assertEquals("type", expected.type(), actual.type());
 
-        Assert.assertEquals("has location,", expected.hasLocation(), actual.hasLocation());
-        if (expected.hasLocation()) {
-            Assert.assertEquals("latitude", expected.getPosition().latitude(), actual.getPosition().latitude(), 0.001);
-            Assert.assertEquals("longitude", expected.getPosition().longitude(), actual.getPosition().longitude(), 0.001);
-        }
-
-        Assert.assertEquals("has altitude", expected.hasAltitude(), actual.hasAltitude());
-        if (expected.hasAltitude()) {
-            Assert.assertEquals("altitude", expected.getAltitude().toM(), actual.getAltitude().toM(), delta);
+        Assert.assertEquals("has location,", expected.position().hasLocation(), actual.position().hasLocation());
+        if (expected.position().hasLocation()) {
+            Assert.assertEquals("latitude", expected.position().latitude(), actual.position().latitude(), 0.001);
+            Assert.assertEquals("longitude", expected.position().longitude(), actual.position().longitude(), 0.001);
         }
 
-        Assert.assertEquals("has altitudeGainLoss", expected.hasAltitudeGainLoss(), actual.hasAltitudeGainLoss());
-        if (expected.hasAltitudeGainLoss()) {
-            Assert.assertEquals("altitudeGainLoss", expected.getAltitudeGainLoss(), actual.getAltitudeGainLoss());
+        Assert.assertEquals("has altitude", expected.position().hasAltitude(), actual.position().hasAltitude());
+        if (expected.position().hasAltitude()) {
+            Assert.assertEquals("altitude", expected.position().altitude().toM(), actual.position().altitude().toM(), delta);
         }
 
-        Assert.assertEquals("has speed", expected.hasSpeed(), actual.hasSpeed());
-        if (expected.hasSpeed()) {
-            Assert.assertEquals("speed", expected.getSpeed().toMPS(), actual.getSpeed().toMPS(), delta);
+        Assert.assertEquals("altitudeGainLoss", expected.altitudeGainLoss(), actual.altitudeGainLoss());
+
+        Assert.assertEquals("has speed", expected.position().hasSpeed(), actual.position().hasSpeed());
+        if (expected.position().hasSpeed()) {
+            Assert.assertEquals("speed", expected.position().speed().toMPS(), actual.position().speed().toMPS(), delta);
         }
 
-        Assert.assertEquals("has horizontalAccuracy", expected.hasHorizontalAccuracy(), actual.hasHorizontalAccuracy());
-        if (expected.hasHorizontalAccuracy()) {
-            Assert.assertEquals("horizontalAccuracy", expected.getHorizontalAccuracy().toM(), actual.getHorizontalAccuracy().toM(), delta);
+        Assert.assertEquals("has horizontalAccuracy", expected.position().hasHorizontalAccuracy(), actual.position().hasHorizontalAccuracy());
+        if (expected.position().hasHorizontalAccuracy()) {
+            Assert.assertEquals("horizontalAccuracy", expected.position().horizontalAccuracy().toM(), actual.position().horizontalAccuracy().toM(), delta);
         }
-        Assert.assertEquals("has verticalAccuracy", expected.hasVerticalAccuracy(), actual.hasVerticalAccuracy());
-        if (expected.hasVerticalAccuracy()) {
-            Assert.assertEquals("verticalAccuracy", expected.getVerticalAccuracy().toM(), actual.getVerticalAccuracy().toM(), delta);
-        }
-
-        Assert.assertEquals("has sensorDistance", expected.hasSensorDistance(), actual.hasSensorDistance());
-        if (expected.hasSensorDistance()) {
-            Assert.assertEquals("sensorDistance", expected.getSensorDistance().toM(), actual.getSensorDistance().toM(), delta);
+        Assert.assertEquals("has verticalAccuracy", expected.position().hasVerticalAccuracy(), actual.position().hasVerticalAccuracy());
+        if (expected.position().hasVerticalAccuracy()) {
+            Assert.assertEquals("verticalAccuracy", expected.position().verticalAccuracy().toM(), actual.position().verticalAccuracy().toM(), delta);
         }
 
-        Assert.assertEquals("has heartrate", expected.hasHeartRate(), actual.hasHeartRate());
-        if (expected.hasHeartRate()) {
-            Assert.assertEquals("heartrate", expected.getHeartRate(), actual.getHeartRate());
+        Assert.assertEquals("has sensorDistance", expected.sensorDistance() != null, actual.sensorDistance() != null);
+        if (expected.sensorDistance() != null) {
+            Assert.assertEquals("sensorDistance", expected.sensorDistance().toM(), actual.sensorDistance().toM(), delta);
         }
 
-        Assert.assertEquals("has power", expected.hasPower(), actual.hasPower());
-        if (expected.hasPower()) {
-            Assert.assertEquals("power", expected.getPower(), actual.getPower());
-        }
+        Assert.assertEquals("heartRate", expected.heartRate(), actual.heartRate());
 
-        Assert.assertEquals("has cadence", expected.hasCadence(), actual.hasCadence());
-        if (expected.hasCadence()) {
-            Assert.assertEquals("cadence", expected.getCadence(), actual.getCadence());
-        }
+        Assert.assertEquals("power", expected.power(), actual.power());
+
+        Assert.assertEquals("cadence", expected.cadence(), actual.cadence());
     }
 
     public void assertEquals(List<TrackPoint> expected, List<TrackPoint> actual) {

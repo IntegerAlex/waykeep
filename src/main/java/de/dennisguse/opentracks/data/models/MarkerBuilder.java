@@ -51,10 +51,10 @@ public final class MarkerBuilder {
         this.typeLocalized = "";
         this.photoUrl = null;
 
-        if (!trackPoint.hasLocation())
+        if (!trackPoint.position().hasLocation())
             throw new RuntimeException("Marker requires a trackpoint with a location.");
 
-        this.position = trackPoint.getPosition();
+        this.position = trackPoint.position();
     }
 
     public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String typeLocalized, Uri photoUrl) {

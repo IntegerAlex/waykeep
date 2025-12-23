@@ -1,7 +1,5 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
 
 import java.time.Instant;
@@ -61,8 +59,8 @@ public abstract class Aggregator<Input, Output> {
     }
 
     @NonNull
-    public Pair<Output, String> getAggregatedValueWithSensorName(Instant now) {
-        return new Pair<>(getAggregatedValue(now), getSensorNameOrAddress());
+    public SensorData<Output> getAggregatedValueWithSensorName(Instant now) {
+        return new SensorData<>(getAggregatedValue(now), getSensorNameOrAddress());
     }
 
     /**

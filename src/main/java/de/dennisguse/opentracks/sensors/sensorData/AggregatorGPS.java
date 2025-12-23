@@ -2,6 +2,8 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import androidx.annotation.NonNull;
 
+import java.time.Instant;
+
 import de.dennisguse.opentracks.data.models.Position;
 
 public class AggregatorGPS extends Aggregator<Position, Position> {
@@ -35,5 +37,12 @@ public class AggregatorGPS extends Aggregator<Position, Position> {
     @Override
     protected Position getNoneValue() {
         return Position.empty();
+    }
+
+    @NonNull
+    @Override
+    public Position getAggregatedValue(Instant now) {
+        return super.getAggregatedValue(now)
+                .with(now);
     }
 }

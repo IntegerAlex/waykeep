@@ -22,11 +22,11 @@ import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.util.TrackNameUtils;
 
 public class TrackRecordingManager implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -160,14 +160,14 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
      * @return TrackPoint was stored?
      */
     synchronized boolean onNewTrackPoint(@NonNull TrackPoint trackPoint) {
-        if (trackPoint.hasSpeed()) {
+        if (trackPoint.position().hasSpeed()) {
             lastTrackPointUIWithSpeed = trackPoint;
         }
-        if (trackPoint.hasAltitude()) {
+        if (trackPoint.position().hasAltitude()) {
             lastTrackPointUIWithAltitude = trackPoint;
         }
 
-        if (trackPoint.getType() == TrackPoint.Type.IDLE) {
+        if (trackPoint.type() == TrackPoint.Type.IDLE) {
             insertTrackPoint(trackPoint, true);
             handler.removeCallbacks(ON_IDLE);
             return true;
@@ -180,14 +180,14 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return true;
         }
 
-        if (trackPoint.hasLocation() && lastStoredTrackPointWithLocation == null) {
+        if (trackPoint.position().hasLocation() && lastStoredTrackPointWithLocation == null) {
             insertTrackPoint(trackPoint, true);
 
             scheduleNewIdleTimeout();
             return true;
         }
 
-        if (!trackPoint.hasLocation() && !trackPoint.hasSensorDistance()) {
+        if (!trackPoint.position().hasLocation() && trackPoint.sensorDistance() == null) {
             Duration minStorageInterval = Duration.ofSeconds(10); // TODO Should be configurable.
             boolean shouldStore = lastStoredTrackPoint.getTime().plus(minStorageInterval)
                     .isBefore(trackPoint.getTime());
@@ -201,14 +201,14 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         Distance distanceToLastStoredTrackPoint;
-        if (trackPoint.hasLocation() && !lastStoredTrackPoint.hasLocation()) {
+        if (trackPoint.position().hasLocation() && !lastStoredTrackPoint.position().hasLocation()) {
             distanceToLastStoredTrackPoint = trackPoint.distanceToPreviousFromLocation(lastStoredTrackPointWithLocation);
         } else {
             distanceToLastStoredTrackPoint = trackPoint.distanceToPrevious(lastStoredTrackPoint);
         }
 
         if (distanceToLastStoredTrackPoint.greaterThan(maxRecordingDistance)) {
-            trackPoint.setType(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
+            trackPoint = trackPoint.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
             insertTrackPoint(trackPoint, true);
 
             scheduleNewIdleTimeout();
@@ -248,8 +248,8 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
                 Log.w(TAG, "Ignore insertTrackPoint. trackPoint time same as last valid trackId point time.");
             } else {
                 insertTrackPointHelper(lastTrackPoint);
-                // Remove the sensorDistance from trackPoint that is already going  be stored with lastTrackPoint.
-                trackPoint.minusCumulativeSensorData(lastTrackPoint);
+                // Remove the sensorDistance from trackPoint that is already going be stored with lastTrackPoint.
+                trackPoint = trackPoint.minusCumulativeSensorData(lastTrackPoint);
             }
         }
         lastTrackPoint = null;
@@ -264,7 +264,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
             contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics());
             lastStoredTrackPoint = trackPoint;
-            if (trackPoint.hasLocation()) {
+            if (trackPoint.position().hasLocation()) {
                 lastStoredTrackPointWithLocation = lastStoredTrackPoint;
             }
         } catch (SQLiteException e) {

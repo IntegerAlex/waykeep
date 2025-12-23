@@ -33,9 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
@@ -95,10 +99,11 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private ZoneOffset zoneOffset;
 
     private final ArrayList<Instant> whenList = new ArrayList<>();
-    private final ArrayList<Position> positionList = new ArrayList<>();
+    private final ArrayList<Position> positionList = new ArrayList<>(); //TODO This is only latitude, longitude, and altitude
 
     private String dataType;
 
+    //TODO For ArrayList use specific data models; and why Float? Double would be easier.
     private final ArrayList<String> trackpointTypeList = new ArrayList<>();
     private final ArrayList<Float> sensorSpeedList = new ArrayList<>();
     private final ArrayList<Float> sensorDistanceList = new ArrayList<>();
@@ -151,8 +156,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 }
                 onTrackSegmentStart();
             }
-            case TAG_EXTENDED_DATA, TAG_SIMPLE_ARRAY_DATA, TAG_KML22_SIMPLE_ARRAY_DATA ->
-                    dataType = attributes.getValue(ATTRIBUTE_NAME);
+            case TAG_EXTENDED_DATA, TAG_SIMPLE_ARRAY_DATA, TAG_KML22_SIMPLE_ARRAY_DATA -> dataType = attributes.getValue(ATTRIBUTE_NAME);
         }
     }
 
@@ -317,62 +321,77 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
         for (int i = 0; i < positionList.size(); i++) {
             Instant time = whenList.get(i);
             Position position = positionList.get(i);
-
-            TrackPoint trackPoint;
             if (position == null) {
-                trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, Position.of(time));
+                position = Position.of(time);
             } else {
-                trackPoint = new TrackPoint(TrackPoint.Type.TRACKPOINT, position.with(time));
+                position = position.with(time);
             }
+
+            TrackPoint.Type type = null;
+            Speed speed = null;
+            Distance sensorDistance = null;
+            HeartRate heartRate = null;
+            Cadence cadence = null;
+            Power power = null;
+            AltitudeGainLoss altitudeGainLoss = null;
+            Distance horizontalAccuracy = null;
+            Distance verticalAccuracy = null;
 
             if (i < trackpointTypeList.size() && trackpointTypeList.get(i) != null) {
-                TrackPoint.Type type = TrackPoint.Type.valueOf(trackpointTypeList.get(i));
-                trackPoint.setType(type);
+                type = TrackPoint.Type.valueOf(trackpointTypeList.get(i));
             }
-
             if (i < sensorSpeedList.size() && sensorSpeedList.get(i) != null) {
-                trackPoint.setSpeed(Speed.of(sensorSpeedList.get(i)));
+                speed = Speed.of(sensorSpeedList.get(i));
             }
             if (i < sensorDistanceList.size() && sensorDistanceList.get(i) != null) {
-                trackPoint.setSensorDistance(Distance.of(sensorDistanceList.get(i)));
+                sensorDistance = Distance.of(sensorDistanceList.get(i));
             }
-            if (i < sensorHeartRateList.size() && sensorHeartRateList.get(i) != null) {
-                trackPoint.setHeartRate(sensorHeartRateList.get(i));
+            if (i < sensorHeartRateList.size()) {
+                heartRate = HeartRate.ofOrNull(sensorHeartRateList.get(i));
             }
             if (i < sensorCadenceList.size() && sensorCadenceList.get(i) != null) {
-                trackPoint.setCadence(sensorCadenceList.get(i));
+                cadence = Cadence.of(sensorCadenceList.get(i));
             }
             if (i < sensorPowerList.size() && sensorPowerList.get(i) != null) {
-                trackPoint.setPower(sensorPowerList.get(i));
+                power = Power.of(sensorPowerList.get(i));
             }
-            if (i < altitudeGainList.size() && i < altitudeLossList.size()) {
-                if (altitudeGainList.get(i) != null && altitudeLossList.get(i) != null) {
-                    trackPoint.setAltitudeGainLoss(altitudeGainList.get(i), altitudeLossList.get(i));
-                }
+            if ((i < altitudeGainList.size() && altitudeGainList.get(i) != null)
+                    && (i < altitudeLossList.size() && altitudeLossList.get(i) != null)) {
+                altitudeGainLoss = new AltitudeGainLoss(altitudeGainList.get(i), altitudeLossList.get(i));
             }
             if (i < accuracyHorizontal.size() && accuracyHorizontal.get(i) != null) {
-                trackPoint.setHorizontalAccuracy(Distance.of(accuracyHorizontal.get(i)));
+                horizontalAccuracy = Distance.of(accuracyHorizontal.get(i));
             }
             if (i < accuracyVertical.size() && accuracyVertical.get(i) != null) {
-                trackPoint.setVerticalAccuracy(Distance.of(accuracyVertical.get(i)));
+                verticalAccuracy = Distance.of(accuracyVertical.get(i));
             }
 
             // Update TrackPoint type for START / STOP.
-            TrackPoint.Type type = trackPoint.getType();
             if (i == 0) {
                 //first
-                if (!trackPoint.wasCreatedManually()) {
-                    type = TrackPoint.Type.SEGMENT_START_MANUAL;
-                } else {
+                if (wasCreatedAutomatically(position)) {
                     type = TrackPoint.Type.SEGMENT_START_AUTOMATIC;
+                } else {
+                    type = TrackPoint.Type.SEGMENT_START_MANUAL;
                 }
-            } else if (i == positionList.size() - 1 && !trackPoint.wasCreatedManually()) {
+            } else if (i == positionList.size() - 1 && !wasCreatedAutomatically(position)) {
                 //last
                 type = TrackPoint.Type.SEGMENT_END_MANUAL;
             }
-            trackPoint.setType(type);
 
-            trackImporter.addTrackPoint(trackPoint);
+            trackImporter.addTrackPoint(new TrackPoint(
+                    null,
+                    type != null ? type : TrackPoint.Type.TRACKPOINT,
+                    position
+                            .with(speed)
+                            .withHorizontalAccuracy(horizontalAccuracy)
+                            .withVerticalAccuracy(verticalAccuracy),
+                    sensorDistance,
+                    heartRate,
+                    cadence,
+                    power,
+                    altitudeGainLoss
+            ));
         }
     }
 
@@ -392,6 +411,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     }
 
     private Position createPosition(String latitude, String longitude, String altitude) {
+        //TODO Do not use Location.
         if (longitude != null && latitude != null) {
             Location location = new Location("import");
             try {
@@ -439,12 +459,9 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             case KMLTrackExporter.EXTENDED_DATA_TYPE_CADENCE -> sensorCadenceList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_ALTITUDE_GAIN -> altitudeGainList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_ALTITUDE_LOSS -> altitudeLossList.add(value);
-            case KMLTrackExporter.EXTENDED_DATA_TYPE_ACCURACY_HORIZONTAL ->
-                    accuracyHorizontal.add(value);
-            case KMLTrackExporter.EXTENDED_DATA_TYPE_ACCURACY_VERTICAL ->
-                    accuracyVertical.add(value);
-            default ->
-                    Log.w(TAG, "Data from extended data " + dataType + " is not (yet) supported.");
+            case KMLTrackExporter.EXTENDED_DATA_TYPE_ACCURACY_HORIZONTAL -> accuracyHorizontal.add(value);
+            case KMLTrackExporter.EXTENDED_DATA_TYPE_ACCURACY_VERTICAL -> accuracyVertical.add(value);
+            default -> Log.w(TAG, "Data from extended data " + dataType + " is not (yet) supported.");
         }
     }
 
@@ -455,6 +472,10 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private void onFileEnd() {
         trackImporter.addMarkers(markers);
         trackImporter.finish();
+    }
+
+    public boolean wasCreatedAutomatically(Position position) {
+        return position.hasLocation() || position.hasSpeed();
     }
 
     @Override

@@ -51,10 +51,10 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
-import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.ui.markers.MarkerUtils;
 import de.dennisguse.opentracks.util.FileUtils;
 
@@ -544,7 +544,12 @@ public class ContentProviderUtils {
         int altitudeGainIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_GAIN);
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_LOSS);
 
-        TrackPoint trackPoint = new TrackPoint(
+        AltitudeGainLoss altitudeGainLoss = null;
+        if (!cursor.isNull(altitudeGainIndex) && !cursor.isNull(altitudeLossIndex)) {
+            altitudeGainLoss = new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex));
+        }
+
+        return new TrackPoint(
                 new TrackPoint.Id(cursor.getInt(idIndex)),
                 TrackPoint.Type.getById(cursor.getInt(typeIndex)),
                 new Position(
@@ -556,26 +561,13 @@ public class ContentProviderUtils {
                         !cursor.isNull(accuracyVerticalIndex) ? Distance.of(cursor.getFloat(accuracyVerticalIndex)) : null,
                         !cursor.isNull(bearingIndex) ? cursor.getFloat(bearingIndex) : null,
                         !cursor.isNull(speedIndex) ? Speed.of(cursor.getFloat(speedIndex)) : null
-                ));
-
-        if (!cursor.isNull(sensorHeartRateIndex)) {
-            trackPoint.setHeartRate(cursor.getFloat(sensorHeartRateIndex));
-        }
-        if (!cursor.isNull(sensorCadenceIndex)) {
-            trackPoint.setCadence(cursor.getFloat(sensorCadenceIndex));
-        }
-        if (!cursor.isNull(sensorDistanceIndex)) {
-            trackPoint.setSensorDistance(Distance.of(cursor.getFloat(sensorDistanceIndex)));
-        }
-        if (!cursor.isNull(sensorPowerIndex)) {
-            trackPoint.setPower(cursor.getFloat(sensorPowerIndex));
-        }
-
-        if (!cursor.isNull(altitudeGainIndex) && !cursor.isNull(altitudeLossIndex)) {
-            trackPoint.setAltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex));
-        }
-
-        return trackPoint;
+                ),
+                !cursor.isNull(sensorDistanceIndex) ? Distance.of(cursor.getFloat(sensorDistanceIndex)) : null,
+                !cursor.isNull(sensorHeartRateIndex) ? HeartRate.of(cursor.getFloat(sensorHeartRateIndex)) : null,
+                !cursor.isNull(sensorCadenceIndex) ? Cadence.of(cursor.getFloat(sensorCadenceIndex)) : null,
+                !cursor.isNull(sensorPowerIndex) ? Power.of(cursor.getFloat(sensorPowerIndex)) : null,
+                altitudeGainLoss
+        );
     }
 
     //TODO Only used for file import; might be better to replace it.
@@ -637,42 +629,42 @@ public class ContentProviderUtils {
     private ContentValues createContentValues(TrackPoint trackPoint, Track.Id trackId) {
         ContentValues values = new ContentValues();
         values.put(TrackPointsColumns.TRACKID, trackId.id());
-        values.put(TrackPointsColumns.TYPE, trackPoint.getType().type_db);
+        values.put(TrackPointsColumns.TYPE, trackPoint.type().type_db);
 
-        if (trackPoint.hasLocation()) {
-            values.put(TrackPointsColumns.LATITUDE, (int) (trackPoint.getPosition().latitude() * 1E6));
-            values.put(TrackPointsColumns.LONGITUDE, (int) (trackPoint.getPosition().longitude() * 1E6));
+        if (trackPoint.position().hasLocation()) {
+            values.put(TrackPointsColumns.LATITUDE, (int) (trackPoint.position().latitude() * 1E6));
+            values.put(TrackPointsColumns.LONGITUDE, (int) (trackPoint.position().longitude() * 1E6));
         }
         values.put(TrackPointsColumns.TIME, trackPoint.getTime().toEpochMilli());
-        if (trackPoint.hasAltitude()) {
-            values.put(TrackPointsColumns.ALTITUDE, trackPoint.getAltitude().toM());
+        if (trackPoint.position().hasAltitude()) {
+            values.put(TrackPointsColumns.ALTITUDE, trackPoint.position().altitude().toM());
         }
-        if (trackPoint.hasHorizontalAccuracy()) {
-            values.put(TrackPointsColumns.HORIZONTAL_ACCURACY, trackPoint.getHorizontalAccuracy().toM());
+        if (trackPoint.position().hasHorizontalAccuracy()) {
+            values.put(TrackPointsColumns.HORIZONTAL_ACCURACY, trackPoint.position().horizontalAccuracy().toM());
         }
-        if (trackPoint.hasSpeed()) {
-            values.put(TrackPointsColumns.SPEED, trackPoint.getSpeed().toMPS());
+        if (trackPoint.position().hasSpeed()) {
+            values.put(TrackPointsColumns.SPEED, trackPoint.position().speed().toMPS());
         }
-        if (trackPoint.hasBearing()) {
-            values.put(TrackPointsColumns.BEARING, trackPoint.getBearing());
-        }
-
-        if (trackPoint.hasHeartRate()) {
-            values.put(TrackPointsColumns.SENSOR_HEARTRATE, trackPoint.getHeartRate().getBPM());
-        }
-        if (trackPoint.hasCadence()) {
-            values.put(TrackPointsColumns.SENSOR_CADENCE, trackPoint.getCadence().getRPM());
-        }
-        if (trackPoint.hasSensorDistance()) {
-            values.put(TrackPointsColumns.SENSOR_DISTANCE, trackPoint.getSensorDistance().toM());
-        }
-        if (trackPoint.hasPower()) {
-            values.put(TrackPointsColumns.SENSOR_POWER, trackPoint.getPower().getW());
+        if (trackPoint.position().hasBearing()) {
+            values.put(TrackPointsColumns.BEARING, trackPoint.position().bearing());
         }
 
-        if (trackPoint.hasAltitudeGainLoss()) {
-            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.getAltitudeGainLoss().gain_m());
-            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.getAltitudeGainLoss().loss_m());
+        if (trackPoint.heartRate() != null) {
+            values.put(TrackPointsColumns.SENSOR_HEARTRATE, trackPoint.heartRate().getBPM());
+        }
+        if (trackPoint.cadence() != null) {
+            values.put(TrackPointsColumns.SENSOR_CADENCE, trackPoint.cadence().getRPM());
+        }
+        if (trackPoint.sensorDistance() != null) {
+            values.put(TrackPointsColumns.SENSOR_DISTANCE, trackPoint.sensorDistance().toM());
+        }
+        if (trackPoint.power() != null) {
+            values.put(TrackPointsColumns.SENSOR_POWER, trackPoint.power().getW());
+        }
+
+        if (trackPoint.altitudeGainLoss() != null) {
+            values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.altitudeGainLoss().gain_m());
+            values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.altitudeGainLoss().loss_m());
         }
         return values;
     }

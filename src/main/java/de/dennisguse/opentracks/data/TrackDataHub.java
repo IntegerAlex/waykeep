@@ -33,12 +33,12 @@ import java.util.Set;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
-import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
 
 /**
  * Track data hub.
@@ -288,14 +288,14 @@ public class TrackDataHub {
                 }
 
                 trackPoint = trackPointIterator.next();
-                TrackPoint.Id trackPointId = trackPoint.getId();
+                TrackPoint.Id trackPointId = trackPoint.id();
 
                 // Stop if past the last wanted point
                 if (maxPointId != null && trackPointId.id() > maxPointId.id()) {
                     break;
                 }
 
-                egm2008Correction.correctAltitude(context, trackPoint);
+                trackPoint = egm2008Correction.correctAltitude(context, trackPoint);
 
                 if (localFirstSeenTrackPointId == null) {
                     localFirstSeenTrackPointId = trackPointId;
@@ -319,7 +319,7 @@ public class TrackDataHub {
         }
 
         if (trackPoint != null) {
-            localLastSeenTrackPointIdId = trackPoint.getId();
+            localLastSeenTrackPointIdId = trackPoint.id();
         }
 
         if (updateSamplingState) {

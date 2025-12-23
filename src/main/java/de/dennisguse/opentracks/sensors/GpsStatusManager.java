@@ -18,6 +18,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 /**
  * This class handle GPS status according to received locations and some thresholds.
  */
+//TODO Use Position instead of TrackPoint.
 class GpsStatusManager {
 
     private static final String TAG = GpsStatusManager.class.getSimpleName();
@@ -100,7 +101,7 @@ class GpsStatusManager {
     //TODO use MonotonicClock instead of Instant.now()
     @VisibleForTesting
     void determineGpsStatusOnTrackpoint(@NonNull TrackPoint lastTrackPoint) {
-        if (lastTrackPoint.fulfillsAccuracy(horizontalAccuracyThreshold)) {
+        if (lastTrackPoint.position().fulfillsAccuracy(horizontalAccuracyThreshold)) {
             if (gpsStatus != GpsStatusValue.GPS_SIGNAL_FIX) {
                 setGpsStatus(GpsStatusValue.GPS_SIGNAL_FIX);
                 scheduleTimer(); //TODO

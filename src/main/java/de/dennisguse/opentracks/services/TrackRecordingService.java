@@ -255,7 +255,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
                 "",
                 "",
                 "",
-                trackPoint.getPosition(),
+                trackPoint.position(),
                 null
         );
         return new ContentProviderUtils(this).insertMarker(marker);
