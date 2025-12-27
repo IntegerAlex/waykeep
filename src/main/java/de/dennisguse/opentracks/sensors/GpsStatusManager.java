@@ -12,13 +12,12 @@ import java.time.Duration;
 import java.time.Instant;
 
 import de.dennisguse.opentracks.data.models.Distance;
-import de.dennisguse.opentracks.data.models.TrackPoint;
+import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
  * This class handle GPS status according to received locations and some thresholds.
  */
-//TODO Use Position instead of TrackPoint.
 class GpsStatusManager {
 
     private static final String TAG = GpsStatusManager.class.getSimpleName();
@@ -36,7 +35,7 @@ class GpsStatusManager {
     private final Context context;
 
     @Nullable
-    private TrackPoint lastTrackPoint = null;
+    private Position lastPosition = null;
 
     private Handler handler;
 
@@ -82,26 +81,24 @@ class GpsStatusManager {
     }
 
     /**
-     * This method must be called from the client every time a new trackPoint is received.
-     * Receive new trackPoint and calculate the new status if needed.
+     * This method must be called every time a new {@link Position} is received.
+     * Receive new position and calculate the new status if needed.
      * It look for GPS changes in lastLocation if it's not null. If it's null then look for in lastValidLocation if any.
      */
-    public void onNewTrackPoint(@NonNull final TrackPoint trackPoint) {
-        lastTrackPoint = trackPoint;
+    public void onNewTrackPoint(@NonNull Position position) {
+        lastPosition = position;
 
-        determineGpsStatusOnTrackpoint(trackPoint);
+        determineGpsStatusOnTrackpoint(position);
     }
 
     /**
-     * Checks if lastLocation has new GPS status looking up time and accuracy.
+     * Checks if {@link Position} has new GPS status looking up time and accuracy.
      * It depends of signalLostThreshold and signalBadThreshold.
      * If there is any change then it does the change.
      * Also, it'll run the runnable if signal is bad or stop it if the signal is lost.
      */
-    //TODO use MonotonicClock instead of Instant.now()
-    @VisibleForTesting
-    void determineGpsStatusOnTrackpoint(@NonNull TrackPoint lastTrackPoint) {
-        if (lastTrackPoint.position().fulfillsAccuracy(horizontalAccuracyThreshold)) {
+    private void determineGpsStatusOnTrackpoint(@NonNull Position position) {
+        if (position.fulfillsAccuracy(horizontalAccuracyThreshold)) {
             if (gpsStatus != GpsStatusValue.GPS_SIGNAL_FIX) {
                 setGpsStatus(GpsStatusValue.GPS_SIGNAL_FIX);
                 scheduleTimer(); //TODO
@@ -116,10 +113,10 @@ class GpsStatusManager {
     }
 
     void determineGpsStatusByTime(Instant now) {
-        if (lastTrackPoint == null) {
+        if (lastPosition == null) {
             return;
         }
-        if (signalLostThreshold.minus(Duration.between(lastTrackPoint.getTime(), now)).isNegative()) {
+        if (signalLostThreshold.minus(Duration.between(lastPosition.time(), now)).isNegative()) {
             // Too much time without receiving signal -> signal lost.
             if (gpsStatus != GpsStatusValue.GPS_SIGNAL_LOST) {
                 setGpsStatus(GpsStatusValue.GPS_SIGNAL_LOST);
@@ -156,7 +153,7 @@ class GpsStatusManager {
         }
 
         setGpsStatus(GpsStatusValue.GPS_DISABLED);
-        lastTrackPoint = null;
+        lastPosition = null;
         stopTimer();
     }
 

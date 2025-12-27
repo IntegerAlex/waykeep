@@ -19,7 +19,6 @@ import java.time.Duration;
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
-import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorGPS;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
@@ -125,7 +124,7 @@ public class GpsManager implements SensorConnector, LocationListenerCompat, GpsS
     public void onLocationChanged(@NonNull Location location) {
         // Send each update to the status; please note that this TrackPoint is not stored.
         Position position = Position.of(location, trackPointCreator.createNow());
-        gpsStatusManager.onNewTrackPoint(new TrackPoint(TrackPoint.Type.TRACKPOINT, position));
+        gpsStatusManager.onNewTrackPoint(position);
 
         if (!position.hasValidLocation()) {
             Log.w(TAG, "Ignore newTrackPoint. Location is invalid.");
