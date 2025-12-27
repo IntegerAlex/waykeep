@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -83,7 +84,6 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private static final String TAG_PHOTO_OVERLAY = "PhotoOverlay";
     private static final String TAG_PLACEMARK = "Placemark";
     private static final String TAG_STYLE_URL = "styleUrl";
-    //    private static final String TAG_VALUE = "value"; TODO
     private static final String TAG_WHEN = "when";
     private static final String TAG_UUID = "opentracks:trackid";
 
@@ -99,7 +99,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private ZoneOffset zoneOffset;
 
     private final ArrayList<Instant> whenList = new ArrayList<>();
-    private final ArrayList<Position> positionList = new ArrayList<>(); //TODO This is only latitude, longitude, and altitude
+    private final ArrayList<LatLngAltitude> positionList = new ArrayList<>();
 
     private String dataType;
 
@@ -260,13 +260,21 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             return;
         }
 
-        Position position = createPosition(latitude, longitude, altitude);
-        if (position == null) {
+        LatLngAltitude latLngAltitude = createPosition(latitude, longitude, altitude);
+        if (latLngAltitude == null) {
             Log.w(TAG, "Marker with invalid coordinates ignored: " + latitude + " " + longitude);
             return;
         }
-        position = position.with(whenList.get(0));
-
+        Position position = new Position(
+                whenList.get(0),
+                latLngAltitude.latitude,
+                latLngAltitude.longitude,
+                null,
+                latLngAltitude.altitude,
+                null,
+                null,
+                null
+        );
         markers.add(new Marker(
                 null,
                 null,
@@ -320,12 +328,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
         // Close a track segment by inserting the segment locations
         for (int i = 0; i < positionList.size(); i++) {
             Instant time = whenList.get(i);
-            Position position = positionList.get(i);
-            if (position == null) {
-                position = Position.of(time);
-            } else {
-                position = position.with(time);
-            }
+            LatLngAltitude latLngAltitude = positionList.get(i);
 
             TrackPoint.Type type = null;
             Speed speed = null;
@@ -366,6 +369,17 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 verticalAccuracy = Distance.of(accuracyVertical.get(i));
             }
 
+            Position position = new Position(
+                    time,
+                    latLngAltitude != null ? latLngAltitude.latitude : null,
+                    latLngAltitude != null ? latLngAltitude.longitude : null,
+                    horizontalAccuracy,
+                    latLngAltitude != null ? latLngAltitude.altitude : null,
+                    verticalAccuracy,
+                    null,
+                    speed
+            );
+
             // Update TrackPoint type for START / STOP.
             if (i == 0) {
                 //first
@@ -382,10 +396,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             trackImporter.addTrackPoint(new TrackPoint(
                     null,
                     type != null ? type : TrackPoint.Type.TRACKPOINT,
-                    position
-                            .with(speed)
-                            .withHorizontalAccuracy(horizontalAccuracy)
-                            .withVerticalAccuracy(verticalAccuracy),
+                    position,
                     sensorDistance,
                     heartRate,
                     cadence,
@@ -410,7 +421,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
         altitude = null;
     }
 
-    private Position createPosition(String latitude, String longitude, String altitude) {
+    private LatLngAltitude createPosition(String latitude, String longitude, String altitude) {
         //TODO Do not use Location.
         if (longitude != null && latitude != null) {
             Location location = new Location("import");
@@ -428,7 +439,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                     throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse altitude: %s", altitude)), e);
                 }
             }
-            return Position.of(location, null);
+            return new LatLngAltitude(location.getLatitude(), location.getLongitude(), Altitude.WGS84.of(location.getAltitude()));
         }
 
         return null;
@@ -491,5 +502,12 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     @Override
     public void cleanImport() {
         trackImporter.cleanImport();
+    }
+
+    private record LatLngAltitude(
+            double latitude,
+            double longitude,
+            Altitude altitude
+    ) {
     }
 }

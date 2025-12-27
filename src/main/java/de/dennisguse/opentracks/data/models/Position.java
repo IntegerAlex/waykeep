@@ -137,12 +137,4 @@ public record Position(
     public Position withBearing(Float bearing) {
         return new Position(time, latitude, longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
     }
-
-    public Position withHorizontalAccuracy(Distance horizontalAccuracy) {
-        return new Position(time, latitude, longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
-    }
-
-    public Position withVerticalAccuracy(Distance verticalAccuracy) {
-        return new Position(time, latitude, longitude, horizontalAccuracy, altitude, verticalAccuracy, bearing, speed);
-    }
 }
