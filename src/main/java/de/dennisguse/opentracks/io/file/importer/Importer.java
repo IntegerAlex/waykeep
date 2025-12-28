@@ -69,6 +69,7 @@ public class Importer {
         WorkRequest importRequest = new OneTimeWorkRequest.Builder(ImportWorker.class)
                 .setInputData(new Data.Builder()
                         .putString(ImportWorker.URI_KEY, documentFile.getUri().toString())
+                        .putString(ImportWorker.FILENAME_KEY, documentFile.getName())
                         .build())
                 .build();
 

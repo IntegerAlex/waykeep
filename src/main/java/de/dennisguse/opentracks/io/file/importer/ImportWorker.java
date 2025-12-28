@@ -25,6 +25,7 @@ public class ImportWorker extends Worker {
     private static final String TAG = ImportWorker.class.getSimpleName();
 
     static final String URI_KEY = "DIRECTORY_URI_KEY";
+    static final String FILENAME_KEY = "FILENAME_KEY";
 
     static final String RESULT_SUCCESS_LIST_TRACKIDS_KEY = "RESULT_TRACK_IDS";
     static final String RESULT_URI_KEY = "RESULT_URI";
@@ -32,11 +33,13 @@ public class ImportWorker extends Worker {
     static final String RESULT_FAILURE_IS_DUPLICATE = "RESULT_FAILURE_IS_DUPLICATE";
 
     private final Uri uri;
+    private final String filename;
 
     public ImportWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
 
         uri = Uri.parse(getInputData().getString(URI_KEY));
+        filename = getInputData().getString(FILENAME_KEY);
     }
 
     @NonNull
@@ -53,7 +56,7 @@ public class ImportWorker extends Worker {
                 .putString(RESULT_URI_KEY, uri.toString());
 
 
-        String fileExtension = FileUtils.getExtension(uri);
+        String fileExtension = FileUtils.getExtension(filename);
         try {
             if (TrackFileFormat.GPX.getExtension().equals(fileExtension)) {
                 trackIds.addAll(new XMLImporter(new GPXTrackImporter(getApplicationContext(), trackImporter)).importFile(context, uri));
