@@ -31,7 +31,6 @@ import de.dennisguse.opentracks.util.IntentUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
 
-    private static final String TAG = TrackListAdapter.class.getSimpleName();
 
     private final AppCompatActivity context;
     private final RecyclerView recyclerView;
@@ -193,18 +192,24 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             viewBinding.trackListItemName.setText(tracksListItem.name());
 
-            String timeDistanceText = ListItemUtils.getTimeDistanceText(context, unitSystem, isRecordingThisTrackRecording, tracksListItem.totalTime(), tracksListItem.totalDistance(), tracksListItem.markerCount());
-            viewBinding.trackListItemTimeDistance.setText(timeDistanceText);
+            String timeText = ListItemUtils.getTimeText(context, isRecordingThisTrackRecording, tracksListItem.totalTime());
+            String distanceText = ListItemUtils.getDistanceText(context, unitSystem, isRecordingThisTrackRecording, tracksListItem.totalDistance());
 
-            viewBinding.trackListItemMarkerCountIcon.setVisibility(tracksListItem.markerCount() > 0 ? View.VISIBLE : View.GONE);
-            viewBinding.trackListItemMarkerCount.setText(tracksListItem.markerCount() > 0 ? Integer.toString(tracksListItem.markerCount()) : null);
+            viewBinding.trackListItemDistance.setText(distanceText);
+            viewBinding.trackListItemDuration.setText(timeText);
 
-            if (!recordingStatus.isRecording()) {
-                ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, tracksListItem.startTime(), tracksListItem.zoneOffset());
+            if (tracksListItem.markerCount() > 0) {
+                viewBinding.trackListItemDistanceMarkerSeparator.setVisibility(View.VISIBLE);
+                viewBinding.trackListItemMarkerCountIcon.setVisibility(View.VISIBLE);
+                viewBinding.trackListItemMarkerCount.setText(Integer.toString(tracksListItem.markerCount()));
             } else {
-                viewBinding.trackListItemDate.setText(null);
-                viewBinding.trackListItemTime.setText(null);
+                viewBinding.trackListItemDistanceMarkerSeparator.setVisibility(View.GONE);
+                viewBinding.trackListItemMarkerCountIcon.setVisibility(View.GONE);
+                viewBinding.trackListItemMarkerCount.setText(null);
             }
+
+
+            ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, tracksListItem.startTime(), tracksListItem.zoneOffset());
 
             viewBinding.trackListItemActivityTypeLocalized.setText(tracksListItem.activityTypeLocalized());
             viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(tracksListItem.activityTypeLocalized()) ? View.GONE : View.VISIBLE);

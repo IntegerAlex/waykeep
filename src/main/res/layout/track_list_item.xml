@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/activated_background"
-    android:paddingTop="8dp"
-    android:paddingHorizontal="8dp">
+    android:paddingHorizontal="8dp"
+    android:paddingTop="8dp">
 
     <!-- Icon -->
     <ImageView
@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:singleLine="true"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_icon"
         app:layout_constraintEnd_toStartOf="@id/track_list_item_date"
+        app:layout_constraintStart_toEndOf="@id/track_list_item_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Main Text" />
 
@@ -44,14 +44,41 @@
         tools:text="2022-02-17" />
 
     <!-- Total time and distance -->
-    <TextView
-        android:id="@+id/track_list_item_time_distance"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/track_list_item_duration_distance_wrapper"
+        android:layout_width="150dp"
+        android:layout_height="18dp"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name"
-        tools:text="50:43 (50.00km)" />
+        app:layout_constraintTop_toBottomOf="@id/track_list_item_name">
+
+        <TextView
+            android:id="@+id/track_list_item_duration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="012:50:43" />
+
+        <TextView
+            android:id="@+id/track_list_item_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="(50.00km)"
+            android:textAlignment="textEnd" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/track_list_item_distance_marker_separator"
+        android:layout_width="10dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text=" ‧"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@id/track_list_item_duration_distance_wrapper"
+        app:layout_constraintStart_toEndOf="@id/track_list_item_duration_distance_wrapper"
+        app:layout_constraintTop_toBottomOf="@id/track_list_item_name" />
 
     <!-- Marker Count Icon -->
     <ImageView
@@ -61,8 +88,8 @@
         android:contentDescription="@string/image_marker_count"
         android:scaleType="centerInside"
         android:src="@drawable/ic_marker_show_24dp"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_time_distance"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_time_distance"
+        app:layout_constraintBottom_toBottomOf="@+id/track_list_item_distance_marker_separator"
+        app:layout_constraintStart_toEndOf="@+id/track_list_item_distance_marker_separator"
         app:layout_constraintTop_toBottomOf="@id/track_list_item_name" />
 
     <!-- Marker count -->
@@ -93,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="track_list_item_time_distance,track_list_item_marker_count_icon,track_list_item_marker_count,track_list_item_time" />
+        app:constraint_referenced_ids="track_list_item_duration_distance_wrapper,track_list_item_marker_count_icon,track_list_item_marker_count,track_list_item_time" />
 
     <!-- Category and description -->
     <TextView
@@ -128,5 +155,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/track_list_item_description" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

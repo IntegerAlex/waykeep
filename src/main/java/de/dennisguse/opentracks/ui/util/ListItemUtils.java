@@ -17,7 +17,6 @@
 package de.dennisguse.opentracks.ui.util;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.TextView;
 
 import java.time.Duration;
@@ -42,50 +41,30 @@ public class ListItemUtils {
     private ListItemUtils() {
     }
 
-    /**
-     * Gets a string for share owner, total time, and total distance.
-     *
-     * @param totalTime     the total time. Can be null
-     * @param totalDistance the total distance. Can be null
-     */
-    private static String getTimeDistance(String totalTime, String totalDistance) {
-        StringBuilder builder = new StringBuilder();
-        if (!TextUtils.isEmpty(totalTime)) {
-            if (builder.length() != 0) {
-                builder.append(" ‧ ");
-            }
-            builder.append(totalTime);
+    public static String getTimeText(Context context, boolean isRecording, Duration totalTime) {
+        String timeText;
+        if (isRecording) {
+            timeText = context.getString(R.string.generic_recording);
+        } else {
+            timeText = StringUtils.formatElapsedTime(totalTime);
         }
-        if (!TextUtils.isEmpty(totalDistance)) {
-            if (builder.length() != 0) {
-                builder.append(" ");
-            }
-            //TODO Use strings.xml
-            builder.append("(").append(totalDistance).append(")");
-        }
-        return builder.toString();
+        return timeText;
     }
 
-    public static String getTimeDistanceText(Context context, UnitSystem unitSystem, boolean isRecording, Duration totalTime, Distance totalDistance, int markerCount) {
-        String timeDistanceText;
-        if (isRecording) {
-            timeDistanceText = context.getString(R.string.generic_recording);
-        } else {
-            // Match list_item_time_distance in list_item.xml
+    public static String getDistanceText(Context context, UnitSystem unitSystem, boolean isRecording, Distance totalDistance) {
 
-            String time = StringUtils.formatElapsedTime(totalTime);
-            String distance = DistanceFormatter.Builder()
+        StringBuilder builder = new StringBuilder();
+
+        if (!isRecording) {
+            String distanceText = DistanceFormatter.Builder()
                     .setUnit(unitSystem)
                     .build(context)
                     .formatDistance(totalDistance);
 
-            timeDistanceText = getTimeDistance(time, distance);
-            if (markerCount > 0) {
-                timeDistanceText += "  ‧";
-            }
+            builder.append("(").append(distanceText).append(")");
         }
 
-        return timeDistanceText;
+        return builder.toString();
     }
 
     public static void setDateAndTime(Context context, TextView dateView, TextView timeView, Instant time, ZoneOffset timeZone) {
