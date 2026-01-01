@@ -16,7 +16,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingCadence;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingDistanceSpeed;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerManagerCyclingPower;
+import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerRunningSpeedAndCadence;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
@@ -119,8 +119,8 @@ public class SensorDataAggregator {
 
             return;
         }
-        if (value instanceof BluetoothHandlerManagerCyclingPower.Data) {
-            this.cyclingPower.add((Raw<BluetoothHandlerManagerCyclingPower.Data>) data);
+        if (value instanceof BluetoothHandlerCyclingPower.Data) {
+            this.cyclingPower.add((Raw<BluetoothHandlerCyclingPower.Data>) data);
             return;
         }
         if (value instanceof AtmosphericPressure) {

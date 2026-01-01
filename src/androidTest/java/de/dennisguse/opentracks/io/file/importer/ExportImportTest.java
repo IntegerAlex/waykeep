@@ -65,7 +65,7 @@ import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerManagerCyclingPower;
+import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
@@ -649,7 +649,7 @@ public class ExportImportTest {
         SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
-        cyclingPower.add(new Raw<>(trackPointCreator.createNow(), new BluetoothHandlerManagerCyclingPower.Data(Power.of(power), null)));
+        cyclingPower.add(new Raw<>(trackPointCreator.createNow(), new BluetoothHandlerCyclingPower.Data(Power.of(power), null)));
         sensorDataAggregator.add(cyclingPower);
 
 

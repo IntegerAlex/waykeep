@@ -14,7 +14,7 @@ public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
     private static final String TAG = BluetoothHandlerCyclingCadence.class.getSimpleName();
 
     public static final List<ServiceMeasurementUUID> CYCLING_CADENCE = List.of(
-            BluetoothHandlerManagerCyclingPower.CYCLING_POWER,
+            BluetoothHandlerCyclingPower.CYCLING_POWER,
             BluetoothHandlerCyclingDistanceSpeed.CYCLING_SPEED_CADENCE
     );
 
@@ -30,8 +30,8 @@ public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
 
     @Override
     public void handlePayload(SensorManager.SensorDataChangedObserver observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
-        if (serviceMeasurementUUID.equals(BluetoothHandlerManagerCyclingPower.CYCLING_POWER)) {
-            BluetoothHandlerManagerCyclingPower.Data data = BluetoothHandlerManagerCyclingPower.parseCyclingPower(characteristic);
+        if (serviceMeasurementUUID.equals(BluetoothHandlerCyclingPower.CYCLING_POWER)) {
+            BluetoothHandlerCyclingPower.Data data = BluetoothHandlerCyclingPower.parseCyclingPower(characteristic);
             if (data != null && data.crank() != null) {
                 observer.onChange(new Raw<>(observer.getNow(), data.crank()));
             }

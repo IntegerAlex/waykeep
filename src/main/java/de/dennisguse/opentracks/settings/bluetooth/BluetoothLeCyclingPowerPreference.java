@@ -7,7 +7,7 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 
 import java.util.List;
 
-import de.dennisguse.opentracks.sensors.BluetoothHandlerManagerCyclingPower;
+import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
 
 public class BluetoothLeCyclingPowerPreference extends BluetoothLeSensorPreference {
 
@@ -29,6 +29,6 @@ public class BluetoothLeCyclingPowerPreference extends BluetoothLeSensorPreferen
 
     @Override
     public PreferenceDialogFragmentCompat createInstance() {
-        return BluetoothLeSensorPreference.BluetoothLeSensorPreferenceDialog.newInstance(getKey(), List.of(BluetoothHandlerManagerCyclingPower.CYCLING_POWER));
+        return BluetoothLeSensorPreference.BluetoothLeSensorPreferenceDialog.newInstance(getKey(), List.of(BluetoothHandlerCyclingPower.CYCLING_POWER));
     }
 }

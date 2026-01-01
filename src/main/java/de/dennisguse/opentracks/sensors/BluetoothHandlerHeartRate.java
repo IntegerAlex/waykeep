@@ -13,7 +13,7 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
-public class BluetoothHandlerManagerHeartRate implements SensorHandlerInterface {
+public class BluetoothHandlerHeartRate implements SensorHandlerInterface {
 
     public static final ServiceMeasurementUUID HEARTRATE = new ServiceMeasurementUUID(
             new UUID(0x180D00001000L, 0x800000805f9b34fbL),

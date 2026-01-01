@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 
 import androidx.preference.PreferenceDialogFragmentCompat;
 
-import de.dennisguse.opentracks.sensors.BluetoothHandlerManagerHeartRate;
+import de.dennisguse.opentracks.sensors.BluetoothHandlerHeartRate;
 
 public class BluetoothLeHeartRatePreference extends BluetoothLeSensorPreference {
 
@@ -27,6 +27,6 @@ public class BluetoothLeHeartRatePreference extends BluetoothLeSensorPreference 
 
     @Override
     public PreferenceDialogFragmentCompat createInstance() {
-        return BluetoothLeSensorPreference.BluetoothLeSensorPreferenceDialog.newInstance(getKey(), BluetoothHandlerManagerHeartRate.HEART_RATE_SUPPORTING_DEVICES);
+        return BluetoothLeSensorPreference.BluetoothLeSensorPreferenceDialog.newInstance(getKey(), BluetoothHandlerHeartRate.HEART_RATE_SUPPORTING_DEVICES);
     }
 }
