@@ -1,4 +1,4 @@
 v4.22.2: OpenTracks
 
-Correzione di errori:
+Correzioni:
 - L'impostazione degli annunci vocali per l'ora e l'unità di misura è stata collegata

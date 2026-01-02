@@ -1,4 +1,4 @@
 v4.22.1: OpenTracks
 
-Modiciche:
+Modifiche:
 - Primo rilascio da Codeberg

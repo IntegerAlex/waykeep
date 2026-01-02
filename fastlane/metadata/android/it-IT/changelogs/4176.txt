@@ -4,7 +4,7 @@ Modifiche:
 - Velocità degli annunci vocali configurabile
 - API <26: L'icona del lanciatore omette lo sfondo
 
-Bugfix:
+Correzioni:
 - UI di registrazione: mostra i valori corretti 
 - Registrazione UI: mostra (di nuovo) l'altitudine in EGM2008
 
