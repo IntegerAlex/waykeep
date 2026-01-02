@@ -621,4 +621,5 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="voiceIdle">Passaggio a inattivo.</string>
     <string name="settings_announcements_segment_average_speed_pace">Velocità/Ritmo medi (segmento)</string>
     <string name="stats_average_segment_pace">Ritmo medio nel segmento</string>
+    <string name="stats_elapsed_segment_time">Tempo trascorso nel segmento</string>
 </resources>
