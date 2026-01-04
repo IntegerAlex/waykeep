@@ -135,6 +135,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
@@ -217,6 +218,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0))
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
 
@@ -235,6 +237,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(pauseTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -280,6 +283,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0))
         ), trackPoints);
     }
@@ -312,6 +316,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(stopTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -360,6 +365,7 @@ public class TrackRecordingServiceRecordingTest {
                         HeartRate.of(7),
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -368,6 +374,7 @@ public class TrackRecordingServiceRecordingTest {
                         Position.of(Instant.parse(stopTime)),
                         null,
                         HeartRate.of(7),
+                        null,
                         null,
                         null,
                         new AltitudeGainLoss(0, 0)
@@ -434,6 +441,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -445,6 +453,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -464,12 +473,14 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(stopTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -535,6 +546,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -550,6 +562,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -561,6 +574,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null, null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -614,6 +628,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -629,11 +644,13 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)),
                 new TrackPoint(
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(stopTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -685,6 +702,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(stopTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -745,6 +763,7 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -760,12 +779,14 @@ public class TrackRecordingServiceRecordingTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
                         null,
                         TrackPoint.Type.SEGMENT_END_MANUAL,
                         Position.of(Instant.parse(stopTime)),
+                        null,
                         null,
                         null,
                         null,
@@ -852,6 +873,7 @@ public class TrackRecordingServiceRecordingTest {
                                 Speed.of(5)),
                         Distance.of(2),
                         null,
+                        null,
                         Cadence.of(2),
                         null,
                         null
@@ -866,6 +888,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null,
                                 Speed.of(5)),
                         Distance.ZERO,
+                        null,
                         null,
                         Cadence.of(2),
                         null,
@@ -882,6 +905,7 @@ public class TrackRecordingServiceRecordingTest {
                                 Speed.of(5)),
                         Distance.of(10),
                         null,
+                        null,
                         Cadence.of(3),
                         null,
                         null
@@ -896,6 +920,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null,
                                 Speed.of(5)),
                         Distance.of(4.0),
+                        null,
                         null,
                         Cadence.of(5),
                         null,
@@ -912,6 +937,7 @@ public class TrackRecordingServiceRecordingTest {
                                 Speed.of(5)),
                         Distance.ZERO,
                         null,
+                        null,
                         Cadence.of(5),
                         null,
                         null
@@ -926,6 +952,7 @@ public class TrackRecordingServiceRecordingTest {
                                 null,
                                 Speed.ZERO), //Sensor data is now outdated, but we do not fall back to GPS.
                         Distance.ZERO,
+                        null,
                         null,
                         Cadence.of(0), //TODO This could be null, right?
                         null,

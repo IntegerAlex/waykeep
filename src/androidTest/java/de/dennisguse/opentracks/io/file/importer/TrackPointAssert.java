@@ -52,6 +52,8 @@ public class TrackPointAssert {
 
         Assert.assertEquals("heartRate", expected.heartRate(), actual.heartRate());
 
+        Assert.assertEquals("temperature", expected.temperature(), actual.temperature());
+
         Assert.assertEquals("power", expected.power(), actual.power());
 
         Assert.assertEquals("cadence", expected.cadence(), actual.cadence());

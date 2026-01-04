@@ -210,6 +210,7 @@ public class GPXTrackImporterTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(1, 1)
                 ),
                 new TrackPoint(
@@ -223,6 +224,7 @@ public class GPXTrackImporterTest {
                                 Speed.of(5)),
                         Distance.of(12),
                         HeartRate.of(69),
+                        null,
                         Cadence.of(3),
                         Power.of(50),
                         new AltitudeGainLoss(1, 1)
@@ -236,6 +238,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -255,6 +258,7 @@ public class GPXTrackImporterTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -266,6 +270,7 @@ public class GPXTrackImporterTest {
                                 Altitude.WGS84.of(10), null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,

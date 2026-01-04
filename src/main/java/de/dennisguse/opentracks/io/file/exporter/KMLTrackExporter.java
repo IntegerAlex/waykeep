@@ -67,8 +67,9 @@ public class KMLTrackExporter implements TrackExporter {
     public static final String EXTENDED_DATA_TYPE_TRACKPOINT = "trackpoint_type";
     public static final String EXTENDED_DATA_TYPE_SPEED = "speed";
     public static final String EXTENDED_DATA_TYPE_DISTANCE = "distance";
-    public static final String EXTENDED_DATA_TYPE_CADENCE = "cadence";
     public static final String EXTENDED_DATA_TYPE_HEARTRATE = "heartrate";
+    public static final String EXTENDED_DATA_TYPE_TEMPERATURE = "temperature";
+    public static final String EXTENDED_DATA_TYPE_CADENCE = "cadence";
     public static final String EXTENDED_DATA_TYPE_POWER = "power";
     public static final String EXTENDED_DATA_TYPE_ALTITUDE_GAIN = "elevation_gain";
     public static final String EXTENDED_DATA_TYPE_ALTITUDE_LOSS = "elevation_loss";
@@ -95,6 +96,7 @@ public class KMLTrackExporter implements TrackExporter {
     private final List<Float> powerList = new ArrayList<>();
     private final List<Float> cadenceList = new ArrayList<>();
     private final List<Float> heartRateList = new ArrayList<>();
+    private final List<Float> temperatureList = new ArrayList<>();
     private final List<Float> altitudeGainList = new ArrayList<>(); //TODO Join with altitudeLossList
     private final List<Float> altitudeLossList = new ArrayList<>();
     private final List<Float> accuracyHorizontal = new ArrayList<>();
@@ -237,7 +239,7 @@ public class KMLTrackExporter implements TrackExporter {
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xsi:schemaLocation="http://www.opengis.net/kml/2.3 http://schemas.opengis.net/kml/2.3/ogckml23.xsd
                                                 http://opentracksapp.com/xmlschemas/v1 http://opentracksapp.com/xmlschemas/OpenTracks_v1.xsd">
-                        """); //TODO ADD xsi:schemaLocation for atom
+                        """); //NOTE: There is no XSD for Atom
         printWriter.println("<Document>");
         printWriter.println("<open>1</open>");
         printWriter.println("<visibility>1</visibility>");
@@ -254,6 +256,7 @@ public class KMLTrackExporter implements TrackExporter {
         writeSimpleArrayStyle(EXTENDED_DATA_TYPE_POWER, context.getString(R.string.description_sensor_power));
         writeSimpleArrayStyle(EXTENDED_DATA_TYPE_CADENCE, context.getString(R.string.description_sensor_cadence));
         writeSimpleArrayStyle(EXTENDED_DATA_TYPE_HEARTRATE, context.getString(R.string.description_sensor_heart_rate));
+        writeSimpleArrayStyle(EXTENDED_DATA_TYPE_TEMPERATURE, context.getString(R.string.description_sensor_temperature));
 
         printWriter.println("</Schema>");
     }
@@ -321,6 +324,7 @@ public class KMLTrackExporter implements TrackExporter {
         powerList.clear();
         cadenceList.clear();
         heartRateList.clear();
+        temperatureList.clear();
         altitudeGainList.clear();
         altitudeLossList.clear();
         accuracyHorizontal.clear();
@@ -348,6 +352,9 @@ public class KMLTrackExporter implements TrackExporter {
         }
         if (heartRateList.stream().anyMatch(Objects::nonNull)) {
             writeSimpleArraySensorData(heartRateList, EXTENDED_DATA_TYPE_HEARTRATE);
+        }
+        if (temperatureList.stream().anyMatch(Objects::nonNull)) {
+            writeSimpleArraySensorData(temperatureList, EXTENDED_DATA_TYPE_TEMPERATURE);
         }
         if (altitudeGainList.stream().anyMatch(Objects::nonNull)) {
             writeSimpleArraySensorData(altitudeGainList, EXTENDED_DATA_TYPE_ALTITUDE_GAIN);
@@ -381,6 +388,7 @@ public class KMLTrackExporter implements TrackExporter {
 
         distanceList.add(trackPoint.sensorDistance() != null ? (float) trackPoint.sensorDistance().toM() : null);
         heartRateList.add(trackPoint.heartRate() != null ? trackPoint.heartRate().getBPM() : null);
+        temperatureList.add(trackPoint.temperature() != null ? trackPoint.temperature().getCelsius() : null);
         cadenceList.add(trackPoint.cadence() != null ? trackPoint.cadence().getRPM() : null);
         powerList.add(trackPoint.power() != null ? trackPoint.power().getW() : null);
         if (trackPoint.altitudeGainLoss() != null) {

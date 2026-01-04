@@ -29,7 +29,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 40;
+    private static final int DATABASE_VERSION = 41;
 
     private final Context context;
 
@@ -84,6 +84,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 38 -> upgradeFrom37to38(db);
                 case 39 -> upgradeFrom38to39(db);
                 case 40 -> upgradeFrom39to40(db);
+                case 41 -> upgradeFrom40to41(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -111,6 +112,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 37 -> downgradeFrom38to37(db);
                 case 38 -> downgradeFrom39to38(db);
                 case 39 -> downgradeFrom40to39(db);
+                case 40 -> downgradeFrom41to40(db);
                 default -> throw new RuntimeException("Not implemented: downgrade to " + toVersion);
             }
         }
@@ -730,6 +732,34 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE markers_old");
 
         db.execSQL("CREATE INDEX markers_trackid_index ON markers(trackid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void upgradeFrom40to41(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("ALTER TABLE trackpoints RENAME TO trackpoints_old");
+        db.execSQL("CREATE TABLE trackpoints (_id INTEGER PRIMARY KEY AUTOINCREMENT, trackid INTEGER NOT NULL, longitude INTEGER, latitude INTEGER, time INTEGER, elevation FLOAT, accuracy FLOAT, speed FLOAT, bearing FLOAT, sensor_heartrate FLOAT, sensor_temperature FLOAT, sensor_cadence FLOAT, sensor_power FLOAT, elevation_gain FLOAT, elevation_loss FLOAT, type TEXT CHECK(type IN (-2, -1, 0, 1, 3)), sensor_distance FLOAT, accuracy_vertical FLOAT, FOREIGN KEY (trackid) REFERENCES tracks(_id) ON UPDATE CASCADE ON DELETE CASCADE)");
+        db.execSQL("INSERT INTO trackpoints SELECT _id, trackid, longitude, latitude, time, elevation, accuracy, speed, bearing, sensor_heartrate, null, sensor_cadence, sensor_power, elevation_gain, elevation_gain, type, sensor_distance, accuracy_vertical FROM trackpoints_old");
+        db.execSQL("DROP TABLE trackpoints_old");
+
+        db.execSQL("CREATE INDEX trackpoints_trackid_index ON trackpoints(trackid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void downgradeFrom41to40(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("ALTER TABLE trackpoints RENAME TO trackpoints_old");
+        db.execSQL("CREATE TABLE trackpoints (_id INTEGER PRIMARY KEY AUTOINCREMENT, trackid INTEGER NOT NULL, longitude INTEGER, latitude INTEGER, time INTEGER, elevation FLOAT, accuracy FLOAT, speed FLOAT, bearing FLOAT, sensor_heartrate FLOAT, sensor_cadence FLOAT, sensor_power FLOAT, elevation_gain FLOAT, elevation_loss FLOAT, type TEXT CHECK(type IN (-2, -1, 0, 1, 3)), sensor_distance FLOAT, accuracy_vertical FLOAT, FOREIGN KEY (trackid) REFERENCES tracks(_id) ON UPDATE CASCADE ON DELETE CASCADE)");
+        db.execSQL("INSERT INTO trackpoints SELECT _id, trackid, longitude, latitude, time, elevation, accuracy, speed, bearing, sensor_heartrate, sensor_cadence, sensor_power, elevation_gain, elevation_gain, type, sensor_distance, accuracy_vertical FROM trackpoints_old");
+        db.execSQL("DROP TABLE trackpoints_old");
+
+        db.execSQL("CREATE INDEX trackpoints_trackid_index ON trackpoints(trackid)");
 
         db.setTransactionSuccessful();
         db.endTransaction();

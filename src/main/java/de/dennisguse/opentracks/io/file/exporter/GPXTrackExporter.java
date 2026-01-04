@@ -61,6 +61,7 @@ public class GPXTrackExporter implements TrackExporter {
     private static final NumberFormat SPEED_FORMAT = NumberFormat.getInstance(Locale.US);
     private static final NumberFormat DISTANCE_FORMAT = NumberFormat.getInstance(Locale.US);
     private static final NumberFormat HEARTRATE_FORMAT = NumberFormat.getInstance(Locale.US);
+    private static final NumberFormat TEMPERATURE_FORMAT = NumberFormat.getInstance(Locale.US);
     private static final NumberFormat CADENCE_FORMAT = NumberFormat.getInstance(Locale.US);
     private static final NumberFormat POWER_FORMAT = NumberFormat.getInstance(Locale.US);
 
@@ -81,6 +82,9 @@ public class GPXTrackExporter implements TrackExporter {
 
         HEARTRATE_FORMAT.setMaximumFractionDigits(0);
         HEARTRATE_FORMAT.setGroupingUsed(false);
+
+        TEMPERATURE_FORMAT.setMaximumFractionDigits(2);
+        TEMPERATURE_FORMAT.setGroupingUsed(false);
 
         CADENCE_FORMAT.setMaximumFractionDigits(0);
         CADENCE_FORMAT.setGroupingUsed(false);
@@ -319,6 +323,10 @@ public class GPXTrackExporter implements TrackExporter {
 
             if (trackPoint.heartRate() != null) {
                 trackPointExtensionV2Content += "<gpxtpx:hr>" + HEARTRATE_FORMAT.format(trackPoint.heartRate().getBPM()) + "</gpxtpx:hr>\n";
+            }
+
+            if (trackPoint.temperature() != null) {
+                trackPointExtensionV2Content += "<gpxtpx:atemp>" + TEMPERATURE_FORMAT.format(trackPoint.temperature().getCelsius()) + "</gpxtpx:atemp>\n";
             }
 
             if (trackPoint.cadence() != null) {

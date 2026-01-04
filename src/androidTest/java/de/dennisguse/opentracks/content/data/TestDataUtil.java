@@ -132,6 +132,7 @@ public class TestDataUtil {
                 ),
                 null,
                 HeartRate.of(100f + i % 80),
+                null,
                 Cadence.of(300f + i),
                 Power.of(400f + i),
                 altitudeGainLoss

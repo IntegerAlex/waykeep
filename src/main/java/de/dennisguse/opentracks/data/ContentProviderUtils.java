@@ -49,6 +49,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.statistics.SensorStatistics;
@@ -538,6 +539,7 @@ public class ContentProviderUtils {
         int speedIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SPEED);
         int bearingIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.BEARING);
         int sensorHeartRateIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_HEARTRATE);
+        int temperatureIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_TEMPERATURE);
         int sensorCadenceIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_CADENCE);
         int sensorDistanceIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_DISTANCE);
         int sensorPowerIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_POWER);
@@ -564,6 +566,7 @@ public class ContentProviderUtils {
                 ),
                 !cursor.isNull(sensorDistanceIndex) ? Distance.of(cursor.getFloat(sensorDistanceIndex)) : null,
                 !cursor.isNull(sensorHeartRateIndex) ? HeartRate.of(cursor.getFloat(sensorHeartRateIndex)) : null,
+                !cursor.isNull(temperatureIndex) ? Temperature.of(cursor.getFloat(temperatureIndex)) : null,
                 !cursor.isNull(sensorCadenceIndex) ? Cadence.of(cursor.getFloat(sensorCadenceIndex)) : null,
                 !cursor.isNull(sensorPowerIndex) ? Power.of(cursor.getFloat(sensorPowerIndex)) : null,
                 altitudeGainLoss
@@ -651,6 +654,9 @@ public class ContentProviderUtils {
 
         if (trackPoint.heartRate() != null) {
             values.put(TrackPointsColumns.SENSOR_HEARTRATE, trackPoint.heartRate().getBPM());
+        }
+        if (trackPoint.temperature() != null) {
+            values.put(TrackPointsColumns.SENSOR_TEMPERATURE, trackPoint.temperature().getCelsius());
         }
         if (trackPoint.cadence() != null) {
             values.put(TrackPointsColumns.SENSOR_CADENCE, trackPoint.cadence().getRPM());

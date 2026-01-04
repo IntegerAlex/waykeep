@@ -89,7 +89,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -129,7 +129,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -169,7 +169,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -209,7 +209,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -231,7 +231,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -271,7 +271,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -293,7 +293,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -333,7 +333,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -373,7 +373,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -413,7 +413,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -453,7 +453,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -475,7 +475,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -515,7 +515,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -537,7 +537,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -564,7 +564,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );
@@ -597,7 +597,7 @@ public class VoiceAnnouncementUtilsTest {
                 null,
                 null,
                 new SensorData<>(HeartRate.of(60), "unused"),
-                null,
+                null, null,
                 null,
                 null
         );

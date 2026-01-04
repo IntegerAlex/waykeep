@@ -10,6 +10,7 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Temperature;
 
 public record SensorDataSet(
         @NonNull
@@ -21,6 +22,7 @@ public record SensorDataSet(
         @Nullable
         SensorData<HeartRate> heartRate,
         @Nullable
+        SensorData<Temperature> temperature,
         SensorData<Cadence> cadence,
         @Nullable
         SensorData<Power> power,

@@ -12,10 +12,10 @@ import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 public class BluetoothHandlerBarometricPressure implements SensorHandlerInterface {
-    private static final UUID ENVIRONMENTAL_SENSING_SERVICE = new UUID(0x181A00001000L, 0x800000805f9b34fbL);
+    static final UUID ENVIRONMENTAL_SENSING_SERVICE = new UUID(0x181A00001000L, 0x800000805f9b34fbL);
     public static final ServiceMeasurementUUID BAROMETRIC_PRESSURE = new ServiceMeasurementUUID(
             ENVIRONMENTAL_SENSING_SERVICE,
-            new UUID(0x2A6D00001000L, 0x800000805f9b34fbL)
+            new UUID(0x2A6D00001000L, 0x800000805f9b34fbL) //TODO extract leastSigBits
     );
 
     @Override
@@ -37,9 +37,7 @@ public class BluetoothHandlerBarometricPressure implements SensorHandlerInterfac
     }
 
     /**
-     * Decoding:
-     * org.bluetooth.service.environmental_sensing.xml
-     * org.bluetooth.characteristic.pressure.xml
+     * Decoding: org.bluetooth.characteristic.pressure.xml
      */
     public static AtmosphericPressure parseEnvironmentalSensing(BluetoothGattCharacteristic characteristic) {
         byte[] raw = characteristic.getValue();

@@ -50,6 +50,7 @@ public interface TrackPointsColumns extends BaseColumns {
     String SPEED = "speed";
     String BEARING = "bearing";
     String SENSOR_HEARTRATE = "sensor_heartrate";
+    String SENSOR_TEMPERATURE = "sensor_temperature";
     String SENSOR_CADENCE = "sensor_cadence";
     String SENSOR_DISTANCE = "sensor_distance"; //DISTANCE from previous TrackPoint
     String SENSOR_POWER = "sensor_power";
@@ -75,6 +76,7 @@ public interface TrackPointsColumns extends BaseColumns {
             + SPEED + " FLOAT, "
             + BEARING + " FLOAT, "
             + SENSOR_HEARTRATE + " FLOAT, "
+            + SENSOR_TEMPERATURE + " FLOAT, "
             + SENSOR_CADENCE + " FLOAT, "
             + SENSOR_POWER + " FLOAT, "
             + ALTITUDE_GAIN + " FLOAT, "

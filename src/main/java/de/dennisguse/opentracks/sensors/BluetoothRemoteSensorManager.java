@@ -24,8 +24,6 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.time.Duration;
-
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
@@ -40,13 +38,12 @@ public class BluetoothRemoteSensorManager implements SensorConnector, SharedPref
 
     private static final String TAG = BluetoothRemoteSensorManager.class.getSimpleName();
 
-    public static final Duration MAX_SENSOR_DATE_SET_AGE = Duration.ofSeconds(5);
-
     private final Context context;
     private final Handler handler;
     private boolean started = false;
 
     private final BluetoothConnectionManager heartRate;
+    private final BluetoothConnectionManager temperature;
     private final BluetoothConnectionManager cyclingCadence;
     private final BluetoothConnectionManager cyclingSpeed;
     private final BluetoothConnectionManager cyclingPower;
@@ -58,6 +55,7 @@ public class BluetoothRemoteSensorManager implements SensorConnector, SharedPref
 
         BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
         this.heartRate = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerHeartRate());
+        this.temperature = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerTemperature());
         this.cyclingCadence = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerCyclingCadence());
         this.cyclingSpeed = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerCyclingDistanceSpeed());
         this.cyclingPower = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerCyclingPower());
@@ -75,6 +73,7 @@ public class BluetoothRemoteSensorManager implements SensorConnector, SharedPref
     @Override
     public synchronized void stop(Context context) {
         heartRate.disconnect();
+        temperature.disconnect();
         cyclingCadence.disconnect();
         cyclingSpeed.disconnect();
         cyclingPower.disconnect();
@@ -94,6 +93,11 @@ public class BluetoothRemoteSensorManager implements SensorConnector, SharedPref
         if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_heart_rate_key, key)) {
             String address = PreferencesUtils.getBluetoothHeartRateSensorAddress();
             connect(heartRate, address);
+        }
+
+        if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_temperature_key, key)) {
+            String address = PreferencesUtils.getBluetoothTemperatureSensorAddress();
+            connect(temperature, address);
         }
 
         if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_cadence_key, key)) {

@@ -60,6 +60,7 @@ import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
@@ -72,6 +73,7 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataAggregator;
 import de.dennisguse.opentracks.services.TrackRecordingService;
@@ -173,14 +175,14 @@ public class ExportImportTest {
 
         // A sensor-only TrackPoint
         trackPointCreator.setClock("2020-02-02T02:02:04Z");
-        mockSensorData(trackPointCreator, 15f, sensorDistance, 66f, 3f, 50f, 1f);
+        mockSensorData(trackPointCreator, 15f, sensorDistance, 66f, 3f, 50f, 1f, 27);
 
         trackPointCreator.setClock("2020-02-02T02:02:14Z"); //ignored
-        mockSensorData(trackPointCreator, 15f, null, 67f, 3f, 50f, null);
+        mockSensorData(trackPointCreator, 15f, null, 67f, 3f, 50f, null, 28);
         trackPointCreator.setClock("2020-02-02T02:02:15Z");
-        mockSensorData(trackPointCreator, null, null, 68f, 3f, 50f, null);
+        mockSensorData(trackPointCreator, null, null, 68f, 3f, 50f, null, 29);
         trackPointCreator.setClock("2020-02-02T02:02:16Z");
-        mockSensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f, null); // Distance will be added to next TrackPoint
+        mockSensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f, null, 30); //Distance will be added to next TrackPoint
 
         sendLocation(trackPointCreator, "2020-02-02T02:02:17Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 0f);
         contentProviderUtils.insertMarker(
@@ -248,6 +250,7 @@ public class ExportImportTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(1, 1)
                 ),
                 new TrackPoint(
@@ -261,6 +264,7 @@ public class ExportImportTest {
                                 Speed.of(15)),
                         Distance.of(10),
                         HeartRate.of(66),
+                        Temperature.of(27),
                         Cadence.of(3),
                         Power.of(50),
                         new AltitudeGainLoss(1, 1)
@@ -271,6 +275,7 @@ public class ExportImportTest {
                         Position.of(Instant.parse("2020-02-02T02:02:15Z")),
                         null,
                         HeartRate.of(68),
+                        Temperature.of(29),
                         Cadence.of(3),
                         Power.of(50),
                         null
@@ -286,6 +291,7 @@ public class ExportImportTest {
                                 Speed.of(5)),
                         Distance.of(2),
                         HeartRate.of(69),
+                        Temperature.of(30),
                         Cadence.of(3),
                         Power.of(50),
                         new AltitudeGainLoss(0, 0)
@@ -305,6 +311,7 @@ public class ExportImportTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -319,12 +326,14 @@ public class ExportImportTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
                         null,
                         TrackPoint.Type.IDLE,
                         Position.of(Instant.parse("2020-02-02T02:03:30Z")),
+                        null,
                         null,
                         null,
                         null,
@@ -339,6 +348,7 @@ public class ExportImportTest {
                                 3.123456, 16.001, Distance.of(10),
                                 Altitude.WGS84.of(999.1229858398438), null,
                                 null, Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -365,7 +375,7 @@ public class ExportImportTest {
     //TODO Does not test marker images
     @LargeTest
     @Test
-    public void kmz_with_trackdetail_and_sensordata() throws TimeoutException, IOException {
+    public void kmz_with_trackdetail_and_sensordata() throws IOException {
         // given
         Track track = contentProviderUtils.getTrack(trackId);
 
@@ -417,7 +427,7 @@ public class ExportImportTest {
 
     @LargeTest
     @Test(expected = ImportAlreadyExistsException.class)
-    public void kml_with_trackdetail_and_sensordata_duplicate_trackUUID() throws TimeoutException, IOException {
+    public void kml_with_trackdetail_and_sensordata_duplicate_trackUUID() throws IOException {
         // given
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean(context.getString(R.string.import_prevent_reimport_key), true);
@@ -487,6 +497,7 @@ public class ExportImportTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(1, 1)
                 ),
                 new TrackPoint(
@@ -500,6 +511,7 @@ public class ExportImportTest {
                                 Speed.of(5)),
                         Distance.of(12),
                         HeartRate.of(69),
+                        Temperature.of(30),
                         Cadence.of(3),
                         Power.of(50),
                         new AltitudeGainLoss(1, 1)
@@ -513,6 +525,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -532,6 +545,7 @@ public class ExportImportTest {
                         null,
                         null,
                         null,
+                        null,
                         new AltitudeGainLoss(0, 0)
                 ),
                 new TrackPoint(
@@ -543,6 +557,7 @@ public class ExportImportTest {
                                 Altitude.WGS84.of(999.0999755859375), null,
                                 null,
                                 Speed.of(15)),
+                        null,
                         null,
                         null,
                         null,
@@ -575,7 +590,7 @@ public class ExportImportTest {
 
     @LargeTest
     @Test(expected = ImportAlreadyExistsException.class)
-    public void gpx_duplicate_trackUUID() throws TimeoutException, IOException {
+    public void gpx_duplicate_trackUUID() throws IOException {
         // given
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean(context.getString(R.string.import_prevent_reimport_key), true);
@@ -601,7 +616,7 @@ public class ExportImportTest {
 
     @LargeTest
     @Test
-    public void csv_export_only() throws TimeoutException, IOException {
+    public void csv_export_only() throws IOException {
         // given
         Track track = contentProviderUtils.getTrack(trackId);
 
@@ -645,7 +660,7 @@ public class ExportImportTest {
         }
     }
 
-    private void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain) {
+    private void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain, float temperature) {
         SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
@@ -690,6 +705,19 @@ public class ExportImportTest {
         }
 
         mockAltitudeChange(trackPointCreator, altitudeGain);
+
+        sensorDataAggregator.add(new AggregatorTemperature("", "'") {
+            @NonNull
+            @Override
+            public Temperature getAggregatedValue(Instant now) {
+                return Temperature.of(temperature);
+            }
+
+            @Override
+            public boolean hasReceivedData() {
+                return true;
+            }
+        });
 
         trackPointCreator.onChange();
     }

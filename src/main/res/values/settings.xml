@@ -20,6 +20,7 @@
     <string name="settings_reset_key" translatable="false">settingsReset</string>
 
     <string name="settings_sensor_bluetooth_heart_rate_key" translatable="false">bluetoothSensor</string>
+    <string name="settings_sensor_bluetooth_temperature_key" translatable="false">bluetoothTemperature</string>
     <string name="settings_sensor_bluetooth_cycling_cadence_key" translatable="false">bluetoothCyclingCadenceSensor</string>
     <string name="settings_sensor_bluetooth_cycling_speed_key" translatable="false">bluetoothCyclingSpeedSensor</string>
     <string name="settings_sensor_bluetooth_cycling_power_key" translatable="false">bluetoothCyclingPowerSensor</string>
@@ -361,6 +362,7 @@
     <string name="stats_custom_layout_coordinates_key" translatable="false">coordinates</string>
     <string name="stats_custom_layout_heart_rate_key" translatable="false">heart_rate</string>
     <string name="stats_custom_layout_average_heart_rate_key" translatable="false">average_heart_rate</string>
+    <string name="stats_custom_layout_temperature_key" translatable="false">temperature</string>
     <string name="stats_custom_layout_cadence_key" translatable="false">cadence</string>
     <string name="stats_custom_layout_average_cadence_key" translatable="false">average_cadence</string>
     <string name="stats_custom_layout_power_key" translatable="false">power</string>
@@ -370,6 +372,7 @@
     Every array has two items:
     - Key value for the dataField.
     - Comma separated flags for: visible, primary and span/wide for the dataField.
+    TODO: refactor, so this data is not stored here, but in  de.dennisguse.opentracks.viewmodels.Mapping. No need to have two places.
     -->
     <string-array name="stats_custom_layout_fields_default_value_0">
         <item>@string/stats_custom_layout_distance_key</item>
@@ -453,6 +456,10 @@
     </string-array>
     <string-array name="stats_custom_layout_fields_default_value_20">
         <item>@string/stats_custom_layout_clock_key</item>
+        <item>0,0,0</item>
+    </string-array>
+    <string-array name="stats_custom_layout_fields_default_value_21">
+        <item>@string/stats_custom_layout_temperature_key</item>
         <item>0,0,0</item>
     </string-array>
 

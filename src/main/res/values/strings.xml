@@ -173,6 +173,7 @@ limitations under the License.
     <string name="description_speed_ms">Speed (m/s)</string>
     <string name="description_sensor_cadence">Cadence (rpm)</string>
     <string name="description_sensor_heart_rate">Heart rate (bpm)</string>
+    <string name="description_sensor_temperature">Temperature (Celsius)</string>
     <string name="description_sensor_power">Power (W)</string>
     <string name="description_default_speed_or_pace">By activity type</string>
     <string name="description_speed_imperial">Speed (mi/hr)</string>
@@ -312,6 +313,7 @@ limitations under the License.
     <string name="sensor_state_heart_rate_unit">bpm</string>
     <string name="sensor_state_heart_rate_value">%1$d bpm</string>
     <string name="sensor_state_power">Power</string>
+    <string name="sensor_state_temperature">Thermometer</string>
     <string name="sensor_state_pressure">Barometer</string>
     <string name="sensor_state_power_avg">Avg Power</string>
     <string name="sensor_state_power_max">Max Power</string>
@@ -471,6 +473,7 @@ limitations under the License.
     <string name="stats_total_time">Total time</string>
     <string name="stats_split_interval">Split interval</string>
     <string name="stats_sensors_heart_rate">Heart rate</string>
+    <string name="stats_sensors_temperature">Temperature</string>
     <string name="stats_sensors_cadence">Cadence</string>
     <string name="stats_sensors_power">Power</string>
     <string name="stats_clock">Clock</string>

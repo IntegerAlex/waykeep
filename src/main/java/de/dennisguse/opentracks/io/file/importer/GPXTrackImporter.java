@@ -40,6 +40,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.statistics.SegmentStatisticUpdater;
@@ -83,6 +84,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
      */
     private static final String TAG_EXTENSION_SPEED_COMPAT = "speed";
     private static final String TAG_EXTENSION_HEARTRATE = "gpxtpx:hr";
+    private static final String TAG_EXTENSION_TEMPERATURE = "gpxtpx:atemp";
     private static final String TAG_EXTENSION_CADENCE = "gpxtpx:cad";
     private static final String TAG_EXTENSION_POWER = "pwr:PowerInWatts";
 
@@ -113,6 +115,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private String time;
     private String speed;
     private String heartrate;
+    private String temperature;
     private String cadence;
     private String power;
     private String markerType;
@@ -216,6 +219,11 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             case TAG_EXTENSION_HEARTRATE -> {
                 if (content != null) {
                     heartrate = content.trim();
+                }
+            }
+            case TAG_EXTENSION_TEMPERATURE -> {
+                if (content != null) {
+                    temperature = content.trim();
                 }
             }
             case TAG_EXTENSION_CADENCE -> {
@@ -354,6 +362,15 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
             }
         }
 
+        Temperature parsedTemperature = null;
+        if (temperature != null) {
+            try {
+                parsedTemperature = Temperature.of(Float.parseFloat(temperature));
+            } catch (NumberFormatException e) {
+                throw new ParsingException(createErrorMessage(String.format(Locale.US, "Unable to parse temperature: %s", temperature)), e);
+            }
+        }
+
         Cadence parsedCadence = null;
         if (cadence != null) {
             try {
@@ -396,6 +413,7 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 ),
                 parsedSensorDistance,
                 parsedHeartRate,
+                parsedTemperature,
                 parsedCadence,
                 parsedPower,
                 altitudeGainLoss
@@ -415,9 +433,10 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         sensorDistance = null;
         accuracyHorizontal = null;
         accuracyVertical = null;
-        power = null;
         heartrate = null;
+        temperature = null;
         cadence = null;
+        power = null;
     }
 
     private void onMarkerStart(Attributes attributes) {

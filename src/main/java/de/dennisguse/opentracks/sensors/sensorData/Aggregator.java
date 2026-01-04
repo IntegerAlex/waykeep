@@ -2,11 +2,12 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import androidx.annotation.NonNull;
 
+import java.time.Duration;
 import java.time.Instant;
 
-import de.dennisguse.opentracks.sensors.BluetoothRemoteSensorManager;
-
 public abstract class Aggregator<Input, Output> {
+
+    private static final Duration MAX_SENSOR_DATE_SET_AGE = Duration.ofSeconds(5);
 
     protected Raw<Input> previous;
 
@@ -43,6 +44,7 @@ public abstract class Aggregator<Input, Output> {
         return aggregatedValue != null;
     }
 
+    @Deprecated //TODO Remove: for sensor there is no default value. Make getAggregatedValue() @Nullable
     @NonNull
     protected abstract Output getNoneValue();
 
@@ -84,8 +86,12 @@ public abstract class Aggregator<Input, Output> {
         return now
                 .isAfter(
                         previous.time()
-                                .plus(BluetoothRemoteSensorManager.MAX_SENSOR_DATE_SET_AGE)
+                                .plus(getMaxSensorAge())
                 );
+    }
+
+    protected Duration getMaxSensorAge() {
+        return MAX_SENSOR_DATE_SET_AGE;
     }
 
     @NonNull

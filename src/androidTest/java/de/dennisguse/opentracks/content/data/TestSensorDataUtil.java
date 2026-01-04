@@ -39,6 +39,7 @@ public class TestSensorDataUtil {
                 ),
                 null,
                 HeartRate.ofOrNull(hr),
+                null,
                 cadence != null ? Cadence.of(cadence) : null,
                 power != null ? Power.of(power) : null,
                 new AltitudeGainLoss(3, 3)

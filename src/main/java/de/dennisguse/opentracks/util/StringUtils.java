@@ -18,7 +18,6 @@ package de.dennisguse.opentracks.util;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 import android.content.Context;
-import android.location.Location;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -47,6 +46,7 @@ import de.dennisguse.opentracks.data.models.DistanceFormatter;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.settings.UnitSystem;
 
 /**
@@ -154,6 +154,15 @@ public class StringUtils {
         }
 
         return new Pair<>(value, context.getString(R.string.sensor_unit_beats_per_minute));
+    }
+
+    public static Pair<String, String> getTemperatureParts(Context context, Temperature temperature) {
+        String value = context.getString(R.string.value_unknown);
+        if (temperature != null) {
+            value = StringUtils.formatDecimal(temperature.getCelsius(), 1);
+        }
+
+        return new Pair<>(value, context.getString(R.string.sensor_unit_temperature));
     }
 
     public static Pair<String, String> getCadenceParts(Context context, Cadence cadence) {

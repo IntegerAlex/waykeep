@@ -42,6 +42,7 @@ import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.exporter.KMLTrackExporter;
@@ -109,6 +110,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private final ArrayList<Float> sensorDistanceList = new ArrayList<>();
     private final ArrayList<Float> sensorCadenceList = new ArrayList<>();
     private final ArrayList<Float> sensorHeartRateList = new ArrayList<>();
+    private final ArrayList<Float> sensorTemperatureList = new ArrayList<>();
     private final ArrayList<Float> sensorPowerList = new ArrayList<>();
     private final ArrayList<Float> altitudeGainList = new ArrayList<>();
     private final ArrayList<Float> altitudeLossList = new ArrayList<>();
@@ -312,6 +314,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
         sensorSpeedList.clear();
         sensorDistanceList.clear();
         sensorHeartRateList.clear();
+        sensorTemperatureList.clear();
         sensorCadenceList.clear();
         sensorPowerList.clear();
         altitudeGainList.clear();
@@ -334,6 +337,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             Speed speed = null;
             Distance sensorDistance = null;
             HeartRate heartRate = null;
+            Temperature temperature = null;
             Cadence cadence = null;
             Power power = null;
             AltitudeGainLoss altitudeGainLoss = null;
@@ -351,6 +355,9 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             }
             if (i < sensorHeartRateList.size()) {
                 heartRate = HeartRate.ofOrNull(sensorHeartRateList.get(i));
+            }
+            if (i < sensorTemperatureList.size() && sensorTemperatureList.get(i) != null) {
+                temperature = Temperature.of(sensorTemperatureList.get(i));
             }
             if (i < sensorCadenceList.size() && sensorCadenceList.get(i) != null) {
                 cadence = Cadence.of(sensorCadenceList.get(i));
@@ -399,6 +406,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
                     position,
                     sensorDistance,
                     heartRate,
+                    temperature,
                     cadence,
                     power,
                     altitudeGainLoss
@@ -467,6 +475,7 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
             case KMLTrackExporter.EXTENDED_DATA_TYPE_POWER -> sensorPowerList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_HEARTRATE,
                  EXTENDED_DATA_TYPE_HEART_RATE_LEGACY -> sensorHeartRateList.add(value);
+            case KMLTrackExporter.EXTENDED_DATA_TYPE_TEMPERATURE -> sensorTemperatureList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_CADENCE -> sensorCadenceList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_ALTITUDE_GAIN -> altitudeGainList.add(value);
             case KMLTrackExporter.EXTENDED_DATA_TYPE_ALTITUDE_LOSS -> altitudeLossList.add(value);

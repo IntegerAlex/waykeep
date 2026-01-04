@@ -812,6 +812,7 @@ public class CustomContentProviderUtilsTest {
                 TestDataUtil.createTrackPoint(5).position(),
                 null,
                 HeartRate.of(1),
+                null,
                 Cadence.of(2),
                 Power.of(3),
                 null
@@ -892,6 +893,7 @@ public class CustomContentProviderUtilsTest {
                 null,
                 TrackPoint.Type.TRACKPOINT,
                 TestDataUtil.createTrackPoint(1).position(),
+                null,
                 null,
                 null,
                 null,

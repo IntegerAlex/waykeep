@@ -60,6 +60,29 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
         }
     }
 
+    public static class SensorTemperature extends SensorStatisticsViewHolder {
+
+        @Override
+        public void onChanged(UnitSystem unitSystem, RecordingData data) {
+            SensorDataSet sensorDataSet = data.sensorDataSet();
+            String sensorName = getContext().getString(R.string.value_unknown);
+
+            Pair<String, String> valueAndUnit;
+            if (sensorDataSet != null && sensorDataSet.temperature() != null) {
+                valueAndUnit = StringUtils.getTemperatureParts(getContext(), sensorDataSet.temperature().data());
+                sensorName = sensorDataSet.temperature().sensorNameOrAddress();
+            } else {
+                valueAndUnit = StringUtils.getTemperatureParts(getContext(), null);
+            }
+
+            getBinding().statsValue.setText(valueAndUnit.first);
+            getBinding().statsUnit.setText(valueAndUnit.second);
+            getBinding().statsDescriptionMain.setText(R.string.stats_sensors_temperature);
+
+            getBinding().statsDescriptionSecondary.setText(sensorName);
+        }
+    }
+
     public static class SensorCadence extends SensorStatisticsViewHolder {
 
         @Override

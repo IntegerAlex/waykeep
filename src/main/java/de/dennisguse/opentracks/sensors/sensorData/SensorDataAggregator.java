@@ -14,6 +14,7 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingCadence;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
@@ -26,6 +27,9 @@ public class SensorDataAggregator {
 
     @VisibleForTesting
     public AggregatorHeartRate heartRate;
+
+    @VisibleForTesting
+    public AggregatorTemperature temperature;
 
     @VisibleForTesting
     public AggregatorCyclingCadence cyclingCadence;
@@ -97,11 +101,17 @@ public class SensorDataAggregator {
         set(data, data);
     }
 
+    //TODO Refactor generic "fun" here: go explicit.
     public void update(@NonNull Raw<?> data) {
         Object value = data.value();
 
         if (value instanceof HeartRate) {
             this.heartRate.add((Raw<HeartRate>) data);
+            return;
+        }
+
+        if (value instanceof Temperature) {
+            this.temperature.add((Raw<Temperature>) data);
             return;
         }
 
@@ -142,6 +152,7 @@ public class SensorDataAggregator {
     public void clear() {
         Log.i(TAG, "Removing all aggregators");
         this.heartRate = null;
+        this.temperature = null;
         this.cyclingCadence = null;
         this.cyclingDistanceSpeed = null;
         this.cyclingPower = null;
@@ -156,6 +167,7 @@ public class SensorDataAggregator {
                 getSpeed(now),
                 getDistance(now),
                 getHeartRate(now),
+                temperature != null && temperature.hasReceivedData() ? temperature.getAggregatedValueWithSensorName(now) : null,
                 getCadence(now),
                 cyclingPower != null && cyclingPower.hasReceivedData() ? cyclingPower.getAggregatedValueWithSensorName(now) : null,
                 barometer != null && barometer.hasReceivedData() ? barometer.getAggregatedValueWithSensorName(now) : null
@@ -166,6 +178,7 @@ public class SensorDataAggregator {
         Log.i(TAG, "Resetting data");
 
         if (heartRate != null) heartRate.resetAggregated();
+        if (temperature != null) temperature.resetAggregated();
         if (cyclingCadence != null) cyclingCadence.resetAggregated();
         if (cyclingDistanceSpeed != null) cyclingDistanceSpeed.resetAggregated();
         if (cyclingPower != null) cyclingPower.resetAggregated();
@@ -180,6 +193,10 @@ public class SensorDataAggregator {
 
         if (type instanceof AggregatorHeartRate) {
             heartRate = (AggregatorHeartRate) sensorData;
+            return;
+        }
+        if (type instanceof AggregatorTemperature) {
+            temperature = (AggregatorTemperature) sensorData;
             return;
         }
         if (type instanceof AggregatorCyclingCadence) {

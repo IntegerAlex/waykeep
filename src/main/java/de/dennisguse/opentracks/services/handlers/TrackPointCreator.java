@@ -113,6 +113,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
                 position,
                 sensorDataSet.distance() != null ? sensorDataSet.distance().data() : null,
                 sensorDataSet.heartRate() != null ? sensorDataSet.heartRate().data() : null,
+                sensorDataSet.temperature() != null ? sensorDataSet.temperature().data() : null,
                 sensorDataSet.cadence() != null ? sensorDataSet.cadence().data() : null,
                 sensorDataSet.power() != null ? sensorDataSet.power().data() : null,
                 sensorDataSet.altitudeGainLoss() != null ? sensorDataSet.altitudeGainLoss().data() : null
@@ -138,6 +139,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
                         position,
                         sensorDataSet.distance() != null ? sensorDataSet.distance().data() : null,
                         sensorDataSet.heartRate() != null ? sensorDataSet.heartRate().data() : null,
+                        sensorDataSet.temperature() != null ? sensorDataSet.temperature().data() : null,
                         sensorDataSet.cadence() != null ? sensorDataSet.cadence().data() : null,
                         sensorDataSet.power() != null ? sensorDataSet.power().data() : null,
                         sensorDataSet.altitudeGainLoss() != null ? sensorDataSet.altitudeGainLoss().data() : null

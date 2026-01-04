@@ -112,6 +112,7 @@ public class TrackStatisticsUpdaterTest {
                 null,
                 null,
                 null,
+                null,
                 null);
 
         // when
@@ -191,6 +192,7 @@ public class TrackStatisticsUpdaterTest {
                         HeartRate.of(50),
                         null,
                         null,
+                        null,
                         null
                 ),
                 new TrackPoint(
@@ -199,6 +201,7 @@ public class TrackStatisticsUpdaterTest {
                         Position.of(Instant.ofEpochSecond(45)),
                         null,
                         HeartRate.of(50),
+                        null,
                         null,
                         null,
                         null
@@ -228,6 +231,7 @@ public class TrackStatisticsUpdaterTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 ),
                 new TrackPoint(
@@ -238,6 +242,7 @@ public class TrackStatisticsUpdaterTest {
                         HeartRate.of(50),
                         null,
                         null,
+                        null,
                         null
                 ),
                 new TrackPoint(
@@ -246,6 +251,7 @@ public class TrackStatisticsUpdaterTest {
                         Position.of(Instant.ofEpochSecond(45)),
                         null,
                         HeartRate.of(50),
+                        null,
                         null,
                         null,
                         null
@@ -287,6 +293,7 @@ public class TrackStatisticsUpdaterTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         );
@@ -306,6 +313,7 @@ public class TrackStatisticsUpdaterTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         );
@@ -322,6 +330,7 @@ public class TrackStatisticsUpdaterTest {
                         TrackPoint.Type.TRACKPOINT,
                         Position.of(Instant.ofEpochSecond(50)),
                         Distance.of(10),
+                        null,
                         null,
                         null,
                         null,
@@ -404,6 +413,7 @@ public class TrackStatisticsUpdaterTest {
                         speed
                 ),
                 sensorDistance,
+                null,
                 null,
                 null,
                 null,

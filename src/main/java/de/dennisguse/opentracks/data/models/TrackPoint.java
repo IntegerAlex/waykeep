@@ -43,6 +43,7 @@ public record TrackPoint(
 
         Distance sensorDistance,
         HeartRate heartRate,
+        Temperature temperature,
         Cadence cadence,
         Power power,
         AltitudeGainLoss altitudeGainLoss
@@ -57,6 +58,7 @@ public record TrackPoint(
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
@@ -67,6 +69,7 @@ public record TrackPoint(
                 null,
                 type,
                 Position.of(now),
+                null,
                 null,
                 null,
                 null,
@@ -95,6 +98,7 @@ public record TrackPoint(
                 ),
                 trackPoint.sensorDistance,
                 trackPoint.heartRate,
+                null,
                 trackPoint.cadence,
                 trackPoint.power,
                 trackPoint.altitudeGainLoss
@@ -108,6 +112,7 @@ public record TrackPoint(
                 position,
                 sensorDistance,
                 heartRate,
+                null,
                 cadence,
                 power,
                 altitudeGainLoss
@@ -121,6 +126,7 @@ public record TrackPoint(
                 newPosition,
                 sensorDistance,
                 heartRate,
+                null,
                 cadence,
                 power,
                 altitudeGainLoss
@@ -150,6 +156,7 @@ public record TrackPoint(
                 position,
                 newSensorDistance,
                 heartRate,
+                null,
                 cadence,
                 power,
                 newAltitudeGainLoss

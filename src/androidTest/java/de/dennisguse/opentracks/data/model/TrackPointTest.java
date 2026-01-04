@@ -58,6 +58,7 @@ public class TrackPointTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -105,6 +106,7 @@ public class TrackPointTest {
                 null,
                 null,
                 null,
+                null,
                 null);
 
         // tp2 has sensor distance
@@ -129,6 +131,7 @@ public class TrackPointTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -145,6 +148,7 @@ public class TrackPointTest {
                         null,
                         null),
                 Distance.of(5),
+                null,
                 null,
                 null,
                 null,
