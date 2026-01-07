@@ -336,9 +336,6 @@
     <!-- Stats layout customization -->
     <string name="stats_custom_layout_key" translatable="false">statsCustomLayoutKey</string>
 
-    <!-- Stats layout customization: number of columns per row -->
-    <integer name="stats_custom_layout_columns_default" translatable="false">2</integer>
-
     <!-- Stats layout customization: key -->
     <string name="stats_custom_layouts_key" translatable="false">statsCustomLayoutFieldsKey</string>
     <string name="stats_custom_layout_selected_layout_key" translatable="false">statsCustomSelectedLayoutKey</string>
@@ -367,101 +364,6 @@
     <string name="stats_custom_layout_average_cadence_key" translatable="false">average_cadence</string>
     <string name="stats_custom_layout_power_key" translatable="false">power</string>
     <string name="stats_custom_layout_clock_key" translatable="false">time</string>
-    <!--
-    Default dataFields for stats layout customization in a set of arrays.
-    Every array has two items:
-    - Key value for the dataField.
-    - Comma separated flags for: visible, primary and span/wide for the dataField.
-    TODO: refactor, so this data is not stored here, but in  de.dennisguse.opentracks.viewmodels.Mapping. No need to have two places.
-    -->
-    <string-array name="stats_custom_layout_fields_default_value_0">
-        <item>@string/stats_custom_layout_distance_key</item>
-        <item>1,1,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_1">
-        <item>@string/stats_custom_layout_total_time_key</item>
-        <item>1,1,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_2">
-        <item>@string/stats_custom_layout_speed_key</item>
-        <item>1,1,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_3">
-        <item>@string/stats_custom_layout_moving_time_key</item>
-        <item>1,1,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_4">
-        <item>@string/stats_custom_layout_average_speed_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_5">
-        <item>@string/stats_custom_layout_max_speed_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_6">
-        <item>@string/stats_custom_layout_average_moving_speed_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_7">
-        <item>@string/stats_custom_layout_altitude_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_8">
-        <item>@string/stats_custom_layout_gain_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_9">
-        <item>@string/stats_custom_layout_loss_key</item>
-        <item>1,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_10">
-        <item>@string/stats_custom_layout_pace_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_11">
-        <item>@string/stats_custom_layout_average_moving_pace_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_12">
-        <item>@string/stats_custom_layout_average_pace_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_13">
-        <item>@string/stats_custom_layout_average_segment_pace_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_14">
-        <item>@string/stats_custom_layout_elapsed_segment_time_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_15">
-        <item>@string/stats_custom_layout_fastest_pace_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_16">
-        <item>@string/stats_custom_layout_coordinates_key</item>
-        <item>0,0,1</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_17">
-        <item>@string/stats_custom_layout_heart_rate_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_18">
-        <item>@string/stats_custom_layout_cadence_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_19">
-        <item>@string/stats_custom_layout_power_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_20">
-        <item>@string/stats_custom_layout_clock_key</item>
-        <item>0,0,0</item>
-    </string-array>
-    <string-array name="stats_custom_layout_fields_default_value_21">
-        <item>@string/stats_custom_layout_temperature_key</item>
-        <item>0,0,0</item>
-    </string-array>
 
     <!-- Stats empty values -->
     <string name="stats_empty_value_integer" translatable="false">0</string>

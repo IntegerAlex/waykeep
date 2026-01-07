@@ -16,17 +16,16 @@
 
 package de.dennisguse.opentracks.settings;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
@@ -34,12 +33,11 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.ActivityType;
@@ -51,7 +49,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
 import de.dennisguse.opentracks.sensors.SensorType;
-import de.dennisguse.opentracks.ui.customRecordingLayout.CsvLayoutUtils;
+import de.dennisguse.opentracks.ui.customRecordingLayout.DataField;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayoutIO;
 
@@ -808,72 +806,54 @@ public class PreferencesUtils {
         return getDefaultExportDirectoryUri() != null;
     }
 
-    public static int getLayoutColumnsByDefault() {
-        return resources.getInteger(R.integer.stats_custom_layout_columns_default);
-    }
+    public static RecordingLayout getDefaultLayout() {
+        //TODO We could merge this with Mapping, right?
+        List<DataField> defaultFields = List.of(
+                new DataField(resources.getString(R.string.stats_custom_layout_distance_key), true, true, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_total_time_key), true, true, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_speed_key), true, true, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_moving_time_key), true, true, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_speed_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_max_speed_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_moving_speed_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_altitude_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_gain_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_loss_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_pace_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_moving_pace_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_pace_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_segment_pace_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_elapsed_segment_time_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_fastest_pace_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_coordinates_key), false, false, true),
+                new DataField(resources.getString(R.string.stats_custom_layout_heart_rate_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_cadence_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_power_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_clock_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_temperature_key), false, false, false)
+        );
 
-    private static List<TypedArray> getLayoutDataFields() {
-        return Stream.of(
-                R.array.stats_custom_layout_fields_default_value_0,
-                R.array.stats_custom_layout_fields_default_value_1,
-                R.array.stats_custom_layout_fields_default_value_2,
-                R.array.stats_custom_layout_fields_default_value_3,
-                R.array.stats_custom_layout_fields_default_value_4,
-                R.array.stats_custom_layout_fields_default_value_5,
-                R.array.stats_custom_layout_fields_default_value_6,
-                R.array.stats_custom_layout_fields_default_value_7,
-                R.array.stats_custom_layout_fields_default_value_8,
-                R.array.stats_custom_layout_fields_default_value_9,
-                R.array.stats_custom_layout_fields_default_value_10,
-                R.array.stats_custom_layout_fields_default_value_11,
-                R.array.stats_custom_layout_fields_default_value_12,
-                R.array.stats_custom_layout_fields_default_value_13,
-                R.array.stats_custom_layout_fields_default_value_14,
-                R.array.stats_custom_layout_fields_default_value_15,
-                R.array.stats_custom_layout_fields_default_value_16,
-                R.array.stats_custom_layout_fields_default_value_17,
-                R.array.stats_custom_layout_fields_default_value_18,
-                R.array.stats_custom_layout_fields_default_value_19,
-                        R.array.stats_custom_layout_fields_default_value_20,
-                        R.array.stats_custom_layout_fields_default_value_21
-                ).map(id -> resources.obtainTypedArray(id))
-                .toList();
-    }
-
-    @SuppressLint("ResourceType")
-    private static String buildDefaultFields() {
-        List<TypedArray> fieldsArrays = getLayoutDataFields();
-        return fieldsArrays.stream().map(i -> i.getString(0) + CsvLayoutUtils.PROPERTY_SEPARATOR + i.getString(1)).collect(Collectors.joining(CsvLayoutUtils.ITEM_SEPARATOR))
-                + CsvLayoutUtils.ITEM_SEPARATOR;
+        RecordingLayout defaultLayout = new RecordingLayout(resources.getString(R.string.stats_custom_layout_default_layout), 2);
+        defaultLayout.addFields(defaultFields);
+        return defaultLayout;
     }
 
     static String buildDefaultLayout() {
-        return resources.getString(R.string.stats_custom_layout_default_layout) + CsvLayoutUtils.ITEM_SEPARATOR + getLayoutColumnsByDefault() + CsvLayoutUtils.ITEM_SEPARATOR + buildDefaultFields();
+        return RecordingLayoutIO.toCSV(List.of(getDefaultLayout()));
     }
 
-    public static String getDefaultLayoutName() {
-        return resources.getString(R.string.stats_custom_layout_default_layout);
-    }
-
-    /**
-     * @return custom layout selected or the first one if any has been selected or the one selected is not exists anymore.
-     */
     public static RecordingLayout getCustomLayout() {
+        String selectedLayout = getSelectedLayoutName();
         String csvCustomLayouts = getString(R.string.stats_custom_layouts_key, buildDefaultLayout());
-        String[] csvLines = csvCustomLayouts.split(CsvLayoutUtils.LINE_SEPARATOR);
-        String layoutSelected = getString(R.string.stats_custom_layout_selected_layout_key, null);
-        if (layoutSelected == null) {
-            return RecordingLayoutIO.fromCsv(csvLines[0], resources);
-        }
 
-        for (String line : csvLines) {
-            RecordingLayout recordingLayout = RecordingLayoutIO.fromCsv(line, resources);
-            if (recordingLayout.sameName(layoutSelected)) {
-                return recordingLayout;
-            }
-        }
+        List<RecordingLayout> recordingLayouts = RecordingLayoutIO.fromCsv(csvCustomLayouts, resources);
 
-        return RecordingLayoutIO.fromCsv(csvLines[0], resources);
+        RecordingLayout fallback = !recordingLayouts.isEmpty() ? recordingLayouts.get(0) : getDefaultLayout();
+
+        return recordingLayouts.stream()
+                .filter(it -> it.sameName(selectedLayout))
+                .findFirst()
+                .orElse(fallback);
     }
 
     public static void updateCustomLayouts(@NonNull List<RecordingLayout> recordingLayouts) {
@@ -891,26 +871,28 @@ public class PreferencesUtils {
     }
 
     public static void addCustomLayout(@NonNull String layoutName) {
-        String newLayoutCsv = layoutName + CsvLayoutUtils.ITEM_SEPARATOR + getLayoutColumnsByDefault() + CsvLayoutUtils.ITEM_SEPARATOR + buildDefaultFields();
-        String customLayoutCsv = getString(R.string.stats_custom_layouts_key, buildDefaultLayout()) + CsvLayoutUtils.LINE_SEPARATOR + newLayoutCsv;
-        setString(R.string.stats_custom_layouts_key, customLayoutCsv);
+        ArrayList<RecordingLayout> currentLayouts = new ArrayList<>(PreferencesUtils.getAllCustomLayouts());
+
+        RecordingLayout newCustomLayout = RecordingLayout.fromDefault(layoutName);
+
+        currentLayouts.add(newCustomLayout);
+
+        setString(R.string.stats_custom_layouts_key, RecordingLayoutIO.toCSV(currentLayouts));
     }
 
-    public static void setDefaultLayout(String layoutName) {
+    @Nullable
+    public static String getSelectedLayoutName() {
+        return getString(R.string.stats_custom_layout_selected_layout_key, null);
+    }
+
+    public static void setSelectedLayoutName(String layoutName) {
         setString(R.string.stats_custom_layout_selected_layout_key, layoutName);
     }
 
     public static List<RecordingLayout> getAllCustomLayouts() {
-        String csvCustomLayout = getString(R.string.stats_custom_layouts_key, buildDefaultLayout());
-        String[] csvLines = csvCustomLayout.split(CsvLayoutUtils.LINE_SEPARATOR);
+        String csvCustomLayouts = getString(R.string.stats_custom_layouts_key, buildDefaultLayout());
 
-        return Arrays.stream(csvLines).map(line -> RecordingLayoutIO.fromCsv(line, resources)).toList();
-    }
-
-    public static List<String> getAllCustomLayoutNames() {
-        return getAllCustomLayouts().stream()
-                .map(RecordingLayout::getName)
-                .toList();
+        return RecordingLayoutIO.fromCsv(csvCustomLayouts, resources);
     }
 
     public static void resetCustomLayoutPreferences() {

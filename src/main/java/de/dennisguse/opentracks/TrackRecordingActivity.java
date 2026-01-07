@@ -44,6 +44,7 @@ import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.SettingsActivity;
+import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.intervals.IntervalsFragment;
 import de.dennisguse.opentracks.ui.markers.MarkerEditActivity;
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
@@ -285,8 +286,10 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         if (item.getItemId() == R.id.track_detail_menu_select_layout) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            List<String> layoutNames = PreferencesUtils.getAllCustomLayoutNames();
-            builder.setTitle(getString(R.string.custom_layout_select_layout)).setItems(layoutNames.toArray(new String[0]), (dialog, which) -> PreferencesUtils.setDefaultLayout(layoutNames.get(which)));
+            List<String> layoutNames = PreferencesUtils.getAllCustomLayouts().stream()
+                    .map(RecordingLayout::getName)
+                    .toList();
+            builder.setTitle(getString(R.string.custom_layout_select_layout)).setItems(layoutNames.toArray(new String[0]), (dialog, which) -> PreferencesUtils.setSelectedLayoutName(layoutNames.get(which)));
             builder.create().show();
             return true;
         }

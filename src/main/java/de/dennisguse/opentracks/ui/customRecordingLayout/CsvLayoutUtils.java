@@ -5,13 +5,26 @@ import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO refactor; rename ot CsvUtils
 public final class CsvLayoutUtils {
+
+    @Deprecated //TODO private | package private
     public static final String LINE_SEPARATOR = "\n";
+    @Deprecated //TODO private | package private
     public static final String ITEM_SEPARATOR = ";";
+    @Deprecated //TODO private | package private
     public static final String PROPERTY_SEPARATOR = ",";
 
     private CsvLayoutUtils() {
+    }
 
+    @Nullable
+    public static List<String> getCsvLines(String csv) {
+        if (csv == null) {
+            return null;
+        }
+
+        return Arrays.stream(csv.split(CsvLayoutUtils.LINE_SEPARATOR)).toList();
     }
 
     /**

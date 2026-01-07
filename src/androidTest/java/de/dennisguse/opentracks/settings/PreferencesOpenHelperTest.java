@@ -60,8 +60,7 @@ public class PreferencesOpenHelperTest {
         // when update to version 2
         PreferencesOpenHelper.newInstance(2).check();
 
-        String updatedOldCustomLayoutCsv = context.getString(R.string.activity_type_unknown) + ";"
-                + PreferencesUtils.getLayoutColumnsByDefault() + ";distance,1,1,0;speed,1,1,0;";
+        String updatedOldCustomLayoutCsv = context.getString(R.string.activity_type_unknown) + ";2;distance,1,1,0;speed,1,1,0;";
 
         // then there should be one layout with old custom layout that has the new CSV value.
         List<RecordingLayout> recordingLayouts = PreferencesUtils.getAllCustomLayouts();
@@ -110,7 +109,7 @@ public class PreferencesOpenHelperTest {
         PreferencesOpenHelper.newInstance(1).check();
 
         // then custom layout should be equals to default layout.
-        RecordingLayout defaultRecordingLayout = RecordingLayoutIO.fromCsv(PreferencesUtils.buildDefaultLayout(), resources);
+        RecordingLayout defaultRecordingLayout = RecordingLayoutIO.fromCsvLine(PreferencesUtils.buildDefaultLayout(), resources);
         List<RecordingLayout> customRecordingLayout = PreferencesUtils.getAllCustomLayouts();
 
         assertEquals(1, customRecordingLayout.size());

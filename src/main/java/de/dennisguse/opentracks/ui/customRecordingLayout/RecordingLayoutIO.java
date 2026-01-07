@@ -19,11 +19,17 @@ public class RecordingLayoutIO {
     private static final String YES_VALUE = "1";
     private static final String NOT_VALUE = "0";
 
-    public static RecordingLayout fromCsv(@NonNull String csvLine, @NonNull Resources resources) {
+    public static List<RecordingLayout> fromCsv(@NonNull String csv, @NonNull Resources resources) {
+        return CsvLayoutUtils.getCsvLines(csv).stream()
+                .map(line -> RecordingLayoutIO.fromCsvLine(line, resources))
+                .toList();
+    }
+
+    public static RecordingLayout fromCsvLine(@NonNull String csvLine, @NonNull Resources resources) {
         List<String> csvParts = CsvLayoutUtils.getCsvLineParts(csvLine);
         if (csvParts == null) {
             Log.e(TAG, "Invalid CSV layout. It shouldn't happen: " + csvLine);
-            return new RecordingLayout(PreferencesUtils.getDefaultLayoutName());
+            return PreferencesUtils.getDefaultLayout();
         }
 
         RecordingLayout recordingLayout = new RecordingLayout(csvParts.get(0), Integer.parseInt(csvParts.get(1)));

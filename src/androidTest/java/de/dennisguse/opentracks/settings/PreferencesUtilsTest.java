@@ -210,7 +210,7 @@ public class PreferencesUtilsTest {
         String csv = sharedPreferences.getString(context.getString(R.string.stats_custom_layouts_key), null);
         assertNotNull(csv);
         assertEquals(csv,
-                "road cycling;" + PreferencesUtils.getLayoutColumnsByDefault() + ";"
+                "road cycling;2;"
                 + context.getString(R.string.stats_custom_layout_moving_time_key) + ",1,1,0;"
                 + context.getString(R.string.stats_custom_layout_distance_key) + ",1,0,0;"
                 + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + ",0,1,0;"
@@ -258,8 +258,8 @@ public class PreferencesUtilsTest {
                 + context.getString(R.string.stats_custom_layout_speed_key) + ",0,0;";
 
         List<RecordingLayout> layoutsToBeUpdated = new ArrayList<>();
-        layoutsToBeUpdated.add(RecordingLayoutIO.fromCsv(cyclingProfileUpdated, resources));
-        layoutsToBeUpdated.add(RecordingLayoutIO.fromCsv(runningProfile, resources));
+        layoutsToBeUpdated.add(RecordingLayoutIO.fromCsvLine(cyclingProfileUpdated, resources));
+        layoutsToBeUpdated.add(RecordingLayoutIO.fromCsvLine(runningProfile, resources));
 
         PreferencesUtils.updateCustomLayouts(layoutsToBeUpdated);
 
@@ -303,7 +303,7 @@ public class PreferencesUtilsTest {
                 + context.getString(R.string.stats_custom_layout_distance_key) + ",0,0;"
                 + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + ",0,0;"
                 + context.getString(R.string.stats_custom_layout_speed_key) + ",0,0;";
-        RecordingLayout recordingLayoutToBeUpdated = RecordingLayoutIO.fromCsv(cyclingProfileUpdated, resources);
+        RecordingLayout recordingLayoutToBeUpdated = RecordingLayoutIO.fromCsvLine(cyclingProfileUpdated, resources);
         PreferencesUtils.updateCustomLayout(recordingLayoutToBeUpdated);
 
         // then only updated profile is modified in the custom layouts

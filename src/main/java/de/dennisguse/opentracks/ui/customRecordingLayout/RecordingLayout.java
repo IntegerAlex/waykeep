@@ -17,9 +17,18 @@ public class RecordingLayout implements Parcelable {
     private int columnsPerRow;
     private final List<DataField> dataFields = new ArrayList<>();
 
+    public static RecordingLayout fromDefault(String newName) {
+        RecordingLayout defaultLayout = PreferencesUtils.getDefaultLayout();
+
+        RecordingLayout recordingLayout = new RecordingLayout(newName, defaultLayout.getColumnsPerRow());
+        recordingLayout.addFields(defaultLayout.getFields());
+        return recordingLayout;
+    }
+
+    @Deprecated //TODO please set columnsPerRow explicitly
     public RecordingLayout(String name) {
         this.name = name;
-        this.columnsPerRow = PreferencesUtils.getLayoutColumnsByDefault();
+        this.columnsPerRow = PreferencesUtils.getDefaultLayout().getColumnsPerRow();
     }
 
     public RecordingLayout(String name, int columnsPerRow) {
@@ -90,11 +99,11 @@ public class RecordingLayout implements Parcelable {
     }
 
     public boolean sameName(RecordingLayout recordingLayout) {
-        return this.name.equalsIgnoreCase(recordingLayout.getName());
+        return sameName(recordingLayout.getName());
     }
 
     public boolean sameName(String name) {
-        return this.name.equalsIgnoreCase(name);
+        return this.name.equals(name);
     }
 
     public String toCsv() {

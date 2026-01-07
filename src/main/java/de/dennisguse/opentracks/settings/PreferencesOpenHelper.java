@@ -56,7 +56,7 @@ class PreferencesOpenHelper {
         }
 
         if (!parts.get(1).matches("\\d+")) {
-            parts.add(1, String.valueOf(PreferencesUtils.getLayoutColumnsByDefault()));
+            parts.add(1, String.valueOf(2));
         }
         PreferencesUtils.setString(R.string.stats_custom_layouts_key, String.join(CsvLayoutUtils.ITEM_SEPARATOR, parts));
     }
