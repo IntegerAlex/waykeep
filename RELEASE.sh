@@ -11,9 +11,6 @@ CHANGELOG_FILE="$CHANGELOG_DIR/$VERSIONID.txt"
 
 git diff --exit-code || echo -e "\nWARNING WARNING WARNING WARNING WARNING: this branch contains uncommit changes."
 
-#TODO Execute all tests: we are destroying data, running on a real device.
-# ./gradlew connectedCheck
-
 # Changelog
 echo -e "\nPrevious changelog\n------------"
 PREVIOUS_CHANGELOG=$(find "$CHANGELOG_DIR" -iname "[[:digit:]]**.txt" | sort -n | tail -1)
@@ -34,8 +31,8 @@ gedit -w "$CHANGELOG_FILE"
 git add "$CHANGELOG_FILE"
 
 echo "Updating build.gradle"
-sed -i s/versionCode\ .*/versionCode\ "$VERSIONID"/g build.gradle
-sed -i s/versionName\ .*/versionName\ "\"$VERSIONNAME\""/g build.gradle
+sed -i s/versionCode\ [0-9]/versionCode\ "$VERSIONID"/g build.gradle
+sed -i s/versionName\ \"v/versionName\ "\"$VERSIONNAME\""/g build.gradle
 
 git diff
 

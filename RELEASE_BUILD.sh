@@ -6,8 +6,13 @@ export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64/
 
 JAVA_VERSION=`java --version`
 if [[ $JAVA_VERSION != "openjdk 21."* ]]; then
-  echo "OpenJDK version should be 21.X"
-  exit -1;
+  echo -e "OpenJDK version should be 21.X"
+fi
+
+git diff --exit-code || echo -e "\nWARNING WARNING WARNING WARNING WARNING: this branch contains uncommit changes."
+
+if [[ $(git log "$(git describe --tags --abbrev=0)..HEAD" --no-merges --oneline | wc -l) -gt 0 ]]; then
+  echo -e "No version tag for this commit; please use RELEASE.sh";
 fi
 
 RELEASE_STORE_PASSWORD=
