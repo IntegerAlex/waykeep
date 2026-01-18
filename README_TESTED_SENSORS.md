@@ -44,7 +44,10 @@ However, often only one value is provided.
 We only support _Instantaneous Power_.
 
 For cycling (incl. cadence):
-* Assioma Duo Powermeter
+
+* Assioma
+    * Duo Powermeter
+    * Pro MX-2
 * Elite drivo II
 * QUARQ Red DZero Powermeter
 * Tacx Satori Smart
