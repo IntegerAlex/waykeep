@@ -36,7 +36,8 @@ public class EspressoDeleteTrackTest {
     @Test
     public void espressoDeleteTrackTest() {
         // TrackListActivity: start recording
-        onView(withId(R.id.track_list_fab_action)).perform(click());
+        onView(withId(R.id.track_list_fab_action))
+                .perform(click());
 
         // TrackRecordingActivity
         onView(withId(R.id.track_recording_fab_action))
@@ -46,10 +47,12 @@ public class EspressoDeleteTrackTest {
                 .perform(longClick());
 
         // TrackStoppedActivity
-        onView(withId(R.id.finish_button)).perform(click());
+        onView(withId(R.id.finish_button))
+                .perform(click());
 
         // select track
-        onView(allOf(withParent(withId(R.id.track_list)), withParentIndex(0))).perform(longClick());
+        onView(allOf(withParent(withId(R.id.track_list)), withParentIndex(0)))
+                .perform(longClick());
 
         // open menu and delete selected track
         onView(
@@ -62,9 +65,11 @@ public class EspressoDeleteTrackTest {
                         isDisplayed()))
                 .perform(click());
 
-        onView(withText("Delete")).perform(click());
+        onView(withText("Delete"))
+                .perform(click());
 
-        onView(withText("OK")).perform(click());
+        onView(withText("OK"))
+                .perform(click());
 
         // tracklist is empty now
         onView(allOf(withText("Start recording your next adventure here"), isDisplayed()));

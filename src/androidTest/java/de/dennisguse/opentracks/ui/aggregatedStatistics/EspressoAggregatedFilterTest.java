@@ -14,7 +14,6 @@ import static de.dennisguse.opentracks.util.EspressoUtils.waitFor;
 import android.util.Pair;
 
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -61,28 +60,34 @@ public class EspressoAggregatedFilterTest {
     @Test
     public void espressoAggregatedFilterTest() {
         // open AggregatedStatisticsActivity through toolbar's menu item
-        onView(ViewMatchers.withId(R.id.bottom_app_bar)).check(matches(isDisplayed()));
-        onView(withId(R.id.bottom_app_bar)).check(matches(hasDescendant(withId(R.id.aggregated_stats_button))));
-        onView(withId(R.id.aggregated_stats_button)).perform(click());
+        onView(ViewMatchers.withId(R.id.bottom_app_bar))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.bottom_app_bar))
+                .check(matches(hasDescendant(withId(R.id.aggregated_stats_button))));
+        onView(withId(R.id.aggregated_stats_button))
+                .perform(click());
 
         // open FilterDialogFragment through toolbar's menu item
-        onView(withId(R.id.bottom_app_bar)).check(matches(isDisplayed()));
-        onView(withId(R.id.bottom_app_bar)).check(matches(hasDescendant(withId(R.id.aggregated_statistics_filter))));
-        onView(withId(R.id.aggregated_statistics_filter)).perform(click());
+        onView(withId(R.id.bottom_app_bar))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.bottom_app_bar))
+                .check(matches(hasDescendant(withId(R.id.aggregated_statistics_filter))));
+        onView(withId(R.id.aggregated_statistics_filter))
+                .perform(click());
 
         // check there's a checkbox with ACTIVITY_TYPE_LOCALIZED text
-        ViewInteraction checkBox = onView(
-                allOf(withId(R.id.filter_dialog_check_button), withText(ACTIVITY_TYPE_LOCALIZED),
-                        withParent(allOf(withId(R.id.filter_items),
-                                withParent(IsInstanceOf.instanceOf(android.view.ViewGroup.class)))),
-                        isDisplayed()));
-        checkBox.perform(waitFor(2000));
+        onView(allOf(withId(R.id.filter_dialog_check_button), withText(ACTIVITY_TYPE_LOCALIZED),
+                withParent(allOf(withId(R.id.filter_items),
+                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup.class)))),
+                isDisplayed()))
+                .perform(waitFor(2000));
 
         // check there's an edit text for "from date"
-        onView(withId(R.id.filter_date_edit_text_from)).check(matches(isDisplayed()));
+        onView(withId(R.id.filter_date_edit_text_from))
+                .check(matches(isDisplayed()));
 
         // check there's an edit text for "to date"
-        onView(withId(R.id.filter_date_edit_text_to)).check(matches(isDisplayed()));
+        onView(withId(R.id.filter_date_edit_text_to))
+                .check(matches(isDisplayed()));
     }
-
 }
