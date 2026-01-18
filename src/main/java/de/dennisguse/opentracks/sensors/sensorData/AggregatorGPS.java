@@ -10,19 +10,13 @@ import de.dennisguse.opentracks.data.models.Position;
 
 public class AggregatorGPS extends Aggregator<Location, Position> {
 
-
     public AggregatorGPS(String sensorAddress, String sensorName) {
         super(sensorAddress, sensorName);
     }
 
     @Override
     protected void computeValue(Raw<Location> current) {
-        aggregatedValue = Position.of(current.value(), current.time());
-    }
-
-    @Override
-    protected void resetImmediate() {
-        aggregatedValue = Position.empty();
+        output = Position.of(current.value(), current.time());
     }
 
     @Override
@@ -32,19 +26,15 @@ public class AggregatorGPS extends Aggregator<Location, Position> {
          * The data is too large to save it more often than needed (i.e., duplicated values).
          * TODO: this behavior can be changed if TrackRecordingManager.insertTrackPoint() would strip GPS data if it was already saved. This would simplify TrackPointCreator.createCurrentTrackPoint()
          */
-        aggregatedValue = Position.empty();
-    }
-
-    @NonNull
-    @Override
-    protected Position getNoneValue() {
-        return Position.empty();
+        output = null;
     }
 
     @NonNull
     @Override
     public Position getAggregatedValue(Instant now) {
-        return super.getAggregatedValue(now)
-                .with(now);
+        Position value = super.getAggregatedValue(now);
+        if (value == null) value = Position.empty();
+
+        return value.with(now);
     }
 }

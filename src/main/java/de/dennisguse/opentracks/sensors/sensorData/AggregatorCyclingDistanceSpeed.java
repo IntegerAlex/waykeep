@@ -2,8 +2,6 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Distance;
@@ -35,41 +33,37 @@ public class AggregatorCyclingDistanceSpeed extends Aggregator<CyclingDistanceSp
         }
         if (timeDiff.isNegative()) {
             Log.e(TAG, "Timestamps difference is invalid: cannot compute cadence.");
-            aggregatedValue = null;
+            output = null;
             return;
         }
 
         if (current.value().wheelRevolutionsCount() < previous.value().wheelRevolutionsCount()) {
             Log.e(TAG, "Wheel revolutions count difference is invalid: cannot compute speed.");
+            output = null;
             return;
         }
         long wheelDiff = UintUtils.diff(current.value().wheelRevolutionsCount(), previous.value().wheelRevolutionsCount(), UintUtils.UINT32_MAX);
 
         Distance distance = wheelCircumference.multipliedBy(wheelDiff);
         Distance distanceOverall = distance;
-        if (aggregatedValue != null) {
-            distanceOverall = distance.plus(aggregatedValue.distanceOverall);
+        if (output != null) {
+            distanceOverall = distance.plus(output.distanceOverall);
         }
         Speed speed_mps = Speed.of(distance, timeDiff);
-        aggregatedValue = new Data(distance, distanceOverall, speed_mps);
+        output = new Data(distance, distanceOverall, speed_mps);
     }
 
     @Override
-    protected void resetImmediate() {
-        aggregatedValue = new Data(Distance.ZERO, aggregatedValue.distanceOverall, Speed.ZERO);
+    protected void resetOutdated() {
+        Distance overallDistance = output != null ? output.distanceOverall : Distance.ZERO;
+        output = new Data(Distance.ZERO, overallDistance, Speed.ZERO);
     }
 
     @Override
     public void resetAggregated() {
-        if (aggregatedValue != null) {
-            aggregatedValue = new Data(aggregatedValue.distance, Distance.ZERO, aggregatedValue.speed);
+        if (output != null) {
+            output = new Data(output.distance, Distance.ZERO, output.speed);
         }
-    }
-
-    @NonNull
-    @Override
-    protected Data getNoneValue() {
-        return new Data(Distance.ZERO, Distance.ZERO, Speed.ZERO);
     }
 
     public void setWheelCircumference(Distance wheelCircumference) {

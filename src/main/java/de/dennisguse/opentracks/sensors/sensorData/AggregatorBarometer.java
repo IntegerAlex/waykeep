@@ -1,7 +1,5 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
-import androidx.annotation.NonNull;
-
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
@@ -19,31 +17,28 @@ public class AggregatorBarometer extends Aggregator<AtmosphericPressure, Altitud
     protected void computeValue(Raw<AtmosphericPressure> current) {
         if (previous == null) {
             lastAcceptedSensorValue = current.value();
-            aggregatedValue = getNoneValue();
+            output = new AltitudeGainLoss(0f, 0f);
             return;
         }
 
         PressureSensorUtils.AltitudeChange altitudeChange = PressureSensorUtils.computeChangesWithSmoothing_m(lastAcceptedSensorValue, previous.value(), current.value());
         if (altitudeChange != null) {
-            aggregatedValue = new AltitudeGainLoss(aggregatedValue.gain_m() + altitudeChange.getAltitudeGain_m(), aggregatedValue.loss_m() + altitudeChange.getAltitudeLoss_m());
+            if (output == null) {
+                output = new AltitudeGainLoss(0f, 0f);
+            }
+            output = new AltitudeGainLoss(output.gain_m() + altitudeChange.getAltitudeGain_m(), output.loss_m() + altitudeChange.getAltitudeLoss_m());
 
             lastAcceptedSensorValue = altitudeChange.currentSensorValue();
         }
     }
 
     @Override
-    protected void resetImmediate() {
+    protected void resetOutdated() {
     }
 
     @Override
     public void resetAggregated() {
-        aggregatedValue = getNoneValue();
-    }
-
-    @NonNull
-    @Override
-    protected AltitudeGainLoss getNoneValue() {
-        return new AltitudeGainLoss(0f, 0f);
+        output = null;
     }
 
     public record Data(Altitude gain, Altitude loss) {}

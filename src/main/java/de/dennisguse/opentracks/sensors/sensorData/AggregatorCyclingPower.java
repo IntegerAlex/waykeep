@@ -1,7 +1,5 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
-import androidx.annotation.NonNull;
-
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.sensors.driver.CyclingPowerBluetooth;
 
@@ -13,21 +11,6 @@ public class AggregatorCyclingPower extends Aggregator<CyclingPowerBluetooth.Dat
 
     @Override
     public void computeValue(Raw<CyclingPowerBluetooth.Data> current) {
-        this.aggregatedValue = current.value().power();
-    }
-
-    @Override
-    protected void resetImmediate() {
-        aggregatedValue = getNoneValue();
-    }
-
-    @Override
-    public void resetAggregated() {
-    }
-
-    @NonNull
-    @Override
-    protected Power getNoneValue() {
-        return Power.of(0f);
+        this.output = current.value().power();
     }
 }

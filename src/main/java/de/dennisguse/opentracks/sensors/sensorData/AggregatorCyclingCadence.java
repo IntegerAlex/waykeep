@@ -2,8 +2,6 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Cadence;
@@ -32,32 +30,18 @@ public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth
         }
         if (timeDiff.isNegative()) {
             Log.e(TAG, "Timestamps difference is invalid: cannot compute cadence.");
-            aggregatedValue = null;
+            output = null;
             return;
         }
 
         // TODO We have to treat with overflow according to the documentation: read https://codeberg.org/OpenTracksApp/OpenTracks/pulls/953#issuecomment-6466930
         if (current.value().crankRevolutionsCount() < previous.value().crankRevolutionsCount()) {
             Log.e(TAG, "Crank revolutions count difference is invalid: cannot compute cadence.");
+            output = null;
             return;
         }
 
         long crankDiff = UintUtils.diff(current.value().crankRevolutionsCount(), previous.value().crankRevolutionsCount(), UintUtils.UINT32_MAX);
-        aggregatedValue = Cadence.of(crankDiff, timeDiff);
-    }
-
-    @Override
-    protected void resetImmediate() {
-        aggregatedValue = getNoneValue();
-    }
-
-    @Override
-    public void resetAggregated() {
-    }
-
-    @NonNull
-    @Override
-    protected Cadence getNoneValue() {
-        return Cadence.of(0);
+        output = Cadence.of(crankDiff, timeDiff);
     }
 }
