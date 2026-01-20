@@ -31,8 +31,8 @@ gedit -w "$CHANGELOG_FILE"
 git add "$CHANGELOG_FILE"
 
 echo "Updating build.gradle"
-sed -i s/versionCode\ [0-9]/versionCode\ "$VERSIONID"/g build.gradle
-sed -i s/versionName\ \"v/versionName\ "\"$VERSIONNAME\""/g build.gradle
+sed -i -e "s/versionCode\ [0-9]\{1,\}/versionCode\ $VERSIONID/g" build.gradle
+sed -i -e "s/versionName\ \"v[0-9\.]\{1,\}\"/versionName\ \"$VERSIONNAME\"/g" build.gradle
 
 git diff
 
