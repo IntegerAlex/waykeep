@@ -21,7 +21,7 @@ def getVersionName = { ->
     return 'git describe --tags'.execute().text.trim()
 }
 
-def getVersionCode = { ->
+def getVersionCodeNightly = { ->
     return Integer.valueOf('git rev-list HEAD --count'.execute().text.trim())
 }
 
@@ -108,12 +108,12 @@ android {
             dimension 'version'
             applicationId 'de.dennisguse.opentracks.nightly'
             resValue 'string', 'applicationId', 'de.dennisguse.opentracks.nightly'
-            signingConfig = signingConfigs.nightly
 
-            versionCode getVersionCode()
+            versionCode getVersionCodeNightly()
             versionName getVersionName()
-            base.archivesName = "de.dennisguse.opentracks.nightly_${getVersionCode()}"
+            base.archivesName = "de.dennisguse.opentracks.nightly_${getVersionCodeNightly()}"
 
+            signingConfig = signingConfigs.nightly
         }
         irreproducible {
             // Non-reproducible: https://f-droid.org/de/packages/de.dennisguse.opentracks/
@@ -130,7 +130,7 @@ android {
             applicationId 'de.dennisguse.opentracks.playstore'
             resValue 'string', 'applicationId', 'de.dennisguse.opentracks.playstore'
 
-            base.archivesName = "de.dennisguse.opentracks.playstore_${getVersionName()}_${getVersionCode()}"
+            base.archivesName = "de.dennisguse.opentracks.playstore_${getVersionName()}_${android.defaultConfig.versionCode}"
 
             signingConfig = signingConfigs.release
         }
