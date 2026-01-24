@@ -216,7 +216,7 @@ limitations under the License.
     <string name="track_markers">Markører for %1$s</string>
     <!-- Track Delete -->
     <string name="track_delete_one_confirm_message">Sporet og markørene slettes fra enheten for godt.</string>
-    <string name="track_delete_one_confirm_title">Slett sporet\?</string>
+    <string name="track_delete_one_confirm_title">Slette spor?</string>
     <string name="track_delete_multiple_confirm_message">Valgte spor og markører slettes fra enheten for godt.</string>
     <string name="track_delete_progress_message">Sletter …</string>
     <!-- Track Detail -->
@@ -585,4 +585,7 @@ limitations under the License.
     <string name="track_edit_time_offset">Tidssoneforskyvning</string>
     <string name="stats_average_segment_pace">Gjen. segmenttempo</string>
     <string name="settings_announcements_segment_average_speed_pace">Gjennomsnittlig hastighet/tempo (Segment)</string>
+    <string name="stats_sensors_temperature">Temperatur</string>
+    <string name="sensor_state_temperature">Termometer</string>
+    <string name="description_sensor_temperature">Temperatur (Celsius)</string>
 </resources>
