@@ -600,4 +600,7 @@ limitations under the License.
     <string name="stats_gain_loss">Підйом і спуск</string>
     <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="stats_elapsed_segment_time">Час на відрізок</string>
+    <string name="description_sensor_temperature">Температура (Цельсій)</string>
+    <string name="sensor_state_temperature">Термометр</string>
+    <string name="stats_sensors_temperature">Температура</string>
 </resources>
