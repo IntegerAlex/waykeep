@@ -83,14 +83,14 @@ limitations under the License.
     <string name="activity_type_wind_surfing">帆板运动</string>
     <!-- Description -->
     <string name="description_activity_type">活动类型：%1$s</string>
-    <string name="description_average_moving_pace_in_minute">平均移动配速：%1$s分钟/公里（%2$s分钟/英里）</string>
+    <string name="description_average_moving_pace_in_minute">平均移动配速：%1$s 分钟/公里（%2$s 分钟/英里）</string>
     <string name="description_average_moving_speed">平均移动速度：%1$.2f 公里/小时（%2$.1f 英里/小时）</string>
-    <string name="description_average_pace_in_minute">平均配速：%1$s分钟/公里（%2$s分钟/英里）</string>
-    <string name="description_average_speed">平均时速：%1$.2f 公里/小时（%2$.1f 英里/小时）</string>
-    <string name="description_altitude_gain">海拔升高：%1$d 米（%2$d 英尺）</string>
+    <string name="description_average_pace_in_minute">平均配速：%1$s 分钟/公里（%2$s 分钟/英里）</string>
+    <string name="description_average_speed">平均速度：%1$.2f 公里/小时（%2$.1f 英里/小时）</string>
+    <string name="description_altitude_gain">海拔上升：%1$d 米（%2$d 英尺）</string>
     <string name="description_altitude_imperial">海拔（英尺）</string>
     <string name="description_altitude_metric">海拔（米）</string>
-    <string name="description_fastest_pace_in_minute">最快配速：%1$s分钟/公里（%2$s分钟/英里）</string>
+    <string name="description_fastest_pace_in_minute">最快配速：%1$s 分钟/公里（%2$s 分钟/英里）</string>
     <string name="description_max_altitude">最高海拔：%1$d 米（%2$d 英尺）</string>
     <string name="description_max_speed">最高速度：%1$.2f 公里/小时（%2$.1f 英里/小时）</string>
     <string name="description_min_altitude">最低海拔：%1$d 米（%2$d 英尺）</string>
@@ -99,8 +99,8 @@ limitations under the License.
     <string name="description_pace_metric">配速（分钟/公里）</string>
     <string name="description_recorded_time">记录时间：%1$s</string>
     <string name="description_speed_ms">速度（米/秒）</string>
-    <string name="description_sensor_cadence">蹬踏频率（转数/分钟）</string>
-    <string name="description_sensor_heart_rate">心率（次/分钟）</string>
+    <string name="description_sensor_cadence">踏频（RPM）</string>
+    <string name="description_sensor_heart_rate">‌心率（BPM）</string>
     <string name="description_sensor_power">功率（瓦）</string>
     <string name="description_speed_imperial">速度（英里/小时）</string>
     <string name="description_speed_metric">速度（公里/小时）</string>
@@ -112,14 +112,14 @@ limitations under the License.
     <!-- External Storage -->
     <!-- Generic -->
     <string name="generic_add">添加</string>
-    <string name="generic_delete_selected_confirm_title">删除所选项？</string>
-    <string name="generic_description">说明</string>
-    <string name="generic_description_line">说明：%1$s</string>
+    <string name="generic_delete_selected_confirm_title">删除所选内容？</string>
+    <string name="generic_description">描述</string>
+    <string name="generic_description_line">描述：%1$s</string>
     <string name="generic_name">名称</string>
     <string name="generic_name_line">名称：%1$s</string>
     <string name="generic_recording">正在记录…</string>
     <string name="generic_save">保存</string>
-    <string name="generic_tracks">路线</string>
+    <string name="generic_tracks">轨迹</string>
     <!-- Gps -->
     <string name="gps_starting">正在启动 GPS</string>
     <string name="gps_wait_for_better_signal">正在等待更好的 GPS 信号</string>
@@ -130,16 +130,16 @@ limitations under the License.
     <string name="image_photo_marker">照片标记</string>
     <string name="image_record">记录</string>
     <string name="image_stop">停止</string>
-    <string name="image_track">跟踪</string>
+    <string name="image_track">轨迹</string>
     <!-- Import -->
     <string name="import_progress_message">正在从 %1$s 导入…</string>
     <!-- Marker -->
     <string name="marker_add_error">无法插入标记，无 GPS 信号。请重试。</string>
     <string name="marker_add_success">已插入标记</string>
     <string name="marker_add_canceled">已取消，未添加标记</string>
-    <string name="marker_delete_one_confirm_message">标记将永久地从设备中删除</string>
+    <string name="marker_delete_one_confirm_message">标记将从设备中永久删除</string>
     <string name="marker_delete_one_confirm_title">删除标记？</string>
-    <string name="marker_delete_multiple_confirm_message">所选标记将永久地从设备中删除</string>
+    <string name="marker_delete_multiple_confirm_message">所选标记将从设备中永久删除</string>
     <string name="marker_name_format">标记 %1$d</string>
     <!-- Marker Detail -->
     <!-- Marker Edit -->
@@ -147,10 +147,10 @@ limitations under the License.
     <!-- Marker List -->
     <string name="marker_list_empty_message">您没有任何标记</string>
     <!-- Menu -->
-    <string name="menu_aggregated_statistics">汇总统计信息</string>
+    <string name="menu_aggregated_statistics">汇总统计数据</string>
     <string name="menu_delete">删除</string>
-    <string name="menu_edit">修改</string>
-    <string name="menu_export_all">全部导出（一个文件存储一条路线）</string>
+    <string name="menu_edit">编辑</string>
+    <string name="menu_export_all">全部导出（每条轨迹单独文件）</string>
     <string name="menu_help">帮助</string>
     <string name="menu_import_all">全部导入</string>
     <string name="menu_insert_marker">插入标记</string>
@@ -161,8 +161,8 @@ limitations under the License.
     <string name="menu_settings">设置</string>
     <string name="menu_share">分享</string>
     <string name="menu_show_on_map">在地图上显示</string>
-    <string name="menu_voice_rate">语音提示速率</string>
-    <string name="menu_resume_track">继续</string>
+    <string name="menu_voice_rate">语音速度</string>
+    <string name="menu_resume_track">恢复轨迹</string>
     <!-- OpenTracks -->
     <string name="recording_service">记录服务</string>
     <!-- Search -->
@@ -179,42 +179,40 @@ limitations under the License.
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">锁屏显示统计数据</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">记录时，无需解锁设备即可显示统计数据。</string>
-    <string name="settings_recording_keep_screen_on_while_recording_title">保持亮屏</string>
-    <string name="settings_recording_keep_screen_on_while_recording_summary">记录时，保持屏幕常亮。</string>
-    <string name="settings_recording_fullscreen_on_while_recording_title">全屏显示</string>
-    <string name="settings_recording_fullscreen_on_while_recording_summary">记录时，全屏幕显示。</string>
+    <string name="settings_recording_keep_screen_on_while_recording_title">保持屏幕开启</string>
+    <string name="settings_recording_keep_screen_on_while_recording_summary">记录时让屏幕保持开启。</string>
+    <string name="settings_recording_fullscreen_on_while_recording_title">全屏</string>
+    <string name="settings_recording_fullscreen_on_while_recording_summary">记录时以全屏显示。</string>
     <string name="settings_recording_default_activity_title">默认活动类型</string>
-    <string name="settings_recording_location_frequency_summary">每隔%1$s检查一次位置</string>
-    <string name="settings_recording_max_recording_distance_summary">如果两个位置之间的距离超过%1$s，则创建新的路段</string>
+    <string name="settings_recording_location_frequency_summary">位置检查间隔：%1$s</string>
+    <string name="settings_recording_max_recording_distance_summary">如果两个位置之间的距离超过 %1$s，则会创建新分段</string>
     <string name="settings_recording_max_recording_distance_title">最大距离</string>
     <string name="settings_recording_min_recording_distance_title">记录距离间隔</string>
     <string name="settings_recording_min_recording_interval_title">记录时间间隔</string>
     <string name="settings_recording_min_required_accuracy_title">GPS 精度</string>
-    <string name="settings_recording_track_name_date_iso_8601_option">日期 (ISO 8601)</string>
+    <string name="settings_recording_track_name_date_iso_8601_option">日期（ISO 8601）</string>
     <string name="settings_recording_track_name_date_local_option">日期（本地）</string>
     <string name="settings_recording_track_name_number_option">编号</string>
-    <string name="settings_recording_track_name_title">默认路线名称</string>
+    <string name="settings_recording_track_name_title">默认轨迹名称</string>
     <string name="settings_night_mode_title">用户界面主题</string>
-    <string name="settings_night_mode_option_system">跟随系统</string>
-    <string name="settings_night_mode_option_day">白天模式</string>
-    <string name="settings_night_mode_option_night">夜间模式</string>
+    <string name="settings_night_mode_option_system">系统</string>
+    <string name="settings_night_mode_option_day">‌日间</string>
+    <string name="settings_night_mode_option_night">夜间</string>
     <!-- Settings Reset -->
-    <string name="settings_reset_confirm_message">所有设置都将恢复为默认值。此操作不会删除设备上的路线。</string>
-    <string name="settings_reset_confirm_title">是否立即重置？</string>
+    <string name="settings_reset_confirm_message">所有设置都将恢复为默认值。此操作不会删除设备上的任何轨迹‌。</string>
+    <string name="settings_reset_confirm_title">立即重置？</string>
     <string name="settings_reset_done">所有设置都已恢复为默认值</string>
     <!-- Settings Sensor -->
-    <string name="settings_sensor_wheel_circumference">车轮周长 (mm)</string>
+    <string name="settings_sensor_wheel_circumference">车轮周长（毫米）</string>
     <!-- Settings Stats -->
     <string name="settings_stats_rate_title">首选速率</string>
     <string name="settings_stats_units_imperial">英制（英里、英尺）</string>
     <string name="settings_stats_units_metric">公制（公里、米）</string>
     <string name="settings_stats_units_title">首选单位</string>
-    <string name="settings_prevent_reimport_tracks_title">防止重复导入路线</string>
+    <string name="settings_prevent_reimport_tracks_title">防止重复导入轨迹</string>
     <!-- Share Track -->
-    <string name="share_track_share_file_body">我想您可能会对此路线感兴趣。
-\n
-\n%1$s</string>
-    <string name="share_track_subject">我想给您分享一条路线</string>
+    <string name="share_track_share_file_body">我觉得您可能会对这条轨迹感兴趣。\n\n%1$s</string>
+    <string name="share_track_subject">我想把这条轨迹分享给您</string>
     <!-- Stats -->
     <string name="stats_average_moving_pace">平均移动配速</string>
     <string name="stats_average_moving_speed">平均移动速度</string>
@@ -222,7 +220,7 @@ limitations under the License.
     <string name="stats_average_speed">平均速度</string>
     <string name="stats_altitude">海拔</string>
     <string name="stats_fastest_pace">最快配速</string>
-    <string name="stats_gain">增益</string>
+    <string name="stats_gain">上升</string>
     <string name="stats_max_speed">最高速度</string>
     <string name="stats_moving_time">移动时间</string>
     <string name="stats_pace">配速</string>
@@ -231,20 +229,20 @@ limitations under the License.
     <string name="stats_total_time">总时间</string>
     <string name="stats_split_interval">分段间隔</string>
     <!-- Track -->
-    <string name="track_name_format">路线 %1$d</string>
+    <string name="track_name_format">‌轨迹 %1$d</string>
     <string name="track_markers">%1$s 标记</string>
     <!-- Track Delete -->
-    <string name="track_delete_one_confirm_message">系统将从设备中永久删除路线及其标记。</string>
-    <string name="track_delete_one_confirm_title">删除路线？</string>
-    <string name="track_delete_multiple_confirm_message">系统将从设备中永久删除选定的路线及其标记。</string>
+    <string name="track_delete_one_confirm_message">该轨迹及其标记将从设备中永久删除。</string>
+    <string name="track_delete_one_confirm_title">删除‌轨迹？</string>
+    <string name="track_delete_multiple_confirm_message">所选轨迹及其标记将从设备中永久删除。</string>
     <string name="track_delete_progress_message">正在删除…</string>
     <!-- Track Detail -->
-    <string name="track_detail_stats_tab">统计信息</string>
+    <string name="track_detail_stats_tab">统计数据</string>
     <!-- Track Edit -->
     <string name="track_edit_activity_type">活动类型（如徒步）</string>
     <string name="track_edit_activity_type_hint">活动类型</string>
     <!-- Track List -->
-    <string name="track_list_empty_message">在这里开始记录您的新冒险</string>
+    <string name="track_list_empty_message">在此处开始记录您的下一次探险</string>
     <!-- Track Widget -->
     <!-- Tracks -->
     <!-- Unit -->
@@ -261,14 +259,14 @@ limitations under the License.
     <string name="value_integer_feet_recommended">%1$d 英尺（推荐）</string>
     <string name="value_integer_kilometer_hour">%1$d 公里/小时</string>
     <string name="value_integer_meter_excellent_gps">%1$d 米（GPS 信号极佳）</string>
-    <string name="value_integer_meter_poor_gps">%1$d 米（GPS 信号差）</string>
+    <string name="value_integer_meter_poor_gps">%1$d 米（GPS 信号不佳）</string>
     <string name="value_integer_meter_recommended">%1$d 米（推荐）</string>
     <string name="value_integer_mile_hour">%1$d 英里/小时</string>
     <string name="value_integer_minute">%1$d 分钟</string>
     <string name="value_integer_second">%1$d 秒</string>
     <string name="value_none">无</string>
     <string name="value_off">关闭</string>
-    <string name="value_smallest_recommended">最小（建议）</string>
+    <string name="value_smallest_recommended">最小（推荐）</string>
     <!-- Voice -->
     <string name="voiceHoursPlural">
         { n, plural,
@@ -348,79 +346,74 @@ limitations under the License.
     <string name="waypoint_type_water_fountain">喷泉</string>
     <string name="waypoint_type_waypoint">路标</string>
     <string name="about_url">项目主页：<a href="%1$s">%1$s</a></string>
-    <string name="about_history">OpenTracks 是已于 2016 年停止维护的 <a href="https://code.google.com/archive/p/mytracks/"><i>Google MyTracks</i></a> 的一个分支版本。</string>
+    <string name="about_history">OpenTracks 是 2016 年停止维护的 <a href="https://code.google.com/archive/p/mytracks/"><i>Google MyTracks</i></a> 的分支版本。</string>
     <string name="open_track_as_trackfileformat">作为 %1$s 文件打开</string>
     <string name="about_preference_title">关于</string>
     <string name="about_version_name">版本名称：%1$s</string>
     <string name="about_version_code">版本号：%1$d</string>
     <string name="about_libraries">库</string>
-    <string name="help_feature_title">OpenTracks 支持以下特性：</string>
+    <string name="help_feature_title">OpenTracks 具备以下功能：</string>
     <string name="activity_type_escooter">电动滑板车</string>
-    <string name="description_altitude_loss">海拔降低：%1$d 米（%2$d 英尺）</string>
+    <string name="description_altitude_loss">海拔下降：%1$d 米（%2$d 英尺）</string>
     <string name="description_default_speed_or_pace">按活动类型</string>
     <!-- Share image -->
-    <string name="hold_to_stop">长按停止</string>
-    <string name="instant_export_enabled_summary">活动结束后，自动导出数据</string>
-    <string name="instant_export_enabled_title">自动导出</string>
-    <string name="settings_default_export_uri_title">选择导出目录</string>
-    <string name="help_recording_content">OpenTracks 使用设备内置的 GPS 传感器来记录位置信息，即使来自 GPS 传感器的数据（比如位置、速度、高度）并不精确。</string>
+    <string name="hold_to_stop">按住即可停止</string>
+    <string name="instant_export_enabled_summary">记录完成后将轨迹导出至存储空间</string>
+    <string name="instant_export_enabled_title">‌运动数据即时导出</string>
+    <string name="settings_default_export_uri_title">轨迹导出目录</string>
+    <string name="help_recording_content">OpenTracks 使用设备的 GPS 传感器持续记录位置信息。如果 GPS 设备报告的数据（例如位置、速度、海拔）不准确，OpenTracks 对此无法采取任何措施。</string>
     <string name="gps_recording_without_signal">OpenTracks 正在无 GPS 信号状态下记录数据。</string>
     <string name="help_data_storage_title">OpenTracks 如何存储传感器数据？</string>
     <string name="help_data_google_play_services_title">OpenTracks 依赖或者使用 Google Play 服务吗？</string>
     <string name="help_recording_title">OpenTracks 如何记录数据？</string>
     <string name="gps_fixed_and_ready">GPS 已就绪</string>
-    <string name="gps_disabled_msg">GPS 被禁用</string>
+    <string name="gps_disabled_msg">GPS 已禁用</string>
     <string name="speed">平均移动速度</string>
-    <string name="about_description"><i>OpenTracks</i> 是一款完全尊重您的个人隐私的运动追踪软件。</string>
-    <string name="help_feature_content">* 创建 GPS 路线
-\n* 使用心率传感器（仅支持低功率蓝牙）
-\n* 语音播报（时间或距离）
-\n* 创建标记（可包含图片）
-\n* 完全不需要联网
-\n* 在地图上显示路线（见下方）</string>
-    <string name="help_gps_troubleshooting_content">下面是你可以做的事情：\n 一、检查 GPS 是否已经开启，\n 二、改善 GPS 信号（比如走到室外），\n 三、使用 <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/">GPSTest</a> 工具检查 GPS 是否正常， \n 四、关闭节能模式。\n\n 如果以上措施都不起作用，请给我们提交 BUG 报告。</string>
-    <string name="help_storage_pictures_title">OpenTracks 是如何存储被用作标记的照片的？</string>
-    <string name="help_track_export_content">您可以在设置界面导出路线，支持的格式有 KMZ、KML 和 GPX。KMZ 和 KML 格式包含全部数据；GPX 仅包含位置数据。用<i>分享图标</i>分享出去的路线即为 KMZ 格式。</string>
-    <string name="help_support_content">你可以：\n 一、向别人介绍 OpenTracks，\n 二、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提交新功能建议</a>，\n 三、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">报告 BUG</a>，\n 四、帮助开发本应用，\n 五、在 <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play 商店</a>购买本应用，\n 六、赞助，或者\n 七、做任何你认为可以帮助到 OpenTracks 的事情。</string>
+    <string name="about_description"><i>OpenTracks</i> 是完全尊重您隐私的运动追踪应用程序。</string>
+    <string name="help_feature_content">* 创建 GPS 轨迹 \n* 使用心率传感器（仅限低功率蓝牙） \n* 语音播报‌（按时间或距离） \n* 创建标记（包括图片） \n* 完全离线工作 \n* 在地图上显示轨迹（见下方）</string>
+    <string name="help_gps_troubleshooting_content">您可以采取以下措施：\n 一、检查 GPS 是否已启用，\n 二、改善 GPS 信号接收（例如移步室外），\n 三、使用 <a href="https://f-droid.org/zh_Hans/packages/com.android.gpstest.osmdroid/">GPSTest</a> 应用进行检测，\n 四、禁用省电模式。\n \n 如果以上措施无效，请提交错误报告。</string>
+    <string name="help_storage_pictures_title">OpenTracks 如何存储作为标记拍摄的照片？</string>
+    <string name="help_track_export_content">轨迹可以从设置中以 KMZ、KML 或 GPX 格式导出。KMZ/KML 包含所有数据，GPX 仅包含位置数据。通过<i>分享图标</i>分享的轨迹将以 KMZ 格式分享。</string>
+    <string name="help_support_content">您可以通过以下方式贡献力量：\n 一、宣传推广 OpenTracks，\n 二、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提出功能建议</a>，\n 三、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提交错误报告</a>，\n 四、参与软件开发，\n 五、在 <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play 商店</a>购买本应用，\n 六、直接捐赠，\n 七、采取任何您认为有助于 OpenTracks 的方式。</string>
     <string name="activity_type_swimming">游泳</string>
     <string name="export_with_photos">带照片</string>
-    <string name="export_progress_summary_skip_msg">已跳过的文件</string>
+    <string name="export_progress_summary_skip_msg">文件已跳过</string>
     <string name="generic_overwrite">覆盖</string>
     <string name="import_progress_summary_ok_msg">文件已导入</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f 公里/小时（推荐）</string>
     <string name="permission_bluetooth_failed">OpenTracks 需要使用蓝牙的权限。</string>
-    <string name="generic_choose_an_option">选择一项</string>
+    <string name="generic_choose_an_option">选择一个选项</string>
     <string name="settings_gps_summary">时间间隔、距离间隔、最大距离、精度</string>
     <string name="permission_bluetooth_failed_rejected">您需要在系统设置中手动授予 OpenTracks 访问附近设备的权限。</string>
     <string name="settings_recording_customize_layout_title">自定义您的记录布局</string>
     <string name="settings_announcements_lap_heart_rate">单圈心率</string>
-    <string name="custom_layout_list_layout_removed">布局已删除</string>
+    <string name="custom_layout_list_layout_removed">布局已移除</string>
     <string name="stats_custom_layout_default_layout">默认布局</string>
-    <string name="settings_layout_reset_confirm_message">所有布局设置都会被恢复至默认值。此操作不会删除设备上的路线。</string>
-    <string name="settings_public_api_enabled_summary_on">其他应用可以开始或停止记录。</string>
-    <string name="settings_public_api_dashboard_enabled_summary_on">开始记录的应用可以访问记录下的数据。</string>
-    <string name="help_track_map_content">点击地图图标。\n 方法一（在线地图）：安装 <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>。该应用提供基于 <a href="https://www.openstreetmap.org">OpenStreetMap</a> 的在线或离线地图。\n 事实上，OSMDashboard 是一款独立的应用，它仅能（临时）访问将要被展示的数据。\n 方法二：通过一个正常的地图应用（例如 <a href="http://osmand.net/">OsmAnd</a> 和 <a href="https://maps.me/">MAPS.ME</a>）。这些应用需要支持 KMZ 文件格式（只包含位置和时间戳）。事实上，应用需要支持 <i>application/vnd.google-earth.kmz</i> MIME 类型的 <i>ACTION_VIEW</i> 操作。</string>
+    <string name="settings_layout_reset_confirm_message">所有布局设置都将恢复为默认值。此操作不会删除设备上的任何轨迹‌。</string>
+    <string name="settings_public_api_enabled_summary_on">其他已安装的应用程序可以开始或停止记录。</string>
+    <string name="settings_public_api_dashboard_enabled_summary_on">开始记录的应用程序也可以访问记录的数据。</string>
+    <string name="help_track_map_content">使用小地图图标。\n 方法一：（实时更新）安装 <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>。它通过 <a href="https://www.openstreetmap.org">OpenStreetMap</a> 提供在线或离线地图。\n 实际上，OSMDashboard 是独立的应用程序，只能（临时）访问要显示的轨迹数据。\n 方法二：通过常规地图应用程序（例如 <a href="http://osmand.net/">OsmAnd</a> 和 <a href="https://maps.me/">MAPS.ME</a>）。这些应用需要支持 KMZ 文件格式（仅包含位置和时间戳）。实际上，应用需要支持 <i>ACTION_VIEW</i> 操作及 MIME 类型 <i>application/vnd.google-earth.kmz</i>。</string>
     <string name="export_progress_summary_errors_msg">错误</string>
     <string name="permission_gps_failed">OpenTracks 需要使用 GPS 的权限。</string>
     <string name="custom_layout_list_title">布局</string>
-    <string name="image_discard">丢弃</string>
-    <string name="import_thread_interrupted">线程被中断</string>
+    <string name="image_discard">舍弃</string>
+    <string name="import_thread_interrupted">线程中断</string>
     <string name="import_unsupported_format">不支持的文件格式</string>
     <string name="import_parser_error">解析器错误：%1$s</string>
     <string name="import_unable_to_import_file">无法导入文件：%1$s</string>
     <string name="menu_select_layout">选择布局</string>
     <string name="voice_per_kilometer">每公里</string>
-    <string name="track_delete_number_of_tracks">%1$d 条路线</string>
+    <string name="track_delete_number_of_tracks">%1$d 条轨迹</string>
     <string name="stats_clock">时钟</string>
-    <string name="export_error_post_workout">健身后导出失败，请检查导出文件夹。</string>
-    <string name="export_track_already_exists_msg">文件 %1$s 已经存在于目标文件夹。</string>
+    <string name="export_error_post_workout">运动数据导出失败，请检查导出目录。</string>
+    <string name="export_track_already_exists_msg">目标目录中已存在文件 %1$s。</string>
     <string name="pace">配速</string>
     <string name="generic_show_errors">显示错误</string>
     <string name="settings_export_filename_title">文件名格式</string>
-    <string name="generic_filter">过滤器</string>
+    <string name="generic_filter">筛选</string>
     <string name="generic_from">从</string>
     <string name="generic_to">到</string>
-    <string name="menu_insert_gallery_img">插入相册中的图片</string>
+    <string name="menu_insert_gallery_img">插入图库图片</string>
     <string name="settings_announcements_summary">时间、距离、语音速度</string>
     <string name="settings_import_export_summary">导入、导出、自动导出</string>
     <string name="settings_running_sensor">跑步</string>
@@ -429,11 +422,11 @@ limitations under the License.
     <string name="settings_sensor_running_speed_and_cadence">距离、速度和踏频</string>
     <string name="settings_import_section">导入</string>
     <string name="stats_sensors_heart_rate">心率</string>
-    <string name="track_discarding">丢弃路线</string>
+    <string name="track_discarding">正在舍弃轨迹</string>
     <string name="unit_nautical_mile">海里</string>
     <string name="voice_per_mile">每英里</string>
-    <string name="no_compatible_file_manager_installed">没有安装兼容的文件管理器</string>
-    <string name="track_detail_intervals_tab">分段</string>
+    <string name="no_compatible_file_manager_installed">未安装兼容的文件管理器</string>
+    <string name="track_detail_intervals_tab">间隔</string>
     <string name="settings_generic_sensor">通用</string>
     <string name="settings_cycling_sensor">骑自行车</string>
     <string name="settings_public_api_package_title">公共 API 包名</string>
@@ -453,16 +446,16 @@ limitations under the License.
     <string name="sensor_state_heart_rate_avg">平均心率</string>
     <string name="sensor_state_heart_rate_max">最大心率</string>
     <string name="sensor_state_power_avg">平均功率</string>
-    <string name="bluetooth_disabled">请开启蓝牙。</string>
-    <string name="settings_defaults_summary">偏好的单位，默认活动类型，路线默认名称</string>
+    <string name="bluetooth_disabled">请启用蓝牙。</string>
+    <string name="settings_defaults_summary">首选单位、默认活动、轨迹默认名称</string>
     <string name="settings_ui_title">用户界面</string>
     <string name="settings_ui_summary">外观、记录布局、主题</string>
     <string name="settings_gps_sensor">GPS</string>
     <string name="settings_import_export_title">导入和导出</string>
-    <string name="settings_activity_defaults_category">活动默认</string>
+    <string name="settings_activity_defaults_category">活动的默认设置</string>
     <string name="settings_announcements_totaltime_frequency">时间间隔</string>
     <string name="settings_announcements_distance_frequency">每圈长度</string>
-    <string name="custom_layout_list_edit_already_exists">布局名已存在</string>
+    <string name="custom_layout_list_edit_already_exists">布局名称已存在</string>
     <string name="settings_public_api_enabled_title">公共 API</string>
     <string name="track_distance_notification">距离：%1$s</string>
     <string name="value_float_mile_hour_recommended">%1$.1f 英里/小时（推荐）</string>
@@ -479,7 +472,7 @@ limitations under the License.
     </string>
     <string name="average_heart_rate">平均心率</string>
     <string name="export_without_photos">不带照片</string>
-    <string name="settings_sensor_bluetooth_service_filter_on">只显示蓝牙广播中包含所需服务的设备</string>
+    <string name="settings_sensor_bluetooth_service_filter_on">仅显示广播所需服务的蓝牙设备</string>
     <string name="voiceSpeedMKnotsPlural">
         { n, plural,
         other {{n,number,#.0} 节}
@@ -491,41 +484,41 @@ limitations under the License.
         other {{n,number,#.0} 海里}
         }
     </string>
-    <string name="share_image_subject">我想跟你分享一张图片</string>
-    <string name="share_image_body">我觉得你可能对这张图片感兴趣。</string>
+    <string name="share_image_subject">我想把这张图片分享给您</string>
+    <string name="share_image_body">我觉得您可能会对这张图片感兴趣。</string>
     <string name="field_set_primary">设为主要</string>
     <string name="field_remove_from_layout">移除</string>
-    <string name="help_gps_troubleshooting_title">为什么 OpenTracks 没有记录下我的位置？</string>
-    <string name="help_support_title">我能通过什么途径支持 OpenTracks 呢？</string>
+    <string name="help_gps_troubleshooting_title">OpenTracks 没有记录位置？</string>
+    <string name="help_support_title">我如何支持 OpenTracks？</string>
     <string name="generic_skip">跳过</string>
     <string name="generic_separator_done_total">/</string>
     <plurals name="generic_completed_with_errors">
         <item quantity="other">已完成但有 %1$d 个错误</item>
     </plurals>
     <string name="generic_completed">已完成</string>
-    <string name="generic_click_twice_cancel">再按一次返回取消</string>
+    <string name="generic_click_twice_cancel">再次点击返回即可取消</string>
     <string name="settings_api_title">公共 API</string>
-    <string name="aggregated_stats_empty_message">记录您的第一条路线后即可看到汇总统计数据</string>
-    <string name="aggregated_stats_filter_no_results">当前过滤条件下没有活动</string>
-    <string name="interval_list_empty_message">目前暂时没有分段</string>
+    <string name="aggregated_stats_empty_message">记录您的第一条轨迹即可查看汇总统计数据</string>
+    <string name="aggregated_stats_filter_no_results">没有符合指定筛选条件的活动</string>
+    <string name="interval_list_empty_message">尚无任何间隔</string>
     <string name="lap_speed">单圈速度</string>
     <string name="about_third_party_data">第三方数据</string>
-    <string name="help_track_map_title">如何在地图上显示路线？</string>
-    <string name="help_track_export_title">如何导出或分享我记录的路线？</string>
-    <string name="export_all_do_it_for_all">用同样方式处理全部冲突</string>
-    <string name="export_progress_summary_overwrite_msg">已覆盖的文件</string>
-    <string name="show_on_dashboard_not_installed">没有安装支持 OpenTracks 仪表盘 API 的应用。</string>
-    <string name="help_storage_pictures_content">这些照片被保存在设备内部存储中（也就是说只能在 OpenTracks 内访问）。</string>
-    <string name="help_data_storage_content">应用每记录一次位置便同时记录一次传感器数据。以心率传感器为例，这意味着每一个位置仅仅对应<i>一个</i>心率读数。如果你站着不动或者处于室内，心率数据就不会被记录（但会被显示）。</string>
+    <string name="help_track_map_title">如何在地图上显示轨迹？</string>
+    <string name="help_track_export_title">如何导出或分享已记录的轨迹？</string>
+    <string name="export_all_do_it_for_all">对所有冲突执行此操作</string>
+    <string name="export_progress_summary_overwrite_msg">文件已覆盖</string>
+    <string name="show_on_dashboard_not_installed">未安装支持 OpenTracks 仪表板 API 的应用程序。</string>
+    <string name="help_storage_pictures_content">这些照片存储在应用内部存储空间中（即仅可在 OpenTracks 内访问）。</string>
+    <string name="help_data_storage_content">传感器数据会按记录的位置进行存储。以心率传感器为例，这意味着每个位置仅会存储<i>一次</i>心率测量值。如果您站立不动或在室内，则不会记录传感器数据（但数据仍会显示）。</string>
     <string name="description_speed_nautical">速度（节）</string>
     <string name="description_speed_source_gps">GPS</string>
-    <string name="export_cannot_write_to_dir">无法写入导出文件夹。</string>
+    <string name="export_cannot_write_to_dir">无法写入导出目录。</string>
     <string name="export_dir_not_writable">" （不可写！）"</string>
-    <string name="export_track_errors">未导出的文件</string>
-    <string name="export_progress_summary_new_msg">已导出的新文件</string>
+    <string name="export_track_errors">文件未导出</string>
+    <string name="export_progress_summary_new_msg">新文件已导出</string>
     <string name="generic_undo">撤销</string>
     <string name="generic_dismiss">关闭</string>
-    <string name="settings_defaults_title">默认的单位和活动类型</string>
+    <string name="settings_defaults_title">默认单位和活动</string>
     <string name="settings_sensors_title">传感器</string>
     <string name="settings_sensors_summary">自行车传感器、车轮周长、跑步传感器</string>
     <string name="settings_announcements_statistics_title">统计数据播报</string>
@@ -534,20 +527,20 @@ limitations under the License.
     <string name="description_pace_nautical">配速（分钟/海里）</string>
     <string name="field_set_secondary">设为次要</string>
     <string name="gps_recording_status">%1$s：%2$s</string>
-    <string name="generic_open_track">打开路线</string>
-    <string name="menu_add_custom_layout">创建新布局</string>
-    <string name="menu_filter">过滤器</string>
-    <string name="custom_layout_list_edit_name">输入布局名以添加</string>
+    <string name="generic_open_track">打开轨迹</string>
+    <string name="menu_add_custom_layout">新布局</string>
+    <string name="menu_filter">筛选</string>
+    <string name="custom_layout_list_edit_name">输入要添加的布局名称</string>
     <string name="custom_layout_select_layout">选择布局</string>
-    <string name="settings_layout_reset_confirm_title">是否重置布局？</string>
+    <string name="settings_layout_reset_confirm_title">重置布局？</string>
     <string name="settings_announcements_average_speed_pace">平均速度/配速</string>
     <string name="settings_stats_units_nautical">海事（海里、英尺）</string>
-    <string name="settings_public_api_enabled_summary_off">只有 OpenTracks 才能开始或停止记录。</string>
-    <string name="settings_public_api_disabled_toast">OpenTracks 公共 API 已停用：可以在设置中启用。</string>
+    <string name="settings_public_api_enabled_summary_off">只有 OpenTracks 可以开始或停止记录。</string>
+    <string name="settings_public_api_disabled_toast">OpenTracks 公共 API 已禁用：可以在设置中启用。</string>
     <string name="settings_public_api_dashboard_enabled_title">自动数据传输</string>
-    <string name="settings_public_api_dashboard_enabled_summary_off">记录下的数据不会被自动分享给其他应用。</string>
+    <string name="settings_public_api_dashboard_enabled_summary_off">记录的数据不会自动与其他应用程序共享。</string>
     <string name="settings_export_section">导出</string>
-    <string name="stats_loss">损失</string>
+    <string name="stats_loss">下降</string>
     <string name="stats_coordinates">纬度/经度</string>
     <string name="track_pace_notification">配速：%1$s</string>
     <string name="settings_announcements_lap_speed_pace">单圈速度/配速</string>
@@ -555,14 +548,14 @@ limitations under the License.
     <string name="activity_type_workout">健身</string>
     <string name="generic_today">今天</string>
     <string name="generic_yesterday">昨天</string>
-    <string name="import_no_kml_file_found">在 KMZ 中没有找到 kml 文件</string>
+    <string name="import_no_kml_file_found">KMZ 中未找到 kml 文件</string>
     <string name="import_error_info">%1$s：%2$s</string>
     <string name="import_error_list_dialog_title">文件未导入</string>
     <string name="import_file_imported">文件 %1$s 已导入</string>
-    <string name="import_prevent_reimport">您设置了防止重复导入路线</string>
+    <string name="import_prevent_reimport">您设置了防止重复导入轨迹</string>
     <string name="import_progress_summary_exists_msg">已存在</string>
     <string name="import_progress_summary_errors_msg">错误</string>
-    <string name="marker_add_photo_canceled">已取消，照片标记没有被添加</string>
+    <string name="marker_add_photo_canceled">已取消，未添加照片标记</string>
     <string name="sensor_state_cadence_avg">平均踏频</string>
     <string name="sensor_could_not_scan">无法扫描蓝牙设备（错误：%1$i）。</string>
     <string name="settings_units_category">单位</string>
@@ -570,23 +563,23 @@ limitations under the License.
     <string name="settings_announcements_average_heart_rate">平均心率</string>
     <string name="settings_layout_reset_done">所有布局设置已恢复至默认值</string>
     <string name="settings_all_reset">重置</string>
-    <string name="track_delete_not_recording">该路线无法被删除，因为它还在记录中。</string>
-    <string name="error_crash_title">%1$s 已崩溃</string>
+    <string name="track_delete_not_recording">此轨迹正在记录中，无法删除。</string>
+    <string name="error_crash_title">%1$s 崩溃了</string>
     <string name="share_crash_report">分享崩溃报告</string>
-    <string name="report_bug">报告 BUG</string>
-    <string name="show_on_dashboard">OpenTracks 仪表盘 API</string>
-    <string name="always">总是</string>
+    <string name="report_bug">报告错误</string>
+    <string name="show_on_dashboard">OpenTracks 仪表板 API</string>
+    <string name="always">始终</string>
     <string name="track_speed_notification">速度：%1$s</string>
-    <string name="settings_stats_units_imperial_meter">英制（英里，米）</string>
+    <string name="settings_stats_units_imperial_meter">英制（英里、米）</string>
     <string name="voice_on_device_speaker_title">使用设备的扬声器</string>
-    <string name="introduction_osm_dashboard">OpenTracks 本身不提供地图。请安装 OSMDashboard 应用，以便在地图上查看您的记录。</string>
+    <string name="introduction_osm_dashboard">OpenTracks 本身不提供地图。请安装 OSMDashboard 以在地图上查看您的记录。</string>
     <string name="settings_sensor_bluetooth_service_filter_title">筛选蓝牙设备</string>
-    <string name="menu_export_all_one_file">全部导出（一个文件存储全部路线）</string>
-    <string name="no_compatible_camera_installed">尚未安装兼容的照相机应用</string>
-    <string name="no_compatible_gallery_installed">尚未安装兼容的图库应用</string>
-    <string name="settings_recording_min_required_accuracy_summary">精度不足 %1$s 的位置会被忽略</string>
-    <string name="settings_sensor_heart_rate_max">心率区间：最大心率（bpm）</string>
-    <string name="settings_api_summary">给其他应用使用的远程控制和统计 API</string>
+    <string name="menu_export_all_one_file">全部导出（所有轨迹合并文件）</string>
+    <string name="no_compatible_camera_installed">未安装兼容的相机应用程序</string>
+    <string name="no_compatible_gallery_installed">未安装兼容的图库应用程序</string>
+    <string name="settings_recording_min_required_accuracy_summary">如果位置精度大于 %1$s，则忽略该位置</string>
+    <string name="settings_sensor_heart_rate_max">心率区间：最大心率（BPM）</string>
+    <string name="settings_api_summary">其他应用的远程控制和统计数据 API</string>
     <string name="sensor_state_cadence_unit">RPM</string>
     <string name="sensor_state_heart_rate_unit">BPM</string>
     <string name="sensor_state_power_unit">瓦</string>
@@ -598,7 +591,7 @@ limitations under the License.
     <string name="settings_ui_dynamic_colors_summary">使用用户定义的动态配色（需要 Android 12 及更高版本，需要手动重启）</string>
     <string name="sensor_state_power_max">最大功率</string>
     <string name="activity_type_kickscooter">滑板车</string>
-    <string name="permission_recording_failed">OpenTracks 需要获取定位和查找附近设备权限。</string>
+    <string name="permission_recording_failed">OpenTracks 需要获得访问您的位置信息以及附近的设备的权限。</string>
     <string name="voiceIdle">即将进入空闲状态。</string>
     <string name="settings_announcements_idle_title">空闲</string>
     <string name="settings_recording_idle_timeout_title">空闲阈值</string>
@@ -607,9 +600,9 @@ limitations under the License.
     <string name="value_internal_sensor">内部传感器</string>
     <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
     <string name="settings_recording_min_sampling_interval_title">采样时间间隔</string>
-    <string name="settings_recording_location_distance_summary">每隔%1$s记录地点之间</string>
+    <string name="settings_recording_location_distance_summary">间隔 %1$s 记录位置</string>
     <string name="settings_theme_switch_restart">主题更改可能需要手动重启。</string>
-    <string name="settings_night_mode_option_night_oled">OLED 优化模式</string>
+    <string name="settings_night_mode_option_night_oled">OLED 优化</string>
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="settings_announcements_lap_power">单圈功率</string>
     <string name="settings_charts_title">图表</string>
@@ -629,10 +622,10 @@ limitations under the License.
     <string name="create_marker_error">无法创建标记，请重试。</string>
     <string name="stats_gain_loss">上升与下降</string>
     <string name="marker_detail_title">%1$d / %2$d：%3$s</string>
-    <string name="settings_night_mode_option_system_dynamic">跟随系统（动态配色）</string>
-    <string name="settings_night_mode_option_day_dynamic">白天模式（动态配色）</string>
-    <string name="settings_night_mode_option_night_dynamic">‌夜间模式（动态配色）</string>
-    <string name="settings_night_mode_option_night_oled_dynamic">OLED 优化模式（动态配色）</string>
+    <string name="settings_night_mode_option_system_dynamic">系统（动态配色）</string>
+    <string name="settings_night_mode_option_day_dynamic">‌日间（动态配色）</string>
+    <string name="settings_night_mode_option_night_dynamic">‌夜间（动态配色）</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">OLED 优化（动态配色）</string>
     <string name="track_edit_time_offset">时区偏移</string>
     <string name="settings_announcements_segment_average_speed_pace">平均速度/配速（路段）</string>
     <string name="stats_average_segment_pace">平均路段配速</string>
