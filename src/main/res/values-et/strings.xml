@@ -596,4 +596,7 @@ limitations under the License.
     <string name="introduction_osm_dashboard">Kaardi kuvamine pole OpenTracks-i automaatselt lisatud. Oma salvestiste kaardil vaatamiseks palun paigalda OSMDashboard.</string>
     <string name="settings_recording_min_sampling_interval_title">Proovivõtu ajavahemik</string>
     <string name="voice_announce_lap_power_key">RingiVõimsuseHäälteade</string>
+    <string name="description_sensor_temperature">Temperatuur (Celsius)</string>
+    <string name="sensor_state_temperature">Termomeeter</string>
+    <string name="stats_sensors_temperature">Temperatuur</string>
 </resources>
