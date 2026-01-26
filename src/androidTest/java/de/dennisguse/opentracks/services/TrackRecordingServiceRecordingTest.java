@@ -339,7 +339,7 @@ public class TrackRecordingServiceRecordingTest {
         mockAltitudeChange(trackPointCreator, 0);
 
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.sensorDataAggregator.add(new AggregatorHeartRate("", ""));
+        sensorManager.add(new AggregatorHeartRate("", ""));
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
         trackPointCreator.setClock(sensor1);
@@ -809,8 +809,8 @@ public class TrackRecordingServiceRecordingTest {
         Track.Id trackId = service.startNewTrack();
 
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.sensorDataAggregator.add(new AggregatorRunning("", ""));
-        sensorManager.sensorDataAggregator.barometer = null;
+        sensorManager.add(new AggregatorRunning("", ""));
+        sensorManager.barometer = null;
 
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
@@ -962,7 +962,7 @@ public class TrackRecordingServiceRecordingTest {
     }
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, float altitudeGain) {
-        trackPointCreator.getSensorManager().sensorDataAggregator.barometer = new AggregatorBarometer("", "") {
+        trackPointCreator.getSensorManager().barometer = new AggregatorBarometer("", "") {
             @Override
             public boolean hasReceivedData() {
                 return true;

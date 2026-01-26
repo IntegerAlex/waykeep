@@ -67,6 +67,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
 import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
+import de.dennisguse.opentracks.sensors.SensorManager;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
@@ -75,7 +76,6 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
 import de.dennisguse.opentracks.sensors.sensorData.Raw;
-import de.dennisguse.opentracks.sensors.sensorData.SensorDataAggregator;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 
@@ -197,7 +197,7 @@ public class ExportImportTest {
                 ));
 
         trackPointCreator.setClock("2020-02-02T02:02:18Z");
-        trackPointCreator.getSensorManager().sensorDataAggregator = new SensorDataAggregator();
+        trackPointCreator.getSensorManager().clear();
         service.endCurrentTrack();
 
         trackPointCreator.setClock("2020-02-02T02:03:20Z");
@@ -212,7 +212,7 @@ public class ExportImportTest {
 
         sendLocation(trackPointCreator, "2020-02-02T02:03:50Z", 3.1234567, 16.001, 10, 27, 15, 999.123, 0f);
 
-        trackPointCreator.getSensorManager().sensorDataAggregator = new SensorDataAggregator();
+        trackPointCreator.getSensorManager().clear();
         trackPointCreator.setClock("2020-02-02T02:04:00Z");
         service.endCurrentTrack();
 
@@ -661,16 +661,16 @@ public class ExportImportTest {
     }
 
     private void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain, float temperature) {
-        SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
+        SensorManager sensorManager = trackPointCreator.getSensorManager();
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
         cyclingPower.add(new Raw<>(trackPointCreator.createNow(), new BluetoothHandlerCyclingPower.Data(Power.of(power), null)));
-        sensorDataAggregator.add(cyclingPower);
+        sensorManager.add(cyclingPower);
 
 
         AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
         avgHeartRate.add(new Raw<>(trackPointCreator.createNow(), HeartRate.of(heartRate)));
-        sensorDataAggregator.add(avgHeartRate);
+        sensorManager.add(avgHeartRate);
 
         AggregatorCyclingCadence cyclingCadence = new AggregatorCyclingCadence("", "") {
             @NonNull
@@ -684,7 +684,7 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorDataAggregator.add(cyclingCadence);
+        sensorManager.add(cyclingCadence);
 
         if (distance != null && speed != null) {
             AggregatorCyclingDistanceSpeed aggregatorCyclingDistanceSpeed = new AggregatorCyclingDistanceSpeed("", "") {
@@ -699,14 +699,14 @@ public class ExportImportTest {
                     return true;
                 }
             };
-            sensorDataAggregator.add(aggregatorCyclingDistanceSpeed);
+            sensorManager.add(aggregatorCyclingDistanceSpeed);
         } else {
-            sensorDataAggregator.add(new AggregatorCyclingDistanceSpeed("", ""));
+            sensorManager.add(new AggregatorCyclingDistanceSpeed("", ""));
         }
 
         mockAltitudeChange(trackPointCreator, altitudeGain);
 
-        sensorDataAggregator.add(new AggregatorTemperature("", "'") {
+        sensorManager.add(new AggregatorTemperature("", "'") {
             @NonNull
             @Override
             public Temperature getAggregatedValue(Instant now) {
@@ -723,10 +723,11 @@ public class ExportImportTest {
     }
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, Float altitudeGain) {
-        SensorDataAggregator sensorDataAggregator = trackPointCreator.getSensorManager().sensorDataAggregator;
+        SensorManager sensorManager = trackPointCreator.getSensorManager();
+        sensorManager.reset();
 
         if (altitudeGain == null) {
-            sensorDataAggregator.add(new AggregatorBarometer("test", null));
+            sensorManager.add(new AggregatorBarometer("test", null));
             return;
         }
 
@@ -742,7 +743,7 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorDataAggregator.add(aggregatorBarometer);
+        sensorManager.add(aggregatorBarometer);
     }
 
     private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {

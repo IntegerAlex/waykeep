@@ -48,6 +48,11 @@ public abstract class Aggregator<Input, Output> {
     @NonNull
     protected abstract Output getNoneValue();
 
+    @Deprecated //TODO Removed; just implemented for refactoring. This code is bypassing core functionality of this class.
+    public Output getAggregatedValue() {
+        return aggregatedValue;
+    }
+
     @NonNull
     public Output getAggregatedValue(Instant now) {
         if (!hasReceivedData()) {
