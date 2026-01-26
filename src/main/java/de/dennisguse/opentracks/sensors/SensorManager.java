@@ -71,7 +71,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         bluetoothSensorManager.start();
     }
 
-    public void stop(Context context) {
+    public void stop() {
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
 
         bluetoothSensorManager.stop();
@@ -104,25 +104,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (gps != null) gps.resetAggregated();
     }
 
-    @Deprecated
-    public void onConnect(Aggregator<?, ?> aggregator) {
-        add(aggregator);
-    }
-
-    @Deprecated
-    public void onDisconnect(Aggregator<?, ?> aggregator) {
-        add(aggregator);
-    }
-
-    @Deprecated
-    public void onRemove(Aggregator<?, ?> aggregator) {
-        remove(aggregator);
-    }
-
-    public Instant getNow() {
-        return observer.createNow();
-    }
-
     public GpsManager getGpsManager() {
         return gpsManager;
     }
@@ -148,6 +129,25 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     //TODO Inlined from SensorDataAggregator; Aggregators will be moved into Drivers.
+    @Deprecated
+    public void onConnect(Aggregator<?, ?> aggregator) {
+        add(aggregator);
+    }
+
+    @Deprecated
+    public void onDisconnect(Aggregator<?, ?> aggregator) {
+        add(aggregator);
+    }
+
+    @Deprecated
+    public void onRemove(Aggregator<?, ?> aggregator) {
+        remove(aggregator);
+    }
+
+    public Instant getNow() {
+        return observer.createNow();
+    }
+
     @VisibleForTesting
     public AggregatorHeartRate heartRate;
 

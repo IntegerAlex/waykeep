@@ -56,7 +56,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public void stop() {
-        sensorManager.stop(context);
+        sensorManager.stop();
         this.context = null;
     }
 
