@@ -41,7 +41,7 @@ public class BluetoothHandlerHeartRate implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         HeartRate heartRate = parseHeartRate(characteristic);
 
         if (heartRate != null) {

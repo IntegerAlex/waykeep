@@ -34,7 +34,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
 
     private TrackPointCreator trackPointCreator;
 
-    private SensorManager.SensorDataChangedObserver observer;
+    private SensorManager observer;
     private Context context;
     private Handler handler;
 
@@ -43,7 +43,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
     private Duration gpsInterval;
     private Distance thresholdHorizontalAccuracy;
 
-    public GpsManager(TrackPointCreator trackPointCreator, SensorManager.SensorDataChangedObserver observer) {
+    public GpsManager(TrackPointCreator trackPointCreator, SensorManager observer) {
         this.trackPointCreator = trackPointCreator;
         this.observer = observer;
     }

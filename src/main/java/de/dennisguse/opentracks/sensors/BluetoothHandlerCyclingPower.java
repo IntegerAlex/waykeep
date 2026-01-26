@@ -31,7 +31,7 @@ public class BluetoothHandlerCyclingPower implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Data cyclingPower = parseCyclingPower(characteristic);
 
         if (cyclingPower != null) {

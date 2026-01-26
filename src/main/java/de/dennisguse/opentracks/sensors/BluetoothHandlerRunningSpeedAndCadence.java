@@ -34,7 +34,7 @@ public class BluetoothHandlerRunningSpeedAndCadence implements SensorHandlerInte
     }
 
     @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Data data = parseRunningSpeedAndCadence(sensorName, characteristic);
         observer.onChange(new Raw<>(observer.getNow(), data));
     }

@@ -49,7 +49,7 @@ public class BluetoothRemoteSensorManager implements SharedPreferences.OnSharedP
     private final BluetoothConnectionManager cyclingPower;
     private final BluetoothConnectionManager runningSpeedAndCadence;
 
-    public BluetoothRemoteSensorManager(@NonNull Context context, @NonNull Handler handler, @Nullable SensorManager.SensorDataChangedObserver observer) {
+    public BluetoothRemoteSensorManager(@NonNull Context context, @NonNull Handler handler, @Nullable SensorManager observer) {
         this.context = context;
         this.handler = handler;
 

@@ -43,35 +43,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     private final TrackPointCreator observer;
 
-    private final SensorDataChangedObserver listener = new SensorDataChangedObserver() {
-
-        @Override
-        public void onConnect(Aggregator<?, ?> aggregator) {
-            add(aggregator);
-        }
-
-        @Override
-        public void onChange(Raw<?> data) {
-            update(data);
-            observer.onChange();
-        }
-
-        @Override
-        public void onDisconnect(Aggregator<?, ?> aggregator) {
-            add(aggregator);
-        }
-
-        @Override
-        public void onRemove(Aggregator<?, ?> aggregator) {
-            remove(aggregator);
-        }
-
-        @Override
-        public Instant getNow() {
-            return observer.createNow();
-        }
-    };
-
     private BluetoothRemoteSensorManager bluetoothSensorManager;
 
     private GainManager altitudeSumManager;
@@ -89,9 +60,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         wakeLock = SystemUtils.acquireWakeLock(context, wakeLock);
 
-        gpsManager = new GpsManager(observer, listener);
-        altitudeSumManager = new GainManager(listener);
-        bluetoothSensorManager = new BluetoothRemoteSensorManager(context, handler, listener);
+        gpsManager = new GpsManager(observer, this);
+        altitudeSumManager = new GainManager(this);
+        bluetoothSensorManager = new BluetoothRemoteSensorManager(context, handler, this);
 
         onSharedPreferenceChanged(null, null);
 
@@ -133,9 +104,23 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (gps != null) gps.resetAggregated();
     }
 
-    @VisibleForTesting
-    public void onChanged(Raw<?> data) {
-        listener.onChange(data);
+    @Deprecated
+    public void onConnect(Aggregator<?, ?> aggregator) {
+        add(aggregator);
+    }
+
+    @Deprecated
+    public void onDisconnect(Aggregator<?, ?> aggregator) {
+        add(aggregator);
+    }
+
+    @Deprecated
+    public void onRemove(Aggregator<?, ?> aggregator) {
+        remove(aggregator);
+    }
+
+    public Instant getNow() {
+        return observer.createNow();
     }
 
     public GpsManager getGpsManager() {
@@ -162,20 +147,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
     }
 
-    public interface SensorDataChangedObserver {
-
-        void onConnect(Aggregator<?, ?> sensorData);
-        void onChange(Raw<?> sensorData);
-
-        void onDisconnect(Aggregator<?, ?> sensorData);
-
-        void onRemove(Aggregator<?, ?> sensorData);
-
-        Instant getNow();
-    }
-
-
-    //TODO Inline from SensorDataAggregator; Aggregators will be moved into Drivers.
+    //TODO Inlined from SensorDataAggregator; Aggregators will be moved into Drivers.
     @VisibleForTesting
     public AggregatorHeartRate heartRate;
 
@@ -252,8 +224,14 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         set(data, data);
     }
 
+    @Deprecated
+    public void onChange(Raw<?> data) {
+        update(data);
+        observer.onChange();
+    }
+
     //TODO Refactor generic "fun" here: go explicit.
-    public void update(@NonNull Raw<?> data) {
+    private void update(@NonNull Raw<?> data) {
         Object value = data.value();
 
         if (value instanceof HeartRate) {

@@ -30,7 +30,7 @@ public class BluetoothHandlerTemperature implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(SensorManager observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Temperature value = parseEnvironmentalSensing(characteristic);
         if (value == null) return;
 

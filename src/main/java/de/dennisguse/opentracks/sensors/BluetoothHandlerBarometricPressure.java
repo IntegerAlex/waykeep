@@ -29,7 +29,7 @@ public class BluetoothHandlerBarometricPressure implements SensorHandlerInterfac
     }
 
     @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(SensorManager observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         AtmosphericPressure value = parseEnvironmentalSensing(characteristic);
         if (value == null) return;
 

@@ -22,7 +22,7 @@ public class BarometerInternal implements Driver {
 
     private static final int SAMPLING_PERIOD = (int) TimeUnit.SECONDS.toMicros(5);
 
-    private final SensorManager.SensorDataChangedObserver observer;
+    private final SensorManager observer;
 
     private Context context;
 
@@ -43,7 +43,7 @@ public class BarometerInternal implements Driver {
         }
     };
 
-    public BarometerInternal(@NonNull SensorManager.SensorDataChangedObserver observer) {
+    public BarometerInternal(@NonNull SensorManager observer) {
         this.observer = observer;
 
     }

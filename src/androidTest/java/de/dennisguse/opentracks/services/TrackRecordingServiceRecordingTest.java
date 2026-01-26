@@ -344,11 +344,12 @@ public class TrackRecordingServiceRecordingTest {
         String sensor1 = "2020-02-02T02:02:03Z";
         trackPointCreator.setClock(sensor1);
 
-        sensorManager.onChanged(new Raw<>(sensor1, HeartRate.of(5))); //Should be ignored
+        //Should be ignored
+        sensorManager.onChange(new Raw<HeartRate>(sensor1, HeartRate.of(5)));
 
         String sensor3 = "2020-02-02T02:02:13Z";
         trackPointCreator.setClock(sensor3);
-        sensorManager.onChanged(new Raw<>(sensor3, HeartRate.of(7)));
+        sensorManager.onChange(new Raw<HeartRate>(sensor3, HeartRate.of(7)));
 
         String stopTime = "2020-02-02T02:02:15Z";
         trackPointCreator.setClock(stopTime);
@@ -815,12 +816,13 @@ public class TrackRecordingServiceRecordingTest {
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
         trackPointCreator.setClock(sensor1);
-        sensorManager.onChanged(new Raw<>(sensor1, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(1), Distance.ZERO))); //Should be ignored
+        //Should be ignored
+        sensorManager.onChange(new Raw<BluetoothHandlerRunningSpeedAndCadence.Data>(sensor1, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(1), Distance.ZERO)));
 
         // when
         String sensor2 = "2020-02-02T02:02:04Z";
         trackPointCreator.setClock(sensor2);
-        sensorManager.onChanged(new Raw<>(sensor2, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(2), Distance.of(2))));
+        sensorManager.onChange(new Raw<BluetoothHandlerRunningSpeedAndCadence.Data>(sensor2, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(2), Distance.of(2))));
 
         // when
         String gps1 = "2020-02-02T02:02:05Z";
@@ -829,12 +831,13 @@ public class TrackRecordingServiceRecordingTest {
         // when
         String sensor3 = "2020-02-02T02:02:06Z";
         trackPointCreator.setClock(sensor3);
-        sensorManager.onChanged(new Raw<>(sensor3, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(3), Distance.of(12))));
+        sensorManager.onChange(new Raw<BluetoothHandlerRunningSpeedAndCadence.Data>(sensor3, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(3), Distance.of(12))));
 
         // when
         String sensor4 = "2020-02-02T02:02:07Z";
         trackPointCreator.setClock(sensor4);
-        sensorManager.onChanged(new Raw<>(sensor4, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(4), Distance.of(14)))); //Should be ignored
+        //Should be ignored
+        sensorManager.onChange(new Raw<BluetoothHandlerRunningSpeedAndCadence.Data>(sensor4, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(4), Distance.of(14))));
 
         // when
         String gps2 = "2020-02-02T02:02:08Z";
@@ -843,7 +846,8 @@ public class TrackRecordingServiceRecordingTest {
         // when
         String sensor5 = "2020-02-02T02:02:10Z";
         trackPointCreator.setClock(sensor5);
-        sensorManager.onChanged(new Raw<>(sensor5, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(5), Distance.of(16)))); //Should be ignored
+        //Should be ignored
+        sensorManager.onChange(new Raw<BluetoothHandlerRunningSpeedAndCadence.Data>(sensor5, new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(5), Distance.of(16))));
 
         // when
         String gps3 = "2020-02-02T02:02:12Z";

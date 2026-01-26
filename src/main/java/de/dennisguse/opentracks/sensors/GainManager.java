@@ -18,7 +18,7 @@ public class GainManager {
     private static final String TAG = GainManager.class.getSimpleName();
 
 
-    private final SensorManager.SensorDataChangedObserver listener;
+    private final SensorManager listener;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> connect();
 
@@ -26,7 +26,7 @@ public class GainManager {
     private Handler handler;
     private Driver driver;
 
-    public GainManager(SensorManager.SensorDataChangedObserver listener) {
+    public GainManager(SensorManager listener) {
         this.listener = listener;
     }
 

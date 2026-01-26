@@ -45,7 +45,7 @@ public class BluetoothConnectionManager implements Driver {
 
     private static final String TAG = BluetoothConnectionManager.class.getSimpleName();
 
-    private final SensorManager.SensorDataChangedObserver observer;
+    private final SensorManager observer;
 
     private final SensorHandlerInterface sensorHandler;
 
@@ -131,7 +131,7 @@ public class BluetoothConnectionManager implements Driver {
         }
     };
 
-    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, SensorManager.SensorDataChangedObserver observer, SensorHandlerInterface sensorHandler) {
+    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, SensorManager observer, SensorHandlerInterface sensorHandler) {
         this.bluetoothAdapter = bluetoothAdapter;
         this.observer = observer;
         this.sensorHandler = sensorHandler;
