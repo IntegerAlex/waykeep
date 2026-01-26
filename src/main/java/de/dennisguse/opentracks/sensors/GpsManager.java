@@ -26,7 +26,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-public class GpsManager implements SensorConnector, LocationListenerCompat, GpsStatusManager.GpsStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final String TAG = GpsManager.class.getSimpleName();
 
@@ -68,7 +68,7 @@ public class GpsManager implements SensorConnector, LocationListenerCompat, GpsS
     }
 
     @SuppressWarnings({"MissingPermission"})
-    public void stop(Context context) {
+    public void stop() {
         if (isStarted()) {
             LocationManagerCompat.removeUpdates(locationManager, this);
         }

@@ -85,19 +85,19 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         gpsManager.start(context, handler);
         altitudeSumManager.start(context, handler);
-        bluetoothSensorManager.start(context, handler);
+        bluetoothSensorManager.start();
     }
 
     public void stop(Context context) {
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
 
-        bluetoothSensorManager.stop(context);
+        bluetoothSensorManager.stop();
         bluetoothSensorManager = null;
 
-        altitudeSumManager.stop(context);
+        altitudeSumManager.stop();
         altitudeSumManager = null;
 
-        gpsManager.stop(context);
+        gpsManager.stop();
         gpsManager = null;
 
         sensorDataAggregator.clear();

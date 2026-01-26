@@ -13,7 +13,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 /**
  * Estimates the altitude gain and altitude loss using the device's pressure sensor (i.e., barometer).
  */
-public class GainManager implements SensorConnector {
+public class GainManager {
 
     private static final String TAG = GainManager.class.getSimpleName();
 
@@ -36,7 +36,7 @@ public class GainManager implements SensorConnector {
         PreferencesUtils.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
-    public void stop(Context context) {
+    public void stop() {
         Log.d(TAG, "Stop");
         this.context = null;
         this.handler = null;

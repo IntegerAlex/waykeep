@@ -34,7 +34,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  * TODO: listen for Bluetooth enabled/disabled events.
  * @author Sandor Dornbush
  */
-public class BluetoothRemoteSensorManager implements SensorConnector, SharedPreferences.OnSharedPreferenceChangeListener {
+public class BluetoothRemoteSensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = BluetoothRemoteSensorManager.class.getSimpleName();
 
@@ -62,16 +62,14 @@ public class BluetoothRemoteSensorManager implements SensorConnector, SharedPref
         this.runningSpeedAndCadence = new BluetoothConnectionManager(bluetoothAdapter, observer, new BluetoothHandlerRunningSpeedAndCadence());
     }
 
-    @Override
-    public void start(Context context, Handler handler) {
+    public void start() {
         started = true;
 
         // Triggers connection startup
         onSharedPreferenceChanged(null, null);
     }
 
-    @Override
-    public synchronized void stop(Context context) {
+    public synchronized void stop() {
         heartRate.disconnect();
         temperature.disconnect();
         cyclingCadence.disconnect();
