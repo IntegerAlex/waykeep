@@ -545,4 +545,7 @@
     <string name="settings_announcements_segment_average_speed_pace">சராசரி வேகம்/பாய்சல் (பிரிவு)</string>
     <string name="stats_average_segment_pace">சராசரி பிரிவு வேகம்</string>
     <string name="stats_elapsed_segment_time">கடந்த பிரிவு நேரம்</string>
+    <string name="description_sensor_temperature">வெப்பநிலை (செல்சியசு)</string>
+    <string name="sensor_state_temperature">வெப்பமானி</string>
+    <string name="stats_sensors_temperature">வெப்பநிலை</string>
 </resources>
