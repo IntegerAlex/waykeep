@@ -101,7 +101,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingPower != null) cyclingPower.resetAggregated();
         if (runningDistanceSpeedCadence != null) runningDistanceSpeedCadence.resetAggregated();
         if (barometer != null) barometer.resetAggregated();
-        if (gps != null) gps.resetAggregated();
+        if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
 
     public GpsManager getGpsManager() {
@@ -169,8 +169,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @VisibleForTesting
     public AggregatorBarometer barometer;
 
-    public AggregatorGPS gps;
-
     @VisibleForTesting
     public SensorData<HeartRate> getHeartRate(Instant now) {
         if (heartRate != null) {
@@ -227,6 +225,10 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @Deprecated
     public void onChange(Record data) {
         update(data);
+        onChange();
+    }
+
+    public void onChange() {
         observer.onChange();
     }
 
@@ -266,10 +268,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             this.barometer.add(now, (AtmosphericPressure) value);
             return;
         }
-        if (value instanceof Position) {
-            this.gps.add(now, (Position) value);
-            return;
-        }
 
         throw new UnsupportedOperationException(value.getClass().getCanonicalName());
     }
@@ -289,10 +287,16 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.cyclingPower = null;
         this.runningDistanceSpeedCadence = null;
         this.barometer = null;
-        this.gps = null;
+
+        //TODO This is to ExportImportTest alive; refactor test.
+        if (this.gpsManager != null) {
+            this.gpsManager.setAggregatorGPS();
+        }
     }
 
     public SensorDataSet getSensorDataSet(Instant now) {
+        AggregatorGPS gps = gpsManager.getAggregatorGPS();
+
         return new SensorDataSet(
                 gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
                 getSpeed(now),
@@ -335,10 +339,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
         if (type instanceof AggregatorBarometer) {
             barometer = (AggregatorBarometer) sensorData;
-            return;
-        }
-        if (type instanceof AggregatorGPS) {
-            gps = (AggregatorGPS) sensorData;
             return;
         }
 

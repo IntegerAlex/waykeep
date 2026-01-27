@@ -43,6 +43,8 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
     private Duration gpsInterval;
     private Distance thresholdHorizontalAccuracy;
 
+    private AggregatorGPS aggregatorGPS;
+
     public GpsManager(TrackPointCreator trackPointCreator, SensorManager observer) {
         this.trackPointCreator = trackPointCreator;
         this.observer = observer;
@@ -57,7 +59,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
         gpsStatusManager = new GpsStatusManager(context, this, handler);
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        observer.onConnect(new AggregatorGPS("internal"));
+        this.aggregatorGPS = new AggregatorGPS("internal");
 
         registerLocationListener();
         gpsStatusManager.start();
@@ -79,10 +81,22 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
         gpsStatusManager.stop();
         gpsStatusManager = null;
 
-        observer.onDisconnect(new AggregatorGPS("internal"));
+        this.aggregatorGPS = null;
         observer = null;
 
         trackPointCreator = null;
+    }
+
+    //TODO Exposed for refactoring. Is this necessary?
+    @Deprecated
+    AggregatorGPS getAggregatorGPS() {
+        return aggregatorGPS;
+    }
+
+    //TODO Exposed for refactoring. This is very ugly.
+    @Deprecated
+    void setAggregatorGPS() {
+        this.aggregatorGPS = null;
     }
 
     @Override
@@ -136,7 +150,8 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
             return;
         }
 
-        observer.onChange(position);
+        aggregatorGPS.add(observer.getNow(), position);
+        observer.onChange();
     }
 
     @Override
