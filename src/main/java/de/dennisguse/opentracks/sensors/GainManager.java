@@ -8,6 +8,7 @@ import android.util.Log;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.driver.BarometerInternal;
 import de.dennisguse.opentracks.sensors.driver.Driver;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver;
 import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
@@ -17,7 +18,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  * Estimates the altitude gain and altitude loss using the device's pressure sensor (i.e., barometer).
  */
 //TODO Rename class
-public class GainManager implements DriverObserver0 {
+public class GainManager implements DriverObserver<AtmosphericPressure> {
 
     private static final String TAG = GainManager.class.getSimpleName();
 
@@ -73,7 +74,27 @@ public class GainManager implements DriverObserver0 {
             case REMOTE -> driver =
                     new BluetoothConnectionManager(
                             BluetoothUtils.getAdapter(context),
-                            this,
+                            new DriverObserver0() {
+                                @Override
+                                public void onConnect(Aggregator<?, ?> emptySensorData) {
+                                    GainManager.this.onConnect();
+                                }
+
+                                @Override
+                                public void onDisconnect(Aggregator<?, ?> emptySensorData) {
+                                    GainManager.this.onDisconnect();
+                                }
+
+                                @Override
+                                public void onRemove(Aggregator<?, ?> emptySensorData) {
+                                    GainManager.this.onRemove();
+                                }
+
+                                @Override
+                                public void onChange(Record value) {
+                                    onData((AtmosphericPressure) value);
+                                }
+                            },
                             new BluetoothHandlerBarometricPressure()
                     );
             default -> throw new RuntimeException("Not implemented");
@@ -90,23 +111,22 @@ public class GainManager implements DriverObserver0 {
     }
 
     @Override
-    public void onRemove(Aggregator<?, ?> emptySensorData) {
-        this.aggregatorBarometer = null;
+    public void onConnect() {
+        this.aggregatorBarometer = new AggregatorBarometer("", null);
     }
 
     @Override
-    public void onConnect(Aggregator<?, ?> emptySensorData) {
-        //TODO Aggregator should be created here.
-        this.aggregatorBarometer = (AggregatorBarometer) emptySensorData;
-    }
-
-    @Override
-    public void onDisconnect(Aggregator<?, ?> emptySensorData) {
+    public void onDisconnect() {
         this.aggregatorBarometer.resetAggregated();
     }
 
     @Override
-    public void onChange(Record first) {
-        this.aggregatorBarometer.add(sensorManager.getNow(), (AtmosphericPressure) first);
+    public void onData(AtmosphericPressure value) {
+        this.aggregatorBarometer.add(sensorManager.getNow(), value);
+    }
+
+    @Override
+    public void onRemove() {
+        this.aggregatorBarometer = null;
     }
 }
