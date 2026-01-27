@@ -723,10 +723,9 @@ public class ExportImportTest {
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, Float altitudeGain) {
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.reset();
 
         if (altitudeGain == null) {
-            sensorManager.add(new AggregatorBarometer("test", null));
+            sensorManager.getAltitudeSumManager().setAggregatorBarometer(new AggregatorBarometer("test", null));
             return;
         }
 
@@ -742,7 +741,7 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorManager.add(aggregatorBarometer);
+        sensorManager.getAltitudeSumManager().setAggregatorBarometer(aggregatorBarometer);
     }
 
     private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {

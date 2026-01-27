@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.sensors.driver.Driver;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 /**
@@ -45,7 +46,7 @@ public class BluetoothConnectionManager implements Driver {
 
     private static final String TAG = BluetoothConnectionManager.class.getSimpleName();
 
-    private final SensorManager observer;
+    private final DriverObserver0 observer;
 
     private final SensorHandlerInterface sensorHandler;
 
@@ -131,7 +132,7 @@ public class BluetoothConnectionManager implements Driver {
         }
     };
 
-    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, SensorManager observer, SensorHandlerInterface sensorHandler) {
+    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, DriverObserver0 observer, SensorHandlerInterface sensorHandler) {
         this.bluetoothAdapter = bluetoothAdapter;
         this.observer = observer;
         this.sensorHandler = sensorHandler;

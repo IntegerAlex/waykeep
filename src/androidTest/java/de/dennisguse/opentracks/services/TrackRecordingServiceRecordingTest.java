@@ -810,7 +810,6 @@ public class TrackRecordingServiceRecordingTest {
 
         SensorManager sensorManager = trackPointCreator.getSensorManager();
         sensorManager.add(new AggregatorRunning("", ""));
-        sensorManager.barometer = null;
 
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
@@ -965,7 +964,7 @@ public class TrackRecordingServiceRecordingTest {
     }
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, float altitudeGain) {
-        trackPointCreator.getSensorManager().barometer = new AggregatorBarometer("", "") {
+        trackPointCreator.getSensorManager().getAltitudeSumManager().setAggregatorBarometer(new AggregatorBarometer("", "") {
             @Override
             public boolean hasReceivedData() {
                 return true;
@@ -976,7 +975,7 @@ public class TrackRecordingServiceRecordingTest {
             public AltitudeGainLoss getAggregatedValue(Instant now) {
                 return new AltitudeGainLoss(altitudeGain, altitudeGain);
             }
-        };
+        });
     }
 
     private static void sendGPSLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, long speed) {

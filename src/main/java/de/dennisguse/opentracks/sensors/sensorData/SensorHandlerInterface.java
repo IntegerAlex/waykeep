@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import java.util.List;
 
-import de.dennisguse.opentracks.sensors.SensorManager;
 import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 
 public interface SensorHandlerInterface {
 
@@ -13,5 +13,5 @@ public interface SensorHandlerInterface {
 
     Aggregator<?, ?> createEmptySensorData(String address, String name);
 
-    void handlePayload(SensorManager observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic);
+    void handlePayload(DriverObserver0 observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic);
 }

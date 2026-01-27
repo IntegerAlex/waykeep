@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import java.util.List;
 
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
@@ -28,7 +29,7 @@ public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(DriverObserver0 observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         if (serviceMeasurementUUID.equals(BluetoothHandlerCyclingPower.CYCLING_POWER)) {
             BluetoothHandlerCyclingPower.Data data = BluetoothHandlerCyclingPower.parseCyclingPower(characteristic);
             if (data != null && data.crank() != null) {

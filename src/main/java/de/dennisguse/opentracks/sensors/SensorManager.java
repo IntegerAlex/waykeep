@@ -12,13 +12,13 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
-import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Temperature;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
@@ -35,7 +35,8 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.SystemUtils;
 
 //TODO provide context and handler for different Managers (not passing via start(), but similar to getNow()).
-public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
+//TODO Remove DriverObserver from SensorManager
+public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener, DriverObserver0 {
 
     private static final String TAG = SensorManager.class.getSimpleName();
 
@@ -100,7 +101,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingDistanceSpeed != null) cyclingDistanceSpeed.resetAggregated();
         if (cyclingPower != null) cyclingPower.resetAggregated();
         if (runningDistanceSpeedCadence != null) runningDistanceSpeedCadence.resetAggregated();
-        if (barometer != null) barometer.resetAggregated();
+        if (altitudeSumManager.getAggregatorBarometer() != null) altitudeSumManager.getAggregatorBarometer().resetAggregated();
         if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
 
@@ -165,9 +166,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     @VisibleForTesting
     public AggregatorRunning runningDistanceSpeedCadence;
-
-    @VisibleForTesting
-    public AggregatorBarometer barometer;
 
     @VisibleForTesting
     public SensorData<HeartRate> getHeartRate(Instant now) {
@@ -264,10 +262,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             this.cyclingPower.add(now, (BluetoothHandlerCyclingPower.Data) value);
             return;
         }
-        if (value instanceof AtmosphericPressure) {
-            this.barometer.add(now, (AtmosphericPressure) value);
-            return;
-        }
 
         throw new UnsupportedOperationException(value.getClass().getCanonicalName());
     }
@@ -286,9 +280,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.cyclingDistanceSpeed = null;
         this.cyclingPower = null;
         this.runningDistanceSpeedCadence = null;
-        this.barometer = null;
 
         //TODO This is to ExportImportTest alive; refactor test.
+        if (this.altitudeSumManager != null) {
+            this.altitudeSumManager.setAggregatorBarometer(null);
+        }
         if (this.gpsManager != null) {
             this.gpsManager.setAggregatorGPS();
         }
@@ -296,6 +292,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     public SensorDataSet getSensorDataSet(Instant now) {
         AggregatorGPS gps = gpsManager.getAggregatorGPS();
+        AggregatorBarometer barometer = altitudeSumManager.getAggregatorBarometer();
 
         return new SensorDataSet(
                 gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
@@ -335,10 +332,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
         if (type instanceof AggregatorRunning) {
             runningDistanceSpeedCadence = (AggregatorRunning) sensorData;
-            return;
-        }
-        if (type instanceof AggregatorBarometer) {
-            barometer = (AggregatorBarometer) sensorData;
             return;
         }
 

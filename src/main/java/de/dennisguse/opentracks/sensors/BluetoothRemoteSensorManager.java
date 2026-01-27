@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
@@ -34,6 +35,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  * TODO: listen for Bluetooth enabled/disabled events.
  * @author Sandor Dornbush
  */
+//TODO Merge into SensorManager
 public class BluetoothRemoteSensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = BluetoothRemoteSensorManager.class.getSimpleName();
@@ -49,7 +51,7 @@ public class BluetoothRemoteSensorManager implements SharedPreferences.OnSharedP
     private final BluetoothConnectionManager cyclingPower;
     private final BluetoothConnectionManager runningSpeedAndCadence;
 
-    public BluetoothRemoteSensorManager(@NonNull Context context, @NonNull Handler handler, @Nullable SensorManager observer) {
+    public BluetoothRemoteSensorManager(@NonNull Context context, @NonNull Handler handler, @Nullable DriverObserver0 observer) {
         this.context = context;
         this.handler = handler;
 

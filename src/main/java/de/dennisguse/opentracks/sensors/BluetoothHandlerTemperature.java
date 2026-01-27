@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.data.models.Temperature;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
@@ -29,7 +30,7 @@ public class BluetoothHandlerTemperature implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(DriverObserver0 observer, ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Temperature value = parseEnvironmentalSensing(characteristic);
         if (value == null) return;
 

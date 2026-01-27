@@ -5,20 +5,24 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
+import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.driver.BarometerInternal;
 import de.dennisguse.opentracks.sensors.driver.Driver;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
+import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
  * Estimates the altitude gain and altitude loss using the device's pressure sensor (i.e., barometer).
  */
-public class GainManager {
+//TODO Rename class
+public class GainManager implements DriverObserver0 {
 
     private static final String TAG = GainManager.class.getSimpleName();
 
 
-    private final SensorManager listener;
+    private final SensorManager sensorManager;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> connect();
 
@@ -26,8 +30,10 @@ public class GainManager {
     private Handler handler;
     private Driver driver;
 
-    public GainManager(SensorManager listener) {
-        this.listener = listener;
+    private AggregatorBarometer aggregatorBarometer;
+
+    public GainManager(SensorManager sensorManager) {
+        this.sensorManager = sensorManager;
     }
 
     public void start(Context context, Handler handler) {
@@ -42,24 +48,32 @@ public class GainManager {
         this.handler = null;
         PreferencesUtils.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
-        onDisconnect();
+        disconnect();
+    }
+
+    @Deprecated
+    public AggregatorBarometer getAggregatorBarometer() {
+        return aggregatorBarometer;
+    }
+
+    @Deprecated
+    public void setAggregatorBarometer(AggregatorBarometer aggregatorBarometer) {
+        this.aggregatorBarometer = aggregatorBarometer;
     }
 
     private void connect() {
-        onDisconnect();
+        disconnect();
 
         String address = PreferencesUtils.getBarometerSensorAddress();
         switch (PreferencesUtils.getSensorType(address)) {
             case NONE -> {
-                driver = null;
-                listener.onRemove(new AggregatorBarometer(null, null));
                 return;
             }
-            case INTERNAL -> driver = new BarometerInternal(listener);
+            case INTERNAL -> driver = new BarometerInternal(this);
             case REMOTE -> driver =
                     new BluetoothConnectionManager(
                             BluetoothUtils.getAdapter(context),
-                            listener,
+                            this,
                             new BluetoothHandlerBarometricPressure()
                     );
             default -> throw new RuntimeException("Not implemented");
@@ -68,10 +82,31 @@ public class GainManager {
         driver.connect(context, handler, address);
     }
 
-    private void onDisconnect() {
+    private void disconnect() {
         if (driver == null) return;
 
         driver.disconnect();
-        listener.onDisconnect(new AggregatorBarometer("GainManager", null));
+        driver = null;
+    }
+
+    @Override
+    public void onRemove(Aggregator<?, ?> emptySensorData) {
+        this.aggregatorBarometer = null;
+    }
+
+    @Override
+    public void onConnect(Aggregator<?, ?> emptySensorData) {
+        //TODO Aggregator should be created here.
+        this.aggregatorBarometer = (AggregatorBarometer) emptySensorData;
+    }
+
+    @Override
+    public void onDisconnect(Aggregator<?, ?> emptySensorData) {
+        this.aggregatorBarometer.resetAggregated();
+    }
+
+    @Override
+    public void onChange(Record first) {
+        this.aggregatorBarometer.add(sensorManager.getNow(), (AtmosphericPressure) first);
     }
 }

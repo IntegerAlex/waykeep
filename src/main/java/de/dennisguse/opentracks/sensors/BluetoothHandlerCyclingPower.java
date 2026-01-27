@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.data.models.Power;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
@@ -30,7 +31,7 @@ public class BluetoothHandlerCyclingPower implements SensorHandlerInterface {
     }
 
     @Override
-    public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(DriverObserver0 observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Data cyclingPower = parseCyclingPower(characteristic);
 
         if (cyclingPower == null) return;

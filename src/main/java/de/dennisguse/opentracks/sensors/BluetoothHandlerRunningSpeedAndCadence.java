@@ -11,6 +11,7 @@ import java.util.UUID;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
@@ -33,7 +34,7 @@ public class BluetoothHandlerRunningSpeedAndCadence implements SensorHandlerInte
     }
 
     @Override
-    public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
+    public void handlePayload(DriverObserver0 observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Data data = parseRunningSpeedAndCadence(sensorName, characteristic);
         if (data == null) return;
 

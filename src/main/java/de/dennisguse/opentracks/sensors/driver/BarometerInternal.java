@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.TimeUnit;
 
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
-import de.dennisguse.opentracks.sensors.SensorManager;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 
 public class BarometerInternal implements Driver {
@@ -21,7 +20,7 @@ public class BarometerInternal implements Driver {
 
     private static final int SAMPLING_PERIOD = (int) TimeUnit.SECONDS.toMicros(5);
 
-    private final SensorManager observer;
+    private final DriverObserver0 observer;
 
     private Context context;
 
@@ -42,9 +41,8 @@ public class BarometerInternal implements Driver {
         }
     };
 
-    public BarometerInternal(@NonNull SensorManager observer) {
+    public BarometerInternal(@NonNull DriverObserver0 observer) {
         this.observer = observer;
-
     }
 
     @Override
@@ -66,6 +64,7 @@ public class BarometerInternal implements Driver {
         disconnect();
     }
 
+    @Override
     public boolean isConnected() {
         return context != null;
     }
