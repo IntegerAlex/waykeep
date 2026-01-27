@@ -10,7 +10,6 @@ import java.util.UUID;
 import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 public class BluetoothHandlerTemperature implements SensorHandlerInterface {
@@ -34,7 +33,7 @@ public class BluetoothHandlerTemperature implements SensorHandlerInterface {
         Temperature value = parseEnvironmentalSensing(characteristic);
         if (value == null) return;
 
-        observer.onChange(new Raw<>(observer.getNow(), value));
+        observer.onChange(value);
     }
 
     /**

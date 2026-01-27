@@ -20,7 +20,6 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorGPS;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
@@ -32,6 +31,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
 
     private static final String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
+    //TODO Refactor to just pass information via SensorManager.
     private TrackPointCreator trackPointCreator;
 
     private SensorManager observer;
@@ -123,7 +123,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
     @Override
     public void onLocationChanged(@NonNull Location location) {
         // Send each update to the status; please note that this TrackPoint is not stored.
-        Position position = Position.of(location, trackPointCreator.createNow());
+        Position position = Position.of(location, observer.getNow());
         gpsStatusManager.onNewTrackPoint(position);
 
         if (!position.hasValidLocation()) {
@@ -136,7 +136,7 @@ public class GpsManager implements LocationListenerCompat, GpsStatusManager.GpsS
             return;
         }
 
-        observer.onChange(new Raw<>(observer.getNow(), position));
+        observer.onChange(position);
     }
 
     @Override

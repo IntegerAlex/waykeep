@@ -73,7 +73,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public synchronized TrackPoint createSegmentStartManual() {
-        return TrackPoint.createSegmentStartManualWithTime(createNow());
+        return TrackPoint.createSegmentStartManualWithTime(getNow());
     }
 
     public synchronized TrackPoint createSegmentEnd() {
@@ -89,7 +89,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public Pair<TrackPoint, SensorDataSet> createCurrentTrackPoint(@Nullable TrackPoint lastTrackPointUISpeed, @Nullable TrackPoint lastTrackPointUIAltitude, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
-        Instant now = createNow();
+        Instant now = getNow();
         SensorDataSet sensorDataSet = sensorManager.getSensorDataSet(now);
 
         Position position = sensorDataSet.position().data();
@@ -123,7 +123,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     private TrackPoint createTrackPoint(TrackPoint.Type type) {
-        Instant now = createNow();
+        Instant now = getNow();
 
         SensorDataSet sensorDataSet = sensorManager.getSensorDataSet(now);
 
@@ -146,7 +146,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
                 );
     }
 
-    public Instant createNow() {
+    public Instant getNow() {
         return Instant.now(clock);
     }
 

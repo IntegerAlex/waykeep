@@ -7,7 +7,6 @@ import android.util.Pair;
 import java.util.List;
 
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
@@ -33,7 +32,7 @@ public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
         if (serviceMeasurementUUID.equals(BluetoothHandlerCyclingPower.CYCLING_POWER)) {
             BluetoothHandlerCyclingPower.Data data = BluetoothHandlerCyclingPower.parseCyclingPower(characteristic);
             if (data != null && data.crank() != null) {
-                observer.onChange(new Raw<>(observer.getNow(), data.crank()));
+                observer.onChange(data.crank());
             }
             return;
         }
@@ -42,7 +41,7 @@ public class BluetoothHandlerCyclingCadence implements SensorHandlerInterface {
             Pair<BluetoothHandlerCyclingDistanceSpeed.WheelData, CrankData> data = BluetoothHandlerCyclingDistanceSpeed.parseCyclingCrankAndWheel(address, sensorName, characteristic);
 
             if (data != null && data.second != null) {
-                observer.onChange(new Raw<>(observer.getNow(), data.second));
+                observer.onChange(data.second);
             }
             return;
         }

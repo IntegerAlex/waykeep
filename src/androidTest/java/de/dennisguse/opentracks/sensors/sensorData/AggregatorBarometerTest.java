@@ -11,7 +11,7 @@ public class AggregatorBarometerTest {
 
     private static void addSensorValue(AggregatorBarometer aggregatorBarometer, float[] values) {
         for (float f : values) {
-            aggregatorBarometer.add(new Raw<>(Instant.MIN, AtmosphericPressure.ofHPA(f)));
+            aggregatorBarometer.add(Instant.MIN, AtmosphericPressure.ofHPA(f));
         }
     }
 

@@ -29,9 +29,10 @@ public abstract class Aggregator<Input, Output> {
         return sensorName != null ? sensorName : sensorAddress;
     }
 
-    public final void add(Raw<Input> current) {
-        computeValue(current);
-        previous = current;
+    public final void add(Instant now, Input current) {
+        Raw next = new Raw<>(now, current);
+        computeValue(next);
+        previous = next;
     }
 
     protected abstract void computeValue(Raw<Input> current);
@@ -103,5 +104,11 @@ public abstract class Aggregator<Input, Output> {
     @Override
     public String toString() {
         return "sensorAddress=" + sensorAddress + " data=" + aggregatedValue;
+    }
+
+    protected record Raw<T>(
+            @NonNull Instant time,
+            @NonNull T value
+    ) {
     }
 }

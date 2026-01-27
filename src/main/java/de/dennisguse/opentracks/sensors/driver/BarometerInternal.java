@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.SensorManager;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 
 public class BarometerInternal implements Driver {
 
@@ -34,7 +33,7 @@ public class BarometerInternal implements Driver {
                 return;
             }
 
-            observer.onChange(new Raw<>(observer.getNow(), AtmosphericPressure.ofHPA(event.values[0])));
+            observer.onChange(AtmosphericPressure.ofHPA(event.values[0]));
         }
 
         @Override

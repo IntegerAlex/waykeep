@@ -28,13 +28,13 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorGPS;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.SystemUtils;
 
+//TODO provide context and handler for different Managers (not passing via start(), but similar to getNow()).
 public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SensorManager.class.getSimpleName();
@@ -145,7 +145,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public Instant getNow() {
-        return observer.createNow();
+        return observer.getNow();
     }
 
     @VisibleForTesting
@@ -225,53 +225,53 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     @Deprecated
-    public void onChange(Raw<?> data) {
+    public void onChange(Record data) {
         update(data);
         observer.onChange();
     }
 
     //TODO Refactor generic "fun" here: go explicit.
-    private void update(@NonNull Raw<?> data) {
-        Object value = data.value();
+    private void update(@NonNull Record value) {
+        Instant now = getNow();
 
         if (value instanceof HeartRate) {
-            this.heartRate.add((Raw<HeartRate>) data);
+            this.heartRate.add(now, (HeartRate) value);
             return;
         }
 
         if (value instanceof Temperature) {
-            this.temperature.add((Raw<Temperature>) data);
+            this.temperature.add(now, (Temperature) value);
             return;
         }
 
         if (value instanceof BluetoothHandlerCyclingCadence.CrankData) {
-            this.cyclingCadence.add((Raw<BluetoothHandlerCyclingCadence.CrankData>) data);
+            this.cyclingCadence.add(now, (BluetoothHandlerCyclingCadence.CrankData) value);
             return;
         }
         if (value instanceof BluetoothHandlerCyclingDistanceSpeed.WheelData) {
             this.cyclingDistanceSpeed.setWheelCircumference(PreferencesUtils.getWheelCircumference()); //TODO Fetch once and then listen for changes.
-            this.cyclingDistanceSpeed.add((Raw<BluetoothHandlerCyclingDistanceSpeed.WheelData>) data);
+            this.cyclingDistanceSpeed.add(now, (BluetoothHandlerCyclingDistanceSpeed.WheelData) value);
             return;
         }
         if (value instanceof BluetoothHandlerRunningSpeedAndCadence.Data) {
-            this.runningDistanceSpeedCadence.add((Raw<BluetoothHandlerRunningSpeedAndCadence.Data>) data);
+            this.runningDistanceSpeedCadence.add(now, (BluetoothHandlerRunningSpeedAndCadence.Data) value);
 
             return;
         }
         if (value instanceof BluetoothHandlerCyclingPower.Data) {
-            this.cyclingPower.add((Raw<BluetoothHandlerCyclingPower.Data>) data);
+            this.cyclingPower.add(now, (BluetoothHandlerCyclingPower.Data) value);
             return;
         }
         if (value instanceof AtmosphericPressure) {
-            this.barometer.add((Raw<AtmosphericPressure>) data);
+            this.barometer.add(now, (AtmosphericPressure) value);
             return;
         }
         if (value instanceof Position) {
-            this.gps.add((Raw<Position>) data);
+            this.gps.add(now, (Position) value);
             return;
         }
 
-        throw new UnsupportedOperationException(data.getClass().getCanonicalName() + " " + data.value().getClass().getCanonicalName());
+        throw new UnsupportedOperationException(value.getClass().getCanonicalName());
     }
 
     public void remove(@NonNull Aggregator<?, ?> type) {

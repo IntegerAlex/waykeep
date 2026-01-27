@@ -75,7 +75,6 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpee
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 
@@ -664,12 +663,12 @@ public class ExportImportTest {
         SensorManager sensorManager = trackPointCreator.getSensorManager();
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
-        cyclingPower.add(new Raw<>(trackPointCreator.createNow(), new BluetoothHandlerCyclingPower.Data(Power.of(power), null)));
+        cyclingPower.add(trackPointCreator.getNow(), new BluetoothHandlerCyclingPower.Data(Power.of(power), null));
         sensorManager.add(cyclingPower);
 
 
         AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
-        avgHeartRate.add(new Raw<>(trackPointCreator.createNow(), HeartRate.of(heartRate)));
+        avgHeartRate.add(trackPointCreator.getNow(), HeartRate.of(heartRate));
         sensorManager.add(avgHeartRate);
 
         AggregatorCyclingCadence cyclingCadence = new AggregatorCyclingCadence("", "") {

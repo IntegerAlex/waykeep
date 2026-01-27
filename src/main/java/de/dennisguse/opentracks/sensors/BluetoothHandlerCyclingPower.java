@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import de.dennisguse.opentracks.data.models.Power;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 public class BluetoothHandlerCyclingPower implements SensorHandlerInterface {
@@ -34,9 +33,9 @@ public class BluetoothHandlerCyclingPower implements SensorHandlerInterface {
     public void handlePayload(SensorManager observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
         Data cyclingPower = parseCyclingPower(characteristic);
 
-        if (cyclingPower != null) {
-            observer.onChange(new Raw<>(observer.getNow(), cyclingPower));
-        }
+        if (cyclingPower == null) return;
+
+        observer.onChange(cyclingPower);
     }
 
 

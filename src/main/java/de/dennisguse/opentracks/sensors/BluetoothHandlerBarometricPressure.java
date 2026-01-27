@@ -8,7 +8,6 @@ import java.util.UUID;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
 import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
 
 public class BluetoothHandlerBarometricPressure implements SensorHandlerInterface {
@@ -33,7 +32,7 @@ public class BluetoothHandlerBarometricPressure implements SensorHandlerInterfac
         AtmosphericPressure value = parseEnvironmentalSensing(characteristic);
         if (value == null) return;
 
-        observer.onChange(new Raw<>(observer.getNow(), value));
+        observer.onChange(value);
     }
 
     /**
