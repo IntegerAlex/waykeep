@@ -579,6 +579,7 @@ public class PreferencesUtils {
         return entries;
     }
 
+    //TODO Rename to getGpsMinSamplingInterval
     public static Duration getMinSamplingInterval() {
         final Duration MIN_SAMPLING_INTERVAL = getMinSamplingIntervalDefault();
         return Duration.ofSeconds(getInt(R.string.min_sampling_interval_key, (int) MIN_SAMPLING_INTERVAL.getSeconds()));

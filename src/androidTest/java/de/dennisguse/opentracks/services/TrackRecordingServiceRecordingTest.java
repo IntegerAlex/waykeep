@@ -6,11 +6,9 @@ import static org.junit.Assert.assertFalse;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
-import androidx.core.location.LocationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -153,7 +151,7 @@ public class TrackRecordingServiceRecordingTest {
         Track.Id trackId = service.startNewTrack();
 
         //We do not want the real GPS to interfere.
-        LocationManagerCompat.removeUpdates((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), trackPointCreator.getSensorManager().getGpsManager());
+        trackPointCreator.getSensorManager().getGpsManager().driver.disconnect();
 
         String gps1 = "2020-02-02T02:02:03Z";
         sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
@@ -987,6 +985,6 @@ public class TrackRecordingServiceRecordingTest {
         location.setSpeed(speed);
 
         trackPointCreator.setClock(time);
-        trackPointCreator.getSensorManager().getGpsManager().onLocationChanged(location);
+        trackPointCreator.getSensorManager().getGpsManager().onData(location);
     }
 }
