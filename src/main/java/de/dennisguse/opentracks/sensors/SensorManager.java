@@ -1,5 +1,6 @@
 package de.dennisguse.opentracks.sensors;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
+import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -40,11 +42,20 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     private static final String TAG = SensorManager.class.getSimpleName();
 
+    private Context context;
+
+    private Handler handler;
+
     private PowerManager.WakeLock wakeLock;
 
     private final TrackPointCreator observer;
 
-    private BluetoothRemoteSensorManager bluetoothSensorManager;
+    private BluetoothConnectionManager heartRateManager;
+    private BluetoothConnectionManager temperatureManager;
+    private BluetoothConnectionManager cyclingCadenceManager;
+    private BluetoothConnectionManager cyclingSpeedManager;
+    private BluetoothConnectionManager cyclingPowerManager;
+    private BluetoothConnectionManager runningSpeedAndCadenceManager;
 
     private GainManager altitudeSumManager;
 
@@ -60,23 +71,45 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
 
         wakeLock = SystemUtils.acquireWakeLock(context, wakeLock);
+        this.context = context;
+        this.handler = handler;
 
         gpsManager = new GpsManager(observer, this);
         altitudeSumManager = new GainManager(this);
-        bluetoothSensorManager = new BluetoothRemoteSensorManager(context, handler, this);
+        BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
+        this.heartRateManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerHeartRate());
+        this.temperatureManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerTemperature());
+        this.cyclingCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingCadence());
+        this.cyclingSpeedManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingDistanceSpeed());
+        this.cyclingPowerManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingPower());
+        this.runningSpeedAndCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerRunningSpeedAndCadence());
 
         onSharedPreferenceChanged(null, null);
 
         gpsManager.start(context, handler);
         altitudeSumManager.start(context, handler);
-        bluetoothSensorManager.start();
     }
 
     public void stop() {
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
 
-        bluetoothSensorManager.stop();
-        bluetoothSensorManager = null;
+        heartRateManager.disconnect();
+        heartRateManager = null;
+
+        temperatureManager.disconnect();
+        temperatureManager = null;
+
+        cyclingCadenceManager.disconnect();
+        cyclingCadenceManager = null;
+
+        cyclingSpeedManager.disconnect();
+        cyclingSpeedManager = null;
+
+        cyclingPowerManager.disconnect();
+        cyclingPowerManager = null;
+
+        runningSpeedAndCadenceManager.disconnect();
+        runningSpeedAndCadenceManager = null;
 
         altitudeSumManager.stop();
         altitudeSumManager = null;
@@ -84,11 +117,14 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         gpsManager.stop();
         gpsManager = null;
 
+        context = null;
+        handler = null;
+
         clear();
     }
 
     public void reset() {
-        if (bluetoothSensorManager == null || altitudeSumManager == null) {
+        if (gpsManager == null || altitudeSumManager == null) {
             Log.d(TAG, "No recording running and no reset necessary.");
             return;
         }
@@ -121,11 +157,47 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.altitudeSumManager = altitudeSumManager;
     }
 
+    private synchronized void connect(BluetoothConnectionManager connectionManager, String address) {
+        connectionManager.connect(context, handler, address);
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
         if (gpsManager != null) {
             gpsManager.onSharedPreferenceChanged(sharedPreferences, key);
-            bluetoothSensorManager.onSharedPreferenceChanged(sharedPreferences, key);
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_heart_rate_key, key)) {
+                String address = PreferencesUtils.getBluetoothHeartRateSensorAddress();
+                connect(heartRateManager, address);
+            }
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_temperature_key, key)) {
+                String address = PreferencesUtils.getBluetoothTemperatureSensorAddress();
+                connect(temperatureManager, address);
+            }
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_cadence_key, key)) {
+                String address = PreferencesUtils.getBluetoothCyclingCadenceSensorAddress();
+                connect(cyclingCadenceManager, address);
+            }
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_speed_key, key)) {
+                String address = PreferencesUtils.getBluetoothCyclingSpeedSensorAddress();
+
+                connect(cyclingSpeedManager, address);
+            }
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_power_key, key)) {
+                String address = PreferencesUtils.getBluetoothCyclingPowerSensorAddress();
+
+                connect(cyclingPowerManager, address);
+            }
+
+            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_running_speed_and_cadence_key, key)) {
+                String address = PreferencesUtils.getBluetoothRunningSpeedAndCadenceAddress();
+
+                connect(runningSpeedAndCadenceManager, address);
+            }
         }
     }
 
