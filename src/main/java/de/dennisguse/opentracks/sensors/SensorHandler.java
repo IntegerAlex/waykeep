@@ -1,7 +1,6 @@
 package de.dennisguse.opentracks.sensors;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -16,8 +15,6 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 public abstract class SensorHandler<T> {
 
     private final SensorManager sensorManager;
-
-    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> connect();
 
     private Context context;
     private Handler handler;
@@ -48,7 +45,6 @@ public abstract class SensorHandler<T> {
         }
     };
 
-
     protected SensorHandler(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
     }
@@ -57,13 +53,11 @@ public abstract class SensorHandler<T> {
     void start(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
-        PreferencesUtils.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
     void stop() {
         this.context = null;
         this.handler = null;
-        PreferencesUtils.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
         disconnect();
     }
@@ -108,6 +102,8 @@ public abstract class SensorHandler<T> {
 
     @NonNull
     protected abstract Aggregator<T, ?> createAggregator();
+
+    protected abstract int getSensorPreferenceKey();
 
     protected Context getContext() {
         return context;

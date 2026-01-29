@@ -167,6 +167,10 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (gpsManager != null) {
             gpsManager.onSharedPreferenceChanged(sharedPreferences, key);
 
+            if (PreferencesUtils.isKey(altitudeSumManager.getSensorPreferenceKey(), key)) {
+                altitudeSumManager.connect();
+            }
+
             if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_heart_rate_key, key)) {
                 String address = PreferencesUtils.getBluetoothHeartRateSensorAddress();
                 connect(heartRateManager, address);
