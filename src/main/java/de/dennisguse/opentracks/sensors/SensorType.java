@@ -1,8 +1,8 @@
 package de.dennisguse.opentracks.sensors;
 
 public enum SensorType {
-    NONE("NONE"),
-    INTERNAL("INTERNAL"),
+    NONE("NONE"), //TODO Use R.string.sensor_type_value_none
+    INTERNAL("INTERNAL"), //TODO Use R.string.sensor_type_value_none
 
     //NOTE: preferenceValue of REMOTE should not be used anywhere.
     REMOTE("*");

@@ -84,10 +84,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.cyclingPowerManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingPower());
         this.runningSpeedAndCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerRunningSpeedAndCadence());
 
+        altitudeSumManager.start(context, handler);
+
         onSharedPreferenceChanged(null, null);
 
         gpsManager.start(context, handler);
-        altitudeSumManager.start(context, handler);
     }
 
     public void stop() {
@@ -137,7 +138,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingDistanceSpeed != null) cyclingDistanceSpeed.resetAggregated();
         if (cyclingPower != null) cyclingPower.resetAggregated();
         if (runningDistanceSpeedCadence != null) runningDistanceSpeedCadence.resetAggregated();
-        if (altitudeSumManager.getAggregatorBarometer() != null) altitudeSumManager.getAggregatorBarometer().resetAggregated();
+        if (altitudeSumManager.getAggregator() != null) altitudeSumManager.getAggregator().resetAggregated();
         if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
 
@@ -355,7 +356,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         //TODO This is to ExportImportTest alive; refactor test.
         if (this.altitudeSumManager != null) {
-            this.altitudeSumManager.setAggregatorBarometer(null);
+            this.altitudeSumManager.setAggregator(null);
         }
         if (this.gpsManager != null) {
             this.gpsManager.setAggregatorGPS();
@@ -364,7 +365,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     public SensorDataSet getSensorDataSet(Instant now) {
         AggregatorGPS gps = gpsManager.getAggregatorGPS();
-        AggregatorBarometer barometer = altitudeSumManager.getAggregatorBarometer();
+        AggregatorBarometer barometer = (AggregatorBarometer) altitudeSumManager.getAggregator();
 
         return new SensorDataSet(
                 gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),

@@ -253,7 +253,7 @@ public class PreferencesUtils {
         return isReportSpeed(track.activityTypeLocalized());
     }
 
-    private static String getBluetoothSensorAddressNone() {
+    public static String getBluetoothSensorAddressNone() {
         return SensorType.NONE.getPreferenceValue();
     }
 
@@ -262,10 +262,6 @@ public class PreferencesUtils {
                 .filter(it -> it.getPreferenceValue().equals(address))
                 .findFirst()
                 .orElse(SensorType.REMOTE);
-    }
-
-    public static String getBarometerSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_pressure_key, getBluetoothSensorAddressNone());
     }
 
     public static String getBluetoothHeartRateSensorAddress() {
