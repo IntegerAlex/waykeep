@@ -336,17 +336,21 @@ public class TrackRecordingServiceRecordingTest {
         mockAltitudeChange(trackPointCreator, 0);
 
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.add(new AggregatorHeartRate("", ""));
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
         trackPointCreator.setClock(sensor1);
 
+        AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
+        sensorManager.add(avgHeartRate);
+
         //Should be ignored
-        sensorManager.onChange(HeartRate.of(5));
+        avgHeartRate.add(trackPointCreator.getNow(), HeartRate.of(5));
+        sensorManager.onChange();
 
         String sensor3 = "2020-02-02T02:02:13Z";
         trackPointCreator.setClock(sensor3);
-        sensorManager.onChange(HeartRate.of(7));
+        avgHeartRate.add(trackPointCreator.getNow(), HeartRate.of(7));
+        sensorManager.onChange();
 
         String stopTime = "2020-02-02T02:02:15Z";
         trackPointCreator.setClock(stopTime);

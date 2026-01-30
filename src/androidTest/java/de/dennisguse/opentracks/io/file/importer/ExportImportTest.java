@@ -659,7 +659,7 @@ public class ExportImportTest {
         }
     }
 
-    private void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain, float temperature) {
+    private static void mockSensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power, Float altitudeGain, float temperature) {
         SensorManager sensorManager = trackPointCreator.getSensorManager();
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
@@ -721,7 +721,7 @@ public class ExportImportTest {
         trackPointCreator.onChange();
     }
 
-    private void mockAltitudeChange(TrackPointCreator trackPointCreator, Float altitudeGain) {
+    private static void mockAltitudeChange(TrackPointCreator trackPointCreator, Float altitudeGain) {
         SensorManager sensorManager = trackPointCreator.getSensorManager();
 
         if (altitudeGain == null) {
