@@ -810,19 +810,22 @@ public class TrackRecordingServiceRecordingTest {
         trackPointCreator.setClock(startTime);
         Track.Id trackId = service.startNewTrack();
 
+        AggregatorRunning aggregatorRunning = new AggregatorRunning("", "");
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.add(new AggregatorRunning("", ""));
+        sensorManager.add(aggregatorRunning);
 
         // when
         String sensor1 = "2020-02-02T02:02:03Z";
         trackPointCreator.setClock(sensor1);
         //Should be ignored
-        sensorManager.onChange(new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(1), Distance.ZERO));
+        aggregatorRunning.add(trackPointCreator.getNow(), new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(1), Distance.ZERO));
+        sensorManager.onChange();
 
         // when
         String sensor2 = "2020-02-02T02:02:04Z";
         trackPointCreator.setClock(sensor2);
-        sensorManager.onChange(new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(2), Distance.of(2)));
+        aggregatorRunning.add(trackPointCreator.getNow(), new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(2), Distance.of(2)));
+        sensorManager.onChange();
 
         // when
         String gps1 = "2020-02-02T02:02:05Z";
@@ -831,13 +834,15 @@ public class TrackRecordingServiceRecordingTest {
         // when
         String sensor3 = "2020-02-02T02:02:06Z";
         trackPointCreator.setClock(sensor3);
-        sensorManager.onChange(new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(3), Distance.of(12)));
+        aggregatorRunning.add(trackPointCreator.getNow(), new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(3), Distance.of(12)));
+        sensorManager.onChange();
 
         // when
         String sensor4 = "2020-02-02T02:02:07Z";
         trackPointCreator.setClock(sensor4);
         //Should be ignored
-        sensorManager.onChange(new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(4), Distance.of(14)));
+        aggregatorRunning.add(trackPointCreator.getNow(), new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(4), Distance.of(14)));
+        sensorManager.onChange();
 
         // when
         String gps2 = "2020-02-02T02:02:08Z";
@@ -847,7 +852,8 @@ public class TrackRecordingServiceRecordingTest {
         String sensor5 = "2020-02-02T02:02:10Z";
         trackPointCreator.setClock(sensor5);
         //Should be ignored
-        sensorManager.onChange(new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(5), Distance.of(16)));
+        aggregatorRunning.add(trackPointCreator.getNow(), new BluetoothHandlerRunningSpeedAndCadence.Data(Speed.of(5), Cadence.of(5), Distance.of(16)));
+        sensorManager.onChange();
 
         // when
         String gps3 = "2020-02-02T02:02:12Z";

@@ -1,6 +1,5 @@
 package de.dennisguse.opentracks.sensors;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
-import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
@@ -54,7 +52,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private CyclingCadenceHandler cyclingCadenceHandler;
     private CyclingDistanceSpeedHandler cyclingDistanceSpeedHandler;
     private CyclingPowerHandler cyclingPowerHandler;
-    private BluetoothConnectionManager runningSpeedAndCadenceManager;
+    private RunningSpeedCadenceDistanceHandler runningSpeedCadenceDistanceHandler;
 
     private GainManager altitudeSumManager;
 
@@ -80,9 +78,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.cyclingCadenceHandler = new CyclingCadenceHandler(this);
         this.cyclingDistanceSpeedHandler = new CyclingDistanceSpeedHandler(this);
         this.cyclingPowerHandler = new CyclingPowerHandler(this);
-
-        BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
-        this.runningSpeedAndCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerRunningSpeedAndCadence());
+        this.runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
 
         altitudeSumManager.start(context, handler);
         heartRateHandler.start(context, handler);
@@ -90,6 +86,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         cyclingCadenceHandler.start(context, handler);
         cyclingDistanceSpeedHandler.start(context, handler);
         cyclingPowerHandler.start(context, handler);
+        runningSpeedCadenceDistanceHandler.start(context, handler);
+
         onSharedPreferenceChanged(null, null);
 
         gpsManager.start(context, handler);
@@ -113,8 +111,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         cyclingPowerHandler.stop();
         cyclingPowerHandler = null;
 
-        runningSpeedAndCadenceManager.disconnect();
-        runningSpeedAndCadenceManager = null;
+        runningSpeedCadenceDistanceHandler.stop();
+        runningSpeedCadenceDistanceHandler = null;
 
         altitudeSumManager.stop();
         altitudeSumManager = null;
@@ -141,7 +139,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingCadenceHandler.getAggregator() != null) cyclingCadenceHandler.getAggregator().resetAggregated();
         if (cyclingDistanceSpeedHandler.getAggregator() != null) cyclingDistanceSpeedHandler.getAggregator().resetAggregated();
         if (cyclingPowerHandler.getAggregator() != null) cyclingPowerHandler.getAggregator().resetAggregated();
-        if (runningDistanceSpeedCadence != null) runningDistanceSpeedCadence.resetAggregated();
+        if (runningSpeedCadenceDistanceHandler.getAggregator() != null) runningSpeedCadenceDistanceHandler.getAggregator().resetAggregated();
         if (altitudeSumManager.getAggregator() != null) altitudeSumManager.getAggregator().resetAggregated();
         if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
@@ -195,10 +193,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 cyclingPowerHandler.connect();
             }
 
-            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_running_speed_and_cadence_key, key)) {
-                String address = PreferencesUtils.getBluetoothRunningSpeedAndCadenceAddress();
-
-                connect(runningSpeedAndCadenceManager, address);
+            if (PreferencesUtils.isKey(runningSpeedCadenceDistanceHandler.getSensorPreferenceKey(), key)) {
+                runningSpeedCadenceDistanceHandler.connect();
             }
         }
     }
@@ -206,17 +202,22 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     //TODO Inlined from SensorDataAggregator; Aggregators will be moved into Drivers.
     @Deprecated
     public void onConnect(Aggregator<?, ?> aggregator) {
-        add(aggregator);
+        throw new UnsupportedOperationException();
     }
 
     @Deprecated
     public void onDisconnect(Aggregator<?, ?> aggregator) {
-        add(aggregator);
+        throw new UnsupportedOperationException();
     }
 
     @Deprecated
     public void onRemove(Aggregator<?, ?> aggregator) {
-        remove(aggregator);
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onChange(Record value) {
+        throw new UnsupportedOperationException();
     }
 
     public Instant getNow() {
@@ -224,12 +225,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     @VisibleForTesting
-    public AggregatorRunning runningDistanceSpeedCadence;
-
-    @VisibleForTesting
     public SensorData<HeartRate> getHeartRate(Instant now) {
         if (heartRateHandler.getAggregator() != null) {
-            SensorData<HeartRate> value = (SensorData<HeartRate>) heartRateHandler.getAggregator().getAggregatedValueWithSensorName(now);
+            SensorData<HeartRate> value = ((AggregatorHeartRate) heartRateHandler.getAggregator()).getAggregatedValueWithSensorName(now);
             //TODO Move this check into HeartRateHandler
             if (value.data().isValid()) return value;
         }
@@ -239,11 +237,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     private SensorData<Cadence> getCadence(Instant now) {
         if (cyclingCadenceHandler.getAggregator() != null) {
-            return (SensorData<Cadence>) cyclingCadenceHandler.getAggregator().getAggregatedValueWithSensorName(now);
+            return ((AggregatorCyclingCadence) cyclingCadenceHandler.getAggregator()).getAggregatedValueWithSensorName(now);
         }
 
-        if (runningDistanceSpeedCadence != null && runningDistanceSpeedCadence.hasReceivedData() && runningDistanceSpeedCadence.getAggregatedValue(now).cadence() != null) {
-            return new SensorData<>(runningDistanceSpeedCadence.getAggregatedValue().cadence(), runningDistanceSpeedCadence.getSensorNameOrAddress());
+        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData() && ((AggregatorRunning)runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).cadence() != null) {
+            return new SensorData<>(((AggregatorRunning)runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue().cadence(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
         }
 
         return null;
@@ -254,8 +252,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             return new SensorData<>(((AggregatorCyclingDistanceSpeed) cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).distanceOverall(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
         }
 
-        if (runningDistanceSpeedCadence != null && runningDistanceSpeedCadence.hasReceivedData()) {
-            return new SensorData<>(runningDistanceSpeedCadence.getAggregatedValue(now).distance(), runningDistanceSpeedCadence.getSensorNameOrAddress());
+        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData()) {
+            return new SensorData<>(((AggregatorRunning)runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).distance(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
 
         }
 
@@ -269,8 +267,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             return new SensorData<>(((AggregatorCyclingDistanceSpeed) cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).speed(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
         }
 
-        if (runningDistanceSpeedCadence != null && runningDistanceSpeedCadence.hasReceivedData() && runningDistanceSpeedCadence.getAggregatedValue(now).speed() != null) {
-            return new SensorData<>(runningDistanceSpeedCadence.getAggregatedValue().speed(), runningDistanceSpeedCadence.getSensorNameOrAddress());
+        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData() && ((AggregatorRunning)runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).speed() != null) {
+            return new SensorData<>(((AggregatorRunning)runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue().speed(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
         }
 
         return null;
@@ -297,46 +295,25 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             return;
         }
         if (data instanceof AggregatorCyclingPower) {
-            cyclingPowerHandler.setAggregator((Aggregator<BluetoothHandlerCyclingPower.Data, ?>) data);
+            cyclingPowerHandler.setAggregator((AggregatorCyclingPower) data);
+            return;
+        }
+        if (data instanceof AggregatorRunning) {
+            runningSpeedCadenceDistanceHandler.setAggregator((AggregatorRunning) data);
             return;
         }
 
-        set(data, data);
-    }
-
-    @Deprecated
-    public void onChange(Record data) {
-        update(data);
-        onChange();
+        throw new UnsupportedOperationException(data.getClass().getCanonicalName());
     }
 
     public void onChange() {
         observer.onChange();
     }
 
-    //TODO Refactor generic "fun" here: go explicit.
-    @Deprecated
-    private void update(@NonNull Record value) {
-        Instant now = getNow();
-        if (value instanceof BluetoothHandlerRunningSpeedAndCadence.Data) {
-            this.runningDistanceSpeedCadence.add(now, (BluetoothHandlerRunningSpeedAndCadence.Data) value);
-
-            return;
-        }
-
-        throw new UnsupportedOperationException(value.getClass().getCanonicalName());
-    }
-
-    @Deprecated
-    public void remove(@NonNull Aggregator<?, ?> type) {
-        set(type, null);
-    }
-
     // TODO inline with stop()?
     @VisibleForTesting
     public void clear() {
         Log.i(TAG, "Removing all aggregators");
-        this.runningDistanceSpeedCadence = null;
 
         //TODO This is to ExportImportTest alive; refactor test.
         if (this.altitudeSumManager != null) {
@@ -357,6 +334,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingPowerHandler != null) {
             cyclingPowerHandler.setAggregator(null);
         }
+        if (runningSpeedCadenceDistanceHandler != null) {
+            runningSpeedCadenceDistanceHandler.setAggregator(null);
+        }
         if (this.gpsManager != null) {
             this.gpsManager.setAggregatorGPS();
         }
@@ -376,17 +356,5 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 cyclingPowerHandler.getAggregator() != null && cyclingPowerHandler.getAggregator().hasReceivedData() ? ((AggregatorCyclingPower) cyclingPowerHandler.getAggregator()).getAggregatedValueWithSensorName(now) : null,
                 barometer != null && barometer.hasReceivedData() ? barometer.getAggregatedValueWithSensorName(now) : null
         );
-    }
-
-    //TODO Refactor generic "fun" here: go explicit.
-    private void set(@NonNull Aggregator<?, ?> type, @Nullable Aggregator<?, ?> sensorData) {
-        Log.i(TAG, "Setting aggregator " + type.getClass().getCanonicalName() + " to " + sensorData);
-
-        if (type instanceof AggregatorRunning) {
-            runningDistanceSpeedCadence = (AggregatorRunning) sensorData;
-            return;
-        }
-
-        throw new UnsupportedOperationException(type.getClass().getCanonicalName());
     }
 }

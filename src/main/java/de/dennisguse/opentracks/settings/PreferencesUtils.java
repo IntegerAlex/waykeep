@@ -269,10 +269,6 @@ public class PreferencesUtils {
         return Distance.ofMM(getInt(R.string.settings_sensor_bluetooth_cycling_speed_wheel_circumference_key, DEFAULT));
     }
 
-    public static String getBluetoothRunningSpeedAndCadenceAddress() {
-        return getString(R.string.settings_sensor_bluetooth_running_speed_and_cadence_key, getBluetoothSensorAddressNone());
-    }
-
     public static boolean getBluetoothFilterEnabled() {
         final boolean DEFAULT = resources.getBoolean(R.bool.settings_sensor_bluetooth_service_filter_enabled_default);
         return getBoolean(R.string.settings_sensor_bluetooth_service_filter_enabled_key, DEFAULT);
