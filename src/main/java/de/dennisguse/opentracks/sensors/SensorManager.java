@@ -51,7 +51,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private final TrackPointCreator observer;
 
     private HeartRateHandler heartRateHandler;
-    private BluetoothConnectionManager temperatureManager;
+    private TemperatureHandler temperatureHandler;
     private BluetoothConnectionManager cyclingCadenceManager;
     private BluetoothConnectionManager cyclingSpeedManager;
     private BluetoothConnectionManager cyclingPowerManager;
@@ -76,11 +76,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         gpsManager = new GpsManager(observer, this);
         altitudeSumManager = new GainManager(this);
-        BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
         this.heartRateHandler = new HeartRateHandler(this);
+        this.temperatureHandler = new TemperatureHandler(this);
 
+        BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
         new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerHeartRate());
-        this.temperatureManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerTemperature());
         this.cyclingCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingCadence());
         this.cyclingSpeedManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingDistanceSpeed());
         this.cyclingPowerManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingPower());
@@ -88,6 +88,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         altitudeSumManager.start(context, handler);
         heartRateHandler.start(context, handler);
+        temperatureHandler.start(context, handler);
         onSharedPreferenceChanged(null, null);
 
         gpsManager.start(context, handler);
@@ -99,8 +100,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         heartRateHandler.stop();
         heartRateHandler = null;
 
-        temperatureManager.disconnect();
-        temperatureManager = null;
+        temperatureHandler.stop();
+        temperatureHandler = null;
 
         cyclingCadenceManager.disconnect();
         cyclingCadenceManager = null;
@@ -135,7 +136,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         Log.i(TAG, "Resetting data");
 
         if (heartRateHandler.getAggregator() != null) heartRateHandler.getAggregator().resetAggregated();
-        if (temperature != null) temperature.resetAggregated();
+        if (temperatureHandler.getAggregator() != null) temperatureHandler.getAggregator().resetAggregated();
         if (cyclingCadence != null) cyclingCadence.resetAggregated();
         if (cyclingDistanceSpeed != null) cyclingDistanceSpeed.resetAggregated();
         if (cyclingPower != null) cyclingPower.resetAggregated();
@@ -177,9 +178,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 heartRateHandler.connect();
             }
 
-            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_temperature_key, key)) {
-                String address = PreferencesUtils.getBluetoothTemperatureSensorAddress();
-                connect(temperatureManager, address);
+            if (PreferencesUtils.isKey(temperatureHandler.getSensorPreferenceKey(), key)) {
+                temperatureHandler.connect();
             }
 
             if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_cadence_key, key)) {
@@ -226,9 +226,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     public Instant getNow() {
         return observer.getNow();
     }
-
-    @VisibleForTesting
-    public AggregatorTemperature temperature;
 
     @VisibleForTesting
     public AggregatorCyclingCadence cyclingCadence;
@@ -300,6 +297,10 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             heartRateHandler.setAggregator((AggregatorHeartRate) data);
             return;
         }
+        if (data instanceof AggregatorTemperature) {
+            temperatureHandler.setAggregator((AggregatorTemperature) data);
+            return;
+        }
         set(data, data);
     }
 
@@ -317,11 +318,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @Deprecated
     private void update(@NonNull Record value) {
         Instant now = getNow();
-
-        if (value instanceof Temperature) {
-            this.temperature.add(now, (Temperature) value);
-            return;
-        }
 
         if (value instanceof BluetoothHandlerCyclingCadence.CrankData) {
             this.cyclingCadence.add(now, (BluetoothHandlerCyclingCadence.CrankData) value);
@@ -354,7 +350,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @VisibleForTesting
     public void clear() {
         Log.i(TAG, "Removing all aggregators");
-        this.temperature = null;
         this.cyclingCadence = null;
         this.cyclingDistanceSpeed = null;
         this.cyclingPower = null;
@@ -366,6 +361,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
         if (this.heartRateHandler != null) {
             this.heartRateHandler.setAggregator(null);
+        }
+        if (this.temperatureHandler != null) {
+            this.temperatureHandler.setAggregator(null);
         }
         if (this.gpsManager != null) {
             this.gpsManager.setAggregatorGPS();
@@ -381,7 +379,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 getSpeed(now),
                 getDistance(now),
                 getHeartRate(now),
-                temperature != null && temperature.hasReceivedData() ? temperature.getAggregatedValueWithSensorName(now) : null,
+                temperatureHandler.getAggregator() != null && temperatureHandler.getAggregator().hasReceivedData() ? (SensorData<Temperature>) temperatureHandler.getAggregator().getAggregatedValueWithSensorName(now) : null,
                 getCadence(now),
                 cyclingPower != null && cyclingPower.hasReceivedData() ? cyclingPower.getAggregatedValueWithSensorName(now) : null,
                 barometer != null && barometer.hasReceivedData() ? barometer.getAggregatedValueWithSensorName(now) : null
@@ -392,10 +390,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private void set(@NonNull Aggregator<?, ?> type, @Nullable Aggregator<?, ?> sensorData) {
         Log.i(TAG, "Setting aggregator " + type.getClass().getCanonicalName() + " to " + sensorData);
 
-        if (type instanceof AggregatorTemperature) {
-            temperature = (AggregatorTemperature) sensorData;
-            return;
-        }
         if (type instanceof AggregatorCyclingCadence) {
             cyclingCadence = (AggregatorCyclingCadence) sensorData;
             return;
