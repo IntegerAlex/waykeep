@@ -264,10 +264,6 @@ public class PreferencesUtils {
                 .orElse(SensorType.REMOTE);
     }
 
-    public static String getBluetoothCyclingCadenceSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_cycling_cadence_key, getBluetoothSensorAddressNone());
-    }
-
     public static String getBluetoothCyclingSpeedSensorAddress() {
         return getString(R.string.settings_sensor_bluetooth_cycling_speed_key, getBluetoothSensorAddressNone());
     }
