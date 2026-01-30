@@ -264,10 +264,6 @@ public class PreferencesUtils {
                 .orElse(SensorType.REMOTE);
     }
 
-    public static String getBluetoothCyclingSpeedSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_cycling_speed_key, getBluetoothSensorAddressNone());
-    }
-
     public static Distance getWheelCircumference() {
         final int DEFAULT = Integer.parseInt(resources.getString(R.string.settings_sensor_bluetooth_cycling_speed_wheel_circumference_default));
         return Distance.ofMM(getInt(R.string.settings_sensor_bluetooth_cycling_speed_wheel_circumference_key, DEFAULT));

@@ -53,7 +53,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private HeartRateHandler heartRateHandler;
     private TemperatureHandler temperatureHandler;
     private CyclingCadenceHandler cyclingCadenceHandler;
-    private BluetoothConnectionManager cyclingSpeedManager;
+    private CyclingDistanceSpeedHandler cyclingDistanceSpeedHandler;
     private BluetoothConnectionManager cyclingPowerManager;
     private BluetoothConnectionManager runningSpeedAndCadenceManager;
 
@@ -79,10 +79,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.heartRateHandler = new HeartRateHandler(this);
         this.temperatureHandler = new TemperatureHandler(this);
         this.cyclingCadenceHandler = new CyclingCadenceHandler(this);
+        this.cyclingDistanceSpeedHandler = new CyclingDistanceSpeedHandler(this);
 
         BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
-        new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerHeartRate());
-        this.cyclingSpeedManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingDistanceSpeed());
         this.cyclingPowerManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerCyclingPower());
         this.runningSpeedAndCadenceManager = new BluetoothConnectionManager(bluetoothAdapter, this, new BluetoothHandlerRunningSpeedAndCadence());
 
@@ -90,6 +89,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         heartRateHandler.start(context, handler);
         temperatureHandler.start(context, handler);
         cyclingCadenceHandler.start(context, handler);
+        cyclingDistanceSpeedHandler.start(context, handler);
         onSharedPreferenceChanged(null, null);
 
         gpsManager.start(context, handler);
@@ -107,8 +107,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         cyclingCadenceHandler.stop();
         cyclingCadenceHandler = null;
 
-        cyclingSpeedManager.disconnect();
-        cyclingSpeedManager = null;
+        cyclingDistanceSpeedHandler.stop();
+        cyclingDistanceSpeedHandler = null;
 
         cyclingPowerManager.disconnect();
         cyclingPowerManager = null;
@@ -139,7 +139,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (heartRateHandler.getAggregator() != null) heartRateHandler.getAggregator().resetAggregated();
         if (temperatureHandler.getAggregator() != null) temperatureHandler.getAggregator().resetAggregated();
         if (cyclingCadenceHandler.getAggregator() != null) cyclingCadenceHandler.getAggregator().resetAggregated();
-        if (cyclingDistanceSpeed != null) cyclingDistanceSpeed.resetAggregated();
+        if (cyclingDistanceSpeedHandler.getAggregator() != null) cyclingDistanceSpeedHandler.getAggregator().resetAggregated();
         if (cyclingPower != null) cyclingPower.resetAggregated();
         if (runningDistanceSpeedCadence != null) runningDistanceSpeedCadence.resetAggregated();
         if (altitudeSumManager.getAggregator() != null) altitudeSumManager.getAggregator().resetAggregated();
@@ -187,10 +187,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 cyclingCadenceHandler.connect();
             }
 
-            if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_speed_key, key)) {
-                String address = PreferencesUtils.getBluetoothCyclingSpeedSensorAddress();
-
-                connect(cyclingSpeedManager, address);
+            if (PreferencesUtils.isKey(cyclingDistanceSpeedHandler.getSensorPreferenceKey(), key)) {
+                cyclingDistanceSpeedHandler.connect();
             }
 
             if (PreferencesUtils.isKey(R.string.settings_sensor_bluetooth_cycling_power_key, key)) {
@@ -228,9 +226,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     @VisibleForTesting
-    public AggregatorCyclingDistanceSpeed cyclingDistanceSpeed;
-
-    @VisibleForTesting
     public AggregatorCyclingPower cyclingPower;
 
     @VisibleForTesting
@@ -260,8 +255,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     private SensorData<Distance> getDistance(Instant now) {
-        if (cyclingDistanceSpeed != null && cyclingDistanceSpeed.hasReceivedData()) {
-            return new SensorData<>(cyclingDistanceSpeed.getAggregatedValue(now).distanceOverall(), cyclingDistanceSpeed.getSensorNameOrAddress());
+        if (cyclingDistanceSpeedHandler.getAggregator() != null && cyclingDistanceSpeedHandler.getAggregator().hasReceivedData()) {
+            return new SensorData<>(((AggregatorCyclingDistanceSpeed)cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).distanceOverall(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
         }
 
         if (runningDistanceSpeedCadence != null && runningDistanceSpeedCadence.hasReceivedData()) {
@@ -275,8 +270,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     //TOOD simplify?
     private SensorData<Speed> getSpeed(Instant now) {
 
-        if (cyclingDistanceSpeed != null && cyclingDistanceSpeed.hasReceivedData() && cyclingDistanceSpeed.getAggregatedValue(now).speed() != null) {
-            return new SensorData<>(cyclingDistanceSpeed.getAggregatedValue(now).speed(), cyclingDistanceSpeed.getSensorNameOrAddress());
+        if (cyclingDistanceSpeedHandler.getAggregator() != null && cyclingDistanceSpeedHandler.getAggregator().hasReceivedData() && ((AggregatorCyclingDistanceSpeed)cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).speed() != null) {
+            return new SensorData<>(((AggregatorCyclingDistanceSpeed)cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).speed(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
         }
 
         if (runningDistanceSpeedCadence != null && runningDistanceSpeedCadence.hasReceivedData() && runningDistanceSpeedCadence.getAggregatedValue(now).speed() != null) {
@@ -302,6 +297,10 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             cyclingCadenceHandler.setAggregator((AggregatorCyclingCadence) data);
             return;
         }
+        if (data instanceof AggregatorCyclingDistanceSpeed) {
+            cyclingDistanceSpeedHandler.setAggregator((AggregatorCyclingDistanceSpeed) data);
+            return;
+        }
         set(data, data);
     }
 
@@ -319,12 +318,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @Deprecated
     private void update(@NonNull Record value) {
         Instant now = getNow();
-
-        if (value instanceof BluetoothHandlerCyclingDistanceSpeed.WheelData) {
-            this.cyclingDistanceSpeed.setWheelCircumference(PreferencesUtils.getWheelCircumference()); //TODO Fetch once and then listen for changes.
-            this.cyclingDistanceSpeed.add(now, (BluetoothHandlerCyclingDistanceSpeed.WheelData) value);
-            return;
-        }
         if (value instanceof BluetoothHandlerRunningSpeedAndCadence.Data) {
             this.runningDistanceSpeedCadence.add(now, (BluetoothHandlerRunningSpeedAndCadence.Data) value);
 
@@ -347,7 +340,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     @VisibleForTesting
     public void clear() {
         Log.i(TAG, "Removing all aggregators");
-        this.cyclingDistanceSpeed = null;
         this.cyclingPower = null;
         this.runningDistanceSpeedCadence = null;
 
@@ -363,6 +355,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
         if (this.cyclingCadenceHandler != null) {
             this.cyclingCadenceHandler.setAggregator(null);
+        }
+        if (cyclingDistanceSpeedHandler != null) {
+            cyclingDistanceSpeedHandler.setAggregator(null);
         }
         if (this.gpsManager != null) {
             this.gpsManager.setAggregatorGPS();
@@ -389,10 +384,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private void set(@NonNull Aggregator<?, ?> type, @Nullable Aggregator<?, ?> sensorData) {
         Log.i(TAG, "Setting aggregator " + type.getClass().getCanonicalName() + " to " + sensorData);
 
-        if (type instanceof AggregatorCyclingDistanceSpeed) {
-            cyclingDistanceSpeed = (AggregatorCyclingDistanceSpeed) sensorData;
-            return;
-        }
         if (type instanceof AggregatorCyclingPower) {
             cyclingPower = (AggregatorCyclingPower) sensorData;
             return;
