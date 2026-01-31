@@ -7,10 +7,9 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.driver.HeartRateBluetooth;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 
-public class HeartRateHandler extends SensorHandler<HeartRate> {
+public class HeartRateHandler extends SensorHandler<HeartRate, HeartRate> {
 
     protected HeartRateHandler(SensorManager sensorManager) {
         super(sensorManager);
@@ -28,7 +27,7 @@ public class HeartRateHandler extends SensorHandler<HeartRate> {
 
     @NonNull
     @Override
-    protected Aggregator<HeartRate, ?> createAggregator() {
+    protected AggregatorHeartRate createAggregator() {
         return new AggregatorHeartRate("", null);
     }
 

@@ -8,7 +8,7 @@ import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.driver.RunningSpeedAndCadenceBluetooth;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
 
-public class RunningSpeedCadenceDistanceHandler extends SensorHandler<RunningSpeedAndCadenceBluetooth.Data> {
+public class RunningSpeedCadenceDistanceHandler extends SensorHandler<RunningSpeedAndCadenceBluetooth.Data, AggregatorRunning.Data> {
 
     protected RunningSpeedCadenceDistanceHandler(SensorManager sensorManager) {
         super(sensorManager);

@@ -25,12 +25,12 @@ public abstract class Aggregator<Input, Output> {
         this.sensorName = sensorName;
     }
 
-    public String getSensorNameOrAddress() {
+    private String getSensorNameOrAddress() {
         return sensorName != null ? sensorName : sensorAddress;
     }
 
     public final void add(Instant now, Input current) {
-        Raw next = new Raw<>(now, current);
+        Raw<Input> next = new Raw<>(now, current);
         computeValue(next);
         previous = next;
     }

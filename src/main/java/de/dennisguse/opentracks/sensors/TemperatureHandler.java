@@ -7,10 +7,9 @@ import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.driver.TemperatureBluetooth;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
 
-public class TemperatureHandler extends SensorHandler<Temperature> {
+public class TemperatureHandler extends SensorHandler<Temperature, Temperature> {
 
     protected TemperatureHandler(SensorManager sensorManager) {
         super(sensorManager);
@@ -28,7 +27,7 @@ public class TemperatureHandler extends SensorHandler<Temperature> {
 
     @NonNull
     @Override
-    protected Aggregator<Temperature, ?> createAggregator() {
+    protected AggregatorTemperature createAggregator() {
         return new AggregatorTemperature("", null);
     }
 

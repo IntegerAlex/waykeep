@@ -3,19 +3,19 @@ package de.dennisguse.opentracks.sensors;
 import androidx.annotation.NonNull;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.driver.BarometerBluetooth;
 import de.dennisguse.opentracks.sensors.driver.BarometerInternal;
 import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 
 /**
  * Estimates the altitude gain and altitude loss using the device's pressure sensor (i.e., barometer).
  */
 //TODO Rename class
-public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure> {
+public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure, AltitudeGainLoss> {
 
     public AltitudeChangeHandler(SensorManager sensorManager) {
         super(sensorManager);
@@ -44,7 +44,7 @@ public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure> {
 
     @NonNull
     @Override
-    public Aggregator<AtmosphericPressure, ?> createAggregator() {
+    public AggregatorBarometer createAggregator() {
         return new AggregatorBarometer("", null);
     }
 }

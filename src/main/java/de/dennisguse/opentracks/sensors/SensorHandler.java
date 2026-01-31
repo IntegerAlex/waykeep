@@ -3,23 +3,27 @@ package de.dennisguse.opentracks.sensors;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
+import java.time.Instant;
 
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.driver.DriverObserver;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
+import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 
-public abstract class SensorHandler<T> {
+public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
 
     private final SensorManager sensorManager;
 
     private Driver driver;
 
-    private Aggregator<T, ?> aggregator;
+    private Aggregator<AggregatorInput, AggregatorOutput> aggregator;
 
-    protected final DriverObserver<T> driverObserver = new DriverObserver<>() {
+    protected final DriverObserver<AggregatorInput> driverObserver = new DriverObserver<>() {
         @Override
         public void onConnect() {
             SensorHandler.this.aggregator = createAggregator();
@@ -31,7 +35,7 @@ public abstract class SensorHandler<T> {
         }
 
         @Override
-        public void onData(T value) {
+        public void onData(AggregatorInput value) {
             SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
             sensorManager.onChange();
         }
@@ -85,7 +89,7 @@ public abstract class SensorHandler<T> {
     }
 
     @NonNull
-    protected abstract Aggregator<T, ?> createAggregator();
+    protected abstract Aggregator<AggregatorInput, AggregatorOutput> createAggregator();
 
     protected abstract int getSensorPreferenceKey();
 
@@ -93,14 +97,23 @@ public abstract class SensorHandler<T> {
         return sensorManager.getContext();
     }
 
-    //TODO Try to keep aggregator private.
-    Aggregator<T, ?> getAggregator() {
-        return aggregator;
+    void resetAggregated() {
+        if (aggregator != null) {
+            aggregator.resetAggregated();
+        }
+    }
+
+    @Nullable
+    SensorData<AggregatorOutput> getSensorData(Instant now) {
+        if (aggregator == null) return null;
+        if (!aggregator.hasReceivedData()) return null;
+
+        return aggregator.getAggregatedValueWithSensorName(now);
     }
 
     //TODO REMOVE
     @VisibleForTesting
-    public void setAggregator(Aggregator<T, ?> aggregator) {
+    public void setAggregator(Aggregator<AggregatorInput, AggregatorOutput> aggregator) {
         this.aggregator = aggregator;
     }
 }

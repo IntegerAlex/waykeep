@@ -8,7 +8,7 @@ import de.dennisguse.opentracks.sensors.driver.CyclingDistanceSpeedBluetooth;
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
 
-public class CyclingDistanceSpeedHandler extends SensorHandler<CyclingDistanceSpeedBluetooth.WheelData> {
+public class CyclingDistanceSpeedHandler extends SensorHandler<CyclingDistanceSpeedBluetooth.WheelData, AggregatorCyclingDistanceSpeed.Data> {
 
     protected CyclingDistanceSpeedHandler(SensorManager sensorManager) {
         super(sensorManager);

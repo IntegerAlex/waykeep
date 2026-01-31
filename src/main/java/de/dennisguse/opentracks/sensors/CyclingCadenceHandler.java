@@ -3,13 +3,13 @@ package de.dennisguse.opentracks.sensors;
 import androidx.annotation.NonNull;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.CyclingCadenceBluetooth;
 import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 
-public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth.CrankData> {
+public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth.CrankData, Cadence> {
 
     protected CyclingCadenceHandler(SensorManager sensorManager) {
         super(sensorManager);
@@ -27,7 +27,7 @@ public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth
 
     @NonNull
     @Override
-    protected Aggregator<CyclingCadenceBluetooth.CrankData, ?> createAggregator() {
+    protected AggregatorCyclingCadence createAggregator() {
         return new AggregatorCyclingCadence("", null);
     }
 

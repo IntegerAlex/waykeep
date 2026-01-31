@@ -18,7 +18,6 @@ import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
-import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
@@ -121,13 +120,13 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         Log.i(TAG, "Resetting data");
 
-        if (heartRateHandler.getAggregator() != null) heartRateHandler.getAggregator().resetAggregated();
-        if (temperatureHandler.getAggregator() != null) temperatureHandler.getAggregator().resetAggregated();
-        if (cyclingCadenceHandler.getAggregator() != null) cyclingCadenceHandler.getAggregator().resetAggregated();
-        if (cyclingDistanceSpeedHandler.getAggregator() != null) cyclingDistanceSpeedHandler.getAggregator().resetAggregated();
-        if (cyclingPowerHandler.getAggregator() != null) cyclingPowerHandler.getAggregator().resetAggregated();
-        if (runningSpeedCadenceDistanceHandler.getAggregator() != null) runningSpeedCadenceDistanceHandler.getAggregator().resetAggregated();
-        if (altitudeChangeHandler.getAggregator() != null) altitudeChangeHandler.getAggregator().resetAggregated();
+        heartRateHandler.resetAggregated();
+        temperatureHandler.resetAggregated();
+        cyclingCadenceHandler.resetAggregated();
+        cyclingDistanceSpeedHandler.resetAggregated();
+        cyclingPowerHandler.resetAggregated();
+        runningSpeedCadenceDistanceHandler.resetAggregated();
+        altitudeChangeHandler.resetAggregated();
         if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
 
@@ -189,8 +188,9 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     private SensorData<HeartRate> getHeartRate(Instant now) {
-        if (heartRateHandler.getAggregator() != null) {
-            SensorData<HeartRate> value = ((AggregatorHeartRate) heartRateHandler.getAggregator()).getAggregatedValueWithSensorName(now);
+        SensorData<HeartRate> value = heartRateHandler.getSensorData(now);
+        if (value != null) {
+
             //TODO Move this check into HeartRateHandler
             if (value.data().isValid()) return value;
         }
@@ -199,25 +199,32 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     private SensorData<Cadence> getCadence(Instant now) {
-        if (cyclingCadenceHandler.getAggregator() != null) {
-            return ((AggregatorCyclingCadence) cyclingCadenceHandler.getAggregator()).getAggregatedValueWithSensorName(now);
+        {
+            SensorData<Cadence> value = cyclingCadenceHandler.getSensorData(now);
+            if (value != null) {
+                return cyclingCadenceHandler.getSensorData(now);
+            }
         }
 
-        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData() && ((AggregatorRunning) runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).cadence() != null) {
-            return new SensorData<>(((AggregatorRunning) runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue().cadence(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null && value.data().cadence() != null) {
+            return new SensorData<>(value.data().cadence(), value.sensorNameOrAddress());
         }
 
         return null;
     }
 
     private SensorData<Distance> getDistance(Instant now) {
-        if (cyclingDistanceSpeedHandler.getAggregator() != null && cyclingDistanceSpeedHandler.getAggregator().hasReceivedData()) {
-            return new SensorData<>(((AggregatorCyclingDistanceSpeed) cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).distanceOverall(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
+        {
+            SensorData<AggregatorCyclingDistanceSpeed.Data> value = cyclingDistanceSpeedHandler.getSensorData(now);
+            if (value != null) {
+                return new SensorData<>(value.data().distanceOverall(), value.sensorNameOrAddress());
+            }
         }
 
-        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData()) {
-            return new SensorData<>(((AggregatorRunning) runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).distance(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
-
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null) {
+            return new SensorData<>(value.data().distance(), value.sensorNameOrAddress());
         }
 
         return null;
@@ -225,13 +232,16 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     //TOOD simplify?
     private SensorData<Speed> getSpeed(Instant now) {
-
-        if (cyclingDistanceSpeedHandler.getAggregator() != null && cyclingDistanceSpeedHandler.getAggregator().hasReceivedData() && ((AggregatorCyclingDistanceSpeed) cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).speed() != null) {
-            return new SensorData<>(((AggregatorCyclingDistanceSpeed) cyclingDistanceSpeedHandler.getAggregator()).getAggregatedValue(now).speed(), cyclingDistanceSpeedHandler.getAggregator().getSensorNameOrAddress());
+        {
+            SensorData<AggregatorCyclingDistanceSpeed.Data> value = cyclingDistanceSpeedHandler.getSensorData(now);
+            if (value != null && value.data() != null && value.data().speed() != null) {
+                return new SensorData<>(value.data().speed(), value.sensorNameOrAddress());
+            }
         }
 
-        if (runningSpeedCadenceDistanceHandler.getAggregator() != null && runningSpeedCadenceDistanceHandler.getAggregator().hasReceivedData() && ((AggregatorRunning) runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue(now).speed() != null) {
-            return new SensorData<>(((AggregatorRunning) runningSpeedCadenceDistanceHandler.getAggregator()).getAggregatedValue().speed(), runningSpeedCadenceDistanceHandler.getAggregator().getSensorNameOrAddress());
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null && value.data() != null && value.data().speed() != null) {
+            return new SensorData<>(value.data().speed(), value.sensorNameOrAddress());
         }
 
         return null;
@@ -273,7 +283,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         observer.onChange();
     }
 
-    // TODO inline with stop()?
     @VisibleForTesting
     public void clear() {
         Log.i(TAG, "Removing all aggregators");
@@ -307,17 +316,16 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     public SensorDataSet getSensorDataSet(Instant now) {
         AggregatorGPS gps = gpsManager.getAggregatorGPS();
-        AggregatorBarometer barometer = (AggregatorBarometer) altitudeChangeHandler.getAggregator();
 
         return new SensorDataSet(
                 gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
                 getSpeed(now),
                 getDistance(now),
                 getHeartRate(now),
-                temperatureHandler.getAggregator() != null && temperatureHandler.getAggregator().hasReceivedData() ? ((AggregatorTemperature) temperatureHandler.getAggregator()).getAggregatedValueWithSensorName(now) : null,
+                temperatureHandler.getSensorData(now),
                 getCadence(now),
-                cyclingPowerHandler.getAggregator() != null && cyclingPowerHandler.getAggregator().hasReceivedData() ? ((AggregatorCyclingPower) cyclingPowerHandler.getAggregator()).getAggregatedValueWithSensorName(now) : null,
-                barometer != null && barometer.hasReceivedData() ? barometer.getAggregatedValueWithSensorName(now) : null
+                cyclingPowerHandler.getSensorData(now),
+                altitudeChangeHandler.getSensorData(now)
         );
     }
 }
