@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Cadence;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingCadence;
 import de.dennisguse.opentracks.sensors.UintUtils;
+import de.dennisguse.opentracks.sensors.driver.CyclingCadenceBluetooth;
 
-public class AggregatorCyclingCadence extends Aggregator<BluetoothHandlerCyclingCadence.CrankData, Cadence> {
+public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth.CrankData, Cadence> {
 
     private final String TAG = AggregatorCyclingCadence.class.getSimpleName();
 
@@ -19,7 +19,7 @@ public class AggregatorCyclingCadence extends Aggregator<BluetoothHandlerCycling
     }
 
     @Override
-    protected void computeValue(Raw<BluetoothHandlerCyclingCadence.CrankData> current) {
+    protected void computeValue(Raw<CyclingCadenceBluetooth.CrankData> current) {
         if (previous == null) {
             return;
         }

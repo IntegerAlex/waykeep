@@ -48,7 +48,7 @@ import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
-import de.dennisguse.opentracks.sensors.SensorType;
+import de.dennisguse.opentracks.sensors.driver.SensorType;
 import de.dennisguse.opentracks.ui.customRecordingLayout.DataField;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayoutIO;

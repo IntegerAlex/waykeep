@@ -22,7 +22,7 @@ public abstract class SensorHandler<T> {
 
     private Aggregator<T, ?> aggregator;
 
-    protected final DriverObserver<T> driverObserver = new DriverObserver<T>() {
+    protected final DriverObserver<T> driverObserver = new DriverObserver<>() {
         @Override
         public void onConnect() {
             SensorHandler.this.aggregator = createAggregator();

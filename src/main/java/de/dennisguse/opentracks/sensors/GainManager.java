@@ -4,9 +4,10 @@ import androidx.annotation.NonNull;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
+import de.dennisguse.opentracks.sensors.driver.BarometerBluetooth;
 import de.dennisguse.opentracks.sensors.driver.BarometerInternal;
+import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 
@@ -34,30 +35,10 @@ public class GainManager extends SensorHandler<AtmosphericPressure> {
     @NonNull
     @Override
     protected Driver createDriverBluetooth(String address) {
-        return new BluetoothConnectionManager(
+        return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                new DriverObserver0() {
-                    @Override
-                    public void onConnect(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onConnect();
-                    }
-
-                    @Override
-                    public void onDisconnect(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onDisconnect();
-                    }
-
-                    @Override
-                    public void onRemove(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onRemove();
-                    }
-
-                    @Override
-                    public void onChange(Record value) {
-                        driverObserver.onData((AtmosphericPressure) value);
-                    }
-                },
-                new BluetoothHandlerBarometricPressure()
+                driverObserver,
+                new BarometerBluetooth()
         );
     }
 

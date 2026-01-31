@@ -1,4 +1,4 @@
-package de.dennisguse.opentracks.sensors;
+package de.dennisguse.opentracks.sensors.driver;
 
 public enum SensorType {
     NONE("NONE"), //TODO Use R.string.sensor_type_value_none

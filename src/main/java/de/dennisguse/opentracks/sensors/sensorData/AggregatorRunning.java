@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerRunningSpeedAndCadence;
+import de.dennisguse.opentracks.sensors.driver.RunningSpeedAndCadenceBluetooth;
 
 /**
  * Provides cadence in rpm and speed in milliseconds from Bluetooth LE Running Speed and Cadence sensors.
  */
-public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningSpeedAndCadence.Data, AggregatorRunning.Data> {
+public final class AggregatorRunning extends Aggregator<RunningSpeedAndCadenceBluetooth.Data, AggregatorRunning.Data> {
 
     private static final String TAG = AggregatorRunning.class.getSimpleName();
 
@@ -19,7 +19,7 @@ public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningS
     }
 
     @Override
-    public void computeValue(Raw<BluetoothHandlerRunningSpeedAndCadence.Data> current) {
+    public void computeValue(Raw<RunningSpeedAndCadenceBluetooth.Data> current) {
         if (previous == null) {
             return;
         }

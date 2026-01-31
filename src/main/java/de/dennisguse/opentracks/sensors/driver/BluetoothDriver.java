@@ -14,7 +14,7 @@
  * the License.
  */
 
-package de.dennisguse.opentracks.sensors;
+package de.dennisguse.opentracks.sensors.driver;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -31,24 +31,24 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
-import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
+import de.dennisguse.opentracks.sensors.BluetoothUtils;
+import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
 
 /**
  * Manages connection to a Bluetooth LE sensor and subscribes for onChange-notifications.
  */
 @SuppressLint("MissingPermission")
-public class BluetoothConnectionManager implements Driver {
+public class BluetoothDriver<T> implements Driver {
 
-    private static final String TAG = BluetoothConnectionManager.class.getSimpleName();
+    private static final String TAG = BluetoothDriver.class.getSimpleName();
 
-    private final DriverObserver0 observer;
+    private final DriverObserver<T> observer;
 
-    private final SensorHandlerInterface sensorHandler;
+    private final BluetoothParser<T> sensorHandler;
 
     private final BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
@@ -128,11 +128,15 @@ public class BluetoothConnectionManager implements Driver {
                 return;
             }
 
-            sensorHandler.handlePayload(observer, serviceMeasurementUUID.get(), gatt.getDevice().getName(), gatt.getDevice().getAddress(), characteristic);
+            T value = sensorHandler.parsePayload(serviceMeasurementUUID.get(), gatt.getDevice().getName(), characteristic);
+            if (value == null) {
+                return;
+            }
+            observer.onData(value);
         }
     };
 
-    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, DriverObserver0 observer, SensorHandlerInterface sensorHandler) {
+    public BluetoothDriver(BluetoothAdapter bluetoothAdapter, DriverObserver<T> observer, BluetoothParser<T> sensorHandler) {
         this.bluetoothAdapter = bluetoothAdapter;
         this.observer = observer;
         this.sensorHandler = sensorHandler;
@@ -145,24 +149,9 @@ public class BluetoothConnectionManager implements Driver {
             return;
         }
 
-        if (SensorType.NONE.getPreferenceValue().equals(address)) {
-            Log.w(TAG, "NONE: going to disconnect");
-            if (isConnected()) {
-                disconnect();
-                observer.onRemove(sensorHandler.createEmptySensorData(null, null));
-            }
-            return;
-        }
-
         if (isConnected()) {
-            Log.w(TAG, "Already connected; ignoring.");
+            Log.e(TAG, "Already connected; ignoring.");
             return;
-        }
-
-        if (isSameBluetoothDevice(address)) {
-            return;
-        } else {
-            disconnect();
         }
 
         BluetoothDevice device;
@@ -177,11 +166,11 @@ public class BluetoothConnectionManager implements Driver {
 
         bluetoothGatt = device.connectGatt(context, false, connectCallback, BluetoothDevice.TRANSPORT_AUTO, 0, handler);
 
-        observer.onConnect(sensorHandler.createEmptySensorData(device.getAddress(), device.getName()));
+        observer.onConnect(); //TODO pass device.getAddress(), device.getName()
     }
 
     private synchronized void clearData() {
-        observer.onDisconnect(sensorHandler.createEmptySensorData(bluetoothGatt.getDevice().getAddress(), bluetoothGatt.getDevice().getName()));
+        observer.onDisconnect();
     }
 
     @Override
@@ -214,5 +203,12 @@ public class BluetoothConnectionManager implements Driver {
     @Override
     public boolean isConnected() {
         return bluetoothGatt != null;
+    }
+
+    public interface BluetoothParser<T> {
+
+        List<ServiceMeasurementUUID> getServices();
+
+        T parsePayload(ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, BluetoothGattCharacteristic characteristic);
     }
 }

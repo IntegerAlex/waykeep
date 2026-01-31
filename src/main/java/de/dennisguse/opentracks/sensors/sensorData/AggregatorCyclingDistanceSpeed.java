@@ -8,10 +8,10 @@ import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.UintUtils;
+import de.dennisguse.opentracks.sensors.driver.CyclingDistanceSpeedBluetooth;
 
-public class AggregatorCyclingDistanceSpeed extends Aggregator<BluetoothHandlerCyclingDistanceSpeed.WheelData, AggregatorCyclingDistanceSpeed.Data> {
+public class AggregatorCyclingDistanceSpeed extends Aggregator<CyclingDistanceSpeedBluetooth.WheelData, AggregatorCyclingDistanceSpeed.Data> {
 
     private final String TAG = AggregatorCyclingDistanceSpeed.class.getSimpleName();
 
@@ -22,7 +22,7 @@ public class AggregatorCyclingDistanceSpeed extends Aggregator<BluetoothHandlerC
     }
 
     @Override
-    protected void computeValue(Raw<BluetoothHandlerCyclingDistanceSpeed.WheelData> current) {
+    protected void computeValue(Raw<CyclingDistanceSpeedBluetooth.WheelData> current) {
         if (previous == null) {
             return;
         }

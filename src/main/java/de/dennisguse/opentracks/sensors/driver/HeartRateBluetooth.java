@@ -1,4 +1,4 @@
-package de.dennisguse.opentracks.sensors;
+package de.dennisguse.opentracks.sensors.driver;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.data.models.HeartRate;
-import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
-import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
-import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
+import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
 
-public class BluetoothHandlerHeartRate implements SensorHandlerInterface {
+public class HeartRateBluetooth implements BluetoothDriver.BluetoothParser<HeartRate> {
 
     public static final ServiceMeasurementUUID HEARTRATE = new ServiceMeasurementUUID(
             new UUID(0x180D00001000L, 0x800000805f9b34fbL),
@@ -36,17 +34,8 @@ public class BluetoothHandlerHeartRate implements SensorHandlerInterface {
     }
 
     @Override
-    public AggregatorHeartRate createEmptySensorData(String address, String name) {
-        return new AggregatorHeartRate(address, name);
-    }
-
-    @Override
-    public void handlePayload(DriverObserver0 observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
-        HeartRate heartRate = parseHeartRate(characteristic);
-
-        if (heartRate == null) return;
-
-        observer.onChange(heartRate);
+    public HeartRate parsePayload(@NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, BluetoothGattCharacteristic characteristic) {
+        return parseHeartRate(characteristic);
     }
 
     @VisibleForTesting

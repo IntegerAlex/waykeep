@@ -3,16 +3,16 @@ package de.dennisguse.opentracks.sensors.sensorData;
 import androidx.annotation.NonNull;
 
 import de.dennisguse.opentracks.data.models.Power;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingPower;
+import de.dennisguse.opentracks.sensors.driver.CyclingPowerBluetooth;
 
-public class AggregatorCyclingPower extends Aggregator<BluetoothHandlerCyclingPower.Data, Power> {
+public class AggregatorCyclingPower extends Aggregator<CyclingPowerBluetooth.Data, Power> {
 
     public AggregatorCyclingPower(String name, String address) {
         super(name, address);
     }
 
     @Override
-    public void computeValue(Raw<BluetoothHandlerCyclingPower.Data> current) {
+    public void computeValue(Raw<CyclingPowerBluetooth.Data> current) {
         this.aggregatedValue = current.value().power();
     }
 

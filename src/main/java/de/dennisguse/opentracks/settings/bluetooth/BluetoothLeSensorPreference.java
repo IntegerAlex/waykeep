@@ -28,8 +28,8 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.sensors.BluetoothUtils;
-import de.dennisguse.opentracks.sensors.SensorType;
 import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
+import de.dennisguse.opentracks.sensors.driver.SensorType;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
 

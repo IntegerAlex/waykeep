@@ -7,7 +7,7 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 
 import java.util.List;
 
-import de.dennisguse.opentracks.sensors.BluetoothHandlerTemperature;
+import de.dennisguse.opentracks.sensors.driver.TemperatureBluetooth;
 
 public class BluetoothLeTemperaturePreference extends BluetoothLeSensorPreference {
 
@@ -30,6 +30,6 @@ public class BluetoothLeTemperaturePreference extends BluetoothLeSensorPreferenc
     @Override
     public PreferenceDialogFragmentCompat createInstance() {
         return BluetoothLeSensorPreferenceDialog
-                .newInstance(getKey(), List.of(BluetoothHandlerTemperature.TEMPERATURE));
+                .newInstance(getKey(), List.of(TemperatureBluetooth.TEMPERATURE));
     }
 }

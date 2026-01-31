@@ -3,12 +3,12 @@ package de.dennisguse.opentracks.sensors;
 import androidx.annotation.NonNull;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.driver.DriverObserver0;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
+import de.dennisguse.opentracks.sensors.driver.RunningSpeedAndCadenceBluetooth;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
 
-public class RunningSpeedCadenceDistanceHandler extends SensorHandler<BluetoothHandlerRunningSpeedAndCadence.Data> {
+public class RunningSpeedCadenceDistanceHandler extends SensorHandler<RunningSpeedAndCadenceBluetooth.Data> {
 
     protected RunningSpeedCadenceDistanceHandler(SensorManager sensorManager) {
         super(sensorManager);
@@ -17,30 +17,10 @@ public class RunningSpeedCadenceDistanceHandler extends SensorHandler<BluetoothH
     @NonNull
     @Override
     protected Driver createDriverBluetooth(String address) {
-        return new BluetoothConnectionManager(
+        return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                new DriverObserver0() {
-                    @Override
-                    public void onConnect(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onConnect();
-                    }
-
-                    @Override
-                    public void onDisconnect(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onDisconnect();
-                    }
-
-                    @Override
-                    public void onRemove(Aggregator<?, ?> emptySensorData) {
-                        driverObserver.onRemove();
-                    }
-
-                    @Override
-                    public void onChange(Record value) {
-                        driverObserver.onData((BluetoothHandlerRunningSpeedAndCadence.Data) value);
-                    }
-                },
-                new BluetoothHandlerRunningSpeedAndCadence()
+                driverObserver,
+                new RunningSpeedAndCadenceBluetooth()
         );
     }
 
