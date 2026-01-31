@@ -341,7 +341,7 @@ public class TrackRecordingServiceRecordingTest {
         trackPointCreator.setClock(sensor1);
 
         AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
-        sensorManager.add(avgHeartRate);
+        sensorManager.setAggregator(avgHeartRate);
 
         //Should be ignored
         avgHeartRate.add(trackPointCreator.getNow(), HeartRate.of(5));
@@ -812,7 +812,7 @@ public class TrackRecordingServiceRecordingTest {
 
         AggregatorRunning aggregatorRunning = new AggregatorRunning("", "");
         SensorManager sensorManager = trackPointCreator.getSensorManager();
-        sensorManager.add(aggregatorRunning);
+        sensorManager.setAggregator(aggregatorRunning);
 
         // when
         String sensor1 = "2020-02-02T02:02:03Z";

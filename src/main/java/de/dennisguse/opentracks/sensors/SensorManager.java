@@ -17,7 +17,6 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
@@ -247,40 +246,23 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         return null;
     }
 
-    //TODO Remove
-    @VisibleForTesting
-    @Deprecated
-    public void add(@NonNull Aggregator<?, ?> data) {
-        if (data instanceof AggregatorHeartRate) {
-            heartRateHandler.setAggregator((AggregatorHeartRate) data);
-            return;
-        }
-        if (data instanceof AggregatorTemperature) {
-            temperatureHandler.setAggregator((AggregatorTemperature) data);
-            return;
-        }
-        if (data instanceof AggregatorCyclingCadence) {
-            cyclingCadenceHandler.setAggregator((AggregatorCyclingCadence) data);
-            return;
-        }
-        if (data instanceof AggregatorCyclingDistanceSpeed) {
-            cyclingDistanceSpeedHandler.setAggregator((AggregatorCyclingDistanceSpeed) data);
-            return;
-        }
-        if (data instanceof AggregatorCyclingPower) {
-            cyclingPowerHandler.setAggregator((AggregatorCyclingPower) data);
-            return;
-        }
-        if (data instanceof AggregatorRunning) {
-            runningSpeedCadenceDistanceHandler.setAggregator((AggregatorRunning) data);
-            return;
-        }
-
-        throw new UnsupportedOperationException(data.getClass().getCanonicalName());
-    }
-
     public void onChange() {
         observer.onChange();
+    }
+
+    public SensorDataSet getSensorDataSet(Instant now) {
+        AggregatorGPS gps = gpsManager.getAggregatorGPS();
+
+        return new SensorDataSet(
+                gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
+                getSpeed(now),
+                getDistance(now),
+                getHeartRate(now),
+                temperatureHandler.getSensorData(now),
+                getCadence(now),
+                cyclingPowerHandler.getSensorData(now),
+                altitudeChangeHandler.getSensorData(now)
+        );
     }
 
     @VisibleForTesting
@@ -314,18 +296,33 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         }
     }
 
-    public SensorDataSet getSensorDataSet(Instant now) {
-        AggregatorGPS gps = gpsManager.getAggregatorGPS();
+    @VisibleForTesting
+    public void setAggregator(AggregatorHeartRate data) {
+        heartRateHandler.setAggregator(data);
+    }
 
-        return new SensorDataSet(
-                gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
-                getSpeed(now),
-                getDistance(now),
-                getHeartRate(now),
-                temperatureHandler.getSensorData(now),
-                getCadence(now),
-                cyclingPowerHandler.getSensorData(now),
-                altitudeChangeHandler.getSensorData(now)
-        );
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorTemperature data) {
+        temperatureHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingCadence data) {
+        cyclingCadenceHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingDistanceSpeed data) {
+        cyclingDistanceSpeedHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingPower data) {
+        cyclingPowerHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorRunning data) {
+        runningSpeedCadenceDistanceHandler.setAggregator(data);
     }
 }

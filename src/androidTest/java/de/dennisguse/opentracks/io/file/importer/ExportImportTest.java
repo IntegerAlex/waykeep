@@ -664,12 +664,12 @@ public class ExportImportTest {
 
         AggregatorCyclingPower cyclingPower = new AggregatorCyclingPower("", "");
         cyclingPower.add(trackPointCreator.getNow(), new CyclingPowerBluetooth.Data(Power.of(power), null));
-        sensorManager.add(cyclingPower);
+        sensorManager.setAggregator(cyclingPower);
 
 
         AggregatorHeartRate avgHeartRate = new AggregatorHeartRate("", "");
         avgHeartRate.add(trackPointCreator.getNow(), HeartRate.of(heartRate));
-        sensorManager.add(avgHeartRate);
+        sensorManager.setAggregator(avgHeartRate);
 
         AggregatorCyclingCadence cyclingCadence = new AggregatorCyclingCadence("", "") {
             @NonNull
@@ -683,7 +683,7 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorManager.add(cyclingCadence);
+        sensorManager.setAggregator(cyclingCadence);
 
         if (distance != null && speed != null) {
             AggregatorCyclingDistanceSpeed aggregatorCyclingDistanceSpeed = new AggregatorCyclingDistanceSpeed("", "") {
@@ -698,14 +698,14 @@ public class ExportImportTest {
                     return true;
                 }
             };
-            sensorManager.add(aggregatorCyclingDistanceSpeed);
+            sensorManager.setAggregator(aggregatorCyclingDistanceSpeed);
         } else {
-            sensorManager.add(new AggregatorCyclingDistanceSpeed("", ""));
+            sensorManager.setAggregator(new AggregatorCyclingDistanceSpeed("", ""));
         }
 
         mockAltitudeChange(trackPointCreator, altitudeGain);
 
-        sensorManager.add(new AggregatorTemperature("", "'") {
+        sensorManager.setAggregator(new AggregatorTemperature("", "'") {
             @NonNull
             @Override
             public Temperature getAggregatedValue(Instant now) {
