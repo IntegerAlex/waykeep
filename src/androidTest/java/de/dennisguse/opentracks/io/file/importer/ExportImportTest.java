@@ -725,7 +725,7 @@ public class ExportImportTest {
         SensorManager sensorManager = trackPointCreator.getSensorManager();
 
         if (altitudeGain == null) {
-            sensorManager.getAltitudeSumManager().setAggregator(new AggregatorBarometer("test", null));
+            sensorManager.getAltitudeChangeHandler().setAggregator(new AggregatorBarometer("test", null));
             return;
         }
 
@@ -741,7 +741,7 @@ public class ExportImportTest {
                 return true;
             }
         };
-        sensorManager.getAltitudeSumManager().setAggregator(aggregatorBarometer);
+        sensorManager.getAltitudeChangeHandler().setAggregator(aggregatorBarometer);
     }
 
     private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {

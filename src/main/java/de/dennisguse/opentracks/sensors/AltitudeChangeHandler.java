@@ -15,9 +15,9 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
  * Estimates the altitude gain and altitude loss using the device's pressure sensor (i.e., barometer).
  */
 //TODO Rename class
-public class GainManager extends SensorHandler<AtmosphericPressure> {
+public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure> {
 
-    public GainManager(SensorManager sensorManager) {
+    public AltitudeChangeHandler(SensorManager sensorManager) {
         super(sensorManager);
     }
 

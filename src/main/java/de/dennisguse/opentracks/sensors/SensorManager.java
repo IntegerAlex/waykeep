@@ -17,7 +17,6 @@ import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.driver.BluetoothDriver;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
@@ -53,7 +52,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     private CyclingPowerHandler cyclingPowerHandler;
     private RunningSpeedCadenceDistanceHandler runningSpeedCadenceDistanceHandler;
 
-    private GainManager altitudeSumManager;
+    private AltitudeChangeHandler altitudeChangeHandler;
 
     private GpsManager gpsManager;
 
@@ -71,7 +70,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.handler = handler;
 
         gpsManager = new GpsManager(observer, this);
-        altitudeSumManager = new GainManager(this);
+        altitudeChangeHandler = new AltitudeChangeHandler(this);
         this.heartRateHandler = new HeartRateHandler(this);
         this.temperatureHandler = new TemperatureHandler(this);
         this.cyclingCadenceHandler = new CyclingCadenceHandler(this);
@@ -79,7 +78,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.cyclingPowerHandler = new CyclingPowerHandler(this);
         this.runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
 
-        altitudeSumManager.start(context, handler);
+        altitudeChangeHandler.start(context, handler);
         heartRateHandler.start(context, handler);
         temperatureHandler.start(context, handler);
         cyclingCadenceHandler.start(context, handler);
@@ -113,8 +112,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         runningSpeedCadenceDistanceHandler.stop();
         runningSpeedCadenceDistanceHandler = null;
 
-        altitudeSumManager.stop();
-        altitudeSumManager = null;
+        altitudeChangeHandler.stop();
+        altitudeChangeHandler = null;
 
         gpsManager.stop();
         gpsManager = null;
@@ -124,7 +123,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public void reset() {
-        if (gpsManager == null || altitudeSumManager == null) {
+        if (gpsManager == null || altitudeChangeHandler == null) {
             Log.d(TAG, "No recording running and no reset necessary.");
             return;
         }
@@ -137,7 +136,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (cyclingDistanceSpeedHandler.getAggregator() != null) cyclingDistanceSpeedHandler.getAggregator().resetAggregated();
         if (cyclingPowerHandler.getAggregator() != null) cyclingPowerHandler.getAggregator().resetAggregated();
         if (runningSpeedCadenceDistanceHandler.getAggregator() != null) runningSpeedCadenceDistanceHandler.getAggregator().resetAggregated();
-        if (altitudeSumManager.getAggregator() != null) altitudeSumManager.getAggregator().resetAggregated();
+        if (altitudeChangeHandler.getAggregator() != null) altitudeChangeHandler.getAggregator().resetAggregated();
         if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
     }
 
@@ -147,18 +146,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     @Deprecated
     @VisibleForTesting
-    public GainManager getAltitudeSumManager() {
-        return altitudeSumManager;
-    }
-
-    @Deprecated
-    @VisibleForTesting
-    public void setAltitudeSumManager(GainManager altitudeSumManager) {
-        this.altitudeSumManager = altitudeSumManager;
-    }
-
-    private synchronized void connect(BluetoothDriver connectionManager, String address) {
-        connectionManager.connect(context, handler, address);
+    public AltitudeChangeHandler getAltitudeChangeHandler() {
+        return altitudeChangeHandler;
     }
 
     @Override
@@ -166,8 +155,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (gpsManager != null) {
             gpsManager.onSharedPreferenceChanged(sharedPreferences, key);
 
-            if (PreferencesUtils.isKey(altitudeSumManager.getSensorPreferenceKey(), key)) {
-                altitudeSumManager.connect();
+            if (PreferencesUtils.isKey(altitudeChangeHandler.getSensorPreferenceKey(), key)) {
+                altitudeChangeHandler.connect();
             }
 
             if (PreferencesUtils.isKey(heartRateHandler.getSensorPreferenceKey(), key)) {
@@ -292,8 +281,8 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         Log.i(TAG, "Removing all aggregators");
 
         //TODO This is to ExportImportTest alive; refactor test.
-        if (this.altitudeSumManager != null) {
-            this.altitudeSumManager.setAggregator(null);
+        if (this.altitudeChangeHandler != null) {
+            this.altitudeChangeHandler.setAggregator(null);
         }
         if (this.heartRateHandler != null) {
             this.heartRateHandler.setAggregator(null);
@@ -320,7 +309,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     public SensorDataSet getSensorDataSet(Instant now) {
         AggregatorGPS gps = gpsManager.getAggregatorGPS();
-        AggregatorBarometer barometer = (AggregatorBarometer) altitudeSumManager.getAggregator();
+        AggregatorBarometer barometer = (AggregatorBarometer) altitudeChangeHandler.getAggregator();
 
         return new SensorDataSet(
                 gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),

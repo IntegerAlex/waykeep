@@ -972,7 +972,7 @@ public class TrackRecordingServiceRecordingTest {
     }
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, float altitudeGain) {
-        trackPointCreator.getSensorManager().getAltitudeSumManager().setAggregator(new AggregatorBarometer("", "") {
+        trackPointCreator.getSensorManager().getAltitudeChangeHandler().setAggregator(new AggregatorBarometer("", "") {
             @Override
             public boolean hasReceivedData() {
                 return true;
