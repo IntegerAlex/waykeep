@@ -32,7 +32,6 @@ import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.SystemUtils;
 
-//TODO provide context and handler for different Managers (not passing via start(), but similar to getNow()).
 public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SensorManager.class.getSimpleName();
@@ -71,20 +70,12 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
         gpsManager = new GpsManager(observer, this);
         altitudeChangeHandler = new AltitudeChangeHandler(this);
-        this.heartRateHandler = new HeartRateHandler(this);
-        this.temperatureHandler = new TemperatureHandler(this);
-        this.cyclingCadenceHandler = new CyclingCadenceHandler(this);
-        this.cyclingDistanceSpeedHandler = new CyclingDistanceSpeedHandler(this);
-        this.cyclingPowerHandler = new CyclingPowerHandler(this);
-        this.runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
-
-        altitudeChangeHandler.start(context, handler);
-        heartRateHandler.start(context, handler);
-        temperatureHandler.start(context, handler);
-        cyclingCadenceHandler.start(context, handler);
-        cyclingDistanceSpeedHandler.start(context, handler);
-        cyclingPowerHandler.start(context, handler);
-        runningSpeedCadenceDistanceHandler.start(context, handler);
+        heartRateHandler = new HeartRateHandler(this);
+        temperatureHandler = new TemperatureHandler(this);
+        cyclingCadenceHandler = new CyclingCadenceHandler(this);
+        cyclingDistanceSpeedHandler = new CyclingDistanceSpeedHandler(this);
+        cyclingPowerHandler = new CyclingPowerHandler(this);
+        runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
 
         onSharedPreferenceChanged(null, null);
 
@@ -94,25 +85,25 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     public void stop() {
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
 
-        heartRateHandler.stop();
+        heartRateHandler.disconnect();
         heartRateHandler = null;
 
-        temperatureHandler.stop();
+        temperatureHandler.disconnect();
         temperatureHandler = null;
 
-        cyclingCadenceHandler.stop();
+        cyclingCadenceHandler.disconnect();
         cyclingCadenceHandler = null;
 
-        cyclingDistanceSpeedHandler.stop();
+        cyclingDistanceSpeedHandler.disconnect();
         cyclingDistanceSpeedHandler = null;
 
-        cyclingPowerHandler.stop();
+        cyclingPowerHandler.disconnect();
         cyclingPowerHandler = null;
 
-        runningSpeedCadenceDistanceHandler.stop();
+        runningSpeedCadenceDistanceHandler.disconnect();
         runningSpeedCadenceDistanceHandler = null;
 
-        altitudeChangeHandler.stop();
+        altitudeChangeHandler.disconnect();
         altitudeChangeHandler = null;
 
         gpsManager.stop();
@@ -189,8 +180,15 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         return observer.getNow();
     }
 
-    @VisibleForTesting
-    public SensorData<HeartRate> getHeartRate(Instant now) {
+    public Context getContext() {
+        return context;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    private SensorData<HeartRate> getHeartRate(Instant now) {
         if (heartRateHandler.getAggregator() != null) {
             SensorData<HeartRate> value = ((AggregatorHeartRate) heartRateHandler.getAggregator()).getAggregatedValueWithSensorName(now);
             //TODO Move this check into HeartRateHandler

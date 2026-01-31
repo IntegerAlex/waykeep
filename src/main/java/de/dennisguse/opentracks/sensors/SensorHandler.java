@@ -1,7 +1,6 @@
 package de.dennisguse.opentracks.sensors;
 
 import android.content.Context;
-import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -16,8 +15,6 @@ public abstract class SensorHandler<T> {
 
     private final SensorManager sensorManager;
 
-    private Context context;
-    private Handler handler;
     private Driver driver;
 
     private Aggregator<T, ?> aggregator;
@@ -49,19 +46,6 @@ public abstract class SensorHandler<T> {
         this.sensorManager = sensorManager;
     }
 
-    //TODO Do we really need start and stop?
-    void start(Context context, Handler handler) {
-        this.context = context;
-        this.handler = handler;
-    }
-
-    void stop() {
-        this.context = null;
-        this.handler = null;
-
-        disconnect();
-    }
-
     void connect() {
         disconnect();
 
@@ -80,7 +64,7 @@ public abstract class SensorHandler<T> {
             default -> throw new UnsupportedOperationException();
         }
 
-        driver.connect(context, handler, address);
+        driver.connect(sensorManager.getContext(), sensorManager.getHandler(), address);
     }
 
     void disconnect() {
@@ -106,7 +90,7 @@ public abstract class SensorHandler<T> {
     protected abstract int getSensorPreferenceKey();
 
     protected Context getContext() {
-        return context;
+        return sensorManager.getContext();
     }
 
     //TODO Try to keep aggregator private.
