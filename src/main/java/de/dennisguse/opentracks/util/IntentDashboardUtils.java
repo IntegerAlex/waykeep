@@ -24,6 +24,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  * Create an {@link Intent} to request showing tracks on a Map or a Dashboard.
  * The receiving {@link android.app.Activity} gets temporary access to the {@link TracksColumns} and the {@link TrackPointsColumns} (incl. update).
  */
+//TODO Add a test for the table structure exposed via the DashboardAPI.
 public class IntentDashboardUtils {
 
     private static final String TAG = IntentDashboardUtils.class.getSimpleName();
@@ -40,8 +41,9 @@ public class IntentDashboardUtils {
     /**
      * version 1: the initial version.
      * version 2: replaced pause/resume trackpoints for track segmentation (lat=100 / lat=200) by TrackPoint.Type.
+     * version 3: renamed track database columns.
      */
-    private static final int CURRENT_VERSION = 2;
+    private static final int CURRENT_VERSION = 3;
 
     private static final String EXTRAS_OPENTRACKS_IS_RECORDING_THIS_TRACK = "EXTRAS_OPENTRACKS_IS_RECORDING_THIS_TRACK";
     private static final String EXTRAS_SHOULD_KEEP_SCREEN_ON = "EXTRAS_SHOULD_KEEP_SCREEN_ON";

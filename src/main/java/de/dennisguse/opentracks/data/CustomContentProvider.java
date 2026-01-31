@@ -278,7 +278,7 @@ public class CustomContentProvider extends ContentProvider {
                 queryBuilder.appendWhere(MarkerColumns._ID + "=" + ContentUris.parseId(url));
             }
             case MARKERS_BY_TRACKID -> {
-                queryBuilder.setTables(MarkerColumns.TABLE_NAME + " LEFT OUTER JOIN (SELECT 'unused' AS ICON)"); //TODO Workaround: Column icon was removed in v4.24.0, but is still required for OSM Dashboard v6.4.1.
+                queryBuilder.setTables(MarkerColumns.TABLE_NAME);
                 queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
             }
             default -> throw new IllegalArgumentException("Unknown url " + url);
