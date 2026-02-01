@@ -27,8 +27,8 @@ public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth
 
     @NonNull
     @Override
-    protected AggregatorCyclingCadence createAggregator() {
-        return new AggregatorCyclingCadence("", null);
+    protected AggregatorCyclingCadence createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorCyclingCadence(sensorAddress, sensorName);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class BarometerInternal implements Driver {
 
         if (sensorManager.registerListener(sensorEventListener, pressureSensor, SAMPLING_PERIOD, handler)) {
             this.context = context;
-            observer.onConnect();
+            observer.onConnect(null, null);
             return;
         }
 

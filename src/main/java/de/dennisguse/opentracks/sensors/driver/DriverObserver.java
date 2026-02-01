@@ -2,7 +2,7 @@ package de.dennisguse.opentracks.sensors.driver;
 
 
 public interface DriverObserver<T> {
-    void onConnect();
+    void onConnect(String sensorAddress, String sensorName);
 
     void onDisconnect();
 

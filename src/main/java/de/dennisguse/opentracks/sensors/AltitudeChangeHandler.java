@@ -44,7 +44,7 @@ public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure, Al
 
     @NonNull
     @Override
-    public AggregatorBarometer createAggregator() {
-        return new AggregatorBarometer("", null);
+    public AggregatorBarometer createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorBarometer(sensorAddress, sensorName);
     }
 }

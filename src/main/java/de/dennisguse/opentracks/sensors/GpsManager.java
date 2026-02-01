@@ -120,7 +120,7 @@ public class GpsManager implements DriverObserver<Location>, GpsStatusManager.Gp
     }
 
     @Override
-    public void onConnect() {
+    public void onConnect(String sensorAddress, String sensorName) {
         gpsStatusManager.onGpsEnabled();
     }
 

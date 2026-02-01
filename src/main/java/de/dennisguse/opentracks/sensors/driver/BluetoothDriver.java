@@ -166,7 +166,7 @@ public class BluetoothDriver<T> implements Driver {
 
         bluetoothGatt = device.connectGatt(context, false, connectCallback, BluetoothDevice.TRANSPORT_AUTO, 0, handler);
 
-        observer.onConnect(); //TODO pass device.getAddress(), device.getName()
+        observer.onConnect(device.getAddress(), device.getName());
     }
 
     private synchronized void clearData() {

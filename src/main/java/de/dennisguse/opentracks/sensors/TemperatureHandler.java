@@ -27,8 +27,8 @@ public class TemperatureHandler extends SensorHandler<Temperature, Temperature> 
 
     @NonNull
     @Override
-    protected AggregatorTemperature createAggregator() {
-        return new AggregatorTemperature("", null);
+    protected AggregatorTemperature createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorTemperature(sensorAddress, sensorName);
     }
 
     @Override

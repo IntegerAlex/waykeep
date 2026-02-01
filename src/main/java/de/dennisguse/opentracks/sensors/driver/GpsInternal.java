@@ -28,7 +28,7 @@ public class GpsInternal implements Driver {
 
         @Override
         public void onProviderEnabled(@NonNull String provider) {
-            driverObserver.onConnect();
+            driverObserver.onConnect(null, provider);
         }
 
         @Override

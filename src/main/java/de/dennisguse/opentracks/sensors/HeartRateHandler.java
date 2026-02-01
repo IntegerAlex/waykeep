@@ -27,8 +27,8 @@ public class HeartRateHandler extends SensorHandler<HeartRate, HeartRate> {
 
     @NonNull
     @Override
-    protected AggregatorHeartRate createAggregator() {
-        return new AggregatorHeartRate("", null);
+    protected AggregatorHeartRate createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorHeartRate(sensorAddress, sensorName);
     }
 
     @Override

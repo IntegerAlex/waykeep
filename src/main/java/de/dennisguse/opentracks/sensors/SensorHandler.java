@@ -25,8 +25,8 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
 
     protected final DriverObserver<AggregatorInput> driverObserver = new DriverObserver<>() {
         @Override
-        public void onConnect() {
-            SensorHandler.this.aggregator = createAggregator();
+        public void onConnect(String sensorAddress, String sensorName) {
+            SensorHandler.this.aggregator = createAggregator(sensorAddress, sensorName);
         }
 
         @Override
@@ -89,7 +89,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
     }
 
     @NonNull
-    protected abstract Aggregator<AggregatorInput, AggregatorOutput> createAggregator();
+    protected abstract Aggregator<AggregatorInput, AggregatorOutput> createAggregator(String sensorAddress, String sensorName);
 
     protected abstract int getSensorPreferenceKey();
 

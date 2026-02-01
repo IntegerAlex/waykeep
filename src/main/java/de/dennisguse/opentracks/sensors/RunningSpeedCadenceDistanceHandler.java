@@ -26,7 +26,7 @@ public class RunningSpeedCadenceDistanceHandler extends SensorHandler<RunningSpe
 
     @NonNull
     @Override
-    protected AggregatorRunning createAggregator() {
+    protected AggregatorRunning createAggregator(String sensorAddress, String sensorName) {
         return new AggregatorRunning("", null);
     }
 

@@ -27,8 +27,8 @@ public class CyclingPowerHandler extends SensorHandler<CyclingPowerBluetooth.Dat
 
     @NonNull
     @Override
-    protected AggregatorCyclingPower createAggregator() {
-        return new AggregatorCyclingPower("", null);
+    protected AggregatorCyclingPower createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorCyclingPower(sensorAddress, sensorName);
     }
 
     @Override

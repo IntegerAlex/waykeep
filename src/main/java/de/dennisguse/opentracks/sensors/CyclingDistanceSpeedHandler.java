@@ -27,8 +27,8 @@ public class CyclingDistanceSpeedHandler extends SensorHandler<CyclingDistanceSp
 
     @NonNull
     @Override
-    protected AggregatorCyclingDistanceSpeed createAggregator() {
-        return new AggregatorCyclingDistanceSpeed("", null);
+    protected AggregatorCyclingDistanceSpeed createAggregator(String sensorAddress, String sensorName) {
+        return new AggregatorCyclingDistanceSpeed(sensorAddress, sensorName);
     }
 
     @Override
