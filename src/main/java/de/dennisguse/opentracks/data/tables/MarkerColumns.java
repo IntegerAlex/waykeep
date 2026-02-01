@@ -39,32 +39,32 @@ public interface MarkerColumns extends BaseColumns {
     String DEFAULT_SORT_ORDER = _ID;
 
     // Columns
-    String NAME = "name"; // marker name
-    String DESCRIPTION = "description"; // marker description
-    String TYPE_LOCALIZED = "category";
-    String TRACKID = "trackid"; // track id
-    String LONGITUDE = "longitude"; // longitude
-    String LATITUDE = "latitude"; // latitude
-    String TIME = "time"; // time
-    String ALTITUDE = "elevation"; // altitude //TODO RENAME column
-    String HORIZONTAL_ACCURACY = "accuracy"; // accuracy
-    String BEARING = "bearing"; // bearing
+    String NAME = "name";
+    String DESCRIPTION = "description";
+    String TYPE_LOCALIZED = "marker_type_localized";
+    String TRACKID = "trackid";
+    String LONGITUDE = "longitude";
+    String LATITUDE = "latitude";
+    String TIME = "time";
+    String ALTITUDE = "altitude";
+    String HORIZONTAL_ACCURACY = "accuracy";
+    String BEARING = "bearing";
 
     String PHOTOURL = "photoUrl"; // url for the photo
 
     String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + TRACKID + " INTEGER NOT NULL, "
             + NAME + " TEXT, "
             + DESCRIPTION + " TEXT, "
             + TYPE_LOCALIZED + " TEXT, "
-            + TRACKID + " INTEGER NOT NULL, "
+            + PHOTOURL + " TEXT, "
             + LONGITUDE + " INTEGER, "
             + LATITUDE + " INTEGER, "
             + TIME + " INTEGER, "
             + ALTITUDE + " FLOAT, "
             + HORIZONTAL_ACCURACY + " FLOAT, "
             + BEARING + " FLOAT, "
-            + PHOTOURL + " TEXT, "
             + "FOREIGN KEY (" + TRACKID + ") REFERENCES " + TracksColumns.TABLE_NAME + "(" + TracksColumns._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
             + ")";
 

@@ -29,7 +29,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 41;
+    private static final int DATABASE_VERSION = 42;
 
     private final Context context;
 
@@ -85,6 +85,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 39 -> upgradeFrom38to39(db);
                 case 40 -> upgradeFrom39to40(db);
                 case 41 -> upgradeFrom40to41(db);
+                case 42 -> upgradeFrom41to42(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -113,6 +114,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 38 -> downgradeFrom39to38(db);
                 case 39 -> downgradeFrom40to39(db);
                 case 40 -> downgradeFrom41to40(db);
+                case 41 -> downgradeFrom42to41(db);
                 default -> throw new RuntimeException("Not implemented: downgrade to " + toVersion);
             }
         }
@@ -760,6 +762,34 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE trackpoints_old");
 
         db.execSQL("CREATE INDEX trackpoints_trackid_index ON trackpoints(trackid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void upgradeFrom41to42(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("ALTER TABLE markers RENAME TO markers_old");
+        db.execSQL("CREATE TABLE markers (_id INTEGER PRIMARY KEY AUTOINCREMENT, trackid INTEGER NOT NULL, name TEXT, description TEXT, marker_type_localized TEXT, photoUrl TEXT, longitude INTEGER, latitude INTEGER, time INTEGER, altitude FLOAT, accuracy FLOAT, bearing FLOAT, FOREIGN KEY (trackid) REFERENCES tracks(_id) ON UPDATE CASCADE ON DELETE CASCADE)");
+        db.execSQL("INSERT INTO markers SELECT _id, trackid, name, description, category, photoUrl, longitude, latitude, time, elevation, accuracy, bearing FROM markers_old");
+        db.execSQL("DROP TABLE markers_old");
+
+        db.execSQL("CREATE INDEX markers_trackid_index ON markers(trackid)");
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void downgradeFrom42to41(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        db.execSQL("ALTER TABLE markers RENAME TO markers_old");
+        db.execSQL("CREATE TABLE markers (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, category TEXT, trackid INTEGER NOT NULL, longitude INTEGER, latitude INTEGER, time INTEGER, elevation FLOAT, accuracy FLOAT, bearing FLOAT, photoUrl TEXT, FOREIGN KEY (trackid) REFERENCES tracks(_id) ON UPDATE CASCADE ON DELETE CASCADE)");
+        db.execSQL("INSERT INTO markers SELECT _id, name, description, marker_type_localized, trackid, longitude, latitude, time, altitude, accuracy, bearing, photoUrl FROM markers_old");
+        db.execSQL("DROP TABLE markers_old");
+
+        db.execSQL("CREATE INDEX markers_trackid_index ON markers(trackid)");
 
         db.setTransactionSuccessful();
         db.endTransaction();
