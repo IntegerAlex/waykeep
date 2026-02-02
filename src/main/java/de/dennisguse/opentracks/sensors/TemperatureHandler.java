@@ -20,7 +20,7 @@ public class TemperatureHandler extends SensorHandler<Temperature, Temperature> 
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new TemperatureBluetooth()
         );
     }

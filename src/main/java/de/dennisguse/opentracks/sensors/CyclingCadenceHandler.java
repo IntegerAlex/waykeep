@@ -20,7 +20,7 @@ public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new CyclingCadenceBluetooth()
         );
     }

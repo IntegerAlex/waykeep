@@ -21,15 +21,10 @@ public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure, Al
         super(sensorManager);
     }
 
-    @Override
-    protected int getSensorPreferenceKey() {
-        return R.string.settings_sensor_bluetooth_pressure_key;
-    }
-
     @NonNull
     @Override
     protected Driver createDriverInternal() {
-        return new BarometerInternal(driverObserver);
+        return new BarometerInternal(this);
     }
 
     @NonNull
@@ -37,7 +32,7 @@ public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure, Al
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new BarometerBluetooth()
         );
     }
@@ -46,5 +41,10 @@ public class AltitudeChangeHandler extends SensorHandler<AtmosphericPressure, Al
     @Override
     public AggregatorBarometer createAggregator(String sensorAddress, String sensorName) {
         return new AggregatorBarometer(sensorAddress, sensorName);
+    }
+
+    @Override
+    protected int getSensorPreferenceKey() {
+        return R.string.settings_sensor_bluetooth_pressure_key;
     }
 }

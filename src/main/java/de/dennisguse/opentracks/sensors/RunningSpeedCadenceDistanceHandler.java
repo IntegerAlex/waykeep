@@ -19,7 +19,7 @@ public class RunningSpeedCadenceDistanceHandler extends SensorHandler<RunningSpe
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new RunningSpeedAndCadenceBluetooth()
         );
     }

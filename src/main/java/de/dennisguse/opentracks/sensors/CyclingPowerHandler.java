@@ -20,7 +20,7 @@ public class CyclingPowerHandler extends SensorHandler<CyclingPowerBluetooth.Dat
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new CyclingPowerBluetooth()
         );
     }

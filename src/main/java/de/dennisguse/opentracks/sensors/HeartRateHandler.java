@@ -20,7 +20,7 @@ public class HeartRateHandler extends SensorHandler<HeartRate, HeartRate> {
     protected Driver createDriverBluetooth(String address) {
         return new BluetoothDriver<>(
                 BluetoothUtils.getAdapter(getContext()),
-                driverObserver,
+                this,
                 new HeartRateBluetooth()
         );
     }

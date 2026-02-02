@@ -15,36 +15,13 @@ import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 
-public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
+public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implements DriverObserver<AggregatorInput> {
 
     private final SensorManager sensorManager;
 
     private Driver driver;
 
-    private Aggregator<AggregatorInput, AggregatorOutput> aggregator;
-
-    protected final DriverObserver<AggregatorInput> driverObserver = new DriverObserver<>() {
-        @Override
-        public void onConnected(String sensorAddress, String sensorName) {
-            SensorHandler.this.aggregator = createAggregator(sensorAddress, sensorName);
-        }
-
-        @Override
-        public void onConnectionLost() {
-            SensorHandler.this.aggregator.resetAggregated();
-        }
-
-        @Override
-        public void onDataReceived(AggregatorInput value) {
-            SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
-            sensorManager.onChange();
-        }
-
-        @Override
-        public void onDisconnected() {
-            SensorHandler.this.aggregator = null;
-        }
-    };
+    protected Aggregator<AggregatorInput, AggregatorOutput> aggregator;
 
     protected SensorHandler(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
@@ -57,7 +34,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
 
         switch (PreferencesUtils.getSensorType(address)) {
             case NONE -> {
-                driverObserver.onDisconnected();
+                onDisconnected();
                 return;
             }
             case INTERNAL -> {
@@ -116,5 +93,25 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
     @VisibleForTesting
     public void setAggregator(Aggregator<AggregatorInput, AggregatorOutput> aggregator) {
         this.aggregator = aggregator;
+    }
+
+    public void onConnected(String sensorAddress, String sensorName) {
+        SensorHandler.this.aggregator = createAggregator(sensorAddress, sensorName);
+    }
+
+    @Override
+    public void onConnectionLost() {
+        SensorHandler.this.aggregator.resetAggregated();
+    }
+
+    @Override
+    public void onDataReceived(AggregatorInput value) {
+        SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
+        sensorManager.onChange();
+    }
+
+    @Override
+    public void onDisconnected() {
+        SensorHandler.this.aggregator = null;
     }
 }
