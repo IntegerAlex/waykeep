@@ -18,7 +18,7 @@ limitations under the License.
     <string name="activity_type_airplane">αεροπλάνο</string>
     <string name="activity_type_atv">ATV</string>
     <string name="activity_type_biking">ποδηλασία</string>
-    <string name="activity_type_blimp">μικρό αερόστατο</string>
+    <string name="activity_type_blimp">αερόπλοιο</string>
     <string name="activity_type_boat">πλοίο</string>
     <string name="activity_type_climbing">αναρρίχηση</string>
     <string name="activity_type_commercial_airplane">εμπορικό αεροπλάνο</string>
@@ -29,8 +29,8 @@ limitations under the License.
     <string name="activity_type_driving">οδήγηση</string>
     <string name="activity_type_driving_bus">οδήγηση λεωφορείου</string>
     <string name="activity_type_driving_car">οδήγηση αυτοκινήτου</string>
-    <string name="activity_type_ferry">Φέρι μποτ</string>
-    <string name="activity_type_frisbee">φρισμπι</string>
+    <string name="activity_type_ferry">φέρι μποτ</string>
+    <string name="activity_type_frisbee">φρίσμπι</string>
     <string name="activity_type_gliding">ανεμόπτερο</string>
     <string name="activity_type_hang_gliding">αιωροπτερισμός</string>
     <string name="activity_type_helicopter">ελικόπτερο</string>
@@ -44,15 +44,15 @@ limitations under the License.
     <string name="activity_type_land_sailing">ιστιοπλοΐα γης</string>
     <string name="activity_type_mixed_type">μικτού τύπου</string>
     <string name="activity_type_motor_bike">μηχανάκι</string>
-    <string name="activity_type_motor_boating">Μηχανοκίνητα σκάφη</string>
-    <string name="activity_type_mountain_biking">Ποδηλασία στο βουνό</string>
+    <string name="activity_type_motor_boating">μηχανοκίνητο σκάφος</string>
+    <string name="activity_type_mountain_biking">ποδηλασία στο βουνό</string>
     <string name="activity_type_off_trail_hiking">πεζοπορία σε ανώμαλο έδαφος</string>
-    <string name="activity_type_other">Άλλη</string>
+    <string name="activity_type_other">άλλη</string>
     <string name="activity_type_paddling">κωπηλασία</string>
     <string name="activity_type_para_gliding">παραπέντε</string>
     <string name="activity_type_rc_airplane">τηλεχειριζόμενο αεροπλάνο</string>
-    <string name="activity_type_rc_boat">Τηλεχειριζόμενη βάρκα</string>
-    <string name="activity_type_rc_helicopter">Τηλεχειριζόμενο ελικόπτερο</string>
+    <string name="activity_type_rc_boat">τηλεχειριζόμενη βάρκα</string>
+    <string name="activity_type_rc_helicopter">τηλεχειριζόμενο ελικόπτερο</string>
     <string name="activity_type_riding">ιππασία</string>
     <string name="activity_type_road_biking">ποδηλασία</string>
     <string name="activity_type_roller_skiing">ρόλερ σκι ρολό</string>
@@ -302,4 +302,27 @@ limitations under the License.
     <string name="waypoint_type_waterfall">καταρράκτης</string>
     <string name="waypoint_type_water_fountain">συντριβάνι</string>
     <string name="waypoint_type_waypoint">σημείο διαδρομής</string>
+    <string name="about_preference_title">Σχετικά</string>
+    <string name="about_url">Ιστότοπους εγχειρήματος: <a href="%1$s">%1$s</a></string>
+    <string name="about_version_name">Όνομα έκδοσης: %1$s</string>
+    <string name="about_version_code">Κωδικός έκδοσης: %1$d</string>
+    <string name="about_third_party_data">Δεδομένα από τρίτους</string>
+    <string name="about_libraries">Βιβλιοθήκες</string>
+    <string name="help_feature_title">Το OpenTracks έχει τα ακόλουθα χαρακτηριστικά:</string>
+    <string name="help_data_google_play_services_title">Το OpenTracks χρειάζεται/χρησιμοποιεί τις Υπηρεσίες Google Play;</string>
+    <string name="help_data_google_play_services_content">Όχι</string>
+    <string name="help_recording_title">Πώς το OpenTracks καταγράφει τα δεδομένα;</string>
+    <string name="help_track_map_title">Πώς να εμφανιστεί ένα ίχνος στον χάρτη;</string>
+    <string name="help_gps_troubleshooting_title">Το OpenTracks δεν καταγράφει τοποθεσίες;</string>
+    <string name="help_support_title">Πώς να υποστηρίξω το OpenTracks;</string>
+    <string name="open_track_as_trackfileformat">Ανοίγμα ως %1$s</string>
+    <string name="activity_type_escooter">ηλεκτρικό πατίνι</string>
+    <string name="activity_type_kickscooter">πατίνι</string>
+    <string name="power_x_watt">Ισχύς {x, plural, =1 {1 watt} other {# watts} }</string>
+    <string name="power">Ισχύς</string>
+    <string name="report_bug">Αναφορά προβλήματος</string>
+    <string name="always">Πάντα</string>
+    <string name="settings_recording_min_sampling_interval_title">Χρονικό μεσοδιάστημα δειγματοληψίας</string>
+    <string name="settings_recording_location_distance_summary">%1$s μεταξύ καταγεγραμμένων τοποθεσιών</string>
+    <string name="field_remove_from_layout">Αφαίρεση</string>
 </resources>
