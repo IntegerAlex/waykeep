@@ -756,6 +756,6 @@ public class ExportImportTest {
         mockAltitudeChange(trackPointCreator, altitudeGain);
 
         trackPointCreator.setClock(time);
-        trackPointCreator.getSensorManager().getGpsManager().onData(location);
+        trackPointCreator.getSensorManager().getGpsManager().onDataReceived(location);
     }
 }

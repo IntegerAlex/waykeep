@@ -23,17 +23,17 @@ public class GpsInternal implements Driver {
     private final LocationListenerCompat locationListenerCompat = new LocationListenerCompat() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            driverObserver.onData(location);
+            driverObserver.onDataReceived(location);
         }
 
         @Override
         public void onProviderEnabled(@NonNull String provider) {
-            driverObserver.onConnect(null, provider);
+            driverObserver.onConnected(null, provider);
         }
 
         @Override
         public void onProviderDisabled(@NonNull String provider) {
-            driverObserver.onDisconnect();
+            driverObserver.onConnectionLost();
         }
     };
 
@@ -63,10 +63,14 @@ public class GpsInternal implements Driver {
             try {
                 Log.i(TAG, "Register for location updates " + context);
                 LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, locationRequest, handler::post, locationListenerCompat);
+                driverObserver.onConnected(null, null);
+                return;
             } catch (SecurityException e) {
                 Log.e(TAG, "Could not register location listener; permissions not granted.", e);
             }
         }
+
+        driverObserver.onDisconnected();
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -77,7 +81,7 @@ public class GpsInternal implements Driver {
         LocationManagerCompat.removeUpdates(locationManager, locationListenerCompat);
 
         locationManager = null;
-        driverObserver.onDisconnect();
+        driverObserver.onDisconnected();
     }
 
 

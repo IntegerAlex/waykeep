@@ -21,7 +21,7 @@ public class BarometerInternal implements Driver {
 
     private final DriverObserver<AtmosphericPressure> observer;
 
-    private Context context;
+    private android.hardware.SensorManager sensorService;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
@@ -31,7 +31,7 @@ public class BarometerInternal implements Driver {
                 return;
             }
 
-            observer.onData(AtmosphericPressure.ofHPA(event.values[0]));
+            observer.onDataReceived(AtmosphericPressure.ofHPA(event.values[0]));
         }
 
         @Override
@@ -46,34 +46,28 @@ public class BarometerInternal implements Driver {
 
     @Override
     public void connect(Context context, Handler handler, String addressIgnored) {
+        sensorService = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        Sensor pressureSensor = sensorService.getDefaultSensor(Sensor.TYPE_PRESSURE);
 
-        android.hardware.SensorManager sensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        Sensor pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        if (pressureSensor == null) {
-            Log.w(TAG, "No pressure sensor available.");
+        if (pressureSensor != null && sensorService.registerListener(sensorEventListener, pressureSensor, SAMPLING_PERIOD, handler)) {
+            observer.onConnected(null, null);
             return;
         }
 
-        if (sensorManager.registerListener(sensorEventListener, pressureSensor, SAMPLING_PERIOD, handler)) {
-            this.context = context;
-            observer.onConnect(null, null);
-            return;
-        }
-
-        disconnect();
+        Log.w(TAG, "No pressure sensor available.");
+        observer.onDisconnected();
     }
 
     @Override
     public boolean isConnected() {
-        return context != null;
+        return sensorService != null;
     }
 
     @Override
     public void disconnect() {
         if (!isConnected()) return;
 
-        android.hardware.SensorManager sensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.unregisterListener(sensorEventListener);
-        this.context = null;
+        sensorService.unregisterListener(sensorEventListener);
+        sensorService = null;
     }
 }

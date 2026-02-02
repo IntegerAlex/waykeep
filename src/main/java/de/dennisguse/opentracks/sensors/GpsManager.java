@@ -120,22 +120,22 @@ public class GpsManager implements DriverObserver<Location>, GpsStatusManager.Gp
     }
 
     @Override
-    public void onConnect(String sensorAddress, String sensorName) {
+    public void onConnected(String sensorAddress, String sensorName) {
         gpsStatusManager.onGpsEnabled();
     }
 
     @Override
-    public void onDisconnect() {
+    public void onConnectionLost() {
         gpsStatusManager.onGpsDisabled();
     }
 
     @Override
-    public void onRemove() {
+    public void onDisconnected() {
         gpsStatusManager.onGpsDisabled();
     }
 
     @Override
-    public void onData(Location location) {
+    public void onDataReceived(Location location) {
         // Send each update to the status; please note that this TrackPoint is not stored.
         Position position = Position.of(location, observer.getNow());
         gpsStatusManager.onNewTrackPoint(position);

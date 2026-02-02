@@ -995,6 +995,6 @@ public class TrackRecordingServiceRecordingTest {
         location.setSpeed(speed);
 
         trackPointCreator.setClock(time);
-        trackPointCreator.getSensorManager().getGpsManager().onData(location);
+        trackPointCreator.getSensorManager().getGpsManager().onDataReceived(location);
     }
 }

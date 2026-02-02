@@ -56,27 +56,29 @@ public class BluetoothDriver<T> implements Driver {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             switch (newState) {
-                case BluetoothProfile.STATE_CONNECTING ->
-                        Log.i(TAG, gatt.getDevice() + ": connecting to sensor");
+                case BluetoothProfile.STATE_CONNECTING -> {
+                    Log.i(TAG, gatt.getDevice() + ": connecting to sensor");
+                }
                 case BluetoothProfile.STATE_CONNECTED -> {
                     Log.i(TAG, gatt.getDevice() + ": connected to sensor; discovering services");
                     gatt.discoverServices();
                 }
-                case BluetoothProfile.STATE_DISCONNECTING ->
-                        Log.i(TAG, gatt.getDevice() + ": disconnecting from sensor: ");
+                case BluetoothProfile.STATE_DISCONNECTING -> Log.i(TAG, gatt.getDevice() + ": disconnecting from sensor: ");
                 case BluetoothProfile.STATE_DISCONNECTED -> {
                     //This is also triggered, if no connection was established (ca. 30s)
                     Log.i(TAG, gatt.getDevice() + ": disconnected from sensor: trying to reconnect");
                     if (gatt.connect()) {
                         Log.e(TAG, gatt.getDevice() + ": could not trigger reconnect for sensor");
                     }
-                    clearData();
+                    observer.onConnectionLost();
                 }
             }
         }
 
         @Override
         public void onServicesDiscovered(@NonNull BluetoothGatt gatt, int status) {
+            BluetoothDevice device = gatt.getDevice();
+
             BluetoothGattService gattService = null;
             ServiceMeasurementUUID serviceMeasurement = null;
             for (ServiceMeasurementUUID s : sensorHandler.getServices()) {
@@ -88,13 +90,13 @@ public class BluetoothDriver<T> implements Driver {
             }
 
             if (gattService == null) {
-                Log.e(TAG, gatt.getDevice() + ": could not get gattService for serviceUUID=" + serviceMeasurement);
+                Log.e(TAG, device + ": could not get gattService for serviceUUID=" + serviceMeasurement);
                 return;
             }
 
             BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(serviceMeasurement.measurementUUID());
             if (characteristic == null) {
-                Log.e(TAG, gatt.getDevice() + ": could not get BluetoothCharacteristic for serviceUUID=" + serviceMeasurement.serviceUUID() + " characteristicUUID=" + serviceMeasurement.measurementUUID());
+                Log.e(TAG, device + ": could not get BluetoothCharacteristic for serviceUUID=" + serviceMeasurement.serviceUUID() + " characteristicUUID=" + serviceMeasurement.measurementUUID());
                 return;
             }
             gatt.setCharacteristicNotification(characteristic, true);
@@ -112,6 +114,8 @@ public class BluetoothDriver<T> implements Driver {
             if (!gatt.writeDescriptor(descriptor)) {
                 Log.e(TAG, "CLIENT_CHARACTERISTIC_CONFIG_UUID descriptor could not be written");
             }
+
+            observer.onConnected(device.getAddress(), device.getName());
         }
 
         @Override
@@ -132,7 +136,7 @@ public class BluetoothDriver<T> implements Driver {
             if (value == null) {
                 return;
             }
-            observer.onData(value);
+            observer.onDataReceived(value);
         }
     };
 
@@ -165,36 +169,22 @@ public class BluetoothDriver<T> implements Driver {
         Log.d(TAG, device + ": trying to connect");
 
         bluetoothGatt = device.connectGatt(context, false, connectCallback, BluetoothDevice.TRANSPORT_AUTO, 0, handler);
-
-        observer.onConnect(device.getAddress(), device.getName());
-    }
-
-    private synchronized void clearData() {
-        observer.onDisconnect();
     }
 
     @Override
     public synchronized void disconnect() {
         if (!isConnected()) {
-            Log.w(TAG, "Not connected; no need to re-connect.");
+            Log.w(TAG, "Not connected; cannot disconnect.");
             return;
         }
         Log.i(TAG, bluetoothGatt.getDevice() + ": start disconnect");
         bluetoothGatt.disconnect();
         bluetoothGatt.close();
-        clearData();
         Log.i(TAG, bluetoothGatt.getDevice() + ": disconnect finished");
         bluetoothGatt = null;
+
+        observer.onDisconnected();
     }
-
-    private synchronized boolean isSameBluetoothDevice(String address) {
-        if (bluetoothGatt == null) {
-            return false;
-        }
-
-        return address.equals(bluetoothGatt.getDevice().getAddress());
-    }
-
 
     private boolean isBluetoothEnabled() {
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();

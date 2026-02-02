@@ -2,11 +2,24 @@ package de.dennisguse.opentracks.sensors.driver;
 
 
 public interface DriverObserver<T> {
-    void onConnect(String sensorAddress, String sensorName);
+    /**
+     * The Driver could connect to the sensor.
+     */
+    void onConnected(String sensorAddress, String sensorName);
 
-    void onDisconnect();
+    /**
+     * Sensor got temporarily disconnected, Driver should try to re-connect.
+     */
+    void onConnectionLost();
 
-    void onData(T value);
+    /**
+     * The Driver provided data from the sensor.
+     */
+    void onDataReceived(T value);
 
-    void onRemove();
+    /**
+     * The Driver was shutdown and no further data will be provided.
+     */
+    //TODO check if really need this, because the driver was told to disconnect and then just signalizes that it finished this task.
+    void onDisconnected();
 }

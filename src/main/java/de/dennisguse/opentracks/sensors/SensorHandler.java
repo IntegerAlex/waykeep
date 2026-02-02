@@ -25,23 +25,23 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
 
     protected final DriverObserver<AggregatorInput> driverObserver = new DriverObserver<>() {
         @Override
-        public void onConnect(String sensorAddress, String sensorName) {
+        public void onConnected(String sensorAddress, String sensorName) {
             SensorHandler.this.aggregator = createAggregator(sensorAddress, sensorName);
         }
 
         @Override
-        public void onDisconnect() {
+        public void onConnectionLost() {
             SensorHandler.this.aggregator.resetAggregated();
         }
 
         @Override
-        public void onData(AggregatorInput value) {
+        public void onDataReceived(AggregatorInput value) {
             SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
             sensorManager.onChange();
         }
 
         @Override
-        public void onRemove() {
+        public void onDisconnected() {
             SensorHandler.this.aggregator = null;
         }
     };
@@ -57,6 +57,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> {
 
         switch (PreferencesUtils.getSensorType(address)) {
             case NONE -> {
+                driverObserver.onDisconnected();
                 return;
             }
             case INTERNAL -> {
