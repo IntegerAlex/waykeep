@@ -253,10 +253,6 @@ public class PreferencesUtils {
         return isReportSpeed(track.activityTypeLocalized());
     }
 
-    public static String getBluetoothSensorAddressNone() {
-        return SensorType.NONE.getPreferenceValue();
-    }
-
     public static SensorType getSensorType(String address) {
         return Arrays.stream(SensorType.values())
                 .filter(it -> it.getPreferenceValue().equals(address))

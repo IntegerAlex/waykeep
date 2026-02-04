@@ -41,6 +41,7 @@ import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
 /**
  * Manages connection to a Bluetooth LE sensor and subscribes for onChange-notifications.
  */
+//TODO Re-act to Bluetooth disabled/enabled
 @SuppressLint("MissingPermission")
 public class BluetoothDriver<T> implements Driver {
 

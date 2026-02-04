@@ -22,4 +22,10 @@ public interface DriverObserver<T> {
      */
     //TODO check if really need this, because the driver was told to disconnect and then just signalizes that it finished this task.
     void onDisconnected();
+
+    /**
+     * The Driver detected that the sensor got deactivated.
+     * For example, the user deactivated the internal GPS.
+     */
+    default void onSensorDeactivated() {}
 }

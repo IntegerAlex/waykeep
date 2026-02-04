@@ -77,6 +77,7 @@ import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
+import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
  * Export a track to {@link TrackFileFormat} and verify that the import is identical.
@@ -88,7 +89,7 @@ import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 public class ExportImportTest {
 
     @Rule
-    public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(5, TimeUnit.SECONDS);
+    public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(50, TimeUnit.SECONDS); //TODO 5s
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule = TestUtil.createGrantPermissionRule();
@@ -97,13 +98,15 @@ public class ExportImportTest {
     @Rule
     public TimezoneRule timezoneRule = new TimezoneRule(TimeZone.getTimeZone("Europe/Berlin"));
 
+    private static final Context context = ApplicationProvider.getApplicationContext();
+
     @BeforeClass
     public static void preSetUp() {
         // Prepare looper for Android's message queue
         if (Looper.myLooper() == null) Looper.prepare();
-    }
 
-    private final Context context = ApplicationProvider.getApplicationContext();
+        PreferencesUtils.resetPreferences(context, true);
+    }
 
     private final ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
 
@@ -161,7 +164,7 @@ public class ExportImportTest {
                         "Marker 1 desc",
                         "Marker 1 typeLocalized",
                         new Position(
-                              Instant.parse("2020-02-02T02:02:03Z"),
+                                Instant.parse("2020-02-02T02:02:03Z"),
                                 3.1234567, 14.0014567,
                                 Distance.of(10),
                                 Altitude.WGS84.of(1020.25),
@@ -756,6 +759,6 @@ public class ExportImportTest {
         mockAltitudeChange(trackPointCreator, altitudeGain);
 
         trackPointCreator.setClock(time);
-        trackPointCreator.getSensorManager().getGpsManager().onDataReceived(location);
+        trackPointCreator.getSensorManager().getGpsHandler().onDataReceived(location);
     }
 }

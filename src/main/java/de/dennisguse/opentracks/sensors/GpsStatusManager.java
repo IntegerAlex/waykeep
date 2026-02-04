@@ -31,7 +31,7 @@ class GpsStatusManager {
     private Duration signalLostThreshold;
 
     private GpsStatusValue gpsStatus = GpsStatusValue.GPS_NONE;
-    private GpsStatusListener client;
+    private GpsStatusListener observer;
     private final Context context;
 
     @Nullable
@@ -44,8 +44,8 @@ class GpsStatusManager {
     };
 
 
-    public GpsStatusManager(Context context, GpsStatusListener client, Handler handler) {
-        this.client = client;
+    public GpsStatusManager(Context context, GpsStatusListener observer, Handler handler) {
+        this.observer = observer;
         this.context = context;
         this.handler = handler;
 
@@ -54,7 +54,7 @@ class GpsStatusManager {
     }
 
     public void start() {
-        client.onGpsStatusChanged(GpsStatusValue.GPS_ENABLED);
+        observer.onGpsStatusChanged(GpsStatusValue.GPS_ENABLED);
     }
 
     /**
@@ -62,9 +62,7 @@ class GpsStatusManager {
      */
     public void stop() {
         stopTimer();
-        client.onGpsStatusChanged(GpsStatusValue.GPS_NONE);
-        client = null;
-        handler = null;
+        observer.onGpsStatusChanged(GpsStatusValue.GPS_NONE);
     }
 
     /**
@@ -159,8 +157,8 @@ class GpsStatusManager {
 
     private void setGpsStatus(GpsStatusValue current) {
         gpsStatus = current;
-        if (client != null) {
-            client.onGpsStatusChanged(current);
+        if (observer != null) {
+            observer.onGpsStatusChanged(current);
         }
     }
 

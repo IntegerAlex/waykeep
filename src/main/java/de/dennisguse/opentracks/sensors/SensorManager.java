@@ -20,7 +20,6 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
-import de.dennisguse.opentracks.sensors.sensorData.AggregatorGPS;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
@@ -51,14 +50,14 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     private AltitudeChangeHandler altitudeChangeHandler;
 
-    private GpsManager gpsManager;
+    private GpsHandler gpsHandler;
 
     public SensorManager(TrackPointCreator observer) {
         this.observer = observer;
     }
 
     public void start(Context context, Handler handler) {
-        if (gpsManager != null) {
+        if (isStarted()) {
             throw new RuntimeException("SensorManager cannot be started twice; stop first.");
         }
 
@@ -66,7 +65,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         this.context = context;
         this.handler = handler;
 
-        gpsManager = new GpsManager(observer, this);
+        gpsHandler = new GpsHandler(this, observer);
         altitudeChangeHandler = new AltitudeChangeHandler(this);
         heartRateHandler = new HeartRateHandler(this);
         temperatureHandler = new TemperatureHandler(this);
@@ -76,8 +75,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
 
         onSharedPreferenceChanged(null, null);
-
-        gpsManager.start(context, handler);
     }
 
     public void stop() {
@@ -104,15 +101,15 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         altitudeChangeHandler.disconnect();
         altitudeChangeHandler = null;
 
-        gpsManager.stop();
-        gpsManager = null;
+        gpsHandler.disconnect();
+        gpsHandler = null;
 
         context = null;
         handler = null;
     }
 
     public void reset() {
-        if (gpsManager == null || altitudeChangeHandler == null) {
+        if (gpsHandler == null || altitudeChangeHandler == null) {
             Log.d(TAG, "No recording running and no reset necessary.");
             return;
         }
@@ -126,11 +123,11 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         cyclingPowerHandler.resetAggregated();
         runningSpeedCadenceDistanceHandler.resetAggregated();
         altitudeChangeHandler.resetAggregated();
-        if (gpsManager.getAggregatorGPS() != null) gpsManager.getAggregatorGPS().resetAggregated();
+        gpsHandler.resetAggregated();
     }
 
-    public GpsManager getGpsManager() {
-        return gpsManager;
+    public GpsHandler getGpsHandler() {
+        return gpsHandler;
     }
 
     @Deprecated
@@ -141,36 +138,38 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        if (gpsManager != null) {
-            gpsManager.onSharedPreferenceChanged(sharedPreferences, key);
+        if (!isStarted()) return;
 
-            if (PreferencesUtils.isKey(altitudeChangeHandler.getSensorPreferenceKey(), key)) {
-                altitudeChangeHandler.connect();
-            }
+        if (PreferencesUtils.isKey(gpsHandler.getSensorPreferenceKey(), key)) {
+            gpsHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(heartRateHandler.getSensorPreferenceKey(), key)) {
-                heartRateHandler.connect();
-            }
+        if (PreferencesUtils.isKey(altitudeChangeHandler.getSensorPreferenceKey(), key)) {
+            altitudeChangeHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(temperatureHandler.getSensorPreferenceKey(), key)) {
-                temperatureHandler.connect();
-            }
+        if (PreferencesUtils.isKey(heartRateHandler.getSensorPreferenceKey(), key)) {
+            heartRateHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
-                cyclingCadenceHandler.connect();
-            }
+        if (PreferencesUtils.isKey(temperatureHandler.getSensorPreferenceKey(), key)) {
+            temperatureHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(cyclingDistanceSpeedHandler.getSensorPreferenceKey(), key)) {
-                cyclingDistanceSpeedHandler.connect();
-            }
+        if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
+            cyclingCadenceHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
-                cyclingPowerHandler.connect();
-            }
+        if (PreferencesUtils.isKey(cyclingDistanceSpeedHandler.getSensorPreferenceKey(), key)) {
+            cyclingDistanceSpeedHandler.connect();
+        }
 
-            if (PreferencesUtils.isKey(runningSpeedCadenceDistanceHandler.getSensorPreferenceKey(), key)) {
-                runningSpeedCadenceDistanceHandler.connect();
-            }
+        if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
+            cyclingPowerHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(runningSpeedCadenceDistanceHandler.getSensorPreferenceKey(), key)) {
+            runningSpeedCadenceDistanceHandler.connect();
         }
     }
 
@@ -251,10 +250,13 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public SensorDataSet getSensorDataSet(Instant now) {
-        AggregatorGPS gps = gpsManager.getAggregatorGPS();
+        SensorData<Position> gpsSensorData = gpsHandler.getSensorData(now);
+
+        var a = temperatureHandler.getSensorData(now);
+        var b = altitudeChangeHandler.getSensorData(now);
 
         return new SensorDataSet(
-                gps != null && gps.hasReceivedData() ? gps.getAggregatedValueWithSensorName(now) : new SensorData<>(Position.of(now), ""),
+                gpsSensorData != null ? gpsSensorData : new SensorData<>(Position.of(now), ""), //We always need a Position(now)
                 getSpeed(now),
                 getDistance(now),
                 getHeartRate(now),
@@ -291,9 +293,13 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         if (runningSpeedCadenceDistanceHandler != null) {
             runningSpeedCadenceDistanceHandler.setAggregator(null);
         }
-        if (this.gpsManager != null) {
-            this.gpsManager.setAggregatorGPS();
+        if (this.gpsHandler != null) {
+            this.gpsHandler.setAggregator(null);
         }
+    }
+
+    private boolean isStarted() {
+        return wakeLock != null;
     }
 
     @VisibleForTesting

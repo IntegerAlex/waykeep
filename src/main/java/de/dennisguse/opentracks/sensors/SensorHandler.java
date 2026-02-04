@@ -10,6 +10,7 @@ import java.time.Instant;
 
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.driver.DriverObserver;
+import de.dennisguse.opentracks.sensors.driver.SensorType;
 import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
 import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
@@ -19,7 +20,8 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     private final SensorManager sensorManager;
 
-    private Driver driver;
+    @VisibleForTesting
+    public Driver driver;
 
     protected Aggregator<AggregatorInput, AggregatorOutput> aggregator;
 
@@ -30,7 +32,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
     void connect() {
         disconnect();
 
-        String address = PreferencesUtils.getString(getSensorPreferenceKey(), PreferencesUtils.getBluetoothSensorAddressNone());
+        String address = PreferencesUtils.getString(getSensorPreferenceKey(), getSensorPreferenceDefaultValue());
 
         switch (PreferencesUtils.getSensorType(address)) {
             case NONE -> {
@@ -71,6 +73,10 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     protected abstract int getSensorPreferenceKey();
 
+    protected String getSensorPreferenceDefaultValue() {
+        return SensorType.NONE.getPreferenceValue();
+    }
+
     protected Context getContext() {
         return sensorManager.getContext();
     }
@@ -106,6 +112,9 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     @Override
     public void onDataReceived(AggregatorInput value) {
+        if (aggregator == null) {
+            throw new RuntimeException("Received data while being disconnected.");
+        }
         SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
         sensorManager.onChange();
     }

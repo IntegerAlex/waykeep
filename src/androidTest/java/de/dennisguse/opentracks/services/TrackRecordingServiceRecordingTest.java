@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.core.location.LocationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -43,6 +44,7 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.importer.TrackPointAssert;
 import de.dennisguse.opentracks.sensors.SensorManager;
+import de.dennisguse.opentracks.sensors.driver.GpsInternal;
 import de.dennisguse.opentracks.sensors.driver.RunningSpeedAndCadenceBluetooth;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorBarometer;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
@@ -151,7 +153,8 @@ public class TrackRecordingServiceRecordingTest {
         Track.Id trackId = service.startNewTrack();
 
         //We do not want the real GPS to interfere.
-        trackPointCreator.getSensorManager().getGpsManager().driver.disconnect();
+        GpsInternal gpsInternal = (GpsInternal)trackPointCreator.getSensorManager().getGpsHandler().driver;
+        LocationManagerCompat.removeUpdates(gpsInternal.locationManager, gpsInternal.locationListenerCompat);
 
         String gps1 = "2020-02-02T02:02:03Z";
         sendGPSLocation(trackPointCreator, gps1, 45.0, 35.0, 1, 15);
@@ -995,6 +998,6 @@ public class TrackRecordingServiceRecordingTest {
         location.setSpeed(speed);
 
         trackPointCreator.setClock(time);
-        trackPointCreator.getSensorManager().getGpsManager().onDataReceived(location);
+        trackPointCreator.getSensorManager().getGpsHandler().onDataReceived(location);
     }
 }

@@ -26,6 +26,7 @@
     <string name="settings_sensor_bluetooth_cycling_power_key" translatable="false">bluetoothCyclingPowerSensor</string>
     <string name="settings_sensor_bluetooth_running_speed_and_cadence_key" translatable="false">bluetoothRunningSpeedAndCadenceSensor</string>
     <string name="settings_sensor_bluetooth_pressure_key" translatable="false">bluetoothPressureSensor</string>
+    <string name="settings_sensor_bluetooth_gps_key" translatable="false">bluetoothGPSSensor</string>
     <string name="sensor_type_value_none" translatable="false">NONE</string>
     <string name="sensor_type_value_internal" translatable="false">INTERNAL</string>
 

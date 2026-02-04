@@ -16,10 +16,6 @@ public abstract class Aggregator<Input, Output> {
     private final String sensorAddress;
     private final String sensorName;
 
-    Aggregator(String sensorAddress) {
-        this(sensorAddress, null);
-    }
-
     Aggregator(String sensorAddress, String sensorName) {
         this.sensorAddress = sensorAddress;
         this.sensorName = sensorName;

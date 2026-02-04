@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.location.LocationListenerCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.core.location.LocationRequestCompat;
@@ -18,9 +19,10 @@ public class GpsInternal implements Driver {
 
     private static final String TAG = GpsInternal.class.getSimpleName();
 
-    private static final String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
+    public static final String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
-    private final LocationListenerCompat locationListenerCompat = new LocationListenerCompat() {
+    @VisibleForTesting
+    public final LocationListenerCompat locationListenerCompat = new LocationListenerCompat() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
             driverObserver.onDataReceived(location);
@@ -33,13 +35,14 @@ public class GpsInternal implements Driver {
 
         @Override
         public void onProviderDisabled(@NonNull String provider) {
-            driverObserver.onConnectionLost();
+            driverObserver.onSensorDeactivated();
         }
     };
 
     private final DriverObserver<Location> driverObserver;
 
-    private LocationManager locationManager;
+    @VisibleForTesting
+    public LocationManager locationManager;
 
     public GpsInternal(DriverObserver<Location> driverObserver) {
         this.driverObserver = driverObserver;
@@ -62,8 +65,8 @@ public class GpsInternal implements Driver {
         if (PermissionRequester.GPS.hasPermission(context)) {
             try {
                 Log.i(TAG, "Register for location updates " + context);
-                LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, locationRequest, handler::post, locationListenerCompat);
                 driverObserver.onConnected(null, null);
+                LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, locationRequest, handler::post, locationListenerCompat);
                 return;
             } catch (SecurityException e) {
                 Log.e(TAG, "Could not register location listener; permissions not granted.", e);
