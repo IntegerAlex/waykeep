@@ -192,6 +192,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         notificationManager.onRecordingStarted(this, recordingStatus.trackId());
 
         // Update instance variables
+        updateRecordingData.run();
         handler.postDelayed(updateRecordingData, RECORDING_DATA_UPDATE_INTERVAL.toMillis());
     }
 
