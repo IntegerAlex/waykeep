@@ -778,7 +778,14 @@ public class PreferencesUtils {
             // We want to really clear settings now.
             sharedPreferences.edit().clear().commit();
         }
+
+        // Each setting file must be mentioned here.
         PreferenceManager.setDefaultValues(context, R.xml.settings, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_defaults, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_user_interface, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_sensors, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_import_export, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_public_api, readAgain);
     }
 
     public static Uri getDefaultExportDirectoryUri() {
