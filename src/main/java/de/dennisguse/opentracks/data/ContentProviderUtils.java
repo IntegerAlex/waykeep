@@ -69,9 +69,11 @@ public class ContentProviderUtils {
 
     private static final String TAG = ContentProviderUtils.class.getSimpleName();
 
+    //TODO Move to CustomContentProvider
     // The authority (the first part of the URI) for the app's content provider.
     static final String AUTHORITY_PACKAGE = BuildConfig.APPLICATION_ID + ".content";
 
+    //TODO Move to CustomContentProvider
     // The base URI for the app's content provider.
     public static final String CONTENT_BASE_URI = "content://" + AUTHORITY_PACKAGE;
 

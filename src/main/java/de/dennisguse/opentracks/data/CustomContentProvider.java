@@ -38,6 +38,7 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
+import de.dennisguse.opentracks.publicapi.DataProvider;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 /**
@@ -94,7 +95,6 @@ public class CustomContentProvider extends ContentProvider {
             "AND t." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")";
 
     public CustomContentProvider() {
-        //TODO Add tests for used URIs (incl. Dashboard API)
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath(), UrlType.TRACKPOINTS.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath() + "/#", UrlType.TRACKPOINTS_BY_ID.ordinal());
@@ -108,6 +108,10 @@ public class CustomContentProvider extends ContentProvider {
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath() + "/#", UrlType.MARKERS_BY_ID.ordinal());
         uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.MARKERS_BY_TRACKID.ordinal());
+
+        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKS_BY_IDS.getPath() + "*", UrlType.DASHBOARD_TRACKS_BY_IDS.ordinal());
+        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.ordinal());
+        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.ordinal());
     }
 
     @Override
@@ -170,12 +174,21 @@ public class CustomContentProvider extends ContentProvider {
 
     @Override
     public String getType(@NonNull Uri url) {
+        String contentType = getUrlType(url).contentType;
+        if (contentType != null) {
+            return contentType;
+        }
+
+        //TODO replace with getUrlType(url).getContentType()
         return switch (getUrlType(url)) {
             case TRACKPOINTS -> TrackPointsColumns.CONTENT_TYPE;
             case TRACKPOINTS_BY_TRACKID -> TrackPointsColumns.CONTENT_ITEMTYPE;
             case TRACKS -> TracksColumns.CONTENT_TYPE;
             case MARKERS -> MarkerColumns.CONTENT_TYPE;
             case MARKERS_BY_TRACKID -> MarkerColumns.CONTENT_ITEMTYPE;
+            case DASHBOARD_TRACKS_BY_IDS -> UrlType.DASHBOARD_TRACKS_BY_IDS.contentType;
+            case DASHBOARD_TRACKPOINTS_BY_TRACKIDS -> UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.contentType;
+            case DASHBOARD_MARKERS_BY_TRACKIDS ->  UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.contentType;
             default -> throw new IllegalArgumentException("Unknown URL " + url);
         };
     }
@@ -225,6 +238,7 @@ public class CustomContentProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         String sortOrder = null;
         String groupBy = null;
+        //TODO queryBuilder.setStrict(true);
         //TODO queryBuilder.appendWhere() should use selectionArgs?
         switch (getUrlType(url)) {
             case TRACKPOINTS -> {
@@ -239,6 +253,11 @@ public class CustomContentProvider extends ContentProvider {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
                 queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
             }
+            case DASHBOARD_TRACKPOINTS_BY_TRACKIDS -> {
+                queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
+                queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_TRACKPOINTS);
+            }
             case TRACKS -> {
                 if (projection != null && Arrays.asList(projection).contains(TracksColumns.MARKER_COUNT)) {
                     queryBuilder.setTables(TracksColumns.TABLE_NAME + " LEFT OUTER JOIN (SELECT " + MarkerColumns.TRACKID + " AS markerTrackId, COUNT(*) AS " + TracksColumns.MARKER_COUNT + " FROM " + MarkerColumns.TABLE_NAME + " GROUP BY " + MarkerColumns.TRACKID + ") ON (" + TracksColumns.TABLE_NAME + "." + TracksColumns._ID + "= markerTrackId)");
@@ -250,6 +269,11 @@ public class CustomContentProvider extends ContentProvider {
             case TRACKS_BY_ID -> {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
                 queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+            }
+            case DASHBOARD_TRACKS_BY_IDS ->  {
+                queryBuilder.setTables(TracksColumns.TABLE_NAME);
+                queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_TRACKS);
             }
             case TRACKS_SENSOR_STATS -> {
                 //TODO Replace with SQLQueryBuilder?
@@ -280,6 +304,11 @@ public class CustomContentProvider extends ContentProvider {
             case MARKERS_BY_TRACKID -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
                 queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+            }
+            case DASHBOARD_MARKERS_BY_TRACKIDS -> {
+                queryBuilder.setTables(MarkerColumns.TABLE_NAME);
+                queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_MARKERS);
             }
             default -> throw new IllegalArgumentException("Unknown url " + url);
         }
@@ -372,9 +401,11 @@ public class CustomContentProvider extends ContentProvider {
         throw new SQLException("Failed to insert a marker " + url);
     }
 
-    private enum UrlType {
+    //TODO Add ContentType as attribute
+    public enum UrlType {
         TRACKPOINTS,
         TRACKPOINTS_BY_ID,
+        //TODO Check if still used
         TRACKPOINTS_BY_TRACKID,
         TRACKS,
         TRACKS_BY_ID,
@@ -382,6 +413,36 @@ public class CustomContentProvider extends ContentProvider {
         TRACKS_AGGREGATED_STATISTICS,
         MARKERS,
         MARKERS_BY_ID,
-        MARKERS_BY_TRACKID
+        @Deprecated //TODO Should not be used anymore
+        MARKERS_BY_TRACKID,
+
+        DASHBOARD_TRACKS_BY_IDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/tracks/"), TracksColumns.CONTENT_TYPE),
+        DASHBOARD_TRACKPOINTS_BY_TRACKIDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/trackpoints/"), TrackPointsColumns.CONTENT_TYPE),
+        DASHBOARD_MARKERS_BY_TRACKIDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/markers/"), MarkerColumns.CONTENT_TYPE);
+
+        private final Uri uri;
+
+        private final String contentType;
+
+        //TODO Add Uri as attribute:
+        //TODO Add ContentType as attribute:
+        @Deprecated()
+        UrlType() {
+            this.uri = null;
+            this.contentType = null;
+        }
+
+        UrlType(Uri uri, String contentType) {
+            this.uri = uri;
+            this.contentType = contentType;
+        }
+
+        public Uri getUri() {
+            return uri;
+        }
+
+        String getPath() {
+            return uri.getPath();
+        }
     }
 }
