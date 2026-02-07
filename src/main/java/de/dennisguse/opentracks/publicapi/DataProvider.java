@@ -1,4 +1,4 @@
-package de.dennisguse.opentracks.util;
+package de.dennisguse.opentracks.publicapi;
 
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -24,10 +24,9 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  * Create an {@link Intent} to request showing tracks on a Map or a Dashboard.
  * The receiving {@link android.app.Activity} gets temporary access to the {@link TracksColumns} and the {@link TrackPointsColumns} (incl. update).
  */
-//TODO Add a test for the table structure exposed via the DashboardAPI.
-public class IntentDashboardUtils {
+public class DataProvider {
 
-    private static final String TAG = IntentDashboardUtils.class.getSimpleName();
+    private static final String TAG = DataProvider.class.getSimpleName();
 
     private static final String ACTION_DASHBOARD = "Intent.OpenTracks-Dashboard";
 
@@ -55,7 +54,7 @@ public class IntentDashboardUtils {
     private static final int MARKERS_URI_INDEX = 2;
     private static final int NONE_SELECTED = -1;
 
-    private IntentDashboardUtils() {
+    private DataProvider() {
     }
 
     /**

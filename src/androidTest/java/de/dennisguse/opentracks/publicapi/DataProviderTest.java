@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 
 @RunWith(AndroidJUnit4.class)
-public class DashboardAPITest {
+public class DataProviderTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
 

@@ -47,6 +47,7 @@ import java.util.Objects;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.TrackListBinding;
+import de.dennisguse.opentracks.publicapi.DataProvider;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
 import de.dennisguse.opentracks.services.MissingPermissionException;
 import de.dennisguse.opentracks.services.RecordingStatus;
@@ -62,7 +63,6 @@ import de.dennisguse.opentracks.ui.aggregatedStatistics.ConfirmDeleteDialogFragm
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.RecyclerViewSwipeDeleteCallback;
-import de.dennisguse.opentracks.util.IntentDashboardUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
 
@@ -367,7 +367,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         if (itemId == R.id.list_context_menu_show_on_map) {
-            IntentDashboardUtils.showTrackOnMap(this, false, trackIds);
+            DataProvider.showTrackOnMap(this, false, trackIds);
             return true;
         }
 

@@ -10,7 +10,6 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
-import de.dennisguse.opentracks.util.IntentDashboardUtils;
 
 public class StartRecording extends AbstractAPIActivity {
 
@@ -61,7 +60,7 @@ public class StartRecording extends AbstractAPIActivity {
         String targetPackage = bundle.getString(EXTRA_STATS_TARGET_PACKAGE, null);
         String targetClass = bundle.getString(EXTRA_STATS_TARGET_CLASS, null);
         if (targetClass != null && targetPackage != null) {
-            IntentDashboardUtils.startDashboard(this, true, targetPackage, targetClass, trackId);
+            DataProvider.startDashboard(this, true, targetPackage, targetClass, trackId);
         }
     }
 
