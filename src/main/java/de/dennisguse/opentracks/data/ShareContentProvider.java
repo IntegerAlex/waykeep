@@ -89,11 +89,10 @@ public class ShareContentProvider extends CustomContentProvider {
         trackIdBuilder.deleteCharAt(trackIdBuilder.lastIndexOf(TRACKID_DELIMITER));
 
         Uri uri = Uri.parse(TracksColumns.CONTENT_URI + "/" + trackFileFormat.getPreferenceId() + "/" + trackIdBuilder + "/" + Uri.encode(filename));
-        String mime = getTypeMime(uri);
 
-        Log.d(TAG, "Created uri " + uri + " with MIME " + mime);
+        Log.d(TAG, "Created uri " + uri + " with MIME " + trackFileFormat.getMimeType());
 
-        return new Pair<>(uri, mime);
+        return new Pair<>(uri, trackFileFormat.getMimeType());
     }
 
     static Set<Track.Id> parseURI(Uri uri) {
@@ -126,6 +125,7 @@ public class ShareContentProvider extends CustomContentProvider {
         }
     }
 
+    @Nullable
     private static TrackFileFormat getTrackFileFormat(@NonNull Uri uri) {
         return switch (uriMatcher.match(uri)) {
             case URI_GPX -> TrackFileFormat.GPX;
@@ -134,14 +134,8 @@ public class ShareContentProvider extends CustomContentProvider {
             case URI_KMZ_WITH_TRACKDETAIL_SENSORDATA_AND_PICTURES ->
                     TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES;
             case URI_CSV -> TrackFileFormat.CSV;
-            default ->
-                    throw new RuntimeException("Could not derive TrackFileFormat from Uri " + uri);
+            default -> null;
         };
-    }
-
-    @Nullable
-    private static String getTypeMime(@NonNull Uri uri) {
-        return getTrackFileFormat(uri).getMimeType();
     }
 
     @Override
@@ -182,9 +176,9 @@ public class ShareContentProvider extends CustomContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        String mime = getTypeMime(uri);
-        if (mime != null) {
-            return mime;
+        TrackFileFormat trackFileFormat = getTrackFileFormat(uri);
+        if (trackFileFormat != null) {
+            return trackFileFormat.getMimeType();
         }
 
         return super.getType(uri);

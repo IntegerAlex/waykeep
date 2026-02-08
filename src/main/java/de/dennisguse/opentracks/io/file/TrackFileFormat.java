@@ -5,7 +5,6 @@ import android.content.res.Resources;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,11 +30,13 @@ public enum TrackFileFormat {
             return new KMLTrackExporter(context, contentProviderUtils, false);
         }
 
+        @NonNull
         @Override
         public String getMimeType() {
             return "application/vnd.google-earth.kml+xml";
         }
 
+        @NonNull
         public String getExtension() {
             return "kml";
         }
@@ -50,11 +51,13 @@ public enum TrackFileFormat {
             return new KMZTrackExporter(context, contentProviderUtils, exportPhotos);
         }
 
+        @NonNull
         @Override
         public String getMimeType() {
             return "application/vnd.google-earth.kmz";
         }
 
+        @NonNull
         public String getExtension() {
             return "kmz";
         }
@@ -72,11 +75,13 @@ public enum TrackFileFormat {
             return new GPXTrackExporter(contentProviderUtils, context.getString(R.string.app_name));
         }
 
+        @NonNull
         @Override
         public String getMimeType() {
             return "application/gpx+xml";
         }
 
+        @NonNull
         public String getExtension() {
             return "gpx";
         }
@@ -88,11 +93,13 @@ public enum TrackFileFormat {
             return new CSVTrackExporter(contentProviderUtils);
         }
 
+        @NonNull
         @Override
         public String getMimeType() {
             return "text/csv";
         }
 
+        @NonNull
         @Override
         public String getExtension() {
             return "csv";
@@ -115,16 +122,10 @@ public enum TrackFileFormat {
         return preferenceIdLabelMap;
     }
 
-    public static TrackFileFormat valueOfPreferenceId(final String preferenceId) {
-        return Arrays.stream(values())
-                .filter(trackFileFormat -> trackFileFormat.getPreferenceId().equals(preferenceId))
-                .findFirst()
-                .orElse(null);
-    }
-
     /**
      * Returns the mime type for each format.
      */
+    @NonNull
     public abstract String getMimeType();
 
     /**
@@ -137,6 +138,7 @@ public enum TrackFileFormat {
     /**
      * Returns the file extension for each format.
      */
+    @NonNull
     public abstract String getExtension();
 
     /**
@@ -149,6 +151,7 @@ public enum TrackFileFormat {
     /**
      * The identifier to be stored in the preferences.
      */
+    @NonNull
     public String getPreferenceId() {
         return preferenceId;
     }
