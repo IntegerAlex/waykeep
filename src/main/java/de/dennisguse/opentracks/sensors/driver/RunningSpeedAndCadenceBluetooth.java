@@ -1,4 +1,4 @@
-package de.dennisguse.opentracks.sensors;
+package de.dennisguse.opentracks.sensors.driver;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
@@ -11,11 +11,9 @@ import java.util.UUID;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
-import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
+import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
 
-public class BluetoothHandlerRunningSpeedAndCadence implements SensorHandlerInterface {
+public class RunningSpeedAndCadenceBluetooth implements BluetoothDriver.BluetoothParser<RunningSpeedAndCadenceBluetooth.Data> {
 
 
     public static final ServiceMeasurementUUID RUNNING_SPEED_CADENCE = new ServiceMeasurementUUID(
@@ -29,14 +27,8 @@ public class BluetoothHandlerRunningSpeedAndCadence implements SensorHandlerInte
     }
 
     @Override
-    public AggregatorRunning createEmptySensorData(String address, String name) {
-        return new AggregatorRunning(address, name);
-    }
-
-    @Override
-    public void handlePayload(SensorManager.SensorDataChangedObserver observer, @NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, String address, BluetoothGattCharacteristic characteristic) {
-        Data data = parseRunningSpeedAndCadence(sensorName, characteristic);
-        observer.onChange(new Raw<>(observer.getNow(), data));
+    public Data parsePayload(ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, BluetoothGattCharacteristic characteristic) {
+        return parseRunningSpeedAndCadence(sensorName, characteristic);
     }
 
     @VisibleForTesting

@@ -6,153 +6,329 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
-import de.dennisguse.opentracks.sensors.sensorData.Aggregator;
-import de.dennisguse.opentracks.sensors.sensorData.Raw;
-import de.dennisguse.opentracks.sensors.sensorData.SensorDataAggregator;
+import de.dennisguse.opentracks.data.models.Cadence;
+import de.dennisguse.opentracks.data.models.Distance;
+import de.dennisguse.opentracks.data.models.HeartRate;
+import de.dennisguse.opentracks.data.models.Position;
+import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingDistanceSpeed;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingPower;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorHeartRate;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorRunning;
+import de.dennisguse.opentracks.sensors.sensorData.AggregatorTemperature;
+import de.dennisguse.opentracks.sensors.sensorData.SensorData;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
+import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.SystemUtils;
 
 public class SensorManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SensorManager.class.getSimpleName();
 
-    //TODO Should be final and not be visible for testing
-    @VisibleForTesting
-    public SensorDataAggregator sensorDataAggregator;
+    private Context context;
+
+    private Handler handler;
 
     private PowerManager.WakeLock wakeLock;
 
     private final TrackPointCreator observer;
 
-    private final SensorDataChangedObserver listener = new SensorDataChangedObserver() {
+    private HeartRateHandler heartRateHandler;
+    private TemperatureHandler temperatureHandler;
+    private CyclingCadenceHandler cyclingCadenceHandler;
+    private CyclingDistanceSpeedHandler cyclingDistanceSpeedHandler;
+    private CyclingPowerHandler cyclingPowerHandler;
+    private RunningSpeedCadenceDistanceHandler runningSpeedCadenceDistanceHandler;
 
-        @Override
-        public void onConnect(Aggregator<?, ?> aggregator) {
-            sensorDataAggregator.add(aggregator);
-        }
+    private AltitudeChangeHandler altitudeChangeHandler;
 
-        @Override
-        public void onChange(Raw<?> data) {
-            sensorDataAggregator.update(data);
-            observer.onChange();
-        }
-
-        @Override
-        public void onDisconnect(Aggregator<?, ?> aggregator) {
-            sensorDataAggregator.add(aggregator);
-        }
-
-        @Override
-        public void onRemove(Aggregator<?, ?> aggregator) {
-            sensorDataAggregator.remove(aggregator);
-        }
-
-        @Override
-        public Instant getNow() {
-            return observer.createNow();
-        }
-    };
-
-    private BluetoothRemoteSensorManager bluetoothSensorManager;
-
-    private GainManager altitudeSumManager;
-
-    private GpsManager gpsManager;
+    private GpsHandler gpsHandler;
 
     public SensorManager(TrackPointCreator observer) {
         this.observer = observer;
-        this.sensorDataAggregator = new SensorDataAggregator();
     }
 
     public void start(Context context, Handler handler) {
-        if (gpsManager != null) {
+        if (isStarted()) {
             throw new RuntimeException("SensorManager cannot be started twice; stop first.");
         }
 
         wakeLock = SystemUtils.acquireWakeLock(context, wakeLock);
+        this.context = context;
+        this.handler = handler;
 
-        gpsManager = new GpsManager(observer, listener);
-        altitudeSumManager = new GainManager(listener);
-        bluetoothSensorManager = new BluetoothRemoteSensorManager(context, handler, listener);
+        gpsHandler = new GpsHandler(this, observer);
+        altitudeChangeHandler = new AltitudeChangeHandler(this);
+        heartRateHandler = new HeartRateHandler(this);
+        temperatureHandler = new TemperatureHandler(this);
+        cyclingCadenceHandler = new CyclingCadenceHandler(this);
+        cyclingDistanceSpeedHandler = new CyclingDistanceSpeedHandler(this);
+        cyclingPowerHandler = new CyclingPowerHandler(this);
+        runningSpeedCadenceDistanceHandler = new RunningSpeedCadenceDistanceHandler(this);
 
         onSharedPreferenceChanged(null, null);
-
-        gpsManager.start(context, handler);
-        altitudeSumManager.start(context, handler);
-        bluetoothSensorManager.start(context, handler);
     }
 
-    public void stop(Context context) {
+    public void stop() {
         wakeLock = SystemUtils.releaseWakeLock(wakeLock);
 
-        bluetoothSensorManager.stop(context);
-        bluetoothSensorManager = null;
+        heartRateHandler.disconnect();
+        heartRateHandler = null;
 
-        altitudeSumManager.stop(context);
-        altitudeSumManager = null;
+        temperatureHandler.disconnect();
+        temperatureHandler = null;
 
-        gpsManager.stop(context);
-        gpsManager = null;
+        cyclingCadenceHandler.disconnect();
+        cyclingCadenceHandler = null;
 
-        sensorDataAggregator.clear();
-    }
+        cyclingDistanceSpeedHandler.disconnect();
+        cyclingDistanceSpeedHandler = null;
 
-    public SensorDataSet getSensorDataSet(Instant now) {
-        return sensorDataAggregator.getSensorData(now);
+        cyclingPowerHandler.disconnect();
+        cyclingPowerHandler = null;
+
+        runningSpeedCadenceDistanceHandler.disconnect();
+        runningSpeedCadenceDistanceHandler = null;
+
+        altitudeChangeHandler.disconnect();
+        altitudeChangeHandler = null;
+
+        gpsHandler.disconnect();
+        gpsHandler = null;
+
+        context = null;
+        handler = null;
     }
 
     public void reset() {
-        if (bluetoothSensorManager == null || altitudeSumManager == null) {
+        if (gpsHandler == null || altitudeChangeHandler == null) {
             Log.d(TAG, "No recording running and no reset necessary.");
             return;
         }
-        sensorDataAggregator.reset();
+
+        Log.i(TAG, "Resetting data");
+
+        heartRateHandler.resetAggregated();
+        temperatureHandler.resetAggregated();
+        cyclingCadenceHandler.resetAggregated();
+        cyclingDistanceSpeedHandler.resetAggregated();
+        cyclingPowerHandler.resetAggregated();
+        runningSpeedCadenceDistanceHandler.resetAggregated();
+        altitudeChangeHandler.resetAggregated();
+        gpsHandler.resetAggregated();
     }
 
-    @VisibleForTesting
-    public void onChanged(Raw<?> data) {
-        listener.onChange(data);
-    }
-
-    public GpsManager getGpsManager() {
-        return gpsManager;
+    public GpsHandler getGpsHandler() {
+        return gpsHandler;
     }
 
     @Deprecated
     @VisibleForTesting
-    public GainManager getAltitudeSumManager() {
-        return altitudeSumManager;
-    }
-
-    @Deprecated
-    @VisibleForTesting
-    public void setAltitudeSumManager(GainManager altitudeSumManager) {
-        this.altitudeSumManager = altitudeSumManager;
+    public AltitudeChangeHandler getAltitudeChangeHandler() {
+        return altitudeChangeHandler;
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        if (gpsManager != null) {
-            gpsManager.onSharedPreferenceChanged(sharedPreferences, key);
-            bluetoothSensorManager.onSharedPreferenceChanged(sharedPreferences, key);
+        if (!isStarted()) return;
+
+        if (PreferencesUtils.isKey(gpsHandler.getSensorPreferenceKey(), key)) {
+            gpsHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(altitudeChangeHandler.getSensorPreferenceKey(), key)) {
+            altitudeChangeHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(heartRateHandler.getSensorPreferenceKey(), key)) {
+            heartRateHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(temperatureHandler.getSensorPreferenceKey(), key)) {
+            temperatureHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
+            cyclingCadenceHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(cyclingDistanceSpeedHandler.getSensorPreferenceKey(), key)) {
+            cyclingDistanceSpeedHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
+            cyclingPowerHandler.connect();
+        }
+
+        if (PreferencesUtils.isKey(runningSpeedCadenceDistanceHandler.getSensorPreferenceKey(), key)) {
+            runningSpeedCadenceDistanceHandler.connect();
         }
     }
 
-    public interface SensorDataChangedObserver {
+    public Instant getNow() {
+        return observer.getNow();
+    }
 
-        void onConnect(Aggregator<?, ?> sensorData);
-        void onChange(Raw<?> sensorData);
+    public Context getContext() {
+        return context;
+    }
 
-        void onDisconnect(Aggregator<?, ?> sensorData);
+    public Handler getHandler() {
+        return handler;
+    }
 
-        void onRemove(Aggregator<?, ?> sensorData);
+    private SensorData<HeartRate> getHeartRate(Instant now) {
+        SensorData<HeartRate> value = heartRateHandler.getSensorData(now);
+        if (value != null) {
 
-        Instant getNow();
+            //TODO Move this check into HeartRateHandler
+            if (value.data().isValid()) return value;
+        }
+
+        return null;
+    }
+
+    private SensorData<Cadence> getCadence(Instant now) {
+        {
+            SensorData<Cadence> value = cyclingCadenceHandler.getSensorData(now);
+            if (value != null) {
+                return cyclingCadenceHandler.getSensorData(now);
+            }
+        }
+
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null && value.data().cadence() != null) {
+            return new SensorData<>(value.data().cadence(), value.sensorNameOrAddress());
+        }
+
+        return null;
+    }
+
+    private SensorData<Distance> getDistance(Instant now) {
+        {
+            SensorData<AggregatorCyclingDistanceSpeed.Data> value = cyclingDistanceSpeedHandler.getSensorData(now);
+            if (value != null) {
+                return new SensorData<>(value.data().distanceOverall(), value.sensorNameOrAddress());
+            }
+        }
+
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null) {
+            return new SensorData<>(value.data().distance(), value.sensorNameOrAddress());
+        }
+
+        return null;
+    }
+
+    //TOOD simplify?
+    private SensorData<Speed> getSpeed(Instant now) {
+        {
+            SensorData<AggregatorCyclingDistanceSpeed.Data> value = cyclingDistanceSpeedHandler.getSensorData(now);
+            if (value != null && value.data() != null && value.data().speed() != null) {
+                return new SensorData<>(value.data().speed(), value.sensorNameOrAddress());
+            }
+        }
+
+        SensorData<AggregatorRunning.Data> value = runningSpeedCadenceDistanceHandler.getSensorData(now);
+        if (value != null && value.data() != null && value.data().speed() != null) {
+            return new SensorData<>(value.data().speed(), value.sensorNameOrAddress());
+        }
+
+        return null;
+    }
+
+    public void onChange() {
+        observer.onChange();
+    }
+
+    public SensorDataSet getSensorDataSet(Instant now) {
+        SensorData<Position> gpsSensorData = gpsHandler.getSensorData(now);
+
+        var a = temperatureHandler.getSensorData(now);
+        var b = altitudeChangeHandler.getSensorData(now);
+
+        return new SensorDataSet(
+                gpsSensorData != null ? gpsSensorData : new SensorData<>(Position.of(now), ""), //We always need a Position(now)
+                getSpeed(now),
+                getDistance(now),
+                getHeartRate(now),
+                temperatureHandler.getSensorData(now),
+                getCadence(now),
+                cyclingPowerHandler.getSensorData(now),
+                altitudeChangeHandler.getSensorData(now)
+        );
+    }
+
+    @VisibleForTesting
+    public void clear() {
+        Log.i(TAG, "Removing all aggregators");
+
+        //TODO This is to ExportImportTest alive; refactor test.
+        if (this.altitudeChangeHandler != null) {
+            this.altitudeChangeHandler.setAggregator(null);
+        }
+        if (this.heartRateHandler != null) {
+            this.heartRateHandler.setAggregator(null);
+        }
+        if (this.temperatureHandler != null) {
+            this.temperatureHandler.setAggregator(null);
+        }
+        if (this.cyclingCadenceHandler != null) {
+            this.cyclingCadenceHandler.setAggregator(null);
+        }
+        if (cyclingDistanceSpeedHandler != null) {
+            cyclingDistanceSpeedHandler.setAggregator(null);
+        }
+        if (cyclingPowerHandler != null) {
+            cyclingPowerHandler.setAggregator(null);
+        }
+        if (runningSpeedCadenceDistanceHandler != null) {
+            runningSpeedCadenceDistanceHandler.setAggregator(null);
+        }
+        if (this.gpsHandler != null) {
+            this.gpsHandler.setAggregator(null);
+        }
+    }
+
+    private boolean isStarted() {
+        return wakeLock != null;
+    }
+
+    @VisibleForTesting
+    public void setAggregator(AggregatorHeartRate data) {
+        heartRateHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorTemperature data) {
+        temperatureHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingCadence data) {
+        cyclingCadenceHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingDistanceSpeed data) {
+        cyclingDistanceSpeedHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorCyclingPower data) {
+        cyclingPowerHandler.setAggregator(data);
+    }
+
+    @VisibleForTesting
+    public void setAggregator(@NonNull AggregatorRunning data) {
+        runningSpeedCadenceDistanceHandler.setAggregator(data);
     }
 }

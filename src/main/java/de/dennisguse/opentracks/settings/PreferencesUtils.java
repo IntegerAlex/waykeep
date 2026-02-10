@@ -48,7 +48,7 @@ import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
-import de.dennisguse.opentracks.sensors.SensorType;
+import de.dennisguse.opentracks.sensors.driver.SensorType;
 import de.dennisguse.opentracks.ui.customRecordingLayout.DataField;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayoutIO;
@@ -253,10 +253,6 @@ public class PreferencesUtils {
         return isReportSpeed(track.activityTypeLocalized());
     }
 
-    private static String getBluetoothSensorAddressNone() {
-        return SensorType.NONE.getPreferenceValue();
-    }
-
     public static SensorType getSensorType(String address) {
         return Arrays.stream(SensorType.values())
                 .filter(it -> it.getPreferenceValue().equals(address))
@@ -264,37 +260,9 @@ public class PreferencesUtils {
                 .orElse(SensorType.REMOTE);
     }
 
-    public static String getBarometerSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_pressure_key, getBluetoothSensorAddressNone());
-    }
-
-    public static String getBluetoothHeartRateSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_heart_rate_key, getBluetoothSensorAddressNone());
-    }
-
-    public static String getBluetoothTemperatureSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_temperature_key, getBluetoothSensorAddressNone());
-    }
-
-    public static String getBluetoothCyclingCadenceSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_cycling_cadence_key, getBluetoothSensorAddressNone());
-    }
-
-    public static String getBluetoothCyclingSpeedSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_cycling_speed_key, getBluetoothSensorAddressNone());
-    }
-
     public static Distance getWheelCircumference() {
         final int DEFAULT = Integer.parseInt(resources.getString(R.string.settings_sensor_bluetooth_cycling_speed_wheel_circumference_default));
         return Distance.ofMM(getInt(R.string.settings_sensor_bluetooth_cycling_speed_wheel_circumference_key, DEFAULT));
-    }
-
-    public static String getBluetoothCyclingPowerSensorAddress() {
-        return getString(R.string.settings_sensor_bluetooth_cycling_power_key, getBluetoothSensorAddressNone());
-    }
-
-    public static String getBluetoothRunningSpeedAndCadenceAddress() {
-        return getString(R.string.settings_sensor_bluetooth_running_speed_and_cadence_key, getBluetoothSensorAddressNone());
     }
 
     public static boolean getBluetoothFilterEnabled() {
@@ -579,6 +547,7 @@ public class PreferencesUtils {
         return entries;
     }
 
+    //TODO Rename to getGpsMinSamplingInterval
     public static Duration getMinSamplingInterval() {
         final Duration MIN_SAMPLING_INTERVAL = getMinSamplingIntervalDefault();
         return Duration.ofSeconds(getInt(R.string.min_sampling_interval_key, (int) MIN_SAMPLING_INTERVAL.getSeconds()));

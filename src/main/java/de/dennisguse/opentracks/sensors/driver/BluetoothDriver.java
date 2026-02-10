@@ -14,7 +14,7 @@
  * the License.
  */
 
-package de.dennisguse.opentracks.sensors;
+package de.dennisguse.opentracks.sensors.driver;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -31,23 +31,25 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import de.dennisguse.opentracks.sensors.driver.Driver;
-import de.dennisguse.opentracks.sensors.sensorData.SensorHandlerInterface;
+import de.dennisguse.opentracks.sensors.BluetoothUtils;
+import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
 
 /**
  * Manages connection to a Bluetooth LE sensor and subscribes for onChange-notifications.
  */
+//TODO Re-act to Bluetooth disabled/enabled
 @SuppressLint("MissingPermission")
-public class BluetoothConnectionManager implements Driver {
+public class BluetoothDriver<T> implements Driver {
 
-    private static final String TAG = BluetoothConnectionManager.class.getSimpleName();
+    private static final String TAG = BluetoothDriver.class.getSimpleName();
 
-    private final SensorManager.SensorDataChangedObserver observer;
+    private final DriverObserver<T> observer;
 
-    private final SensorHandlerInterface sensorHandler;
+    private final BluetoothParser<T> sensorHandler;
 
     private final BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
@@ -55,27 +57,29 @@ public class BluetoothConnectionManager implements Driver {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             switch (newState) {
-                case BluetoothProfile.STATE_CONNECTING ->
-                        Log.i(TAG, gatt.getDevice() + ": connecting to sensor");
+                case BluetoothProfile.STATE_CONNECTING -> {
+                    Log.i(TAG, gatt.getDevice() + ": connecting to sensor");
+                }
                 case BluetoothProfile.STATE_CONNECTED -> {
                     Log.i(TAG, gatt.getDevice() + ": connected to sensor; discovering services");
                     gatt.discoverServices();
                 }
-                case BluetoothProfile.STATE_DISCONNECTING ->
-                        Log.i(TAG, gatt.getDevice() + ": disconnecting from sensor: ");
+                case BluetoothProfile.STATE_DISCONNECTING -> Log.i(TAG, gatt.getDevice() + ": disconnecting from sensor: ");
                 case BluetoothProfile.STATE_DISCONNECTED -> {
                     //This is also triggered, if no connection was established (ca. 30s)
                     Log.i(TAG, gatt.getDevice() + ": disconnected from sensor: trying to reconnect");
                     if (gatt.connect()) {
                         Log.e(TAG, gatt.getDevice() + ": could not trigger reconnect for sensor");
                     }
-                    clearData();
+                    observer.onConnectionLost();
                 }
             }
         }
 
         @Override
         public void onServicesDiscovered(@NonNull BluetoothGatt gatt, int status) {
+            BluetoothDevice device = gatt.getDevice();
+
             BluetoothGattService gattService = null;
             ServiceMeasurementUUID serviceMeasurement = null;
             for (ServiceMeasurementUUID s : sensorHandler.getServices()) {
@@ -87,13 +91,13 @@ public class BluetoothConnectionManager implements Driver {
             }
 
             if (gattService == null) {
-                Log.e(TAG, gatt.getDevice() + ": could not get gattService for serviceUUID=" + serviceMeasurement);
+                Log.e(TAG, device + ": could not get gattService for serviceUUID=" + serviceMeasurement);
                 return;
             }
 
             BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(serviceMeasurement.measurementUUID());
             if (characteristic == null) {
-                Log.e(TAG, gatt.getDevice() + ": could not get BluetoothCharacteristic for serviceUUID=" + serviceMeasurement.serviceUUID() + " characteristicUUID=" + serviceMeasurement.measurementUUID());
+                Log.e(TAG, device + ": could not get BluetoothCharacteristic for serviceUUID=" + serviceMeasurement.serviceUUID() + " characteristicUUID=" + serviceMeasurement.measurementUUID());
                 return;
             }
             gatt.setCharacteristicNotification(characteristic, true);
@@ -111,6 +115,8 @@ public class BluetoothConnectionManager implements Driver {
             if (!gatt.writeDescriptor(descriptor)) {
                 Log.e(TAG, "CLIENT_CHARACTERISTIC_CONFIG_UUID descriptor could not be written");
             }
+
+            observer.onConnected(device.getAddress(), device.getName());
         }
 
         @Override
@@ -127,11 +133,15 @@ public class BluetoothConnectionManager implements Driver {
                 return;
             }
 
-            sensorHandler.handlePayload(observer, serviceMeasurementUUID.get(), gatt.getDevice().getName(), gatt.getDevice().getAddress(), characteristic);
+            T value = sensorHandler.parsePayload(serviceMeasurementUUID.get(), gatt.getDevice().getName(), characteristic);
+            if (value == null) {
+                return;
+            }
+            observer.onDataReceived(value);
         }
     };
 
-    BluetoothConnectionManager(BluetoothAdapter bluetoothAdapter, SensorManager.SensorDataChangedObserver observer, SensorHandlerInterface sensorHandler) {
+    public BluetoothDriver(BluetoothAdapter bluetoothAdapter, DriverObserver<T> observer, BluetoothParser<T> sensorHandler) {
         this.bluetoothAdapter = bluetoothAdapter;
         this.observer = observer;
         this.sensorHandler = sensorHandler;
@@ -144,24 +154,9 @@ public class BluetoothConnectionManager implements Driver {
             return;
         }
 
-        if (SensorType.NONE.getPreferenceValue().equals(address)) {
-            Log.w(TAG, "NONE: going to disconnect");
-            if (isConnected()) {
-                disconnect();
-                observer.onRemove(sensorHandler.createEmptySensorData(null, null));
-            }
-            return;
-        }
-
         if (isConnected()) {
-            Log.w(TAG, "Already connected; ignoring.");
+            Log.e(TAG, "Already connected; ignoring.");
             return;
-        }
-
-        if (isSameBluetoothDevice(address)) {
-            return;
-        } else {
-            disconnect();
         }
 
         BluetoothDevice device;
@@ -175,36 +170,22 @@ public class BluetoothConnectionManager implements Driver {
         Log.d(TAG, device + ": trying to connect");
 
         bluetoothGatt = device.connectGatt(context, false, connectCallback, BluetoothDevice.TRANSPORT_AUTO, 0, handler);
-
-        observer.onConnect(sensorHandler.createEmptySensorData(device.getAddress(), device.getName()));
-    }
-
-    private synchronized void clearData() {
-        observer.onDisconnect(sensorHandler.createEmptySensorData(bluetoothGatt.getDevice().getAddress(), bluetoothGatt.getDevice().getName()));
     }
 
     @Override
     public synchronized void disconnect() {
         if (!isConnected()) {
-            Log.w(TAG, "Not connected; no need to re-connect.");
+            Log.w(TAG, "Not connected; cannot disconnect.");
             return;
         }
         Log.i(TAG, bluetoothGatt.getDevice() + ": start disconnect");
         bluetoothGatt.disconnect();
         bluetoothGatt.close();
-        clearData();
         Log.i(TAG, bluetoothGatt.getDevice() + ": disconnect finished");
         bluetoothGatt = null;
+
+        observer.onDisconnected();
     }
-
-    private synchronized boolean isSameBluetoothDevice(String address) {
-        if (bluetoothGatt == null) {
-            return false;
-        }
-
-        return address.equals(bluetoothGatt.getDevice().getAddress());
-    }
-
 
     private boolean isBluetoothEnabled() {
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
@@ -213,5 +194,12 @@ public class BluetoothConnectionManager implements Driver {
     @Override
     public boolean isConnected() {
         return bluetoothGatt != null;
+    }
+
+    public interface BluetoothParser<T> {
+
+        List<ServiceMeasurementUUID> getServices();
+
+        T parsePayload(ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, BluetoothGattCharacteristic characteristic);
     }
 }

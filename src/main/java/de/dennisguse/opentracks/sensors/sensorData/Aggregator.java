@@ -1,79 +1,74 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
 
-public abstract class Aggregator<Input, Output> {
+public abstract class Aggregator<InputType, OutputType> {
 
     private static final Duration MAX_SENSOR_DATE_SET_AGE = Duration.ofSeconds(5);
 
-    protected Raw<Input> previous;
+    @Nullable
+    protected Raw<InputType> previous;
 
-    protected Output aggregatedValue;
+    //TODO Make private
+    protected OutputType output;
 
     private final String sensorAddress;
     private final String sensorName;
-
-    Aggregator(String sensorAddress) {
-        this(sensorAddress, null);
-    }
 
     Aggregator(String sensorAddress, String sensorName) {
         this.sensorAddress = sensorAddress;
         this.sensorName = sensorName;
     }
 
-    public String getSensorNameOrAddress() {
+    private String getSensorNameOrAddress() {
         return sensorName != null ? sensorName : sensorAddress;
     }
 
-    public final void add(Raw<Input> current) {
-        computeValue(current);
-        previous = current;
+    public final void add(Instant now, InputType current) {
+        Raw<InputType> next = new Raw<>(now, current);
+        computeValue(next);
+        previous = next;
     }
 
-    protected abstract void computeValue(Raw<Input> current);
+    protected abstract void computeValue(Raw<InputType> current);
 
     /**
      * @return did we process data from a sensor.
      * NOTE: for some sensors this may require more than one measurement.
      */
     public boolean hasReceivedData() {
-        return aggregatedValue != null;
+        return output != null;
     }
 
-    @Deprecated //TODO Remove: for sensor there is no default value. Make getAggregatedValue() @Nullable
-    @NonNull
-    protected abstract Output getNoneValue();
-
-    @NonNull
-    public Output getAggregatedValue(Instant now) {
-        if (!hasReceivedData()) {
-            return getNoneValue();
-        }
+    @Nullable
+    protected OutputType getAggregatedValue(Instant now) {
         if (isOutdated(now)) {
-            resetImmediate();
+            resetOutdated();
         }
 
-        return aggregatedValue;
+        return output;
     }
 
     @NonNull
-    public SensorData<Output> getAggregatedValueWithSensorName(Instant now) {
+    public SensorData<OutputType> getAggregatedValueWithSensorName(Instant now) {
         return new SensorData<>(getAggregatedValue(now), getSensorNameOrAddress());
     }
 
     /**
      * Reset short-term (i.e., non-aggregated) values that were directly derived from sensor data.
      */
-    protected abstract void resetImmediate();
+    protected void resetOutdated() {
+        output = null;
+    };
 
     /**
      * Reset long-term (i.e., aggregated) values (more than derived from previous SensorData) like overall distance.
      */
-    public abstract void resetAggregated();
+    public void resetAggregated() {};
 
     /**
      * Is the data recent considering the current time.
@@ -97,6 +92,12 @@ public abstract class Aggregator<Input, Output> {
     @NonNull
     @Override
     public String toString() {
-        return "sensorAddress=" + sensorAddress + " data=" + aggregatedValue;
+        return "sensorAddress=" + sensorAddress + " data=" + output;
+    }
+
+    protected record Raw<T>(
+            @NonNull Instant time,
+            @NonNull T value
+    ) {
     }
 }

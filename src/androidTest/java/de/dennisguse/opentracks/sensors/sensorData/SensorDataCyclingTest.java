@@ -2,6 +2,7 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -12,10 +13,9 @@ import java.time.Instant;
 
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
-import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingCadence;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerCyclingDistanceSpeed;
 import de.dennisguse.opentracks.sensors.UintUtils;
+import de.dennisguse.opentracks.sensors.driver.CyclingCadenceBluetooth;
+import de.dennisguse.opentracks.sensors.driver.CyclingDistanceSpeedBluetooth;
 
 @RunWith(AndroidJUnit4.class)
 public class SensorDataCyclingTest {
@@ -25,8 +25,8 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(2, 2048)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(2, 2048));
 
         // then
         assertEquals(60, current.getAggregatedValue(Instant.MIN).getRPM(), 0.01);
@@ -37,8 +37,8 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, 6184)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(2, 8016)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, 6184));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(2, 8016));
 
         // then
         assertEquals(33.53, current.getAggregatedValue(Instant.MIN).getRPM(), 0.01);
@@ -49,8 +49,8 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, 2048)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, 2048));
 
         // then
         assertEquals(Cadence.of(0), current.getAggregatedValue(Instant.MIN));
@@ -62,8 +62,8 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(2, 1024)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(2, 1024));
 
         // then
         assertFalse(current.hasReceivedData()); //TODO Cadence should be 0?
@@ -74,8 +74,8 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(1, UintUtils.UINT16_MAX - 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(2, 0)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1, UintUtils.UINT16_MAX - 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(2, 0));
 
         // then
         assertEquals(60, current.getAggregatedValue(Instant.MIN).getRPM(), 0.01);
@@ -87,13 +87,13 @@ public class SensorDataCyclingTest {
         AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(UintUtils.UINT32_MAX - 1, 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingCadence.CrankData(0, 2048)));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(UintUtils.UINT32_MAX - 1, 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(0, 2048));
 
         // then
         // TODO See #953
 //        assertEquals(60, current.getValue().getRPM(), 0.01);
-        assertEquals(Cadence.of(0), current.getAggregatedValue(Instant.MIN));
+        assertNull(current.getAggregatedValue(Instant.MIN));
     }
 
     @Test
@@ -102,8 +102,8 @@ public class SensorDataCyclingTest {
         current.setWheelCircumference(Distance.ofMM(2150));
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingDistanceSpeed.WheelData(1, 6184)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingDistanceSpeed.WheelData(2, 8016)));
+        current.add(Instant.MIN, new CyclingDistanceSpeedBluetooth.WheelData(1, 6184));
+        current.add(Instant.MIN, new CyclingDistanceSpeedBluetooth.WheelData(2, 8016));
 
         // then
         assertEquals(2.15, current.getAggregatedValue(Instant.MIN).distance().toM(), 0.01);
@@ -117,14 +117,13 @@ public class SensorDataCyclingTest {
         current.setWheelCircumference(Distance.ofMM(2000));
 
         // when
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingDistanceSpeed.WheelData(UintUtils.UINT32_MAX - 1, 1024)));
-        current.add(new Raw<>(Instant.MIN, new BluetoothHandlerCyclingDistanceSpeed.WheelData(0, 2048)));
-
+        current.add(Instant.MIN, new CyclingDistanceSpeedBluetooth.WheelData(UintUtils.UINT32_MAX - 1, 1024));
+        current.add(Instant.MIN, new CyclingDistanceSpeedBluetooth.WheelData(0, 2048));
 
         // then
         // TODO See #953
 //        assertEquals(2, current.getValue().getDistance().toM(), 0.01);
 //        assertEquals(2, current.getValue().getSpeed().toMPS(), 0.01);
-        assertEquals(new AggregatorCyclingDistanceSpeed.Data(Distance.ZERO, Distance.ZERO, Speed.ZERO), current.getAggregatedValue(Instant.MIN));
+        assertNull(current.getAggregatedValue(Instant.MIN));
     }
 }

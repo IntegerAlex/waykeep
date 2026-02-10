@@ -10,6 +10,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
@@ -28,8 +30,8 @@ import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.sensors.BluetoothUtils;
-import de.dennisguse.opentracks.sensors.SensorType;
 import de.dennisguse.opentracks.sensors.ServiceMeasurementUUID;
+import de.dennisguse.opentracks.sensors.driver.SensorType;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.util.PermissionRequester;
 
@@ -78,6 +80,12 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
                 notifyChanged();
             }
         }
+    }
+
+    @Nullable
+    @Override
+    protected Object onGetDefaultValue(@NonNull TypedArray a, int index) {
+        return a.getString(index);
     }
 
     @Override

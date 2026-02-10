@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Speed;
-import de.dennisguse.opentracks.sensors.BluetoothHandlerRunningSpeedAndCadence;
+import de.dennisguse.opentracks.sensors.driver.RunningSpeedAndCadenceBluetooth;
 
 /**
  * Provides cadence in rpm and speed in milliseconds from Bluetooth LE Running Speed and Cadence sensors.
  */
-public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningSpeedAndCadence.Data, AggregatorRunning.Data> {
+public final class AggregatorRunning extends Aggregator<RunningSpeedAndCadenceBluetooth.Data, AggregatorRunning.Data> {
 
     private static final String TAG = AggregatorRunning.class.getSimpleName();
 
@@ -19,7 +19,7 @@ public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningS
     }
 
     @Override
-    public void computeValue(Raw<BluetoothHandlerRunningSpeedAndCadence.Data> current) {
+    public void computeValue(Raw<RunningSpeedAndCadenceBluetooth.Data> current) {
         if (previous == null) {
             return;
         }
@@ -27,33 +27,31 @@ public final class AggregatorRunning extends Aggregator<BluetoothHandlerRunningS
         Distance distance = null;
         if (previous.value().totalDistance() != null && current.value().totalDistance() != null) {
             distance = current.value().totalDistance().minus(previous.value().totalDistance());
-            if (aggregatedValue != null) {
-                distance = distance.plus(aggregatedValue.distance);
+            if (output != null) {
+                distance = distance.plus(output.distance);
             }
         }
 
-        aggregatedValue = new Data(current.value().speed(), current.value().cadence(), distance);
+        output = new Data(current.value().speed(), current.value().cadence(), distance);
     }
 
     @Override
-    protected void resetImmediate() {
-        aggregatedValue = new Data(Speed.ZERO, Cadence.of(0f), aggregatedValue.distance);
+    protected void resetOutdated() {
+        Distance distance = output != null ? output.distance : Distance.ZERO;
+        output = new Data(Speed.ZERO, Cadence.of(0f), distance);
     }
 
     @Override
     public void resetAggregated() {
-        if (aggregatedValue != null) {
-            aggregatedValue = new Data(aggregatedValue.speed, aggregatedValue.cadence, Distance.ZERO);
+        if (output != null) {
+            output = new Data(output.speed, output.cadence, Distance.ZERO);
         }
     }
 
-    @NonNull
-    @Override
-    protected Data getNoneValue() {
-        return new Data(Speed.ZERO, Cadence.of(0f), Distance.ZERO);
-    }
-
-    public record Data(Speed speed, Cadence cadence, @NonNull Distance distance) {
+    public record Data(
+            Speed speed,
+            Cadence cadence,
+            @NonNull Distance distance) {
     }
 }
 

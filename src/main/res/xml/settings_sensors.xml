@@ -5,12 +5,15 @@
     android:title="@string/settings_sensors_title">
 
     <PreferenceCategory android:title="@string/settings_gps_sensor">
+        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeGpsPreference
+            android:defaultValue="@string/sensor_type_value_internal"
+            android:key="@string/settings_sensor_bluetooth_gps_key"
+            android:title="@string/settings_gps_sensor" />
         <ListPreference
             android:defaultValue="@string/min_sampling_interval_default"
             android:entryValues="@array/min_sampling_interval_values"
             android:key="@string/min_sampling_interval_key"
             android:title="@string/settings_recording_min_sampling_interval_title" />
-
         <ListPreference
             android:defaultValue="@string/recording_gps_accuracy_default"
             android:entryValues="@array/recording_gps_accuracy_values"
@@ -71,9 +74,9 @@
         <SwitchPreferenceCompat
             android:defaultValue="@bool/settings_sensor_bluetooth_service_filter_enabled_default"
             android:key="@string/settings_sensor_bluetooth_service_filter_enabled_key"
-            android:title="@string/settings_sensor_bluetooth_service_filter_title"
+            android:summaryOff="@string/settings_sensor_bluetooth_service_filter_off"
             android:summaryOn="@string/settings_sensor_bluetooth_service_filter_on"
-            android:summaryOff="@string/settings_sensor_bluetooth_service_filter_off" />
+            android:title="@string/settings_sensor_bluetooth_service_filter_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
