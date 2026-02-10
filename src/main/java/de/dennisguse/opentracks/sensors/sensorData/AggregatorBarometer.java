@@ -1,6 +1,5 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
-import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.PressureSensorUtils;
@@ -40,6 +39,4 @@ public class AggregatorBarometer extends Aggregator<AtmosphericPressure, Altitud
     public void resetAggregated() {
         output = null;
     }
-
-    public record Data(Altitude gain, Altitude loss) {}
 }
