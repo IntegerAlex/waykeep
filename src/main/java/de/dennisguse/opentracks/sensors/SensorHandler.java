@@ -1,6 +1,7 @@
 package de.dennisguse.opentracks.sensors;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,8 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 
 public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implements DriverObserver<AggregatorInput> {
+
+    private static final String TAG = SensorHandler.class.getSimpleName();
 
     private final SensorManager sensorManager;
 
@@ -107,6 +110,11 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     @Override
     public void onConnectionLost() {
+        if (SensorHandler.this.aggregator == null) {
+            Log.d(TAG, "Connection lost, but where not connected.");
+            return;
+        }
+
         SensorHandler.this.aggregator.resetAggregated();
     }
 
