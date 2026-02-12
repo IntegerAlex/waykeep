@@ -2,10 +2,6 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.location.Location;
 
-import androidx.annotation.NonNull;
-
-import java.time.Instant;
-
 import de.dennisguse.opentracks.data.models.Position;
 
 public class AggregatorGPS extends Aggregator<Location, Position> {
@@ -27,14 +23,5 @@ public class AggregatorGPS extends Aggregator<Location, Position> {
          * TODO: this behavior can be changed if TrackRecordingManager.insertTrackPoint() would strip GPS data if it was already saved. This would simplify TrackPointCreator.createCurrentTrackPoint()
          */
         output = null;
-    }
-
-    @NonNull
-    @Override
-    public Position getAggregatedValue(Instant now) {
-        Position value = super.getAggregatedValue(now);
-        if (value == null) value = Position.empty();
-
-        return value.with(now);
     }
 }

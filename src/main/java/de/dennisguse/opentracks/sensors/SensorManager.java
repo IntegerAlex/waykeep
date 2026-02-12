@@ -250,13 +250,16 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public SensorDataSet getSensorDataSet(Instant now) {
+        //We always need a Position with now
         SensorData<Position> gpsSensorData = gpsHandler.getSensorData(now);
-
-        var a = temperatureHandler.getSensorData(now);
-        var b = altitudeChangeHandler.getSensorData(now);
+        if (gpsSensorData != null && gpsSensorData.data() != null) {
+            gpsSensorData = new SensorData<>(gpsSensorData.data().with(now), gpsSensorData.sensorNameOrAddress());
+        } else {
+            gpsSensorData = new SensorData<>(Position.of(now), "");
+        }
 
         return new SensorDataSet(
-                gpsSensorData != null ? gpsSensorData : new SensorData<>(Position.of(now), ""), //We always need a Position(now)
+                gpsSensorData,
                 getSpeed(now),
                 getDistance(now),
                 getHeartRate(now),
