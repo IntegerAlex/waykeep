@@ -17,10 +17,6 @@ public record Position(
         @Nullable Float bearing,
         @Nullable Speed speed
 ) {
-    @Deprecated
-    public static Position empty() {
-        return of(null);
-    }
 
     public static Position of(@NonNull Instant time) {
         return new Position(
