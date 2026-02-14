@@ -131,10 +131,10 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
     RecordingData getDataForUI() {
         Pair<TrackPoint, SensorDataSet> current = trackPointCreator.createCurrentTrackPoint(lastTrackPointUIWithSpeed, lastTrackPointUIWithAltitude, lastStoredTrackPointWithLocation);
+        TrackPoint trackPoint = current.first;
+        TrackStatisticsUpdater tmpTrackStatisticsUpdater = new TrackStatisticsUpdater(trackStatisticsUpdater, trackPoint);
 
-        TrackStatisticsUpdater tmpTrackStatisticsUpdater = new TrackStatisticsUpdater(trackStatisticsUpdater, current.first);
-
-        ALTITUDE_CORRECTION_MANAGER.correctAltitude(context, current.first);
+        TrackPoint TrackPointWithEGM2008 = ALTITUDE_CORRECTION_MANAGER.correctAltitude(context, trackPoint);
 
         Track track = contentProviderUtils.getTrack(trackId); //Get copy TODO: Avoid re-loading data from DB
         if (track == null) {
@@ -145,7 +145,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         TrackBuilder trackBuilder = new TrackBuilder(track);
         trackBuilder.setStatistics(tmpTrackStatisticsUpdater.getTrackStatistics());
 
-        return new RecordingData(trackBuilder.getTrack(), current.first, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
+        return new RecordingData(trackBuilder.getTrack(), TrackPointWithEGM2008, current.second, tmpTrackStatisticsUpdater.getCurrentSegment());
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
