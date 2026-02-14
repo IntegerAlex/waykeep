@@ -89,12 +89,12 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 public class ExportImportTest {
 
     @Rule
-    public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(50, TimeUnit.SECONDS); //TODO 5s
+    public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(5, TimeUnit.SECONDS);
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule = TestUtil.createGrantPermissionRule();
 
-    //For csv_export_only() as we the timezone is hardcoded in the expectation.
+    //For csv_export_only() as the timezone is hardcoded in the expectation.
     @Rule
     public TimezoneRule timezoneRule = new TimezoneRule(TimeZone.getTimeZone("Europe/Berlin"));
 
@@ -747,7 +747,7 @@ public class ExportImportTest {
         sensorManager.getAltitudeChangeHandler().setAggregator(aggregatorBarometer);
     }
 
-    private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {
+    public static void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {
         Location location = new Location("mock");
         location.setLatitude(latitude);
         location.setLongitude(longitude);

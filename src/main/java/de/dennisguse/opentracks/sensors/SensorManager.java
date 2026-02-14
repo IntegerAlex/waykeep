@@ -126,6 +126,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         gpsHandler.resetAggregated();
     }
 
+    @VisibleForTesting
     public GpsHandler getGpsHandler() {
         return gpsHandler;
     }

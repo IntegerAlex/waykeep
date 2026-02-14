@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import java.time.Instant;
 
 public record Position(
-        @Nullable Instant time,
+        @Nullable Instant time, //TODO It may be a good idea to move time out of Position
         @Nullable Double latitude,
         @Nullable Double longitude,
         @Nullable Distance horizontalAccuracy,

@@ -26,6 +26,7 @@ public class TrackPointAssert {
 
         Assert.assertEquals("has altitude", expected.position().hasAltitude(), actual.position().hasAltitude());
         if (expected.position().hasAltitude()) {
+            Assert.assertEquals("altitude", expected.position().altitude().getClass(), actual.position().altitude().getClass());
             Assert.assertEquals("altitude", expected.position().altitude().toM(), actual.position().altitude().toM(), delta);
         }
 

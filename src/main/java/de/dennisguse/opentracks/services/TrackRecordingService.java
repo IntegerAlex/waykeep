@@ -48,7 +48,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     private static final String TAG = TrackRecordingService.class.getSimpleName();
 
-    private static final Duration RECORDING_DATA_UPDATE_INTERVAL = Duration.ofSeconds(1);
+    @VisibleForTesting
+    public static final Duration RECORDING_DATA_UPDATE_INTERVAL = Duration.ofSeconds(1);
 
     public static final RecordingStatus STATUS_DEFAULT = RecordingStatus.notRecording();
     public static final GpsStatusValue STATUS_GPS_DEFAULT = GpsStatusValue.GPS_NONE;

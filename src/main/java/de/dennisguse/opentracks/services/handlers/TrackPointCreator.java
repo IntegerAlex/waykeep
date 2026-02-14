@@ -102,10 +102,10 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
         }
 
         if (lastTrackPointUISpeed != null)
-            position.with(lastTrackPointUISpeed.position().speed());
+            position = position.with(lastTrackPointUISpeed.position().speed());
 
         if (lastTrackPointUIAltitude != null)
-            position.with(lastTrackPointUIAltitude.position().altitude());
+            position = position.with(lastTrackPointUIAltitude.position().altitude());
 
         TrackPoint currentTrackPoint = new TrackPoint(
                 null,
