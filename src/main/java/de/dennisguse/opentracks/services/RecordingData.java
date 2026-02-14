@@ -10,6 +10,10 @@ import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
  */
 public record RecordingData(
         Track track,
+        /*
+         * The current view on the SensorData.
+         * May contain data from previous measurements that are not present in SensorDataSet.
+         */
         TrackPoint latestTrackPoint,
         SensorDataSet sensorDataSet,
         Statistics currentSegment) {

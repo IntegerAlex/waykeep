@@ -135,7 +135,7 @@ public class TrackRecordingServiceStateMachineTest {
         // then
         assertEquals(TrackRecordingService.STATUS_DEFAULT, service.getRecordingStatusObservable().getValue());
         assertEquals(RecordingData.NOT_RECORDING, service.getRecordingDataObservable().getValue());
-//        assertEquals(GpsStatusValue.GPS_NONE, service.getGpsStatusObservable().getValue()); TODO BUG: GPS can only be stopped if a service is recording.
+        assertEquals(GpsStatusValue.GPS_NONE, service.getGpsStatusObservable().getValue());
     }
 
     @MediumTest
