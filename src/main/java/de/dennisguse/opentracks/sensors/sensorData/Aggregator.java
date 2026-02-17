@@ -34,7 +34,7 @@ public abstract class Aggregator<InputType, OutputType> {
         previous = next;
     }
 
-    protected abstract void computeValue(Raw<InputType> current);
+    protected abstract void computeValue(@NonNull Raw<InputType> current);
 
     /**
      * @return did we process data from a sensor.

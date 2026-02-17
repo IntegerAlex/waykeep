@@ -1,5 +1,7 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
+import androidx.annotation.NonNull;
+
 import de.dennisguse.opentracks.data.models.AltitudeGainLoss;
 import de.dennisguse.opentracks.data.models.AtmosphericPressure;
 import de.dennisguse.opentracks.sensors.PressureSensorUtils;
@@ -13,7 +15,7 @@ public class AggregatorBarometer extends Aggregator<AtmosphericPressure, Altitud
     }
 
     @Override
-    protected void computeValue(Raw<AtmosphericPressure> current) {
+    protected void computeValue(@NonNull Raw<AtmosphericPressure> current) {
         if (previous == null) {
             lastAcceptedSensorValue = current.value();
             output = new AltitudeGainLoss(0f, 0f);

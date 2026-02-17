@@ -1,5 +1,7 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
+import androidx.annotation.NonNull;
+
 import de.dennisguse.opentracks.data.models.HeartRate;
 
 public class AggregatorHeartRate extends Aggregator<HeartRate, HeartRate> {
@@ -9,7 +11,7 @@ public class AggregatorHeartRate extends Aggregator<HeartRate, HeartRate> {
     }
 
     @Override
-    protected void computeValue(Raw<HeartRate> current) {
+    protected void computeValue(@NonNull Raw<HeartRate> current) {
         if (current.value().isValid()) {
             this.output = current.value();
         }

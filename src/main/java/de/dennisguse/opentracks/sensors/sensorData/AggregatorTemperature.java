@@ -1,5 +1,7 @@
 package de.dennisguse.opentracks.sensors.sensorData;
 
+import androidx.annotation.NonNull;
+
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Temperature;
@@ -10,7 +12,7 @@ public class AggregatorTemperature extends Aggregator<Temperature, Temperature> 
         super(sensorAddress, sensorName);
     }
 
-    protected void computeValue(Raw<Temperature> current) {
+    protected void computeValue(@NonNull Raw<Temperature> current) {
         this.output = current.value();
     }
 

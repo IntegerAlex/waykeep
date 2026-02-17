@@ -2,6 +2,8 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Cadence;
@@ -17,7 +19,7 @@ public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth
     }
 
     @Override
-    protected void computeValue(Raw<CyclingCadenceBluetooth.CrankData> current) {
+    protected void computeValue(@NonNull Raw<CyclingCadenceBluetooth.CrankData> current) {
         if (previous == null) {
             return;
         }

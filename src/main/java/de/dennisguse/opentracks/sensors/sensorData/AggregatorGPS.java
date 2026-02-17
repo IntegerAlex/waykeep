@@ -2,6 +2,8 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
+
 import de.dennisguse.opentracks.data.models.Position;
 
 public class AggregatorGPS extends Aggregator<Location, Position> {
@@ -11,7 +13,7 @@ public class AggregatorGPS extends Aggregator<Location, Position> {
     }
 
     @Override
-    protected void computeValue(Raw<Location> current) {
+    protected void computeValue(@NonNull Raw<Location> current) {
         output = Position.of(current.value(), current.time());
     }
 

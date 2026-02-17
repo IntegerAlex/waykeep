@@ -2,6 +2,8 @@ package de.dennisguse.opentracks.sensors.sensorData;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.time.Duration;
 
 import de.dennisguse.opentracks.data.models.Distance;
@@ -20,7 +22,7 @@ public class AggregatorCyclingDistanceSpeed extends Aggregator<CyclingDistanceSp
     }
 
     @Override
-    protected void computeValue(Raw<CyclingDistanceSpeedBluetooth.WheelData> current) {
+    protected void computeValue(@NonNull Raw<CyclingDistanceSpeedBluetooth.WheelData> current) {
         if (previous == null) {
             return;
         }

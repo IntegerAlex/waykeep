@@ -19,7 +19,7 @@ public final class AggregatorRunning extends Aggregator<RunningSpeedAndCadenceBl
     }
 
     @Override
-    public void computeValue(Raw<RunningSpeedAndCadenceBluetooth.Data> current) {
+    public void computeValue(@NonNull Raw<RunningSpeedAndCadenceBluetooth.Data> current) {
         if (previous == null) {
             return;
         }
