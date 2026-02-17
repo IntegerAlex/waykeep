@@ -14,7 +14,6 @@ import java.time.Instant;
 
 import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.data.models.Distance;
-import de.dennisguse.opentracks.data.models.HeartRate;
 import de.dennisguse.opentracks.data.models.Position;
 import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
@@ -186,17 +185,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         return handler;
     }
 
-    private SensorData<HeartRate> getHeartRate(Instant now) {
-        SensorData<HeartRate> value = heartRateHandler.getSensorData(now);
-        if (value != null) {
-
-            //TODO Move this check into HeartRateHandler
-            if (value.data().isValid()) return value;
-        }
-
-        return null;
-    }
-
     private SensorData<Cadence> getCadence(Instant now) {
         {
             SensorData<Cadence> value = cyclingCadenceHandler.getSensorData(now);
@@ -263,7 +251,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 gpsSensorData,
                 getSpeed(now),
                 getDistance(now),
-                getHeartRate(now),
+                heartRateHandler.getSensorData(now),
                 temperatureHandler.getSensorData(now),
                 getCadence(now),
                 cyclingPowerHandler.getSensorData(now),
