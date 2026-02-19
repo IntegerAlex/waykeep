@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class RecordingLayoutIO {
     public static List<RecordingLayout> fromCsv(@NonNull String csv, @NonNull Resources resources) {
         return CsvLayoutUtils.getCsvLines(csv).stream()
                 .map(line -> RecordingLayoutIO.fromCsvLine(line, resources))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static RecordingLayout fromCsvLine(@NonNull String csvLine, @NonNull Resources resources) {
