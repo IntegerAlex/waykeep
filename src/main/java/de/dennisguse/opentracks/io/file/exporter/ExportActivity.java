@@ -167,8 +167,11 @@ public class ExportActivity extends AbstractActivity {
             new Thread(() -> {
                 directoryFiles = ExportUtils.getAllFiles(ExportActivity.this, documentFile.getUri());
                 runOnUiThread(() -> {
-                    createExportTasks(allInOneFile);
-                    nextExport(null);
+                    if (createExportTasks(allInOneFile)) {
+                        nextExport(null);
+                    } else {
+                        onExportEnded();
+                    }
                 });
             }).start();
         } else {
@@ -217,8 +220,12 @@ public class ExportActivity extends AbstractActivity {
         exportTasks.clear();
     }
 
-    private void createExportTasks(boolean allInOneFile) {
+    private boolean createExportTasks(boolean allInOneFile) {
         List<Track> tracks = contentProviderUtils.getTracks();
+        if (tracks.isEmpty()) {
+            return false;
+        }
+
         exportTasks = new ArrayList<>();
         if (allInOneFile) {
             String filename = "OpenTracks-Backup";
@@ -227,6 +234,7 @@ public class ExportActivity extends AbstractActivity {
             exportTasks.addAll(tracks.stream().map(it -> new ExportTask(null, trackFileFormat, List.of(it.id()))).toList());
         }
         trackExportTotalCount = exportTasks.size();
+        return true;
     }
 
     /**
@@ -391,7 +399,7 @@ public class ExportActivity extends AbstractActivity {
 
         /**
          * Try to resolve the conflict if user gave the info needed.
-         * Otherwise shows the buttons and views needed to gives the user the possibility of take a decision.
+         * Otherwise, shows the buttons and views needed to gives the user the possibility of take a decision.
          *
          * @return true if it could resolve the conflict or false otherwise.
          */
