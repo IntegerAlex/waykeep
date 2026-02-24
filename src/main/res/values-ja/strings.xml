@@ -304,4 +304,13 @@ limitations under the License.
     <string name="waypoint_type_waypoint">地点</string>
     <string name="help_feature_content">"* GPS トラックを作成します\n\n\n\n  * 心拍センサーを使用します (Bluetooth LE のみ)\n\n\n\n  * 音声アナウンス（時間または距離）\n\n\n\n  * マーカーの作成 (写真を含む)\n\n\n\n  * 完全にオフラインで動作します\n\n\n\n  * 地図上にトラックを表示します (下記を参照)"</string>
     <string name="help_data_google_play_services_content">いいえ</string>
+    <string name="about_history">OpenTracksは<a href="https://code.google.com/archive/p/mytracks/"><i>GoogleのMyTracks</i></a> (2016に開発停止)のフォークです。</string>
+    <string name="help_feature_title">OpenTracks には以下の機能があります:</string>
+    <string name="activity_type_escooter">電動スクーター</string>
+    <string name="activity_type_kickscooter">スクーター</string>
+    <string name="generic_overwrite">上書き</string>
+    <string name="generic_skip">スキップ</string>
+    <string name="import_progress_summary_ok_msg">インポート完了</string>
+    <string name="import_progress_summary_exists_msg">既に存在しています</string>
+    <string name="help_track_map_content">小さな地図のアイコンを使います.\n a) (live updates) <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>をインストールして下さい。 <a href="https://www.openstreetmap.org">OpenStreetMap</a> を利用したオンラインまたはオフラインの地図を使用できるようになります。\n実際、OSMDashbordは (一時的に保存された) 表示するトラッキングデータにだけアクセスする独立したアプリケーションです。\n b) 一般的な地図アプリケーションを使用 (e.g., <a href="http://osmand.net/">OsmAnd</a> and <a href="https://maps.me/">MAPS.ME</a>) 。 KMZフォーマットをサポートしている必要があります (位置及びタイムスタンプのみを含む)。 加えて、 MIME <i>application/vnd.google-earth.kmz</i> の <i>ACTION_VIEW</i> をサポートしている必要もあります。</string>
 </resources>
