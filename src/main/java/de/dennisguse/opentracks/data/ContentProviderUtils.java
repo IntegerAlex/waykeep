@@ -72,11 +72,6 @@ public class ContentProviderUtils {
 
     private final ContentResolver contentResolver;
 
-    //TODO Check if this can be used in more than one place. If not remove.
-    public interface ContentProviderSelectionInterface {
-        SelectionData buildSelection();
-    }
-
     public ContentProviderUtils(Context context) {
         contentResolver = context.getContentResolver();
     }
@@ -746,7 +741,7 @@ public class ContentProviderUtils {
     }
 
     @NonNull
-    public List<AggregatedStatistic> getAggregatedStatisticsForTracks(ContentProviderSelectionInterface selection) {
+    public List<AggregatedStatistic> getAggregatedStatisticsForTracks(TrackSelection selection) {
         SelectionData data = selection.buildSelection();
         try (Cursor cursor = contentResolver.query(TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS, null, data.selection(), data.getSelectionArgs(), null)) {
             ArrayList<AggregatedStatistic> aggregatedStatistics = new ArrayList<>(cursor.getCount());

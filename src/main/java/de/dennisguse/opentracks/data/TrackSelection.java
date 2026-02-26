@@ -10,7 +10,7 @@ import java.util.List;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.tables.TracksColumns;
 
-public class TrackSelection implements ContentProviderUtils.ContentProviderSelectionInterface {
+public class TrackSelection {
     private final List<Track.Id> trackIds = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
     private Instant from;
@@ -40,7 +40,6 @@ public class TrackSelection implements ContentProviderUtils.ContentProviderSelec
         return trackIds.isEmpty() && categories.isEmpty() && from == null && to == null;
     }
 
-    @Override
     public ContentProviderUtils.SelectionData buildSelection() {
         String selection = "";
         List<String> selectionArgs = new ArrayList<>();
