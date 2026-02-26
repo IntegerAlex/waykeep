@@ -34,6 +34,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 
+import de.dennisguse.opentracks.BuildConfig;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
 import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
@@ -50,6 +51,11 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  */
 public class CustomContentProvider extends ContentProvider {
 
+    // The authority (the first part of the URI) for the app's content provider.
+    static final String AUTHORITY_PACKAGE = BuildConfig.APPLICATION_ID + ".content";
+
+    // The base URI for the app's content provider.
+    public static final String CONTENT_BASE_URI = "content://" + AUTHORITY_PACKAGE;
     private static final String TAG = CustomContentProvider.class.getSimpleName();
 
     private static final String SQL_LIST_DELIMITER = ",";
@@ -96,22 +102,22 @@ public class CustomContentProvider extends ContentProvider {
 
     public CustomContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath(), UrlType.TRACKPOINTS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath() + "/#", UrlType.TRACKPOINTS_BY_ID.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.TRACKPOINTS_BY_TRACKID.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath(), UrlType.TRACKPOINTS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath() + "/#", UrlType.TRACKPOINTS_BY_ID.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.TRACKPOINTS_BY_TRACKID.ordinal());
 
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath(), UrlType.TRACKS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_SENSOR_STATS.getPath() + "/#", UrlType.TRACKS_SENSOR_STATS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath() + "/*", UrlType.TRACKS_BY_ID.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath(), UrlType.TRACKS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_SENSOR_STATS.getPath() + "/#", UrlType.TRACKS_SENSOR_STATS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath() + "/*", UrlType.TRACKS_BY_ID.ordinal());
 
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath() + "/#", UrlType.MARKERS_BY_ID.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.MARKERS_BY_TRACKID.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath() + "/#", UrlType.MARKERS_BY_ID.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.MARKERS_BY_TRACKID.ordinal());
 
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKS_BY_IDS.getPath() + "*", UrlType.DASHBOARD_TRACKS_BY_IDS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.ordinal());
-        uriMatcher.addURI(ContentProviderUtils.AUTHORITY_PACKAGE, UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKS_BY_IDS.getPath() + "*", UrlType.DASHBOARD_TRACKS_BY_IDS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.ordinal());
     }
 
     @Override
@@ -416,9 +422,9 @@ public class CustomContentProvider extends ContentProvider {
         @Deprecated //TODO Should not be used anymore
         MARKERS_BY_TRACKID,
 
-        DASHBOARD_TRACKS_BY_IDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/tracks/"), TracksColumns.CONTENT_TYPE),
-        DASHBOARD_TRACKPOINTS_BY_TRACKIDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/trackpoints/"), TrackPointsColumns.CONTENT_TYPE),
-        DASHBOARD_MARKERS_BY_TRACKIDS(Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/markers/"), MarkerColumns.CONTENT_TYPE);
+        DASHBOARD_TRACKS_BY_IDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/tracks/"), TracksColumns.CONTENT_TYPE),
+        DASHBOARD_TRACKPOINTS_BY_TRACKIDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/trackpoints/"), TrackPointsColumns.CONTENT_TYPE),
+        DASHBOARD_MARKERS_BY_TRACKIDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/markers/"), MarkerColumns.CONTENT_TYPE);
 
         private final Uri uri;
 

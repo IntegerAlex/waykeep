@@ -19,7 +19,7 @@ package de.dennisguse.opentracks.data.tables;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.CustomContentProvider;
 
 /**
  * Constants for the track points table.
@@ -29,8 +29,8 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 public interface TrackPointsColumns extends BaseColumns {
 
     String TABLE_NAME = "trackpoints";
-    Uri CONTENT_URI_BY_ID = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME);
-    Uri CONTENT_URI_BY_TRACKID = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME + "/trackid");
+    Uri CONTENT_URI_BY_ID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
+    Uri CONTENT_URI_BY_TRACKID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/trackid");
     String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint";
     String CONTENT_ITEMTYPE = "vnd.android.cursor.item/vnd.de.dennisguse.trackpoint";
     String DEFAULT_SORT_ORDER = _ID;

@@ -19,7 +19,7 @@ package de.dennisguse.opentracks.data.tables;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.CustomContentProvider;
 
 /**
  * Constants for the tracks table.
@@ -29,9 +29,9 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 public interface TracksColumns extends BaseColumns {
 
     String TABLE_NAME = "tracks";
-    Uri CONTENT_URI = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME);
-    Uri CONTENT_URI_SENSOR_STATS = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME + "/sensorstats");
-    Uri CONTENT_URI_AGGREGATED_STATISTICS = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/" + TABLE_NAME + "/aggregated/");
+    Uri CONTENT_URI = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
+    Uri CONTENT_URI_SENSOR_STATS = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/sensorstats");
+    Uri CONTENT_URI_AGGREGATED_STATISTICS = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/aggregated/");
     String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.de.dennisguse.track";
     String CONTENT_ITEMTYPE = "vnd.android.cursor.item/vnd.de.dennisguse.track";
     String DEFAULT_SORT_ORDER = _ID;

@@ -14,7 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.CustomContentProvider;
 
 @RunWith(AndroidJUnit4.class)
 public class DataProviderTest {
@@ -24,7 +24,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion2_tracks() {
         // given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/tracks/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/tracks/1");
         String[] expectedTracksColumns = new String[]{
                 "_id",
                 "name",
@@ -64,7 +64,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion2_trackpoints() {
         // given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/trackpoints/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/trackpoints/1");
         String[] expectedTrackpointsColumns = {
                 "_id",
                 "trackid",
@@ -94,7 +94,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion2_markers() {
         // given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/markers/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/markers/1");
         String[] expectedMarkersColumns = {
                 "_id",
                 "name",
@@ -126,7 +126,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion3_tracks() {
         // given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/tracks/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/tracks/1");
         String[] expectedTracksColumns = {
                 "_id",
                 "name",
@@ -164,7 +164,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion3_trackpoints() {
         //given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/trackpoints/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/trackpoints/1");
         String[] expectedTrackpointsColumns = {
                 "_id",
                 "trackid",
@@ -194,7 +194,7 @@ public class DataProviderTest {
     @Test
     public void supportsVersion3_markers() {
         // given
-        Uri uri = Uri.parse(ContentProviderUtils.CONTENT_BASE_URI + "/dashboard/markers/1");
+        Uri uri = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/dashboard/markers/1");
         String[] expectedMarkersColumns = {
                 "_id",
                 "name",
