@@ -244,22 +244,6 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         }
     }
 
-    public static class Altitude extends GenericStatisticsViewHolder {
-
-        @Override
-        public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            TrackPoint latestTrackPoint = data.latestTrackPoint();
-            Float altitude = latestTrackPoint != null && latestTrackPoint.position().hasAltitude() ? (float) latestTrackPoint.position().altitude().toM() : null;
-            String altitudeReference = latestTrackPoint != null && latestTrackPoint.position().hasAltitude() ? getContext().getString(latestTrackPoint.position().altitude().getLabelId()) : null;
-            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), altitude, unitSystem);
-
-            getBinding().statsValue.setText(valueAndUnit.first);
-            getBinding().statsUnit.setText(valueAndUnit.second);
-            getBinding().statsDescriptionMain.setText(R.string.stats_altitude);
-            getBinding().statsDescriptionSecondary.setText(altitudeReference);
-        }
-    }
-
     public static class Gain extends GenericStatisticsViewHolder {
 
         @Override

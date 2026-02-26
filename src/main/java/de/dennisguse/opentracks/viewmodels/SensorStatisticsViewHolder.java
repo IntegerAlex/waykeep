@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.HeartRateZones;
+import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.StatsSensorItemBinding;
 import de.dennisguse.opentracks.sensors.sensorData.SensorDataSet;
 import de.dennisguse.opentracks.services.RecordingData;
@@ -126,6 +127,22 @@ public abstract class SensorStatisticsViewHolder extends StatisticViewHolder<Sta
             getBinding().statsDescriptionMain.setText(R.string.stats_sensors_power);
 
             getBinding().statsDescriptionSecondary.setText(sensorName);
+        }
+    }
+
+    public static class Altitude extends SensorStatisticsViewHolder {
+
+        @Override
+        public void onChanged(UnitSystem unitSystem, RecordingData data) {
+            TrackPoint latestTrackPoint = data.latestTrackPoint();
+            Float altitude = latestTrackPoint != null && latestTrackPoint.position().hasAltitude() ? (float) latestTrackPoint.position().altitude().toM() : null;
+            String altitudeReference = latestTrackPoint != null && latestTrackPoint.position().hasAltitude() ? getContext().getString(latestTrackPoint.position().altitude().getLabelId()) : null;
+            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), altitude, unitSystem);
+
+            getBinding().statsValue.setText(valueAndUnit.first);
+            getBinding().statsUnit.setText(valueAndUnit.second);
+            getBinding().statsDescriptionMain.setText(R.string.stats_altitude);
+            getBinding().statsDescriptionSecondary.setText(altitudeReference);
         }
     }
 }
