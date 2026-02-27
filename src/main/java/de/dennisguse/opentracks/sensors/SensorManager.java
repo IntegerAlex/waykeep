@@ -259,37 +259,6 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         );
     }
 
-    @VisibleForTesting
-    public void clear() {
-        Log.i(TAG, "Removing all aggregators");
-
-        //TODO This is to ExportImportTest alive; refactor test.
-        if (this.altitudeChangeHandler != null) {
-            this.altitudeChangeHandler.setAggregator(null);
-        }
-        if (this.heartRateHandler != null) {
-            this.heartRateHandler.setAggregator(null);
-        }
-        if (this.temperatureHandler != null) {
-            this.temperatureHandler.setAggregator(null);
-        }
-        if (this.cyclingCadenceHandler != null) {
-            this.cyclingCadenceHandler.setAggregator(null);
-        }
-        if (cyclingDistanceSpeedHandler != null) {
-            cyclingDistanceSpeedHandler.setAggregator(null);
-        }
-        if (cyclingPowerHandler != null) {
-            cyclingPowerHandler.setAggregator(null);
-        }
-        if (runningSpeedCadenceDistanceHandler != null) {
-            runningSpeedCadenceDistanceHandler.setAggregator(null);
-        }
-        if (this.gpsHandler != null) {
-            this.gpsHandler.setAggregator(null);
-        }
-    }
-
     private boolean isStarted() {
         return wakeLock != null;
     }

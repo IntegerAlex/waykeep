@@ -199,7 +199,6 @@ public class ExportImportTest {
                 ));
 
         trackPointCreator.setClock("2020-02-02T02:02:18Z");
-        trackPointCreator.getSensorManager().clear();
         service.endCurrentTrack();
 
         trackPointCreator.setClock("2020-02-02T02:03:20Z");
@@ -214,7 +213,6 @@ public class ExportImportTest {
 
         sendLocation(trackPointCreator, "2020-02-02T02:03:50Z", 3.1234567, 16.001, 10, 27, 15, 999.123, 0f);
 
-        trackPointCreator.getSensorManager().clear();
         trackPointCreator.setClock("2020-02-02T02:04:00Z");
         service.endCurrentTrack();
 
@@ -298,7 +296,22 @@ public class ExportImportTest {
                         Power.of(50),
                         new AltitudeGainLoss(0, 0)
                 ),
-                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:02:18Z")),
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_END_MANUAL,
+                        new Position(
+                                Instant.parse("2020-02-02T02:02:18Z"),
+                                3.123456, 14.001456, Distance.of(10),
+                                Altitude.WGS84.of(1020.25), null,
+                                null,
+                                Speed.of(5)),
+                        Distance.of(0),
+                        HeartRate.of(69),
+                        null,
+                        Cadence.of(3),
+                        Power.of(50),
+                        new AltitudeGainLoss(0, 0)
+                ),
                 new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, Instant.parse("2020-02-02T02:03:20Z")),
                 new TrackPoint(
                         null,
@@ -356,7 +369,16 @@ public class ExportImportTest {
                         null,
                         null,
                         new AltitudeGainLoss(0, 0)),
-                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Instant.parse("2020-02-02T02:04:00Z"))
+                new TrackPoint(
+                        null,
+                        TrackPoint.Type.SEGMENT_END_MANUAL,
+                        Position.of(Instant.parse("2020-02-02T02:04:00Z")),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new AltitudeGainLoss(0, 0))
         ), actual);
 
         assertEquals(new Statistics(
