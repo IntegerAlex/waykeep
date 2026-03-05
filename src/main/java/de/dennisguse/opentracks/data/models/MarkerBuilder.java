@@ -28,7 +28,6 @@ import androidx.annotation.VisibleForTesting;
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
-//TODO All data should be final; no default values.
 public final class MarkerBuilder {
 
     private Marker.Id id;
@@ -55,14 +54,6 @@ public final class MarkerBuilder {
             throw new RuntimeException("Marker requires a trackpoint with a location.");
 
         this.position = trackPoint.position();
-    }
-
-    public MarkerBuilder(@Nullable Track.Id trackId, @NonNull TrackPoint trackPoint, String name, String description, String typeLocalized, Uri photoUrl) {
-        this(trackId, trackPoint);
-        this.name = name;
-        this.description = description;
-        this.typeLocalized = typeLocalized;
-        this.photoUrl = photoUrl;
     }
 
     public MarkerBuilder(Marker marker) {

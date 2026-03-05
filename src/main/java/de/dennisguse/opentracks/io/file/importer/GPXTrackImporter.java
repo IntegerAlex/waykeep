@@ -297,7 +297,17 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
 
         if (latitude == null || longitude == null) {
-            return new TrackPoint(TrackPoint.Type.TRACKPOINT, parsedTime.toInstant());
+            return new TrackPoint(
+                    null,
+                    TrackPoint.Type.TRACKPOINT,
+                    Position.of(parsedTime.toInstant()),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
         }
 
         double latitudeParsed;
