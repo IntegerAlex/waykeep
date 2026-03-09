@@ -130,7 +130,7 @@ limitations under the License.
     <!-- Description -->
     <string name="description_activity_type">Aktivitetstype: %1$s</string>
     <string name="description_average_moving_pace_in_minute">Gennemsnitstempo i bevægelse: %1$s min./km (%2$s min./mil)</string>
-    <string name="description_average_moving_speed">Gennemsnitshastighed i bevægelse: %1$.2f km/t (%2$.1f mil/t)</string>
+    <string name="description_average_moving_speed">Gennemsnitlig bevægelseshastighed: %1$.2f km/t (%2$.1f mil/t)</string>
     <string name="description_average_pace_in_minute">Gennemsnitstempo: %1$s min./km (%2$s min./mil)</string>
     <string name="description_average_speed">Gennemsnitshastighed: %1$.2f km/t (%2$.1f mil/t)</string>
     <string name="description_altitude_gain">Stigning: %1$d m (%2$d fod)</string>
@@ -220,7 +220,7 @@ limitations under the License.
     <!-- Search -->
     <!-- Sensor State -->
     <string name="sensor_state_heart_rate">Puls</string>
-    <string name="sensor_state_heart_rate_value">%1$d slag per minut</string>
+    <string name="sensor_state_heart_rate_value">%1$d slag/min.</string>
     <string name="sensor_state_power">Effekt</string>
     <string name="sensor_could_not_scan">Kunne ikke scanne efter Bluetooth-enheder (fejl %1$i).</string>
     <string name="bluetooth_disabled">Aktivér venligst Bluetooth.</string>
@@ -544,7 +544,7 @@ limitations under the License.
     <string name="settings_announcements_idle_title">Stillestående</string>
     <string name="unit_knots">knob</string>
     <string name="settings_recording_idle_timeout_title">Tid før stilstand aktiveres</string>
-    <string name="settings_announcements_average_speed_pace">Gennemsnitlig hastighed/tempo</string>
+    <string name="settings_announcements_average_speed_pace">Gennemsnitshastighed/tempo</string>
     <string name="value_float_knots_recommended">%1$.1f knob (anbefalet)</string>
     <string name="activity_type_swimming">svømning</string>
     <string name="settings_recording_min_required_accuracy_summary">Placering ignoreres hvis nøjagtigheden er større end %1$s</string>
@@ -603,4 +603,12 @@ limitations under the License.
     <string name="settings_announcements_lap_power">Omgangseffekt</string>
     <string name="power_x_watt">Power {x, plural, =1 {1 watt} other {# watt} }</string>
     <string name="power">Effekt</string>
+    <string name="marker_detail_title">%1$d af %2$d: %3$s</string>
+    <string name="sensor_state_temperature">Termometer</string>
+    <string name="stats_sensors_temperature">Temperatur</string>
+    <string name="sensor_state_cadence_unit">o/m</string>
+    <string name="sensor_state_heart_rate_unit">slag/min.</string>
+    <string name="settings_announcements_segment_average_speed_pace">Gennemsnitshastighed/tempo (segment)</string>
+    <string name="stats_average_segment_pace">Gns. segment-tempo</string>
+    <string name="stats_elapsed_segment_time">Forløbet segmentid</string>
 </resources>
