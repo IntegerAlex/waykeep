@@ -254,4 +254,6 @@
     <string name="waypoint_type_waterfall">מפל</string>
     <string name="waypoint_type_water_fountain">מזרקת מים</string>
     <string name="waypoint_type_waypoint">ציון דרך</string>
+    <string name="about_preference_title">על אודות</string>
+    <string name="about_libraries">ספריות</string>
 </resources>
