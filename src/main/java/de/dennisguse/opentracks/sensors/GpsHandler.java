@@ -110,7 +110,7 @@ public class GpsHandler extends SensorHandler<Location, Position> {
 
     @Override
     protected int getSensorPreferenceKey() {
-        return R.string.settings_sensor_bluetooth_gps_key;
+        return R.string.settings_sensor_gps_key;
     }
 
     @Override

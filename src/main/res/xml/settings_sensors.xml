@@ -5,10 +5,13 @@
     android:title="@string/settings_sensors_title">
 
     <PreferenceCategory android:title="@string/settings_gps_sensor">
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeGpsPreference
+        <ListPreference
             android:defaultValue="@string/sensor_type_value_internal"
-            android:key="@string/settings_sensor_bluetooth_gps_key"
-            android:title="@string/settings_gps_sensor" />
+            android:entryValues="@array/sensor_type_no_bluetooth_entryValues"
+            android:entries="@array/sensor_type_no_bluetooth_entries"
+            android:key="@string/settings_sensor_gps_key"
+            android:title="@string/settings_gps_sensor"
+            app:useSimpleSummaryProvider="true" />
         <ListPreference
             android:defaultValue="@string/min_sampling_interval_default"
             android:entryValues="@array/min_sampling_interval_values"
