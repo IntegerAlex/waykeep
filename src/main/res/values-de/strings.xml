@@ -654,4 +654,9 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="settings_night_mode_option_day_dynamic">Tag (DynamicColor)</string>
     <string name="settings_night_mode_option_night_dynamic">Nacht (DynamicColor)</string>
     <string name="settings_night_mode_option_night_oled_dynamic">OLED-freundlich (DynamicColor)</string>
+    <string name="stats_sensors_temperature">Temperatur</string>
+    <string name="sensor_state_temperature">Thermometer</string>
+    <string name="settings_announcements_segment_average_speed_pace">Durchschnittsgeschwindigkeit/pace (Segment)</string>
+    <string name="stats_average_segment_pace">Durchschnittliche Segment Geschwindigkeit</string>
+    <string name="stats_elapsed_segment_time">Verstrichene Segment Zeit</string>
 </resources>
