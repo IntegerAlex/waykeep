@@ -228,8 +228,15 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
                 selectedEntryIndex = !includeInternalSensor ? 1 : 2;
             }
 
+            // Pre-populate with already-bonded BLE devices so that devices that are paired but not actively advertising (e.g. Bosch eBike) are still shown. In case we dont have any cached UUIDs for a device, we just add it to the list and let the user decide
+            boolean filterEnabled = PreferencesUtils.getBluetoothFilterEnabled();
+            bluetoothAdapter.getBondedDevices().stream()
+                    .filter(bonded -> bonded.getType() == BluetoothDevice.DEVICE_TYPE_LE || bonded.getType() == BluetoothDevice.DEVICE_TYPE_DUAL)
+                    .filter(bonded -> !filterEnabled || bonded.getUuids() == null || java.util.Arrays.stream(bonded.getUuids()).anyMatch(serviceUUIDs::contains))
+                    .forEach(bonded -> listAdapter.add(bonded.getAddress(), bonded.getName()));
+
             List<ScanFilter> scanFilter = null;
-            if (PreferencesUtils.getBluetoothFilterEnabled()) {
+            if (filterEnabled) {
                 scanFilter = serviceUUIDs.stream()
                         .map(it -> new ScanFilter.Builder().setServiceUuid(it).build())
                         .toList();
