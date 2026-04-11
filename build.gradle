@@ -18,11 +18,11 @@ allprojects {
 }
 
 def getVersionName = { ->
-    return 'git describe --tags'.execute().text.trim()
+    return 'git describe --tags'.execute(null, project.rootDir).text.trim()
 }
 
 def getVersionCodeNightly = { ->
-    return Integer.valueOf('git rev-list HEAD --count'.execute().text.trim())
+    return Integer.valueOf('git rev-list HEAD --count'.execute(null, project.rootDir).text.trim())
 }
 
 android {
