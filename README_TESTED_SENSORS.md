@@ -112,3 +112,15 @@ Here is a list of the smartphones tested:
 | Google  | Nexus 4            | LineageOS 18.1  | Ok                                                                             |
 | Samsung | S4                 | Android 11      | Ok                                                                             |
 | Sony    | Xperia XZ1 Compact | LineageOS 16.1  | Failure                                                                        |
+
+## Bosch Smart System eBike
+
+OpenTracks also supports Bosch Smart System eBikes via Bosch's custom BLE service `00000010-eaa2-11e9-81b4-2a2ae2dbcce4`.
+
+Tested with:
+
+* Bosch Perfomance Line CX (SW-Version 16.9.0) / Kiox 300 (SW-Version 16.4.0)
+
+Currently supported measurements:
+
+* Human power

@@ -18,14 +18,28 @@ public class CyclingPowerBluetooth implements BluetoothDriver.BluetoothParser<Cy
             new UUID(0x2A6300001000L, 0x800000805f9b34fbL)
     );
 
+    public static final List<ServiceMeasurementUUID> SUPPORTED_SERVICES = List.of(
+            CYCLING_POWER,
+            BoschEbikeParser.BOSCH_EBIKE
+    );
+
     @Override
     public List<ServiceMeasurementUUID> getServices() {
-        return List.of(CYCLING_POWER);
+        return SUPPORTED_SERVICES;
     }
 
     @Override
     public CyclingPowerBluetooth.Data parsePayload(@NonNull ServiceMeasurementUUID serviceMeasurementUUID, String sensorName, BluetoothGattCharacteristic characteristic) {
-        return parseCyclingPower(characteristic);
+        if (serviceMeasurementUUID.equals(CYCLING_POWER)) {
+            return parseCyclingPower(characteristic);
+        }
+        if (serviceMeasurementUUID.equals(BoschEbikeParser.BOSCH_EBIKE)) {
+            BoschEbikeParser.Data boschData = BoschEbikeParser.parse(characteristic.getValue());
+            if (boschData != null && boschData.humanPower() != null) {
+                return new Data(boschData.humanPower(), null);
+            }
+        }
+        return null;
     }
 
 
