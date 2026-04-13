@@ -191,26 +191,6 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
             List<ParcelUuid> serviceUUIDs = getArguments().getParcelableArrayList(ARG_BLE_SERVICE_UUIDS);
             boolean includeInternalSensor = getArguments().getBoolean(ARG_INCLUDE_INTERNAL);
 
-            BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(getContext());
-            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-                Log.w(TAG, "Bluetooth adapter is present or not enabled.");
-                Toast.makeText(getContext(), R.string.bluetooth_disabled, Toast.LENGTH_SHORT).show();
-                dismiss();
-                return;
-            }
-
-            if (bluetoothAdapter.isDiscovering()) {
-                Log.i(TAG, "Cancelling ongoing Bluetooth discovery.");
-                bluetoothAdapter.cancelDiscovery();
-            }
-
-            scanner = bluetoothAdapter.getBluetoothLeScanner();
-            if (scanner == null) {
-                Log.e(TAG, "BluetoothLeScanner is null.");
-                dismiss();
-                return;
-            }
-
             listAdapter.add(SensorType.NONE.getPreferenceValue(), getContext().getString(DEVICE_NONE_RESOURCEID));
             selectedEntryIndex = 0;
 
@@ -226,6 +206,28 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
             if (deviceSelected != null && SensorType.REMOTE.equals(PreferencesUtils.getSensorType(deviceSelected))) {
                 listAdapter.add(preference.value, preference.value);
                 selectedEntryIndex = !includeInternalSensor ? 1 : 2;
+            }
+
+            BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(getContext());
+            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+                Log.w(TAG, "Bluetooth adapter is present or not enabled. Skipping BLE scan.");
+                Toast.makeText(getContext(), R.string.bluetooth_disabled, Toast.LENGTH_SHORT).show();
+                if (!includeInternalSensor) {
+                    dismiss();
+                }
+                return;
+            }
+
+            if (bluetoothAdapter.isDiscovering()) {
+                Log.i(TAG, "Cancelling ongoing Bluetooth discovery.");
+                bluetoothAdapter.cancelDiscovery();
+            }
+
+            scanner = bluetoothAdapter.getBluetoothLeScanner();
+            if (scanner == null) {
+                Log.e(TAG, "BluetoothLeScanner is null.");
+                dismiss();
+                return;
             }
 
             // Pre-populate with already-bonded BLE devices so that devices that are paired but not actively advertising (e.g. Bosch eBike) are still shown. In case we dont have any cached UUIDs for a device, we just add it to the list and let the user decide
