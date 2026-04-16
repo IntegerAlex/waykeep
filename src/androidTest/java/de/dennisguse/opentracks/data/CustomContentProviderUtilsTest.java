@@ -20,22 +20,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.util.Pair;
 
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +75,6 @@ import de.dennisguse.opentracks.util.FileUtils;
  * @author Bartlomiej Niechwiej
  * @author Youtao Liu
  */
-@RunWith(MockitoJUnitRunner.class)
 public class CustomContentProviderUtilsTest {
 
     private static final String NAME_PREFIX = "test name";
@@ -89,12 +85,6 @@ public class CustomContentProviderUtilsTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
     private ContentProviderUtils contentProviderUtils;
-
-    @Mock
-    private Cursor cursorMock;
-
-    @Mock
-    private ContentResolver contentResolverMock;
 
     @Before
     public void setUp() {
@@ -187,27 +177,49 @@ public class CustomContentProviderUtilsTest {
     @Test
     public void testCreateTrack() {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-
-        int columnIndex = 1;
-        // Id
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns._ID)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getLong(columnIndex)).thenReturn(trackId.id());
-
-        //Uuid
-        columnIndex++;
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns.UUID)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getBlob(columnIndex)).thenReturn(UUIDUtils.toBytes(UUID.randomUUID()));
-
-        // Name
-        columnIndex++;
         String name = NAME_PREFIX + trackId.id();
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns.NAME)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getString(columnIndex)).thenReturn(name);
 
-        Track track = ContentProviderUtils.createTrack(cursorMock);
+        MatrixCursor cursor = new MatrixCursor(new String[]{
+                TracksColumns._ID,
+                TracksColumns.UUID,
+                TracksColumns.NAME,
+                TracksColumns.DESCRIPTION,
+                TracksColumns.ACTIVITY_TYPE,
+                TracksColumns.ACTIVITY_TYPE_LOCALIZED,
+                TracksColumns.STARTTIME,
+                TracksColumns.STARTTIME_OFFSET,
+                TracksColumns.STOPTIME,
+                TracksColumns.TOTALDISTANCE,
+                TracksColumns.TOTALTIME,
+                TracksColumns.MOVINGTIME,
+                TracksColumns.MAXSPEED,
+                TracksColumns.MIN_ALTITUDE,
+                TracksColumns.MAX_ALTITUDE,
+                TracksColumns.ALTITUDE_GAIN,
+                TracksColumns.ALTITUDE_LOSS,
+        });
+        cursor.addRow(new Object[]{
+                trackId.id(),
+                UUIDUtils.toBytes(UUID.randomUUID()),
+                name,
+                "",
+                ActivityType.UNKNOWN.getId(),
+                "",
+                1_000L,
+                ZoneOffset.UTC.getTotalSeconds(),
+                2_000L,
+                123.45f,
+                1_000L,
+                500L,
+                12.34f,
+                null,
+                null,
+                null,
+                null,
+        });
+        assertTrue(cursor.moveToFirst());
+
+        Track track = ContentProviderUtils.createTrack(cursor);
         assertEquals(trackId, track.id());
         assertEquals(name, track.name());
     }
@@ -448,8 +460,6 @@ public class CustomContentProviderUtilsTest {
         MarkerBuilder marker = new MarkerBuilder(trackId, track.second.get(0));
         marker.setDescription(TEST_DESC);
         contentProviderUtils.insertMarker(marker.getMarker());
-
-        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(contentResolverMock);
 
         Marker.Id markerId = new Marker.Id(System.currentTimeMillis());
         marker.setId(markerId);

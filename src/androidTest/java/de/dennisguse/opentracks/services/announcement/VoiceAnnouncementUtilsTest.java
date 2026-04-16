@@ -556,6 +556,7 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceLapHeartRate(true);
 
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
+        int lapHeartRate = Math.round(data.second.avgHeartRate().getBPM());
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
@@ -573,7 +574,7 @@ public class VoiceAnnouncementUtilsTest {
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();
 
         // then
-        assertEquals("12:16 AM. Total distance 14.2 kilometers. 16 minutes 39 seconds. Average moving speed 51.2 kilometers per hour. Lap speed 51.2 kilometers per hour. Average heart rate 180 bpm. Lap heart rate 133 bpm.", announcement);
+        assertEquals("12:16 AM. Total distance 14.2 kilometers. 16 minutes 39 seconds. Average moving speed 51.2 kilometers per hour. Lap speed 51.2 kilometers per hour. Average heart rate 180 bpm. Lap heart rate " + lapHeartRate + " bpm.", announcement);
     }
 
     @Test
@@ -589,6 +590,7 @@ public class VoiceAnnouncementUtilsTest {
         PreferencesUtils.setVoiceAnnounceLapSpeedPace(false);
 
         Pair<Track, Statistics> data = buildTrackWithTrackPoints();
+        int lapHeartRate = Math.round(data.second.avgHeartRate().getBPM());
 
         SensorStatistics sensorStatistics = new SensorStatistics(HeartRate.of(180f), HeartRate.of(180f), null, null, null, null);
 
@@ -606,7 +608,7 @@ public class VoiceAnnouncementUtilsTest {
         String announcement = VoiceAnnouncementUtils.createStatistics(context, data.first, dataSet, UnitSystem.METRIC, true, data.second, sensorStatistics).toString();
 
         // then
-        assertEquals("12:16 AM.  Current heart rate 60 bpm. Average heart rate 180 bpm. Lap heart rate 133 bpm.", announcement);
+        assertEquals("12:16 AM.  Current heart rate 60 bpm. Average heart rate 180 bpm. Lap heart rate " + lapHeartRate + " bpm.", announcement);
     }
 
     @Test

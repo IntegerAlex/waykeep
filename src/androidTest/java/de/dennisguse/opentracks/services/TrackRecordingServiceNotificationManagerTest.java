@@ -1,24 +1,23 @@
 package de.dennisguse.opentracks.services;
 
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
 import androidx.core.app.NotificationCompat;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.models.ActivityType;
 import de.dennisguse.opentracks.data.models.Altitude;
 import de.dennisguse.opentracks.data.models.Distance;
@@ -29,32 +28,24 @@ import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.settings.UnitSystem;
 
-@RunWith(MockitoJUnitRunner.class)
 public class TrackRecordingServiceNotificationManagerTest {
 
+    private static final String CHANNEL_ID = "TrackRecordingServiceNotificationManagerTest";
+
     private final Context context = ApplicationProvider.getApplicationContext();
+    private final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 
-    @Mock
-    private NotificationCompat.Builder notificationCompatBuilder;
-
-    @Mock
-    private NotificationManager notificationManager;
+    @After
+    public void tearDown() {
+        notificationManager.cancelAll();
+    }
 
     @Test
     public void updateLocation_triggersAlertOnlyOnFirstInaccurateLocation() {
-        TrackPoint trackPointMock = new TrackPoint(TrackPoint.Type.TRACKPOINT,
-                new Position(
-                        null,
-                        null, null, Distance.of(999f),
-                        Altitude.WGS84.of(10), null,
-                        null,
-                        Speed.ZERO)
-        );
+        notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT));
 
-        when(notificationCompatBuilder.setOnlyAlertOnce(anyBoolean()))
-                .thenReturn(notificationCompatBuilder);
-
-        TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationCompatBuilder);
+        TrackingNotificationBuilder notificationBuilder = new TrackingNotificationBuilder(context, CHANNEL_ID);
+        TrackRecordingServiceNotificationManager subject = new TrackRecordingServiceNotificationManager(notificationManager, notificationBuilder);
         subject.setUnitSystem(UnitSystem.METRIC);
 
         Track track = new Track(
@@ -68,16 +59,42 @@ public class TrackRecordingServiceNotificationManagerTest {
                 Statistics.DEFAULT
         );
 
-        RecordingData data = new RecordingData(track, trackPointMock, null, null);
+        subject.updateTrackPoint(context, createRecordingData(track, Distance.of(999f)), Distance.of(100));
+        subject.updateTrackPoint(context, createRecordingData(track, Distance.of(999f)), Distance.of(100));
+        subject.updateTrackPoint(context, createRecordingData(track, Distance.of(999f)), Distance.of(1000));
+        subject.updateTrackPoint(context, createRecordingData(track, Distance.of(999f)), Distance.of(100));
+        assertEquals(java.util.Arrays.asList(false, true, true, true, true, true, false, true), notificationBuilder.onlyAlertOnceValues);
+    }
 
-        // when
-        subject.updateTrackPoint(context, data, Distance.of(100));
-        subject.updateTrackPoint(context, data, Distance.of(100));
-        subject.updateTrackPoint(context, data, Distance.of(1000));
-        subject.updateTrackPoint(context, data, Distance.of(100));
+    private RecordingData createRecordingData(Track track, Distance horizontalAccuracy) {
+        TrackPoint trackPoint = new TrackPoint(
+                TrackPoint.Type.TRACKPOINT,
+                new Position(
+                        null,
+                        null,
+                        null,
+                        horizontalAccuracy,
+                        Altitude.WGS84.of(10),
+                        null,
+                        null,
+                        Speed.ZERO
+                )
+        );
+        return new RecordingData(track, trackPoint, null, null);
+    }
 
-        // then
-        verify(notificationCompatBuilder, times(6)).setOnlyAlertOnce(true);
-        verify(notificationCompatBuilder, times(2)).setOnlyAlertOnce(false);
+    private static final class TrackingNotificationBuilder extends NotificationCompat.Builder {
+        private final List<Boolean> onlyAlertOnceValues = new ArrayList<>();
+
+        private TrackingNotificationBuilder(Context context, String channelId) {
+            super(context, channelId);
+            setSmallIcon(R.drawable.ic_logo_color_24dp);
+        }
+
+        @Override
+        public NotificationCompat.Builder setOnlyAlertOnce(boolean onlyAlertOnce) {
+            onlyAlertOnceValues.add(onlyAlertOnce);
+            return super.setOnlyAlertOnce(onlyAlertOnce);
+        }
     }
 }
