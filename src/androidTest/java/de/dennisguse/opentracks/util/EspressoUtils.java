@@ -1,15 +1,13 @@
 package de.dennisguse.opentracks.util;
 
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 
 import android.app.Activity;
 import android.os.SystemClock;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.PerformException;
@@ -30,45 +28,11 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
 public class EspressoUtils {
 
     private static final long VIEW_POLLING_INTERVAL_MS = 50;
-
-    public static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
-    }
-
-    public static Matcher<View> withListSize (final int size) {
-        return new TypeSafeMatcher<>() {
-            @Override
-            public boolean matchesSafely(final View view) {
-                return ((ListView) view).getCount() == size;
-            }
-
-            @Override
-            public void describeTo(final Description description) {
-                description.appendText("ListView should have " + size + " items");
-            }
-        };
-    }
 
     public static Matcher<View> withRecyclerViewItemCount(final int count) {
         return new TypeSafeMatcher<>() {
@@ -116,50 +80,6 @@ public class EspressoUtils {
             @Override
             public void describeTo(Description description) {
                 description.appendText("ViewPager2 should be idle on item " + index);
-            }
-        };
-    }
-
-    public static ViewAction waitForView(final Matcher<View> viewMatcher, final Duration timeout) {
-        return waitForViewCondition(viewMatcher, ignored -> true, "view to match " + viewMatcher, timeout);
-    }
-
-    public static ViewAction waitForViewCondition(final Matcher<View> viewMatcher,
-                                                  final Predicate<View> condition,
-                                                  final String conditionDescription,
-                                                  final Duration timeout) {
-        return new ViewAction() {
-            @Override
-            public String getDescription() {
-                return "wait up to " + timeout + " ms for " + conditionDescription;
-            }
-
-            @Override
-            public Matcher<View> getConstraints() {
-                return isRoot();
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                long deadline = SystemClock.uptimeMillis() + timeout.toMillis();
-
-                do {
-                    uiController.loopMainThreadUntilIdle();
-
-                    for (View child : TreeIterables.breadthFirstViewTraversal(view)) {
-                        if (viewMatcher.matches(child) && condition.test(child)) {
-                            return;
-                        }
-                    }
-
-                    uiController.loopMainThreadForAtLeast(VIEW_POLLING_INTERVAL_MS);
-                } while (SystemClock.uptimeMillis() < deadline);
-
-                throw new PerformException.Builder()
-                        .withActionDescription(getDescription())
-                        .withViewDescription(HumanReadables.describe(view))
-                        .withCause(new TimeoutException("Timed out waiting for " + conditionDescription))
-                        .build();
             }
         };
     }
@@ -256,7 +176,7 @@ public class EspressoUtils {
 
             @Override
             public Matcher<View> getConstraints() {
-                return isDisplayed();
+                return isAssignableFrom(View.class);
             }
 
             @Override
