@@ -2,18 +2,20 @@ package de.dennisguse.opentracks;
 
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static de.dennisguse.opentracks.util.ActivityTestUtils.waitForResumedActivity;
+import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
+import static de.dennisguse.opentracks.util.EspressoUtils.performClickOnAncestor;
+import static de.dennisguse.opentracks.util.EspressoUtils.performLongClick;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForView;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
 import static de.dennisguse.opentracks.util.TrackRecordingServiceTestUtils.waitForRecordingState;
@@ -67,7 +69,7 @@ public class EspressoEditTrackRecordingTest {
         {
             // TrackListActivity: start recording
             onView(withId(R.id.track_list_fab_action))
-                    .perform(click());
+                    .perform(performClick());
             waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
             waitForRecordingState(true, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_recording_fab_action));
@@ -76,12 +78,15 @@ public class EspressoEditTrackRecordingTest {
             // TrackRecordingActivity
 
             // open menu
-            openContextualActionModeOverflowMenu();
+            onView(allOf(
+                    withContentDescription(androidx.appcompat.R.string.abc_action_menu_overflow_description),
+                    isDescendantOfA(withId(R.id.bottom_app_bar))))
+                    .perform(performClick());
             waitUntilDisplayedInCurrentRoot(withText(R.string.menu_edit));
 
             // Click the item.
             onView(withText(R.string.menu_edit))
-                    .perform(click());
+                    .perform(performClickOnAncestor());
             waitUntilDisplayed(withId(R.id.track_edit_name));
 
             // change name for "New Name"
@@ -93,12 +98,12 @@ public class EspressoEditTrackRecordingTest {
 
             // save edition
             onView(withId(R.id.track_edit_save))
-                    .perform(click());
+                    .perform(performClick());
             waitUntilDisplayed(withId(R.id.track_recording_fab_action));
 
             // stop;
             onView(withId(R.id.track_recording_fab_action))
-                    .perform(longClick());
+                    .perform(performLongClick());
             waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.resume_button));
             waitUntilDisplayed(withId(R.id.finish_button));

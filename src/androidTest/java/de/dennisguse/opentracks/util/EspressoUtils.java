@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -217,6 +218,137 @@ public class EspressoUtils {
             public void perform(UiController uiController, View view) {
                 TabLayout tabLayout = (TabLayout) view;
                 tabLayout.getTabAt(index).select();
+            }
+        };
+    }
+
+    public static ViewAction performClick() {
+        return new ViewAction() {
+            @Override
+            public String getDescription() {
+                return "invoke View.performClick()";
+            }
+
+            @Override
+            public Matcher<View> getConstraints() {
+                return isDisplayed();
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                if (!view.performClick()) {
+                    throw new PerformException.Builder()
+                            .withActionDescription(getDescription())
+                            .withViewDescription(HumanReadables.describe(view))
+                            .build();
+                }
+                uiController.loopMainThreadUntilIdle();
+            }
+        };
+    }
+
+    public static ViewAction performClickOnAncestor() {
+        return new ViewAction() {
+            @Override
+            public String getDescription() {
+                return "invoke performClick() on the matched view or its ancestor";
+            }
+
+            @Override
+            public Matcher<View> getConstraints() {
+                return isDisplayed();
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                View current = view;
+                while (current != null) {
+                    if (current.performClick()) {
+                        uiController.loopMainThreadUntilIdle();
+                        return;
+                    }
+
+                    ViewParent parent = current.getParent();
+                    current = parent instanceof View ? (View) parent : null;
+                }
+
+                current = view;
+                while (current != null) {
+                    ViewParent parent = current.getParent();
+                    if (parent instanceof AdapterView<?> adapterView) {
+                        int position = adapterView.getPositionForView(current);
+                        if (position != AdapterView.INVALID_POSITION
+                                && adapterView.performItemClick(current, position, adapterView.getAdapter().getItemId(position))) {
+                            uiController.loopMainThreadUntilIdle();
+                            return;
+                        }
+                    }
+
+                    current = parent instanceof View ? (View) parent : null;
+                }
+
+                throw new PerformException.Builder()
+                        .withActionDescription(getDescription())
+                        .withViewDescription(HumanReadables.describe(view))
+                        .build();
+            }
+        };
+    }
+
+    public static ViewAction performLongClick() {
+        return new ViewAction() {
+            @Override
+            public String getDescription() {
+                return "invoke View.performLongClick()";
+            }
+
+            @Override
+            public Matcher<View> getConstraints() {
+                return isDisplayed();
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                if (!view.performLongClick()) {
+                    throw new PerformException.Builder()
+                            .withActionDescription(getDescription())
+                            .withViewDescription(HumanReadables.describe(view))
+                            .build();
+                }
+                uiController.loopMainThreadUntilIdle();
+            }
+        };
+    }
+
+    public static ViewAction performLongClickOnAncestor() {
+        return new ViewAction() {
+            @Override
+            public String getDescription() {
+                return "invoke performLongClick() on the matched view or its ancestor";
+            }
+
+            @Override
+            public Matcher<View> getConstraints() {
+                return isDisplayed();
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                View current = view;
+                while (current != null) {
+                    if (current.performLongClick()) {
+                        uiController.loopMainThreadUntilIdle();
+                        return;
+                    }
+
+                    ViewParent parent = current.getParent();
+                    current = parent instanceof View ? (View) parent : null;
+                }
+
+                throw new PerformException.Builder()
+                        .withActionDescription(getDescription())
+                        .withViewDescription(HumanReadables.describe(view))
+                        .build();
             }
         };
     }

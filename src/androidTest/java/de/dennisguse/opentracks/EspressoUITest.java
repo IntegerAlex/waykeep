@@ -1,15 +1,16 @@
 package de.dennisguse.opentracks;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static de.dennisguse.opentracks.util.ActivityTestUtils.waitForResumedActivity;
+import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
+import static de.dennisguse.opentracks.util.EspressoUtils.performLongClick;
+import static de.dennisguse.opentracks.util.EspressoUtils.performLongClickOnAncestor;
 import static de.dennisguse.opentracks.util.EspressoUtils.selectTabAtIndex;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedViewCondition;
@@ -34,6 +35,7 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 
 import java.time.Duration;
@@ -50,11 +52,12 @@ public class EspressoUITest {
 
     private static final Duration UI_TIMEOUT = Duration.ofSeconds(10);
 
-    @Rule
-    public ActivityScenarioRule<TrackListActivity> mActivityTestRule = new ActivityScenarioRule<>(TrackListActivity.class);
+    private final ActivityScenarioRule<TrackListActivity> activityRule = new ActivityScenarioRule<>(TrackListActivity.class);
+    private final GrantPermissionRule grantPermissionRule = TestUtil.createGrantPermissionRule();
 
     @Rule
-    public GrantPermissionRule mGrantPermissionRule = TestUtil.createGrantPermissionRule();
+    public RuleChain rules = RuleChain.outerRule(grantPermissionRule)
+            .around(activityRule);
 
     @Before
     public void setUp() {
@@ -69,7 +72,7 @@ public class EspressoUITest {
         {
             // TrackListActivity: start recording
             onView(withId(R.id.track_list_fab_action))
-                    .perform(click());
+                    .perform(performClick());
             waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
             waitForRecordingState(true, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_recording_fab_action));
@@ -77,7 +80,7 @@ public class EspressoUITest {
         {
             // TrackRecordingActivity: stop
             onView(withId(R.id.track_recording_fab_action))
-                    .perform(longClick());
+                    .perform(performLongClick());
             waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_edit_name));
             waitUntilDisplayed(withId(R.id.resume_button));
@@ -86,14 +89,14 @@ public class EspressoUITest {
 
             // TrackStoppedActivity: resume
             onView(allOf(withId(R.id.resume_button), isClickable()))
-                    .perform(click());
+                    .perform(performClick());
             waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
             waitForRecordingState(true, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_recording_fab_action));
 
             // TrackRecordingActivity: stop again
             onView(withId(R.id.track_recording_fab_action))
-                    .perform(longClick());
+                    .perform(performLongClick());
             waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_edit_name));
             waitUntilDisplayed(withId(R.id.finish_button));
@@ -102,7 +105,7 @@ public class EspressoUITest {
 
             // TrackStoppedActivity
             onView(withId(R.id.finish_button))
-                    .perform(click());
+                    .perform(performClick());
             waitForResumedActivity(TrackListActivity.class, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_list));
         }
@@ -114,7 +117,7 @@ public class EspressoUITest {
         {
             // TrackListActivity: start recording
             onView(withId(R.id.track_list_fab_action))
-                    .perform(click());
+                    .perform(performClick());
             waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
             waitForRecordingState(true, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.track_detail_activity_tablayout));
@@ -138,7 +141,7 @@ public class EspressoUITest {
 
             // stop
             onView(withId(R.id.track_recording_fab_action))
-                    .perform(longClick());
+                    .perform(performLongClick());
             waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
             waitUntilDisplayed(withId(R.id.resume_button));
         }
@@ -152,11 +155,12 @@ public class EspressoUITest {
         TrackBuilder trackBuilder = new TrackBuilder(pair.first);
         trackBuilder.setName(uniqueTrackName);
         TestDataUtil.insertTrackWithLocations(new ContentProviderUtils(ApplicationProvider.getApplicationContext()), trackBuilder.getTrack(), pair.second);
-        mActivityTestRule.getScenario().recreate();
+        activityRule.getScenario().recreate();
         waitUntilDisplayed(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)));
 
         onView(withId(R.id.track_list)).check(matches(isDisplayed()));
-        onView(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName))).perform(longClick());
+        onView(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)))
+                .perform(performLongClickOnAncestor());
     }
 
     private void waitUntilDisplayed(Matcher<View> viewMatcher) {
