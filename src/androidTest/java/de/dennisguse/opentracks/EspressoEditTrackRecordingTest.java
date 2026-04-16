@@ -12,25 +12,19 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static de.dennisguse.opentracks.util.ActivityTestUtils.waitForResumedActivity;
 import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
 import static de.dennisguse.opentracks.util.EspressoUtils.performClickOnAncestor;
-import static de.dennisguse.opentracks.util.EspressoUtils.performLongClick;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
-import static de.dennisguse.opentracks.util.TrackRecordingServiceTestUtils.waitForRecordingState;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
+import static de.dennisguse.opentracks.util.TestEnvironmentUtils.resetTrackRecordingServiceAndDeleteTracks;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.startRecordingFromTrackList;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.stopRecordingToTrackStopped;
 import static org.hamcrest.Matchers.allOf;
 
-import android.view.View;
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +32,6 @@ import org.junit.runner.RunWith;
 
 import java.time.Duration;
 import java.util.Locale;
-import de.dennisguse.opentracks.data.ContentProviderUtils;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -57,22 +50,13 @@ public class EspressoEditTrackRecordingTest {
 
     @Before
     public void setUp() {
-        Context context = ApplicationProvider.getApplicationContext();
-        context.stopService(new Intent(context, de.dennisguse.opentracks.services.TrackRecordingService.class));
-        new ContentProviderUtils(context).deleteAllTracks(context);
+        resetTrackRecordingServiceAndDeleteTracks();
     }
 
     @LargeTest
     @Test
     public void espressoEditTrackRecordingTest() {
-        {
-            // TrackListActivity: start recording
-            onView(withId(R.id.track_list_fab_action))
-                    .perform(performClick());
-            waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
-            waitForRecordingState(true, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_recording_fab_action));
-        }
+        startRecordingFromTrackList(UI_TIMEOUT);
         {
             // TrackRecordingActivity
 
@@ -84,7 +68,7 @@ public class EspressoEditTrackRecordingTest {
             onView(withText(R.string.menu_edit))
                     .inRoot(isPlatformPopup())
                     .perform(performClickOnAncestor());
-            waitUntilDisplayed(withId(R.id.track_edit_name));
+            waitUntilDisplayed(withId(R.id.track_edit_name), UI_TIMEOUT);
 
             // change name for "New Name"
             onView(withId(R.id.track_edit_name))
@@ -96,14 +80,10 @@ public class EspressoEditTrackRecordingTest {
             // save edition
             onView(withId(R.id.track_edit_save))
                     .perform(performClick());
-            waitUntilDisplayed(withId(R.id.track_recording_fab_action));
+            waitUntilDisplayed(withId(R.id.track_recording_fab_action), UI_TIMEOUT);
 
             // stop;
-            onView(withId(R.id.track_recording_fab_action))
-                    .perform(performLongClick());
-            waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.resume_button));
-            waitUntilDisplayed(withId(R.id.finish_button));
+            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.resume_button, R.id.finish_button);
 
             // it's on track stopped activity and there are two buttons
             onView(withId(R.id.resume_button))
@@ -111,9 +91,5 @@ public class EspressoEditTrackRecordingTest {
             onView(withId(R.id.finish_button))
                     .check(matches(isDisplayed()));
         }
-    }
-
-    private void waitUntilDisplayed(Matcher<View> viewMatcher) {
-        waitForResumedView(allOf(viewMatcher, isDisplayed()), UI_TIMEOUT);
     }
 }

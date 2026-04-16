@@ -1,28 +1,24 @@
 package de.dennisguse.opentracks;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static de.dennisguse.opentracks.util.ActivityTestUtils.waitForResumedActivity;
-import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
-import static de.dennisguse.opentracks.util.EspressoUtils.performLongClick;
 import static de.dennisguse.opentracks.util.EspressoUtils.performLongClickOnAncestor;
 import static de.dennisguse.opentracks.util.EspressoUtils.selectTabAtIndex;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedViewCondition;
 import static de.dennisguse.opentracks.util.EspressoUtils.withSelectedTab;
 import static de.dennisguse.opentracks.util.EspressoUtils.withViewPagerCurrentItem;
-import static de.dennisguse.opentracks.util.TrackRecordingServiceTestUtils.waitForRecordingState;
+import static de.dennisguse.opentracks.util.TestEnvironmentUtils.resetTrackRecordingServiceAndDeleteTracks;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.finishStoppedTrack;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.resumeStoppedTrack;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.startRecordingFromTrackList;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.stopRecordingToTrackStopped;
 import static org.hamcrest.Matchers.allOf;
 
 import android.util.Pair;
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.ViewInteraction;
@@ -40,6 +36,7 @@ import org.junit.runner.RunWith;
 
 import java.time.Duration;
 import java.util.List;
+
 import de.dennisguse.opentracks.content.data.TestDataUtil;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
@@ -61,68 +58,27 @@ public class EspressoUITest {
 
     @Before
     public void setUp() {
-        Context context = ApplicationProvider.getApplicationContext();
-        context.stopService(new Intent(context, de.dennisguse.opentracks.services.TrackRecordingService.class));
-        new ContentProviderUtils(context).deleteAllTracks(context);
+        resetTrackRecordingServiceAndDeleteTracks();
     }
 
     @LargeTest
     @Test
     public void record_stop_resume_stop_finish() {
+        startRecordingFromTrackList(UI_TIMEOUT);
         {
-            // TrackListActivity: start recording
-            onView(withId(R.id.track_list_fab_action))
-                    .perform(performClick());
-            waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
-            waitForRecordingState(true, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_recording_fab_action));
-        }
-        {
-            // TrackRecordingActivity: stop
-            onView(withId(R.id.track_recording_fab_action))
-                    .perform(performLongClick());
-            waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_edit_name));
-            waitUntilDisplayed(withId(R.id.resume_button));
-            onView(withId(R.id.track_edit_name))
-                    .perform(closeSoftKeyboard());
-
-            // TrackStoppedActivity: resume
-            onView(allOf(withId(R.id.resume_button), isClickable()))
-                    .perform(performClick());
-            waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
-            waitForRecordingState(true, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_recording_fab_action));
-
-            // TrackRecordingActivity: stop again
-            onView(withId(R.id.track_recording_fab_action))
-                    .perform(performLongClick());
-            waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_edit_name));
-            waitUntilDisplayed(withId(R.id.finish_button));
-            onView(withId(R.id.track_edit_name))
-                    .perform(closeSoftKeyboard());
-
-            // TrackStoppedActivity
-            onView(withId(R.id.finish_button))
-                    .perform(performClick());
-            waitForResumedActivity(TrackListActivity.class, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_list));
+            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.resume_button);
+            resumeStoppedTrack(UI_TIMEOUT);
+            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.finish_button);
+            finishStoppedTrack(UI_TIMEOUT);
         }
     }
 
     @LargeTest
     @Test
     public void record_move_through_tabs() {
-        {
-            // TrackListActivity: start recording
-            onView(withId(R.id.track_list_fab_action))
-                    .perform(performClick());
-            waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
-            waitForRecordingState(true, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.track_detail_activity_tablayout));
-            waitUntilDisplayed(withId(R.id.track_detail_activity_view_pager));
-        }
+        startRecordingFromTrackList(UI_TIMEOUT);
+        waitUntilDisplayed(withId(R.id.track_detail_activity_tablayout), UI_TIMEOUT);
+        waitUntilDisplayed(withId(R.id.track_detail_activity_view_pager), UI_TIMEOUT);
         {
             // TrackRecordingActivity
             ViewInteraction tabLayout = onView(withId(R.id.track_detail_activity_tablayout));
@@ -140,10 +96,7 @@ public class EspressoUITest {
             waitUntilTabSelectionSettlesAt(0);
 
             // stop
-            onView(withId(R.id.track_recording_fab_action))
-                    .perform(performLongClick());
-            waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
-            waitUntilDisplayed(withId(R.id.resume_button));
+            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.resume_button);
         }
     }
 
@@ -156,15 +109,11 @@ public class EspressoUITest {
         trackBuilder.setName(uniqueTrackName);
         TestDataUtil.insertTrackWithLocations(new ContentProviderUtils(ApplicationProvider.getApplicationContext()), trackBuilder.getTrack(), pair.second);
         activityRule.getScenario().recreate();
-        waitUntilDisplayed(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)));
+        waitUntilDisplayed(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)), UI_TIMEOUT);
 
         onView(withId(R.id.track_list)).check(matches(isDisplayed()));
         onView(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)))
                 .perform(performLongClickOnAncestor());
-    }
-
-    private void waitUntilDisplayed(Matcher<View> viewMatcher) {
-        waitForResumedView(allOf(viewMatcher, isDisplayed()), UI_TIMEOUT);
     }
 
     private void waitUntilTabSelectionSettlesAt(int index) {

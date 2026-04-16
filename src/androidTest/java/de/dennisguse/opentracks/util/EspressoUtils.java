@@ -1,5 +1,6 @@
 package de.dennisguse.opentracks.util;
 
+import static org.hamcrest.Matchers.allOf;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 
@@ -86,6 +87,18 @@ public class EspressoUtils {
 
     public static void waitForResumedView(final Matcher<View> viewMatcher, final Duration timeout) {
         waitForResumedViewCondition(viewMatcher, ignored -> true, "view to match " + viewMatcher, timeout);
+    }
+
+    public static void waitUntilDisplayed(final Matcher<View> viewMatcher, final Duration timeout) {
+        waitForResumedView(allOf(viewMatcher, isDisplayed()), timeout);
+    }
+
+    public static void waitUntilRecyclerViewItemCount(final Matcher<View> viewMatcher, final int expectedCount, final Duration timeout) {
+        waitForResumedViewCondition(
+                allOf(viewMatcher, isDisplayed()),
+                view -> withRecyclerViewItemCount(expectedCount).matches(view),
+                "RecyclerView item count to be " + expectedCount,
+                timeout);
     }
 
     public static void waitForResumedViewCondition(final Matcher<View> viewMatcher,

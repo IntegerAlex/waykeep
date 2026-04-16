@@ -2,46 +2,36 @@ package de.dennisguse.opentracks;
 
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
-import static de.dennisguse.opentracks.util.ActivityTestUtils.waitForResumedActivity;
 import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
 import static de.dennisguse.opentracks.util.EspressoUtils.performClickOnAncestor;
-import static de.dennisguse.opentracks.util.EspressoUtils.performLongClick;
 import static de.dennisguse.opentracks.util.EspressoUtils.performLongClickOnAncestor;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedViewCondition;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilRecyclerViewItemCount;
 import static de.dennisguse.opentracks.util.EspressoUtils.withRecyclerViewItemCount;
-import static de.dennisguse.opentracks.util.TrackRecordingServiceTestUtils.waitForRecordingState;
+import static de.dennisguse.opentracks.util.TestEnvironmentUtils.resetTrackRecordingServiceAndDeleteTracks;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.renameStoppedTrack;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.startRecordingFromTrackList;
+import static de.dennisguse.opentracks.util.TrackUiTestUtils.stopRecordingToTrackStopped;
 import static org.hamcrest.Matchers.allOf;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.Duration;
-import de.dennisguse.opentracks.data.ContentProviderUtils;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -57,9 +47,7 @@ public class EspressoDeleteTrackTest {
 
     @Before
     public void setUp() {
-        Context context = ApplicationProvider.getApplicationContext();
-        context.stopService(new Intent(context, de.dennisguse.opentracks.services.TrackRecordingService.class));
-        new ContentProviderUtils(context).deleteAllTracks(context);
+        resetTrackRecordingServiceAndDeleteTracks();
     }
 
     @Test
@@ -72,9 +60,8 @@ public class EspressoDeleteTrackTest {
         onView(withText(android.R.string.ok))
                 .inRoot(isDialog())
                 .perform(performClick());
-        waitForResumedActivity(TrackListActivity.class, UI_TIMEOUT);
-        waitUntilDisplayed(withId(R.id.track_list));
-        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 0);
+        waitUntilDisplayed(withId(R.id.track_list), UI_TIMEOUT);
+        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 0, UI_TIMEOUT);
 
         // the recycler is empty again after discarding the only recorded track
         onView(withId(R.id.track_list))
@@ -86,15 +73,13 @@ public class EspressoDeleteTrackTest {
         String uniqueTrackName = "DeleteFromTrackList-" + System.currentTimeMillis();
 
         recordTrackAndOpenTrackStoppedActivity();
-        onView(withId(R.id.track_edit_name))
-                .perform(scrollTo(), replaceText(uniqueTrackName), closeSoftKeyboard());
+        renameStoppedTrack(uniqueTrackName, UI_TIMEOUT);
 
         onView(withId(R.id.finish_button))
                 .perform(performClick());
-        waitForResumedActivity(TrackListActivity.class, UI_TIMEOUT);
-        waitUntilDisplayed(withId(R.id.track_list));
-        waitUntilDisplayed(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)));
-        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 1);
+        waitUntilDisplayed(withId(R.id.track_list), UI_TIMEOUT);
+        waitUntilDisplayed(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)), UI_TIMEOUT);
+        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 1, UI_TIMEOUT);
 
         onView(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)))
                 .perform(performLongClickOnAncestor());
@@ -103,34 +88,20 @@ public class EspressoDeleteTrackTest {
         onView(withText(android.R.string.ok))
                 .inRoot(isDialog())
                 .perform(performClick());
-        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 0);
+        waitUntilRecyclerViewItemCount(withId(R.id.track_list), 0, UI_TIMEOUT);
 
         onView(withId(R.id.track_list))
                 .check(matches(withRecyclerViewItemCount(0)));
     }
 
     private void recordTrackAndOpenTrackStoppedActivity() {
-        // TrackListActivity: start recording
-        onView(withId(R.id.track_list_fab_action))
-                .perform(performClick());
-        waitForResumedActivity(TrackRecordingActivity.class, UI_TIMEOUT);
-        waitForRecordingState(true, UI_TIMEOUT);
-        waitUntilDisplayed(withId(R.id.track_recording_fab_action));
-
-        // TrackRecordingActivity: stop recording and open TrackStoppedActivity
-        onView(withId(R.id.track_recording_fab_action))
-                .perform(performLongClick());
-        waitForResumedActivity(TrackStoppedActivity.class, UI_TIMEOUT);
-        waitUntilDisplayed(withId(R.id.track_edit_name));
-        waitUntilDisplayed(withId(R.id.discard_button));
-        waitUntilDisplayed(withId(R.id.finish_button));
-        onView(withId(R.id.track_edit_name))
-                .perform(closeSoftKeyboard());
+        startRecordingFromTrackList(UI_TIMEOUT);
+        stopRecordingToTrackStopped(UI_TIMEOUT, R.id.discard_button, R.id.finish_button);
     }
 
     private void clickDeleteSelectedTrackAction() {
         try {
-            waitUntilDisplayed(withId(R.id.list_context_menu_delete));
+            waitUntilDisplayed(withId(R.id.list_context_menu_delete), UI_TIMEOUT);
             onView(withId(R.id.list_context_menu_delete))
                     .perform(performClick());
         } catch (AssertionError ignored) {
@@ -144,15 +115,4 @@ public class EspressoDeleteTrackTest {
         }
     }
 
-    private void waitUntilDisplayed(Matcher<View> viewMatcher) {
-        waitForResumedView(allOf(viewMatcher, isDisplayed()), UI_TIMEOUT);
-    }
-
-    private void waitUntilRecyclerViewItemCount(Matcher<View> viewMatcher, int expectedCount) {
-        waitForResumedViewCondition(
-                viewMatcher,
-                view -> withRecyclerViewItemCount(expectedCount).matches(view),
-                "RecyclerView item count to be " + expectedCount,
-                UI_TIMEOUT);
-    }
 }

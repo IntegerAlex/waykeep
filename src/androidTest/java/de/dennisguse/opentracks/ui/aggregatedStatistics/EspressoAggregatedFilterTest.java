@@ -9,18 +9,16 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static de.dennisguse.opentracks.util.EspressoUtils.performClick;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedView;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedViewCondition;
-import static de.dennisguse.opentracks.util.EspressoUtils.withRecyclerViewItemCount;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilRecyclerViewItemCount;
+import static de.dennisguse.opentracks.util.TestEnvironmentUtils.resetTrackRecordingServiceAndDeleteTracks;
+import static de.dennisguse.opentracks.util.TestEnvironmentUtils.stopTrackRecordingService;
 import static org.hamcrest.Matchers.allOf;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Pair;
 import android.view.View;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
@@ -43,7 +41,6 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.services.TrackRecordingService;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -60,11 +57,8 @@ public class EspressoAggregatedFilterTest {
 
     @Before
     public void setUp() {
-        Context context = ApplicationProvider.getApplicationContext();
-        context.stopService(new Intent(context, TrackRecordingService.class));
-
-        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
-        contentProviderUtils.deleteAllTracks(context);
+        resetTrackRecordingServiceAndDeleteTracks();
+        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(androidx.test.core.app.ApplicationProvider.getApplicationContext());
 
         Pair<Track, List<TrackPoint>> pair = TestDataUtil.createTrack(new Track.Id(System.currentTimeMillis()), 20);
         TrackBuilder trackBuilder = new TrackBuilder(pair.first);
@@ -76,8 +70,7 @@ public class EspressoAggregatedFilterTest {
 
     @After
     public void tearDown() {
-        Context context = ApplicationProvider.getApplicationContext();
-        context.stopService(new Intent(context, TrackRecordingService.class));
+        stopTrackRecordingService();
         if (scenario != null) {
             scenario.close();
         }
@@ -85,10 +78,10 @@ public class EspressoAggregatedFilterTest {
 
     @Test
     public void espressoAggregatedFilterTest() {
-        waitUntilDisplayed(withId(R.id.bottom_app_bar));
-        waitUntilDisplayed(withId(R.id.aggregated_statistics_filter));
-        waitUntilRecyclerViewItemCount(withId(R.id.aggregated_stats_list), 1);
-        waitUntilDisplayed(allOf(withId(R.id.aggregated_stats_type_label), withText(ACTIVITY_TYPE_LOCALIZED)));
+        waitUntilDisplayed(withId(R.id.bottom_app_bar), UI_TIMEOUT);
+        waitUntilDisplayed(withId(R.id.aggregated_statistics_filter), UI_TIMEOUT);
+        waitUntilRecyclerViewItemCount(withId(R.id.aggregated_stats_list), 1, UI_TIMEOUT);
+        waitUntilDisplayed(allOf(withId(R.id.aggregated_stats_type_label), withText(ACTIVITY_TYPE_LOCALIZED)), UI_TIMEOUT);
 
         // open FilterDialogFragment through the current bottom app bar action item
         onView(withId(R.id.bottom_app_bar))
@@ -118,15 +111,4 @@ public class EspressoAggregatedFilterTest {
                 .check(matches(isDisplayed()));
     }
 
-    private void waitUntilDisplayed(Matcher<View> viewMatcher) {
-        waitForResumedView(allOf(viewMatcher, isDisplayed()), UI_TIMEOUT);
-    }
-
-    private void waitUntilRecyclerViewItemCount(Matcher<View> viewMatcher, int expectedCount) {
-        waitForResumedViewCondition(
-                allOf(viewMatcher, isDisplayed()),
-                view -> withRecyclerViewItemCount(expectedCount).matches(view),
-                "RecyclerView item count to be " + expectedCount,
-                UI_TIMEOUT);
-    }
 }
