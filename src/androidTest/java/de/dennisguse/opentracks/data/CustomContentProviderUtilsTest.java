@@ -94,21 +94,21 @@ public class CustomContentProviderUtilsTest {
 
     @Test
     public void testLocationIterator_noPoints() {
-        testIterator(new Track.Id(1), 0);
+        assertEquals(0, testIterator(new Track.Id(1), 0).size());
     }
 
     @Test
     public void testLocationIterator_noAscending() {
-        testIterator(new Track.Id(1), 50);
-        testIterator(new Track.Id(2), 50);
+        assertEquals(50, testIterator(new Track.Id(1), 50).size());
+        assertEquals(50, testIterator(new Track.Id(2), 50).size());
     }
 
     @Test
     public void testLocationIterator_largeTrack() {
-        testIterator(new Track.Id(1), 20000 / 2);
+        assertEquals(20000 / 2, testIterator(new Track.Id(1), 20000 / 2).size());
     }
 
-    private void testIterator(Track.Id trackId, int numPoints) {
+    private List<TrackPoint> testIterator(Track.Id trackId, int numPoints) {
         TrackPoint.Id lastPointId = initializeTrack(trackId, numPoints);
         List<TrackPoint> locations = new ArrayList<>(numPoints);
         try (TrackPointIterator it = contentProviderUtils.getTrackPointIterator(trackId, null)) {
@@ -121,6 +121,7 @@ public class CustomContentProviderUtilsTest {
             }
             assertEquals(numPoints, locations.size());
         }
+        return locations;
     }
 
     private TrackPoint.Id initializeTrack(Track.Id id, int numPoints) {
@@ -1194,7 +1195,7 @@ public class CustomContentProviderUtilsTest {
         assertEquals(sensorStatistics.avgPower().getW(), stats.avgPower, 0f);
     }
 
-    private void testGetSensorStats_randomData(int totalPoints, boolean withStartSegments) {
+    private Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> testGetSensorStats_randomData(int totalPoints, boolean withStartSegments) {
         // given
         Instant start = Instant.now();
         TestSensorDataUtil sensorDataUtil = new TestSensorDataUtil();
@@ -1217,22 +1218,27 @@ public class CustomContentProviderUtilsTest {
         SensorStatistics sensorStatistics = contentProviderUtils.getSensorStats(trackId);
         TestSensorDataUtil.SensorDataStats stats = sensorDataUtil.computeStats();
 
-        // then
-        assertEquals(sensorStatistics.avgHeartRate().getBPM(), stats.avgHr, 0.01f);
-        assertEquals(sensorStatistics.maxHeartRate().getBPM(), stats.maxHr, 0.01f);
-        assertEquals(sensorStatistics.avgCadence().getRPM(), stats.avgCadence, 0.01f);
-        assertEquals(sensorStatistics.maxCadence().getRPM(), stats.maxCadence, 0.01f);
-        assertEquals(sensorStatistics.avgPower().getW(), stats.avgPower, 0.01f);
+        return Pair.create(sensorStatistics, stats);
     }
 
     @Test
     public void testGetSensorStats_veryLongActivity12h() {
-        testGetSensorStats_randomData(43200 / 6, false);
+        Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> result = testGetSensorStats_randomData(43200 / 6, false);
+        assertEquals(result.first.avgHeartRate().getBPM(), result.second.avgHr, 0.01f);
+        assertEquals(result.first.maxHeartRate().getBPM(), result.second.maxHr, 0.01f);
+        assertEquals(result.first.avgCadence().getRPM(), result.second.avgCadence, 0.01f);
+        assertEquals(result.first.maxCadence().getRPM(), result.second.maxCadence, 0.01f);
+        assertEquals(result.first.avgPower().getW(), result.second.avgPower, 0.01f);
     }
 
     @Test
     public void testGetSensorStats_withSeveralRandomStartSegments() {
-        testGetSensorStats_randomData(5000, true);
+        Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> result = testGetSensorStats_randomData(5000, true);
+        assertEquals(result.first.avgHeartRate().getBPM(), result.second.avgHr, 0.01f);
+        assertEquals(result.first.maxHeartRate().getBPM(), result.second.maxHr, 0.01f);
+        assertEquals(result.first.avgCadence().getRPM(), result.second.avgCadence, 0.01f);
+        assertEquals(result.first.maxCadence().getRPM(), result.second.maxCadence, 0.01f);
+        assertEquals(result.first.avgPower().getW(), result.second.avgPower, 0.01f);
     }
 
     private TrackPoint getLastValidTrackPoint(Track.Id trackId) {

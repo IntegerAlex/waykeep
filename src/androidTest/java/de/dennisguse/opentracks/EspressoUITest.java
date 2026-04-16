@@ -70,6 +70,9 @@ public class EspressoUITest {
             resumeStoppedTrack(UI_TIMEOUT);
             stopRecordingToTrackStopped(UI_TIMEOUT, R.id.finish_button);
             finishStoppedTrack(UI_TIMEOUT);
+
+            onView(withId(R.id.track_list))
+                    .check(matches(isDisplayed()));
         }
     }
 
@@ -96,7 +99,12 @@ public class EspressoUITest {
             waitUntilTabSelectionSettlesAt(0);
 
             // stop
-            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.resume_button);
+            stopRecordingToTrackStopped(UI_TIMEOUT, R.id.resume_button, R.id.finish_button);
+
+            onView(withId(R.id.resume_button))
+                    .check(matches(isDisplayed()));
+            onView(withId(R.id.finish_button))
+                    .check(matches(isDisplayed()));
         }
     }
 
@@ -114,6 +122,9 @@ public class EspressoUITest {
         onView(withId(R.id.track_list)).check(matches(isDisplayed()));
         onView(allOf(withId(R.id.track_list_item_name), withText(uniqueTrackName)))
                 .perform(performLongClickOnAncestor());
+
+        onView(withId(androidx.appcompat.R.id.action_mode_bar))
+                .check(matches(isDisplayed()));
     }
 
     private void waitUntilTabSelectionSettlesAt(int index) {

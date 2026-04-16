@@ -35,7 +35,10 @@ public class IntervalStatisticsUpdaterTest {
         float distanceInterval = 1000f;
 
         // when and then
-        whenAndThen(50, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(50, distanceInterval);
+        assertIntervalStatisticsComputation(computation, 50, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
     /**
@@ -49,7 +52,10 @@ public class IntervalStatisticsUpdaterTest {
         float distanceInterval = 1000f;
 
         // when and then
-        whenAndThen(200, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(200, distanceInterval);
+        assertIntervalStatisticsComputation(computation, 200, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
     /**
@@ -63,7 +69,10 @@ public class IntervalStatisticsUpdaterTest {
         float distanceInterval = 3000f;
 
         // when and then
-        whenAndThen(3000, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(3000, distanceInterval);
+        assertIntervalStatisticsComputation(computation, 3000, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
     /**
@@ -77,7 +86,10 @@ public class IntervalStatisticsUpdaterTest {
         float distanceInterval = 3000f;
 
         // when and then
-        whenAndThen(1000, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(1000, distanceInterval);
+        assertIntervalStatisticsComputation(computation, 1000, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
     /**
@@ -91,7 +103,10 @@ public class IntervalStatisticsUpdaterTest {
         float distanceInterval = 1000f;
 
         // when and then
-        whenAndThen(10000, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(10000, distanceInterval);
+        assertIntervalStatisticsComputation(computation, 10000, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
     @Test
@@ -122,15 +137,18 @@ public class IntervalStatisticsUpdaterTest {
         Pair<Track, List<TrackPoint>> trackWithStats = new Pair<>(dummyTrack, trackPoints);
 
         // when and then
-        whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
+        IntervalStatisticsComputation computation = computeIntervalStatistics(trackWithStats.first, trackWithStats.second, distanceInterval);
+        assertIntervalStatisticsComputation(computation, numberOfPoints, distanceInterval);
+        assertEquals((int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval), computation.intervalList.size());
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
     }
 
-    private void whenAndThen(int numberOfPoints, float distanceInterval) {
+    private IntervalStatisticsComputation computeIntervalStatistics(int numberOfPoints, float distanceInterval) {
         Pair<Track, List<TrackPoint>> trackWithStats = buildTrackWithTrackPoints(numberOfPoints);
-        whenAndThen(trackWithStats.first, trackWithStats.second, numberOfPoints, distanceInterval);
+        return computeIntervalStatistics(trackWithStats.first, trackWithStats.second, distanceInterval);
     }
 
-    private void whenAndThen(Track track, List<TrackPoint> trackPoints, int numberOfPoints, float distanceInterval) {
+    private IntervalStatisticsComputation computeIntervalStatistics(Track track, List<TrackPoint> trackPoints, float distanceInterval) {
         IntervalStatisticsUpdater intervalStatistics = new IntervalStatisticsUpdater(Distance.of(distanceInterval));
 
         intervalStatistics.addTrackPoints(trackPoints.iterator());
@@ -157,23 +175,27 @@ public class IntervalStatisticsUpdaterTest {
             }
         }
 
-        // then
-        assertEquals(track.statistics().totalDuration().toSeconds(), totalTime, 0.01);
-        assertEquals(track.statistics().totalDistance().toM(), totalDistance.toM(), 0.01);
-        assertEquals(intervalList.size(), (int) Math.ceil(track.statistics().totalDistance().toM() / distanceInterval));
-        if (totalGain != null && totalLoss != null) {
-            assertEquals(totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
-            assertEquals(totalLoss, numberOfPoints * TestDataUtil.ALTITUDE_LOSS, 0.1);
+        return new IntervalStatisticsComputation(track, intervalList, totalDistance, totalTime, totalGain, totalLoss);
+    }
+
+    private void assertIntervalStatisticsComputation(IntervalStatisticsComputation computation, int numberOfPoints, float distanceInterval) {
+        assertEquals(computation.track.statistics().totalDuration().toSeconds(), computation.totalTime, 0.01);
+        assertEquals(computation.track.statistics().totalDistance().toM(), computation.totalDistance.toM(), 0.01);
+        assertEquals(computation.intervalList.size(), (int) Math.ceil(computation.track.statistics().totalDistance().toM() / distanceInterval));
+        if (computation.totalGain != null && computation.totalLoss != null) {
+            assertEquals(computation.totalGain, numberOfPoints * TestDataUtil.ALTITUDE_GAIN, 0.1);
+            assertEquals(computation.totalLoss, numberOfPoints * TestDataUtil.ALTITUDE_LOSS, 0.1);
 
         } else {
-            assertTrue(intervalStatistics.getIntervalList().stream().noneMatch(i -> i.altitudeGainLoss() != null));
+            assertTrue(computation.intervalList.stream().noneMatch(i -> i.altitudeGainLoss() != null));
         }
 
-        for (int i = 0; i < intervalList.size() - 1; i++) {
-            assertEquals(intervalList.get(i).totalDistance().toM(), distanceInterval, 0.001);
-            totalDistance = totalDistance.minus(intervalList.get(i).totalDistance());
+        Distance remainingDistance = computation.totalDistance;
+        for (int i = 0; i < computation.intervalList.size() - 1; i++) {
+            assertEquals(computation.intervalList.get(i).totalDistance().toM(), distanceInterval, 0.001);
+            remainingDistance = remainingDistance.minus(computation.intervalList.get(i).totalDistance());
         }
-        assertEquals(intervalList.get(intervalList.size() - 1).totalDistance().toM(), totalDistance.toM(), 0.01);
+        assertEquals(computation.intervalList.get(computation.intervalList.size() - 1).totalDistance().toM(), remainingDistance.toM(), 0.01);
     }
 
     private static Pair<Track, List<TrackPoint>> buildTrackWithTrackPoints(int numberOfPoints) {
@@ -194,5 +216,28 @@ public class IntervalStatisticsUpdaterTest {
                 trackStatisticsUpdater.getTrackStatistics());
 
         return new Pair<>(track, trackPoints);
+    }
+
+    private static final class IntervalStatisticsComputation {
+        private final Track track;
+        private final List<Statistics> intervalList;
+        private final Distance totalDistance;
+        private final float totalTime;
+        private final Float totalGain;
+        private final Float totalLoss;
+
+        private IntervalStatisticsComputation(Track track,
+                                              List<Statistics> intervalList,
+                                              Distance totalDistance,
+                                              float totalTime,
+                                              Float totalGain,
+                                              Float totalLoss) {
+            this.track = track;
+            this.intervalList = intervalList;
+            this.totalDistance = totalDistance;
+            this.totalTime = totalTime;
+            this.totalGain = totalGain;
+            this.totalLoss = totalLoss;
+        }
     }
 }
