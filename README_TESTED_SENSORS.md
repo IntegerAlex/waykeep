@@ -124,3 +124,4 @@ Tested with:
 Currently supported measurements:
 
 * Human power
+* Cadence

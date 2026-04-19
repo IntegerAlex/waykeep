@@ -9,7 +9,7 @@ import de.dennisguse.opentracks.sensors.driver.CyclingCadenceBluetooth;
 import de.dennisguse.opentracks.sensors.driver.Driver;
 import de.dennisguse.opentracks.sensors.sensorData.AggregatorCyclingCadence;
 
-public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth.CrankData, Cadence> {
+public class CyclingCadenceHandler extends SensorHandler<CyclingCadenceBluetooth.CyclingCadenceMeasurement, Cadence> {
 
     protected CyclingCadenceHandler(SensorManager sensorManager) {
         super(sensorManager);

@@ -10,7 +10,7 @@ import de.dennisguse.opentracks.data.models.Cadence;
 import de.dennisguse.opentracks.sensors.UintUtils;
 import de.dennisguse.opentracks.sensors.driver.CyclingCadenceBluetooth;
 
-public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth.CrankData, Cadence> {
+public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth.CyclingCadenceMeasurement, Cadence> {
 
     private final String TAG = AggregatorCyclingCadence.class.getSimpleName();
 
@@ -19,12 +19,20 @@ public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth
     }
 
     @Override
-    protected void computeValue(@NonNull Raw<CyclingCadenceBluetooth.CrankData> current) {
-        if (previous == null) {
+    protected void computeValue(@NonNull Raw<CyclingCadenceBluetooth.CyclingCadenceMeasurement> current) {
+        if (current.value() instanceof CyclingCadenceBluetooth.DirectCadenceData directCadenceData) {
+            output = directCadenceData.cadence();
             return;
         }
 
-        float timeDiff_ms = UintUtils.diff(current.value().crankRevolutionsTime(), previous.value().crankRevolutionsTime(), UintUtils.UINT16_MAX) / 1024f * 1000;
+        computeRawCadence((CyclingCadenceBluetooth.CrankData) current.value());
+    }
+
+    private void computeRawCadence(@NonNull CyclingCadenceBluetooth.CrankData currentRaw) {
+        CyclingCadenceBluetooth.CrankData previousRaw = getPreviousRaw();
+        if (previousRaw == null) return;
+
+        float timeDiff_ms = UintUtils.diff(currentRaw.crankRevolutionsTime(), previousRaw.crankRevolutionsTime(), UintUtils.UINT16_MAX) / 1024f * 1000;
         Duration timeDiff = Duration.ofMillis((long) timeDiff_ms);
 
         if (timeDiff.isZero()) {
@@ -37,13 +45,21 @@ public class AggregatorCyclingCadence extends Aggregator<CyclingCadenceBluetooth
         }
 
         // TODO We have to treat with overflow according to the documentation: read https://codeberg.org/OpenTracksApp/OpenTracks/pulls/953#issuecomment-6466930
-        if (current.value().crankRevolutionsCount() < previous.value().crankRevolutionsCount()) {
+        if (currentRaw.crankRevolutionsCount() < previousRaw.crankRevolutionsCount()) {
             Log.e(TAG, "Crank revolutions count difference is invalid: cannot compute cadence.");
             output = null;
             return;
         }
 
-        long crankDiff = UintUtils.diff(current.value().crankRevolutionsCount(), previous.value().crankRevolutionsCount(), UintUtils.UINT32_MAX);
+        long crankDiff = UintUtils.diff(currentRaw.crankRevolutionsCount(), previousRaw.crankRevolutionsCount(), UintUtils.UINT32_MAX);
         output = Cadence.of(crankDiff, timeDiff);
+    }
+
+    private CyclingCadenceBluetooth.CrankData getPreviousRaw() {
+        if (previous == null) {
+            return null;
+        }
+
+        return previous.value() instanceof CyclingCadenceBluetooth.CrankData raw ? raw : null;
     }
 }

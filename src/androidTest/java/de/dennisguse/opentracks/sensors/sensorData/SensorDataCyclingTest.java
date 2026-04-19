@@ -97,6 +97,25 @@ public class SensorDataCyclingTest {
     }
 
     @Test
+    public void compute_cadence_directCadence_withoutPrevious() {
+        AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
+
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.DirectCadenceData(Cadence.of(92)));
+
+        assertEquals(92, current.getAggregatedValue(Instant.MIN).getRPM(), 0.01);
+    }
+
+    @Test
+    public void compute_cadence_directCadence_winsOverCrankData() {
+        AggregatorCyclingCadence current = new AggregatorCyclingCadence("", "");
+
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.CrankData(1L, 1024));
+        current.add(Instant.MIN, new CyclingCadenceBluetooth.DirectCadenceData(Cadence.of(92)));
+
+        assertEquals(92, current.getAggregatedValue(Instant.MIN).getRPM(), 0.01);
+    }
+
+    @Test
     public void compute_speed() {
         AggregatorCyclingDistanceSpeed current = new AggregatorCyclingDistanceSpeed("", "");
         current.setWheelCircumference(Distance.ofMM(2150));
