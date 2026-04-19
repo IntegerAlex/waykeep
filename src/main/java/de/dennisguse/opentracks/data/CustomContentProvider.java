@@ -153,7 +153,7 @@ public class CustomContentProvider extends ContentProvider {
         } finally {
             db.endTransaction();
         }
-        getContext().getContentResolver().notifyChange(url, null, false);
+        notifyChanges(url);
 
         int totalChanges = getTotalChanges() - totalChangesBefore;
         Log.i(TAG, "Deleted " + totalChanges + " total rows from database");
@@ -212,7 +212,8 @@ public class CustomContentProvider extends ContentProvider {
         } finally {
             db.endTransaction();
         }
-        getContext().getContentResolver().notifyChange(url, null, false);
+        notifyChanges(url);
+
         return result;
     }
 
@@ -235,7 +236,8 @@ public class CustomContentProvider extends ContentProvider {
         } finally {
             db.endTransaction();
         }
-        getContext().getContentResolver().notifyChange(url, null, false);
+        notifyChanges(url);
+
         return numInserted;
     }
 
@@ -348,8 +350,34 @@ public class CustomContentProvider extends ContentProvider {
             }
         }
 
-        getContext().getContentResolver().notifyChange(url, null, false);
+        notifyChanges(url);
+
         return count;
+    }
+
+    private void notifyChanges(@NonNull Uri uri) {
+        getContext().getContentResolver().notifyChange(uri, null, false);
+        // Also notify dashboard URIs for compatibility
+        Uri dashboardUri = getDashboardUri(uri);
+        if (dashboardUri != null) {
+            getContext().getContentResolver().notifyChange(dashboardUri, null, false);
+        }
+    }
+
+    private Uri getDashboardUri(Uri uri) {
+        String path = uri.getPath();
+        if (path == null) return null;
+        String dashboardPath;
+        if (path.startsWith("/tracks")) {
+            dashboardPath = path.replaceFirst("/tracks", "/dashboard/tracks");
+        } else if (path.startsWith("/markers")) {
+            dashboardPath = path.replaceFirst("/markers", "/dashboard/markers");
+        } else if (path.startsWith("/trackpoints")) {
+            dashboardPath = path.replaceFirst("/trackpoints", "/dashboard/trackpoints");
+        } else {
+            return null;
+        }
+        return Uri.parse(CONTENT_BASE_URI + dashboardPath);
     }
 
     @NonNull
