@@ -16,6 +16,7 @@ limitations under the License.
 <resources>
     <string name="app_web_url" translatable="false">https://codeberg.org/OpenTracksApp/OpenTracks</string>
     <string name="app_name" translatable="false">OpenTracks</string>
+    <string name="launcher_name" translatable="false">OpenTracks</string>
 
     <string name="egm2008" translatable="false">EGM2008</string>
     <string name="wgs84" translatable="false">WGS84</string>
