@@ -20,22 +20,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.util.Pair;
 
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +75,6 @@ import de.dennisguse.opentracks.util.FileUtils;
  * @author Bartlomiej Niechwiej
  * @author Youtao Liu
  */
-@RunWith(MockitoJUnitRunner.class)
 public class CustomContentProviderUtilsTest {
 
     private static final String NAME_PREFIX = "test name";
@@ -90,12 +86,6 @@ public class CustomContentProviderUtilsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
     private ContentProviderUtils contentProviderUtils;
 
-    @Mock
-    private Cursor cursorMock;
-
-    @Mock
-    private ContentResolver contentResolverMock;
-
     @Before
     public void setUp() {
         contentProviderUtils = new ContentProviderUtils(context);
@@ -104,21 +94,21 @@ public class CustomContentProviderUtilsTest {
 
     @Test
     public void testLocationIterator_noPoints() {
-        testIterator(new Track.Id(1), 0);
+        assertEquals(0, testIterator(new Track.Id(1), 0).size());
     }
 
     @Test
     public void testLocationIterator_noAscending() {
-        testIterator(new Track.Id(1), 50);
-        testIterator(new Track.Id(2), 50);
+        assertEquals(50, testIterator(new Track.Id(1), 50).size());
+        assertEquals(50, testIterator(new Track.Id(2), 50).size());
     }
 
     @Test
     public void testLocationIterator_largeTrack() {
-        testIterator(new Track.Id(1), 20000 / 2);
+        assertEquals(20000 / 2, testIterator(new Track.Id(1), 20000 / 2).size());
     }
 
-    private void testIterator(Track.Id trackId, int numPoints) {
+    private List<TrackPoint> testIterator(Track.Id trackId, int numPoints) {
         TrackPoint.Id lastPointId = initializeTrack(trackId, numPoints);
         List<TrackPoint> locations = new ArrayList<>(numPoints);
         try (TrackPointIterator it = contentProviderUtils.getTrackPointIterator(trackId, null)) {
@@ -131,6 +121,7 @@ public class CustomContentProviderUtilsTest {
             }
             assertEquals(numPoints, locations.size());
         }
+        return locations;
     }
 
     private TrackPoint.Id initializeTrack(Track.Id id, int numPoints) {
@@ -187,27 +178,49 @@ public class CustomContentProviderUtilsTest {
     @Test
     public void testCreateTrack() {
         Track.Id trackId = new Track.Id(System.currentTimeMillis());
-
-        int columnIndex = 1;
-        // Id
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns._ID)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getLong(columnIndex)).thenReturn(trackId.id());
-
-        //Uuid
-        columnIndex++;
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns.UUID)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getBlob(columnIndex)).thenReturn(UUIDUtils.toBytes(UUID.randomUUID()));
-
-        // Name
-        columnIndex++;
         String name = NAME_PREFIX + trackId.id();
-        when(cursorMock.getColumnIndexOrThrow(TracksColumns.NAME)).thenReturn(columnIndex);
-        when(cursorMock.isNull(columnIndex)).thenReturn(false);
-        when(cursorMock.getString(columnIndex)).thenReturn(name);
 
-        Track track = ContentProviderUtils.createTrack(cursorMock);
+        MatrixCursor cursor = new MatrixCursor(new String[]{
+                TracksColumns._ID,
+                TracksColumns.UUID,
+                TracksColumns.NAME,
+                TracksColumns.DESCRIPTION,
+                TracksColumns.ACTIVITY_TYPE,
+                TracksColumns.ACTIVITY_TYPE_LOCALIZED,
+                TracksColumns.STARTTIME,
+                TracksColumns.STARTTIME_OFFSET,
+                TracksColumns.STOPTIME,
+                TracksColumns.TOTALDISTANCE,
+                TracksColumns.TOTALTIME,
+                TracksColumns.MOVINGTIME,
+                TracksColumns.MAXSPEED,
+                TracksColumns.MIN_ALTITUDE,
+                TracksColumns.MAX_ALTITUDE,
+                TracksColumns.ALTITUDE_GAIN,
+                TracksColumns.ALTITUDE_LOSS,
+        });
+        cursor.addRow(new Object[]{
+                trackId.id(),
+                UUIDUtils.toBytes(UUID.randomUUID()),
+                name,
+                "",
+                ActivityType.UNKNOWN.getId(),
+                "",
+                1_000L,
+                ZoneOffset.UTC.getTotalSeconds(),
+                2_000L,
+                123.45f,
+                1_000L,
+                500L,
+                12.34f,
+                null,
+                null,
+                null,
+                null,
+        });
+        assertTrue(cursor.moveToFirst());
+
+        Track track = ContentProviderUtils.createTrack(cursor);
         assertEquals(trackId, track.id());
         assertEquals(name, track.name());
     }
@@ -448,8 +461,6 @@ public class CustomContentProviderUtilsTest {
         MarkerBuilder marker = new MarkerBuilder(trackId, track.second.get(0));
         marker.setDescription(TEST_DESC);
         contentProviderUtils.insertMarker(marker.getMarker());
-
-        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(contentResolverMock);
 
         Marker.Id markerId = new Marker.Id(System.currentTimeMillis());
         marker.setId(markerId);
@@ -1184,7 +1195,7 @@ public class CustomContentProviderUtilsTest {
         assertEquals(sensorStatistics.avgPower().getW(), stats.avgPower, 0f);
     }
 
-    private void testGetSensorStats_randomData(int totalPoints, boolean withStartSegments) {
+    private Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> testGetSensorStats_randomData(int totalPoints, boolean withStartSegments) {
         // given
         Instant start = Instant.now();
         TestSensorDataUtil sensorDataUtil = new TestSensorDataUtil();
@@ -1207,22 +1218,27 @@ public class CustomContentProviderUtilsTest {
         SensorStatistics sensorStatistics = contentProviderUtils.getSensorStats(trackId);
         TestSensorDataUtil.SensorDataStats stats = sensorDataUtil.computeStats();
 
-        // then
-        assertEquals(sensorStatistics.avgHeartRate().getBPM(), stats.avgHr, 0.01f);
-        assertEquals(sensorStatistics.maxHeartRate().getBPM(), stats.maxHr, 0.01f);
-        assertEquals(sensorStatistics.avgCadence().getRPM(), stats.avgCadence, 0.01f);
-        assertEquals(sensorStatistics.maxCadence().getRPM(), stats.maxCadence, 0.01f);
-        assertEquals(sensorStatistics.avgPower().getW(), stats.avgPower, 0.01f);
+        return Pair.create(sensorStatistics, stats);
     }
 
     @Test
     public void testGetSensorStats_veryLongActivity12h() {
-        testGetSensorStats_randomData(43200 / 6, false);
+        Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> result = testGetSensorStats_randomData(43200 / 6, false);
+        assertEquals(result.first.avgHeartRate().getBPM(), result.second.avgHr, 0.01f);
+        assertEquals(result.first.maxHeartRate().getBPM(), result.second.maxHr, 0.01f);
+        assertEquals(result.first.avgCadence().getRPM(), result.second.avgCadence, 0.01f);
+        assertEquals(result.first.maxCadence().getRPM(), result.second.maxCadence, 0.01f);
+        assertEquals(result.first.avgPower().getW(), result.second.avgPower, 0.01f);
     }
 
     @Test
     public void testGetSensorStats_withSeveralRandomStartSegments() {
-        testGetSensorStats_randomData(5000, true);
+        Pair<SensorStatistics, TestSensorDataUtil.SensorDataStats> result = testGetSensorStats_randomData(5000, true);
+        assertEquals(result.first.avgHeartRate().getBPM(), result.second.avgHr, 0.01f);
+        assertEquals(result.first.maxHeartRate().getBPM(), result.second.maxHr, 0.01f);
+        assertEquals(result.first.avgCadence().getRPM(), result.second.avgCadence, 0.01f);
+        assertEquals(result.first.maxCadence().getRPM(), result.second.maxCadence, 0.01f);
+        assertEquals(result.first.avgPower().getW(), result.second.avgPower, 0.01f);
     }
 
     private TrackPoint getLastValidTrackPoint(Track.Id trackId) {

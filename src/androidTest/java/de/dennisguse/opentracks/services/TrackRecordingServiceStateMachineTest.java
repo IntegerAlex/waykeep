@@ -15,6 +15,7 @@
  */
 package de.dennisguse.opentracks.services;
 
+import static de.dennisguse.opentracks.util.LiveDataTestUtils.waitForValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -41,6 +42,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -55,6 +57,8 @@ import de.dennisguse.opentracks.sensors.GpsStatusValue;
  */
 @RunWith(AndroidJUnit4.class)
 public class TrackRecordingServiceStateMachineTest {
+
+    private static final Duration WAIT_TIMEOUT = Duration.ofSeconds(2);
 
     @Rule
     public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(5, TimeUnit.SECONDS);
@@ -123,6 +127,7 @@ public class TrackRecordingServiceStateMachineTest {
 
         // when
         service.tryStartSensors();
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_ENABLED);
 
         // then
         assertEquals(TrackRecordingService.STATUS_DEFAULT, service.getRecordingStatusObservable().getValue());
@@ -131,6 +136,7 @@ public class TrackRecordingServiceStateMachineTest {
 
         // when
         service.stopSensors();
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_NONE);
 
         // then
         assertEquals(TrackRecordingService.STATUS_DEFAULT, service.getRecordingStatusObservable().getValue());
@@ -146,6 +152,9 @@ public class TrackRecordingServiceStateMachineTest {
 
         // when
         Track.Id trackId = service.startNewTrack();
+        waitUntilRecordingStatusIs(new RecordingStatus(trackId));
+        waitUntilRecordingDataIsNotDefault();
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_ENABLED);
 
         // then
         assertTrue(service.isRecording());
@@ -154,9 +163,13 @@ public class TrackRecordingServiceStateMachineTest {
         assertEquals(GpsStatusValue.GPS_ENABLED, service.getGpsStatusObservable().getValue());
 
         service.endCurrentTrack();
+        waitUntilRecordingStatusIs(TrackRecordingService.STATUS_DEFAULT);
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_NONE);
 
         // when
         service.resumeTrack(trackId);
+        waitUntilRecordingStatusIs(new RecordingStatus(trackId));
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_ENABLED);
 
         // then
         assertTrue(service.isRecording());
@@ -167,6 +180,8 @@ public class TrackRecordingServiceStateMachineTest {
 
         // when
         service.endCurrentTrack();
+        waitUntilRecordingStatusIs(TrackRecordingService.STATUS_DEFAULT);
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_NONE);
 
         // then
         assertFalse(service.isRecording());
@@ -177,6 +192,8 @@ public class TrackRecordingServiceStateMachineTest {
 
         // when
         service.resumeTrack(trackId);
+        waitUntilRecordingStatusIs(new RecordingStatus(trackId));
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_ENABLED);
 
         // then
         assertTrue(service.isRecording());
@@ -253,5 +270,26 @@ public class TrackRecordingServiceStateMachineTest {
         // then
         assertNotNull(trackId);
         assertNull(newTrackId);
+    }
+
+    private void waitUntilRecordingDataIsNotDefault() {
+        waitForValue(service.getRecordingDataObservable(),
+                recordingData -> !RecordingData.NOT_RECORDING.equals(recordingData),
+                WAIT_TIMEOUT,
+                "recording data to leave NOT_RECORDING");
+    }
+
+    private void waitUntilGpsStatusIs(GpsStatusValue expected) {
+        waitForValue(service.getGpsStatusObservable(),
+                expected::equals,
+                WAIT_TIMEOUT,
+                "gps status to become " + expected);
+    }
+
+    private void waitUntilRecordingStatusIs(RecordingStatus expected) {
+        waitForValue(service.getRecordingStatusObservable(),
+                expected::equals,
+                WAIT_TIMEOUT,
+                "recording status to become " + expected);
     }
 }

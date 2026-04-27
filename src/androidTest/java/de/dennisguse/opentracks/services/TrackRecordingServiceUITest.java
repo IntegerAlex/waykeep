@@ -2,12 +2,12 @@ package de.dennisguse.opentracks.services;
 
 import static org.junit.Assert.assertEquals;
 import static de.dennisguse.opentracks.services.TrackRecordingService.RECORDING_DATA_UPDATE_INTERVAL;
+import static de.dennisguse.opentracks.util.LiveDataTestUtils.waitForValue;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 
-import androidx.core.location.LocationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
@@ -30,6 +30,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.io.file.importer.ExportImportTest;
 import de.dennisguse.opentracks.io.file.importer.TrackPointAssert;
+import de.dennisguse.opentracks.sensors.GpsHandler;
 import de.dennisguse.opentracks.sensors.driver.GpsInternal;
 import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 
@@ -51,7 +52,7 @@ public class TrackRecordingServiceUITest {
     }
 
     @Test
-    public void getDataForUI_gps() throws TimeoutException, InterruptedException {
+    public void getDataForUI_gps() throws TimeoutException {
         TrackRecordingService service = ((TrackRecordingService.Binder) mServiceRule.bindService(new Intent(context, TrackRecordingService.class)))
                 .getService();
         RecordingData recordingData;
@@ -63,34 +64,23 @@ public class TrackRecordingServiceUITest {
 
         // when
         service.startNewTrack();
-        //We do not want the real GPS to interfere.
-        GpsInternal gpsInternal = (GpsInternal)trackPointCreator.getSensorManager().getGpsHandler().driver;
-        LocationManagerCompat.removeUpdates(gpsInternal.locationManager, gpsInternal.locationListenerCompat);
-        Thread.sleep(RECORDING_DATA_UPDATE_INTERVAL.toMillis());
+        disconnectRealGps(trackPointCreator.getSensorManager().getGpsHandler());
+        trackPointCreator.getSensorManager().reset();
+        RecordingData initialRecordingData = waitUntilLatestTrackPointMatches(service, Instant.parse("2020-02-02T02:02:02Z"), false);
 
         // then
-        assertEquals(new TrackPoint(
-                        null,
-                        TrackPoint.Type.TRACKPOINT,
-                        Position.of( Instant.parse("2020-02-02T02:02:02Z")),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                ),
-                service.getRecordingDataObservable().getValue().latestTrackPoint());
+        TrackPoint initialTrackPoint = initialRecordingData.latestTrackPoint();
+        assertEquals(TrackPoint.Type.TRACKPOINT, initialTrackPoint.type());
+        assertEquals(Instant.parse("2020-02-02T02:02:02Z"), initialTrackPoint.getTime());
 
 
         // when
         // In this step, the data is saved (and Aggregator.resetAggregated called), but data should still be shown in the UI.
         trackPointCreator.setClock("2020-02-02T02:02:03Z");
         ExportImportTest.sendLocation(trackPointCreator, "2020-02-02T02:02:03Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 1f);
+        recordingData = waitUntilLatestTrackPointMatches(service, Instant.parse("2020-02-02T02:02:03Z"), true);
 
         // then
-        Thread.sleep(RECORDING_DATA_UPDATE_INTERVAL.toMillis());
-        recordingData = service.getRecordingDataObservable().getValue();
         new TrackPointAssert().assertEquals(new TrackPoint(
                         null,
                         TrackPoint.Type.TRACKPOINT,
@@ -108,5 +98,24 @@ public class TrackRecordingServiceUITest {
                         new AltitudeGainLoss(1, 1)
                 ),
                 recordingData.latestTrackPoint());
+    }
+
+    private void disconnectRealGps(GpsHandler gpsHandler) {
+        if (gpsHandler.driver != null) {
+            gpsHandler.driver.disconnect();
+        }
+        gpsHandler.onConnected(null, GpsInternal.LOCATION_PROVIDER);
+    }
+
+    private RecordingData waitUntilLatestTrackPointMatches(TrackRecordingService service, Instant expectedTime, boolean requiresLocation) {
+        return waitForValue(service.getRecordingDataObservable(),
+                recordingData -> {
+                    TrackPoint latestTrackPoint = recordingData != null ? recordingData.latestTrackPoint() : null;
+                    return latestTrackPoint != null
+                            && expectedTime.equals(latestTrackPoint.getTime())
+                            && (!requiresLocation || latestTrackPoint.position().hasLocation());
+                },
+                RECORDING_DATA_UPDATE_INTERVAL.multipliedBy(3),
+                "latest track point to reach " + expectedTime + (requiresLocation ? " with location" : ""));
     }
 }
