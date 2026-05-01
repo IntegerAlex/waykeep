@@ -51,5 +51,9 @@
             android:key="@string/export_filename_format_key"
             android:title="@string/settings_export_filename_title"
             android:defaultValue="@string/export_filename_format_default" />
+        <Preference
+            android:key="@string/health_connect_settings_key"
+            android:summary="@string/health_connect_settings_summary"
+            android:title="@string/health_connect_screen_title" />
     </PreferenceCategory>
 </PreferenceScreen>

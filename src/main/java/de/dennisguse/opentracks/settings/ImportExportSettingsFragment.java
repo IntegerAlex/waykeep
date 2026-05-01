@@ -1,5 +1,6 @@
 package de.dennisguse.opentracks.settings;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,13 +13,13 @@ import androidx.preference.PreferenceFragmentCompat;
 import java.util.Map;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.io.healthconnect.HealthConnectExporter;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
 import de.dennisguse.opentracks.util.IntentUtils;
 
-public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
 
-    private static final String TAG = ImportExportSettingsFragment.class.getSimpleName();
+public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -27,6 +28,7 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
         setExportTrackFileFormatOptions();
         setExportDirectorySummary();
         setFilenameTemplate();
+        setHealthConnectPreference();
     }
 
     @Override
@@ -40,9 +42,35 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
         super.onResume();
 
         setExportDirectorySummary();
+        setHealthConnectPreference();
 
         Preference instantExportEnabledPreference = findPreference(getString(R.string.post_workout_export_enabled_key));
         instantExportEnabledPreference.setEnabled(PreferencesUtils.isDefaultExportDirectoryUri());
+    }
+
+    private void setHealthConnectPreference() {
+        Preference preference = findPreference(getString(R.string.health_connect_settings_key));
+        if (preference == null) return;
+
+        preference.setOnPreferenceClickListener(pref -> {
+            startActivity(new Intent(requireContext(), HealthConnectSettingsActivity.class));
+            return true;
+        });
+
+        if (!HealthConnectExporter.isAvailable(requireContext())) {
+            preference.setSummary(R.string.health_connect_not_available);
+            return;
+        }
+
+        if (PreferencesUtils.shouldExportToHealthConnect()) {
+            preference.setSummary(
+                    PreferencesUtils.shouldExportDetailedHealthConnectWorkout()
+                            ? R.string.health_connect_settings_summary_enabled_detailed
+                            : R.string.health_connect_settings_summary_enabled
+            );
+        } else {
+            preference.setSummary(R.string.health_connect_settings_summary);
+        }
     }
 
     private void setExportTrackFileFormatOptions() {
