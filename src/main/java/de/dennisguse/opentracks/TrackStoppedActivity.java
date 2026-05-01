@@ -93,6 +93,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
         viewBinding.finishButton.setOnClickListener(v -> {
             storeTrackMetaData(contentProviderUtils, track);
             ExportUtils.postWorkoutExport(this, trackId);
+            ExportUtils.postWorkoutHealthConnectExport(this, trackId);
             finish();
         });
 

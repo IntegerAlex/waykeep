@@ -168,6 +168,29 @@ public class ContentProviderUtils {
         return tracks;
     }
 
+    public List<Track> getTracksOrderedByStartTime(Instant startTimeInclusive) {
+        ArrayList<Track> tracks = new ArrayList<>();
+        String selection = null;
+        String[] selectionArgs = null;
+
+        if (startTimeInclusive != null) {
+            selection = TracksColumns.STARTTIME + ">=?";
+            selectionArgs = new String[]{Long.toString(startTimeInclusive.toEpochMilli())};
+        }
+
+        String sortOrder = TracksColumns.STARTTIME + " ASC, " + TracksColumns._ID + " ASC";
+        try (Cursor cursor = getTrackCursor(selection, selectionArgs, sortOrder)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                tracks.ensureCapacity(cursor.getCount());
+                do {
+                    tracks.add(createTrack(cursor));
+                } while (cursor.moveToNext());
+            }
+        }
+
+        return tracks;
+    }
+
     public TrackListIterator searchTracks(String searchQuery) {
         // Needed, because MARKER_COUNT is a virtual column and has to be explicitly requested.
         final String[] PROJECTION = new String[]{

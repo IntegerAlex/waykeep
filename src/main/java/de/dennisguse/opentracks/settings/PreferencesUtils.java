@@ -71,6 +71,7 @@ public class PreferencesUtils {
     private static SharedPreferences sharedPreferences;
 
     private static Resources resources;
+    private static final long LONG_UNSET = Long.MIN_VALUE;
 
     /**
      * Must be called during application startup.
@@ -168,24 +169,36 @@ public class PreferencesUtils {
         }
     }
 
+    private static long getLong(int keyId, long defaultValue) {
+        try {
+            return sharedPreferences.getLong(getKey(keyId), defaultValue);
+        } catch (ClassCastException e) {
+            // Ignore.
+        }
+
+        try {
+            String stringValue = sharedPreferences.getString(getKey(keyId), null);
+            return Long.parseLong(stringValue);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     public static String getString(int keyId, String defaultValue) {
         return sharedPreferences.getString(getKey(keyId), defaultValue);
     }
 
-    @VisibleForTesting
-    public static void setString(int keyId, String value) {
+    static void setString(int keyId, String value) {
         Editor editor = sharedPreferences.edit();
         editor.putString(getKey(keyId), value);
         editor.apply();
     }
 
-    @VisibleForTesting
-    public static void setString(int keyId, int valueId) {
+    static void setString(int keyId, int valueId) {
         setString(keyId, resources.getString(valueId));
     }
 
-    @VisibleForTesting
-    public static void setBoolean(int keyId, Boolean value) {
+    static void setBoolean(int keyId, Boolean value) {
         Editor editor = sharedPreferences.edit();
         editor.putBoolean(getKey(keyId), value);
         editor.apply();
@@ -194,6 +207,12 @@ public class PreferencesUtils {
     static void setInt(int keyId, int value) {
         Editor editor = sharedPreferences.edit();
         editor.putInt(getKey(keyId), value);
+        editor.apply();
+    }
+
+    private static void setLong(int keyId, long value) {
+        Editor editor = sharedPreferences.edit();
+        editor.putLong(getKey(keyId), value);
         editor.apply();
     }
 
@@ -664,6 +683,75 @@ public class PreferencesUtils {
     public static boolean shouldInstantExportAfterWorkout() {
         final boolean INSTANT_POST_WORKOUT_EXPORT_DEFAULT = resources.getBoolean(R.bool.post_workout_export_enabled_default);
         return getBoolean(R.string.post_workout_export_enabled_key, INSTANT_POST_WORKOUT_EXPORT_DEFAULT) && isDefaultExportDirectoryUri();
+    }
+
+    public static boolean shouldExportToHealthConnect() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.health_connect_export_enabled_default);
+        return getBoolean(R.string.health_connect_export_enabled_key, DEFAULT);
+    }
+
+    public static boolean shouldExportDetailedHealthConnectWorkout() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.health_connect_detailed_sync_default);
+        return getBoolean(R.string.health_connect_detailed_sync_key, DEFAULT);
+    }
+
+    public static String getHealthConnectLastSyncStatus() {
+        return getString(R.string.health_connect_last_sync_status_key, resources.getString(R.string.health_connect_sync_status_never));
+    }
+
+    public static void setHealthConnectLastSyncStatus(String value) {
+        setString(R.string.health_connect_last_sync_status_key, value);
+    }
+
+    public static boolean hasHealthConnectInitialSyncConfigured() {
+        return getLong(R.string.health_connect_initial_sync_start_time_key, LONG_UNSET) != LONG_UNSET;
+    }
+
+    public static long getHealthConnectInitialSyncStartTimeMillis() {
+        return getLong(R.string.health_connect_initial_sync_start_time_key, LONG_UNSET);
+    }
+
+    public static void setHealthConnectInitialSyncStartTimeMillis(long value) {
+        setLong(R.string.health_connect_initial_sync_start_time_key, value);
+    }
+
+    public static long getHealthConnectInitialSyncCursorStartTimeMillis() {
+        return getLong(R.string.health_connect_initial_sync_cursor_start_time_key, LONG_UNSET);
+    }
+
+    public static void setHealthConnectInitialSyncCursorStartTimeMillis(long value) {
+        setLong(R.string.health_connect_initial_sync_cursor_start_time_key, value);
+    }
+
+    public static long getHealthConnectInitialSyncCursorTrackId() {
+        return getLong(R.string.health_connect_initial_sync_cursor_track_id_key, LONG_UNSET);
+    }
+
+    public static void setHealthConnectInitialSyncCursorTrackId(long value) {
+        setLong(R.string.health_connect_initial_sync_cursor_track_id_key, value);
+    }
+
+    public static boolean isHealthConnectInitialSyncCompleted() {
+        return getBoolean(R.string.health_connect_initial_sync_completed_key, resources.getBoolean(R.bool.health_connect_initial_sync_completed_default));
+    }
+
+    public static void setHealthConnectInitialSyncCompleted(boolean value) {
+        setBoolean(R.string.health_connect_initial_sync_completed_key, value);
+    }
+
+    public static void resetHealthConnectInitialSyncState(long startTimeMillis) {
+        setHealthConnectInitialSyncStartTimeMillis(startTimeMillis);
+        clearHealthConnectInitialSyncCursor();
+        setHealthConnectInitialSyncCompleted(false);
+    }
+
+    public static void clearHealthConnectInitialSyncCursor() {
+        setHealthConnectInitialSyncCursorStartTimeMillis(LONG_UNSET);
+        setHealthConnectInitialSyncCursorTrackId(LONG_UNSET);
+    }
+
+    public static boolean shouldRunHealthConnectInitialSync() {
+        return shouldExportToHealthConnect() && hasHealthConnectInitialSyncConfigured() && !isHealthConnectInitialSyncCompleted();
     }
 
     public static TrackFilenameGenerator getTrackFileformatGenerator() {
