@@ -164,7 +164,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             cyclingDistanceSpeedHandler.connect();
         }
 
-        if (PreferencesUtils.isKey(cyclingCadenceHandler.getSensorPreferenceKey(), key)) {
+        if (PreferencesUtils.isKey(cyclingPowerHandler.getSensorPreferenceKey(), key)) {
             cyclingPowerHandler.connect();
         }
 
