@@ -132,7 +132,7 @@ limitations under the License.
         <activity android:name=".settings.HealthConnectSettingsActivity" />
 
         <activity
-            android:name=".PermissionsRationaleActivity"
+            android:name=".HealthConnectPermissionsRationaleActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
@@ -143,7 +143,7 @@ limitations under the License.
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
             android:permission="android.permission.START_VIEW_PERMISSION_USAGE"
-            android:targetActivity=".PermissionsRationaleActivity">
+            android:targetActivity=".HealthConnectPermissionsRationaleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />

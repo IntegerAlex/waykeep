@@ -50,7 +50,7 @@
                 android:text="@string/health_connect_permissions_rationale_usage" />
 
             <TextView
-                android:id="@+id/permissions_rationale_app_url"
+                android:id="@+id/health_connect_permissions_rationale_app_url"
                 style="?attr/textAppearanceBody1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
