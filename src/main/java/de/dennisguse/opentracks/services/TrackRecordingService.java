@@ -86,7 +86,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private MutableLiveData<GpsStatusValue> gpsStatusObservable;
     private MutableLiveData<RecordingData> recordingDataObservable;
 
-    // The following variables are set when recording:
     private Handler handler;
 
     private TrackPointCreator trackPointCreator;
@@ -119,9 +118,6 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     @Override
     public void onDestroy() {
         Log.d(TAG, "Destroying");
-        if (isRecording()) {
-            endCurrentTrack();
-        }
         if (trackPointCreator != null && trackPointCreator.isStarted()) {
             stopSensors();
         }
@@ -150,6 +146,16 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            Log.i(TAG, "Service got killed and is restarting");
+
+            //Best guess: do we need to resume a recording?
+            Track.Id trackId = TrackIdStorage.get(this);
+            if (trackId != null) {
+                Log.i(TAG, "After restart: resuming recording for " + trackId);
+                resumeTrack(trackId);
+            }
+        }
         return START_STICKY;
     }
 
@@ -167,9 +173,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
         // Set recording status
         Track.Id trackId = trackRecordingManager.startNewTrack();
-        updateRecordingStatus(RecordingStatus.record(trackId));
-
-        startRecording();
+        startRecording(trackId);
         return trackId;
     }
 
@@ -180,12 +184,13 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
         Log.i(TAG, "resumeTrack");
 
-        updateRecordingStatus(RecordingStatus.record(trackId));
-
-        startRecording();
+        startRecording(trackId);
     }
 
-    private void startRecording() {
+    private void startRecording(Track.Id trackId) {
+        updateRecordingStatus(RecordingStatus.record(trackId));
+        TrackIdStorage.set(this, trackId);
+
         startSensors();
 
         voiceAnnouncementManager.start(trackRecordingManager.getTrackStatistics());
@@ -226,6 +231,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         updateRecordingStatus(STATUS_DEFAULT);
 
         trackRecordingManager.endCurrentTrack();
+        TrackIdStorage.unset(this);
 
         stopUpdateRecordingData();
 

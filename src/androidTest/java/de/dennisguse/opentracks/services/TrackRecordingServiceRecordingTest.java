@@ -2,6 +2,7 @@ package de.dennisguse.opentracks.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.Intent;
@@ -91,6 +92,41 @@ public class TrackRecordingServiceRecordingTest {
         PreferencesUtils.setString(R.string.idle_duration_key, R.string.idle_duration_default);
 
         service = startService();
+    }
+
+    @MediumTest
+    @Test
+    public void reCreate_not_recording() {
+        // given
+        TrackIdStorage.unset(context);
+
+        assertFalse(service.isRecording());
+
+        // when
+        service.onStartCommand(null, 0, 1);
+
+        // then
+        assertFalse(service.isRecording());
+    }
+
+    @MediumTest
+    @Test
+    public void reCreate_recording() {
+        // given
+        assertFalse(service.isRecording());
+        Track.Id trackId = service.startNewTrack();
+        assertTrue(service.isRecording());
+
+        // when (crash and restart)
+        service.onDestroy();
+        service.onCreate();
+        service.onStartCommand(null, 0, 1);
+
+        // then
+        assertTrue(service.isRecording());
+        assertEquals(trackId, service.getRecordingStatusObservable().getValue().trackId());
+
+        service.endCurrentTrack();
     }
 
     @MediumTest
