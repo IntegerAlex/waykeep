@@ -753,11 +753,13 @@ public class PreferencesUtils {
             sharedPreferences.edit().clear().commit();
         }
 
-        // Each setting file must be mentioned here.
+        // Each setting file must be mentioned here: see xml/settings.xml
         PreferenceManager.setDefaultValues(context, R.xml.settings, readAgain);
         PreferenceManager.setDefaultValues(context, R.xml.settings_defaults, readAgain);
         PreferenceManager.setDefaultValues(context, R.xml.settings_user_interface, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_recording, readAgain);
         PreferenceManager.setDefaultValues(context, R.xml.settings_sensors, readAgain);
+        PreferenceManager.setDefaultValues(context, R.xml.settings_announcements, readAgain);
         PreferenceManager.setDefaultValues(context, R.xml.settings_import_export, readAgain);
         PreferenceManager.setDefaultValues(context, R.xml.settings_public_api, readAgain);
     }
