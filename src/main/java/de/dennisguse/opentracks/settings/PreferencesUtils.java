@@ -328,6 +328,11 @@ public class PreferencesUtils {
         return getBoolean(R.string.voice_announce_unit_key, true);
     }
 
+    @VisibleForTesting
+    public static void setVoiceAnnounceUnit(boolean value) {
+        setBoolean(R.string.voice_announce_unit_key, value);
+    }
+
     public static Duration getVoiceAnnouncementFrequency() {
         final int DEFAULT = Integer.parseInt(resources.getString(R.string.voice_announcement_frequency_default));
         int value = getInt(R.string.voice_announcement_frequency_key, DEFAULT);

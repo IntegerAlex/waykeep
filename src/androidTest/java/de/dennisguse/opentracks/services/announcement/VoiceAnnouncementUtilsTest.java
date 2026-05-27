@@ -52,6 +52,7 @@ public class VoiceAnnouncementUtilsTest {
 
     @Before
     public void setUp() {
+        PreferencesUtils.setVoiceAnnounceUnit(true);
         PreferencesUtils.setVoiceAnnounceHeartRateCurrent(false);
         PreferencesUtils.setVoiceAnnounceLapHeartRate(false);
         PreferencesUtils.setVoiceAnnounceAverageHeartRate(false);
@@ -219,6 +220,48 @@ public class VoiceAnnouncementUtilsTest {
 
         // then
         assertEquals("12:00 AM. Total distance 19.9 kilometers. 1 hour. Average moving speed 19.9 kilometers per hour.", announcement);
+    }
+
+    @Test
+    public void getAnnouncement_metric_distance_without_unit() {
+        PreferencesUtils.setVoiceAnnounceUnit(false);
+
+        Track track = new Track(
+                null,
+                null,
+                "",
+                "",
+                "",
+                ActivityType.AIRPLANE,
+                ZoneOffset.UTC,
+                new Statistics(
+                        Instant.EPOCH,
+                        Instant.EPOCH,
+                        Duration.ofHours(2).plusMinutes(5).plusSeconds(10),
+                        Duration.ofHours(1),
+                        Distance.of(19900),
+                        Speed.of(100),
+                        null,
+                        new AltitudeGainLoss(6000, 6000),
+                        null,
+                        null
+                ));
+
+        SensorDataSet dataSet = new SensorDataSet(
+                null,
+                null,
+                null,
+                new SensorData<>(HeartRate.of(60), "unused"),
+                null, null,
+                null,
+                null
+        );
+
+        // when
+        String announcement = VoiceAnnouncementUtils.createStatistics(context, track, dataSet, UnitSystem.METRIC, true, null, null).toString();
+
+        // then
+        assertEquals("12:00 AM. Total distance 19.9. 1 hour. Average moving speed 19.9.", announcement);
     }
 
     @Test
