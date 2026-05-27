@@ -83,6 +83,7 @@ limitations under the License.
     <string name="activity_type_airplane">airplane</string>
     <string name="activity_type_atv">ATV</string>
     <string name="activity_type_biking">biking</string>
+    <string name="activity_type_gravel_biking">gravel biking</string>
     <string name="activity_type_blimp">blimp</string>
     <string name="activity_type_boat">boat</string>
     <string name="activity_type_climbing">climbing</string>
