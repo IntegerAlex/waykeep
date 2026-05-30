@@ -94,7 +94,7 @@ limitations under the License.
     <string name="description_max_altitude">Μέγιστη ανύψωση: %1$d μέτρα (%2$d πόδια)</string>
     <string name="description_max_speed">Μέγιστη ταχύτητα: %1$.2f χλμ/ώρα (%2$.1f μίλια/ώρα)</string>
     <string name="description_min_altitude">Ελάχιστη ανύψωση: %1$d μέτρα (%2$d πόδια)</string>
-    <string name="description_moving_time">Χρόνος μεταφοράς: %1$s</string>
+    <string name="description_moving_time">Χρόνος κίνησης: %1$s</string>
     <string name="description_pace_imperial">Ρυθμός (λεπτά/μίλι)</string>
     <string name="description_pace_metric">Ρυθμός (λεπτά/χλμ)</string>
     <string name="description_recorded_time">Εγγραφή: %1$s</string>
@@ -230,22 +230,22 @@ limitations under the License.
     <!-- Tracks -->
     <!-- Unit -->
     <string name="unit_feet">πόδια</string>
-    <string name="unit_kilometer">χλμ.</string>
+    <string name="unit_kilometer">χλμ</string>
     <string name="unit_kilometer_per_hour">χλμ/ώρα</string>
     <string name="unit_meter">μέτρα</string>
     <string name="unit_mile">μίλι</string>
     <string name="unit_mile_per_hour">μίλια/ώρα</string>
-    <string name="unit_minute_per_kilometer">λεπτά / χιλ.</string>
+    <string name="unit_minute_per_kilometer">λεπτά/χλμ</string>
     <string name="unit_minute_per_mile">λεπτά/μίλι</string>
     <!-- Value -->
     <string name="value_integer_feet_excellent_gps">%1$d πόδια (τέλειο σήμα GPS)</string>
-    <string name="value_integer_feet_recommended">%1$d ft (συνιστάται)</string>
+    <string name="value_integer_feet_recommended">%1$d πόδια (συνιστάται)</string>
     <string name="value_integer_kilometer_hour">%1$d χλμ/ώρα</string>
     <string name="value_integer_meter_excellent_gps">%1$d μέτρα (τέλειο σήμα GPS)</string>
     <string name="value_integer_meter_poor_gps">%1$d μέτρα (χαμηλό σήμα GPS)</string>
     <string name="value_integer_meter_recommended">%1$d m (συνιστάται)</string>
     <string name="value_integer_mile_hour">%1$d μίλια/ώρα</string>
-    <string name="value_integer_minute">%1$d λεπ.</string>
+    <string name="value_integer_minute">%1$d λεπ</string>
     <string name="value_integer_second">%1$d δευτ</string>
     <string name="value_none">Καμία</string>
     <string name="value_off">Απενεργοποιημένο</string>
@@ -325,4 +325,120 @@ limitations under the License.
     <string name="settings_recording_min_sampling_interval_title">Χρονικό μεσοδιάστημα δειγματοληψίας</string>
     <string name="settings_recording_location_distance_summary">%1$s μεταξύ καταγεγραμμένων τοποθεσιών</string>
     <string name="field_remove_from_layout">Αφαίρεση</string>
+    <string name="value_float_kilometer_hour">%1$.1f χλμ/ώρα</string>
+    <string name="value_float_kilometer_hour_recommended">%1$.1f χλμ/ώρα (συνιστάται)</string>
+    <string name="value_integer_knots">%1$d κόμβοι</string>
+    <string name="value_float_mile_hour">%1$.1f μίλια/ώρα</string>
+    <string name="value_float_knots">%1$.1f κόμβοι</string>
+    <string name="value_float_mile_hour_recommended">%1$.1f μίλια/ώρα (συνιστάται)</string>
+    <string name="value_float_knots_recommended">%1$.1f κόμβοι (συνιστάται)</string>
+    <string name="value_internal_sensor">Εσωτερικός αισθητήρας</string>
+    <string name="value_int_seconds">%1$d δευτ (συνιστάται)</string>
+    <string name="voice_per_kilometer">ανά χιλιόμετρο</string>
+    <string name="voice_per_mile">ανά μίλι</string>
+    <string name="voice_per_nautical_mile">ανά ναυτικό μίλι</string>
+    <string name="lap_time">Χρόνος γύρου</string>
+    <string name="pace">Ρυθμός</string>
+    <string name="lap_speed">Ταχύτητα γύρου</string>
+    <string name="speed">Μέση ταχύτητα κίνησης</string>
+    <string name="total_distance">Συνολική απόσταση</string>
+    <string name="voiceDistanceKilometersPlural">{n, plural, =1 {1 χιλιόμετρο} other {{n,number,#.0} χιλιόμετρα} }</string>
+    <string name="voiceDistanceMilesPlural">{n, plural, =1 {1 μίλι} other {{n,number,#.0} μίλια} }</string>
+    <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 ναυτικό μίλι} other {{n,number,#.0} ναυτικά μίλια} }</string>
+    <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
+    <string name="voiceHoursPlural">{n, plural, =1 {1 ώρα} other {{n,number} ώρες} }</string>
+    <string name="settings_import_section">Εισαγωγή</string>
+    <string name="settings_export_section">Εξαγωγή</string>
+    <string name="settings_api_title">Δημόσιο API</string>
+    <string name="settings_public_api_enabled_title">Δημόσιο API</string>
+    <string name="settings_public_api_package_title">Όνομα πακέτου για Δημόσιο API</string>
+    <string name="settings_api_summary">API απομακρυσμένου ελέγχου και στατιστικών για άλλες εφαρμογές</string>
+    <string name="voiceMinutesPlural">{n, plural, =1 {1 λεπτό} other {{n,number} λεπτά} }</string>
+    <string name="voiceSecondsPlural">{n, plural, =1 {1 δευτερόλεπτο} other {{n,number} δευτερόλεπτα} }</string>
+    <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 χιλιόμετρο ανά ώρα} other {{n,number,#.0} χιλιόμετρα ανά ώρα} }</string>
+    <string name="voiceSpeedMilesPerHourPlural">{n, plural, =1 {1 μίλι ανά ώρα} other {{n,number,#.0} μίλια ανά ώρα} }</string>
+    <string name="voiceSpeedMKnotsPlural">{n, plural, =1 {1 κόμβος} other {{n,number,#.0} κόμβοι} }</string>
+    <string name="voiceSpeed">{n, plural, =1 {1} other {{n,number,#.0}} }</string>
+    <string name="description_speed_nautical">Ταχύτητα (κόμβοι)</string>
+    <string name="description_sensor_temperature">Θερμοκρασία (Κελσίου)</string>
+    <string name="export_with_photos">με φωτογραφίες</string>
+    <string name="export_without_photos">χωρίς φωτογραφίες</string>
+    <string name="export_progress_summary_errors_msg">Σφάλματα</string>
+    <string name="import_progress_summary_errors_msg">Σφάλματα</string>
+    <string name="import_progress_summary_exists_msg">Υπάρχει ήδη</string>
+    <string name="import_error_info">%1$s: %2$s</string>
+    <string name="gps_recording_status">%1$s: %2$s</string>
+    <string name="generic_undo">Αναίρεση</string>
+    <string name="generic_filter">Φίλτρο</string>
+    <string name="menu_filter">Φίλτρο</string>
+    <string name="menu_voice_rate">Ταχύτητα φωνής</string>
+    <string name="sensor_state_cadence_avg">Μέσο πεταλάρισμα</string>
+    <string name="sensor_state_cadence_max">Μέγιστο πεταλάρισμα</string>
+    <string name="sensor_state_temperature">Θερμόμετρο</string>
+    <string name="sensor_state_pressure">Βαρόμετρο</string>
+    <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
+    <string name="bluetooth_disabled">Παρακαλούμε ενεργοποιήστε το Bluetooth.</string>
+    <string name="settings_ui_title">Διεπαφή Χρήστη</string>
+    <string name="settings_ui_summary">Εμφάνιση, Διάταξη Εγγραφής, Θέμα</string>
+    <string name="settings_gps_sensor">GPS</string>
+    <string name="description_speed_source_gps">GPS</string>
+    <string name="settings_sensors_title">Αισθητήρες</string>
+    <string name="settings_sensors_summary">Αισθητήρες Ποδηλασίας, Περιφέρεια Ρόδας, Αισθητήρες Τρεξίματος</string>
+    <string name="settings_defaults_title">Προεπιλεγμένες Μονάδες και Δραστηριότητα</string>
+    <string name="settings_announcements_summary">Χρόνος, Απόσταση, Ταχύτητα Φωνής</string>
+    <string name="settings_import_export_title">Εισαγωγή και Εξαγωγή</string>
+    <string name="settings_import_export_summary">Εισαγωγή, Εξαγωγή, Αυτόματη Εξαγωγή</string>
+    <string name="settings_units_category">Μονάδες</string>
+    <string name="settings_activity_defaults_category">Προεπιλογές Δραστηριότητας</string>
+    <string name="settings_reset_summary">Επαναφορά Ρυθμίσεων στις Προεπιλεγμένες Τιμές</string>
+    <string name="generic_from">Από</string>
+    <string name="generic_to">Μέχρι</string>
+    <string name="generic_today">Σήμερα</string>
+    <string name="generic_yesterday">Χθες</string>
+    <string name="generic_dismiss">Παράβλεψη</string>
+    <string name="generic_completed">Ολοκληρώθηκε</string>
+    <string name="generic_click_twice_cancel">Πατήστε ξανά πίσω για ακύρωση</string>
+    <string name="generic_choose_an_option">Επιλέξτε μια επιλογή</string>
+    <string name="generic_skip">Παράλειψη</string>
+    <string name="generic_separator_done_total">/</string>
+    <string name="generic_show_errors">Εμφάνιση σφαλμάτων</string>
+    <plurals name="generic_completed_with_errors">
+        <item quantity="one">Ολοκληρώθηκε με ένα σφάλμα</item>
+        <item quantity="other">Ολοκληρώθηκε με %1$d σφάλματα</item>
+    </plurals>
+    <string name="generic_overwrite">Αντικατάσταση</string>
+    <string name="gps_disabled_msg">GPS απενεργοποιημένο</string>
+    <string name="gps_fixed_and_ready">GPS σταθερό και έτοιμο</string>
+    <string name="image_discard">Απόρριψη</string>
+    <string name="menu_select_layout">Επιλογή διάταξης</string>
+    <string name="custom_layout_select_layout">Επιλογή διάταξης</string>
+    <string name="settings_announcements_distance_frequency">Μήκος γύρου</string>
+    <string name="settings_locale_title">Γλώσσα</string>
+    <string name="settings_locale_system_default">Προεπιλογή συστήματος</string>
+    <string name="settings_night_mode_option_system">Σύστημα</string>
+    <string name="settings_night_mode_option_day">Μέρα</string>
+    <string name="settings_night_mode_option_night">Νύχτα</string>
+    <string name="custom_layout_list_title">Διατάξεις</string>
+    <string name="stats_custom_layout_default_layout">Προεπιλεγμένη διάταξη</string>
+    <string name="settings_all_reset">Επαναφορά</string>
+    <string name="settings_recording_fullscreen_on_while_recording_title">Πλήρης οθόνη</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Προειδοποίηση απενεργοποιημένου GPS</string>
+    <string name="settings_recording_keep_screen_on_while_recording_title">Διατήρηση της οθόνης ενεργοποιημένης</string>
+    <string name="settings_recording_show_on_lockscreen_while_recording_title">Εμφάνιση στατιστικών στο κλείδωμα οθόνης</string>
+    <string name="settings_ui_dynamic_colors_title">Δυναμικά Χρώματα</string>
+    <string name="settings_recording_customize_layout_title">Προσαρμόστε τη διάταξη εγγραφής</string>
+    <string name="settings_sensor_cycling_cadence">Πεταλάρισμα</string>
+    <string name="stats_sensors_cadence">Πεταλάρισμα</string>
+    <string name="stats_sensors_temperature">Θερμοκρασία</string>
+    <string name="stats_clock">Ρολόι</string>
+    <string name="track_recording_notification_accuracy">Ακρίβεια τοποθεσίας: %1$s</string>
+    <string name="track_distance_notification">Απόσταση: %1$s</string>
+    <string name="track_speed_notification">Ταχύτητα: %1$s</string>
+    <string name="track_pace_notification">Ρυθμός: %1$s</string>
+    <string name="stats_coordinates">Γεωγραφικό πλάτος/Γεωγραφικό μήκος</string>
+    <string name="settings_sensor_running_speed_and_cadence">Απόσταση, Ταχύτητα και Πεταλάρισμα</string>
+    <string name="settings_sensor_cycling_distance_speed">Απόσταση και Ταχύτητα</string>
+    <string name="settings_sensor_bluetooth_service_filter_title">Φιλτράτισμα Συσκευών Bluetooth</string>
+    <string name="settings_sensor_wheel_circumference">Περιφέρεια Ρόδας (mm)</string>
+    <string name="settings_public_api_dashboard_enabled_title">Αυτόματη μεταφορά δεδομένων</string>
 </resources>
