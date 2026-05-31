@@ -498,7 +498,7 @@ limitations under the License.
     <string name="current_heart_rate">Текущий пульс</string>
     <string name="generic_filter">Фильтр</string>
     <string name="generic_from">с</string>
-    <string name="settings_export_section">Экспорт</string>
+    <string name="settings_export_as_file_section">Экспорт</string>
     <string name="settings_import_section">Импорт</string>
     <string name="settings_api_title">Публичный API</string>
     <string name="settings_public_api_disabled_toast">Публичный API OpenTracks отключен: он может быть включен в настройках.</string>

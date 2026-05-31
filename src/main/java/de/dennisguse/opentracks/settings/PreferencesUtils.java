@@ -679,79 +679,14 @@ public class PreferencesUtils {
         return entries;
     }
 
-
-    public static boolean shouldInstantExportAfterWorkout() {
+    public static boolean shouldInstantExportToFile() {
         final boolean INSTANT_POST_WORKOUT_EXPORT_DEFAULT = resources.getBoolean(R.bool.post_workout_export_enabled_default);
         return getBoolean(R.string.post_workout_export_enabled_key, INSTANT_POST_WORKOUT_EXPORT_DEFAULT) && isDefaultExportDirectoryUri();
     }
 
-    public static boolean shouldExportToHealthConnect() {
-        final boolean DEFAULT = resources.getBoolean(R.bool.health_connect_export_enabled_default);
-        return getBoolean(R.string.health_connect_export_enabled_key, DEFAULT);
-    }
-
-    public static boolean shouldExportDetailedHealthConnectWorkout() {
-        final boolean DEFAULT = resources.getBoolean(R.bool.health_connect_detailed_sync_default);
-        return getBoolean(R.string.health_connect_detailed_sync_key, DEFAULT);
-    }
-
-    public static String getHealthConnectLastSyncStatus() {
-        return getString(R.string.health_connect_last_sync_status_key, resources.getString(R.string.health_connect_sync_status_never));
-    }
-
-    public static void setHealthConnectLastSyncStatus(String value) {
-        setString(R.string.health_connect_last_sync_status_key, value);
-    }
-
-    public static boolean hasHealthConnectInitialSyncConfigured() {
-        return getLong(R.string.health_connect_initial_sync_start_time_key, LONG_UNSET) != LONG_UNSET;
-    }
-
-    public static long getHealthConnectInitialSyncStartTimeMillis() {
-        return getLong(R.string.health_connect_initial_sync_start_time_key, LONG_UNSET);
-    }
-
-    public static void setHealthConnectInitialSyncStartTimeMillis(long value) {
-        setLong(R.string.health_connect_initial_sync_start_time_key, value);
-    }
-
-    public static long getHealthConnectInitialSyncCursorStartTimeMillis() {
-        return getLong(R.string.health_connect_initial_sync_cursor_start_time_key, LONG_UNSET);
-    }
-
-    public static void setHealthConnectInitialSyncCursorStartTimeMillis(long value) {
-        setLong(R.string.health_connect_initial_sync_cursor_start_time_key, value);
-    }
-
-    public static long getHealthConnectInitialSyncCursorTrackId() {
-        return getLong(R.string.health_connect_initial_sync_cursor_track_id_key, LONG_UNSET);
-    }
-
-    public static void setHealthConnectInitialSyncCursorTrackId(long value) {
-        setLong(R.string.health_connect_initial_sync_cursor_track_id_key, value);
-    }
-
-    public static boolean isHealthConnectInitialSyncCompleted() {
-        return getBoolean(R.string.health_connect_initial_sync_completed_key, resources.getBoolean(R.bool.health_connect_initial_sync_completed_default));
-    }
-
-    public static void setHealthConnectInitialSyncCompleted(boolean value) {
-        setBoolean(R.string.health_connect_initial_sync_completed_key, value);
-    }
-
-    public static void resetHealthConnectInitialSyncState(long startTimeMillis) {
-        setHealthConnectInitialSyncStartTimeMillis(startTimeMillis);
-        clearHealthConnectInitialSyncCursor();
-        setHealthConnectInitialSyncCompleted(false);
-    }
-
-    public static void clearHealthConnectInitialSyncCursor() {
-        setHealthConnectInitialSyncCursorStartTimeMillis(LONG_UNSET);
-        setHealthConnectInitialSyncCursorTrackId(LONG_UNSET);
-    }
-
-    public static boolean shouldRunHealthConnectInitialSync() {
-        return shouldExportToHealthConnect() && hasHealthConnectInitialSyncConfigured() && !isHealthConnectInitialSyncCompleted();
+    public static boolean shouldInstantExportToHealthConnect() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.post_workout_export_health_connect_enabled_default);
+        return getBoolean(R.string.post_workout_export_health_connect_enabled_key, DEFAULT);
     }
 
     public static TrackFilenameGenerator getTrackFileformatGenerator() {

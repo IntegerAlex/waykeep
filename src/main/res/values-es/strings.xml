@@ -503,7 +503,7 @@ limitations under the License.
     <string name="permission_bluetooth_failed_rejected">Es necesario conceder manualmente a OpenTracks el acceso a los Dispositivos Cercanos en la configuración del sistema.</string>
     <string name="settings_running_sensor">Correr</string>
     <string name="settings_import_section">Importar</string>
-    <string name="settings_export_section">Exportar</string>
+    <string name="settings_export_as_file_section">Exportar</string>
     <string name="generic_today">Hoy</string>
     <string name="generic_yesterday">Ayer</string>
     <string name="menu_add_custom_layout">Nuevo diseño</string>

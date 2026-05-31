@@ -442,7 +442,7 @@ limitations under the License.
     <string name="settings_reset_summary">Lähtesta seadistused vaikeväärtusteks</string>
     <string name="settings_recording_customize_layout_title">Kohanda oma salvestuse paigutust</string>
     <string name="settings_recording_customize_layout_select_columns">Andmeväljad rea kohta</string>
-    <string name="settings_export_section">Eksport</string>
+    <string name="settings_export_as_file_section">Eksport</string>
     <string name="settings_announcements_totaltime_frequency">Ajavahemik</string>
     <string name="settings_layout_reset">Lähtesta kohandatud paigutus</string>
     <string name="settings_layout_reset_confirm_title">Kas lähtestad oma paigutused?</string>

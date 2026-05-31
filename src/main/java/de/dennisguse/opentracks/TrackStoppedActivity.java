@@ -18,6 +18,7 @@ import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.databinding.TrackStoppedBinding;
 import de.dennisguse.opentracks.fragments.ChooseActivityTypeDialogFragment;
 import de.dennisguse.opentracks.io.file.exporter.ExportUtils;
+import de.dennisguse.opentracks.io.healthconnect.exporter.HealthConnectUtils;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
@@ -93,7 +94,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
         viewBinding.finishButton.setOnClickListener(v -> {
             storeTrackMetaData(contentProviderUtils, track);
             ExportUtils.postWorkoutExport(this, trackId);
-            ExportUtils.postWorkoutHealthConnectExport(this, trackId);
+            HealthConnectUtils.postExportTrack(this, trackId);
             finish();
         });
 

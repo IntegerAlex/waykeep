@@ -58,6 +58,9 @@
     <string name="export_filename_format_key" translatable="false">instantExportFilename</string>
     <string name="export_filename_format_default" translatable="false">{date}_{time}_{name}</string>
 
+    <string name="post_workout_export_health_connect_enabled_key" translatable="false">instantExportHealthConnectEnabled</string>
+    <bool name="post_workout_export_health_connect_enabled_default" translatable="false">false</bool>
+
     <!-- Stats layout customization default layout -->
     <string name="settings_layout_reset_key" translatable="false">settingsLayoutReset</string>
 
@@ -270,18 +273,6 @@
 
     <string name="import_prevent_reimport_key" translatable="false">preventReimportTrackKey</string>
     <bool name="import_prevent_reimport_default">true</bool>
-
-    <string name="health_connect_export_enabled_key" translatable="false">healthConnectExportEnabled</string>
-    <bool name="health_connect_export_enabled_default" translatable="false">false</bool>
-    <string name="health_connect_detailed_sync_key" translatable="false">healthConnectDetailedSync</string>
-    <bool name="health_connect_detailed_sync_default" translatable="false">false</bool>
-    <string name="health_connect_last_sync_status_key" translatable="false">healthConnectLastSyncStatus</string>
-    <string name="health_connect_settings_key" translatable="false">healthConnectSettings</string>
-    <string name="health_connect_initial_sync_start_time_key" translatable="false">healthConnectInitialSyncStartTime</string>
-    <string name="health_connect_initial_sync_cursor_start_time_key" translatable="false">healthConnectInitialSyncCursorStartTime</string>
-    <string name="health_connect_initial_sync_cursor_track_id_key" translatable="false">healthConnectInitialSyncCursorTrackId</string>
-    <string name="health_connect_initial_sync_completed_key" translatable="false">healthConnectInitialSyncCompleted</string>
-    <bool name="health_connect_initial_sync_completed_default" translatable="false">false</bool>
 
     <string name="settings_api_key" translatable="false">settingsAPI</string>
     <string name="publicapi_package_key" translatable="false">apiPackageKey</string>

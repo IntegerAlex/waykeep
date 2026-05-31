@@ -437,7 +437,7 @@ limitations under the License.
     <string name="settings_cycling_sensor">Sykling</string>
     <string name="settings_running_sensor">Løping</string>
     <string name="settings_import_section">Import</string>
-    <string name="settings_export_section">Eksport</string>
+    <string name="settings_export_as_file_section">Eksport</string>
     <string name="value_float_kilometer_hour">%1$.1f km/t</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/t (anbefales)</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>

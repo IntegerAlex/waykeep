@@ -425,7 +425,7 @@ limitations under the License.
     <string name="field_remove_from_layout">Видалити</string>
     <string name="stats_clock">Годинник</string>
     <string name="settings_recording_customize_layout_select_columns">Поля даних у рядку</string>
-    <string name="settings_export_section">Експорт</string>
+    <string name="settings_export_as_file_section">Експорт</string>
     <string name="field_set_secondary">Вторинний</string>
     <string name="settings_all_reset">Скидання</string>
     <string name="generic_filter">Фільтр</string>

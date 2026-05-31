@@ -11,23 +11,22 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/health_connect_activity_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_help_24dp"
-            app:title="@string/health_connect_permissions_rationale_title" />
+            app:title="@string/app_name" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="?attr/actionBarSize"
+        android:padding="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
             <TextView
                 style="?attr/textAppearanceHeadline6"
@@ -41,27 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="@string/health_connect_permissions_rationale_summary" />
-
-            <TextView
-                style="?attr/textAppearanceBody1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/health_connect_permissions_rationale_usage" />
-
-            <TextView
-                android:id="@+id/health_connect_permissions_rationale_app_url"
-                style="?attr/textAppearanceBody1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:autoLink="web"
-                android:linksClickable="true" />
         </LinearLayout>
     </ScrollView>
-
-    <include
-        android:id="@+id/bottom_app_bar_layout"
-        layout="@layout/bottomappbar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

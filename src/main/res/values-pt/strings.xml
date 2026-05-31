@@ -466,7 +466,7 @@ limitations under the License.
     <string name="settings_public_api_enabled_summary_off">Apenas o OpenTracks pode iniciar e parar gravações.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">Os dados gravados não serão compartilhados automaticamente com outras aplicações.</string>
     <string name="settings_import_section">Importar</string>
-    <string name="settings_export_section">Exportar</string>
+    <string name="settings_export_as_file_section">Exportar</string>
     <string name="settings_prevent_reimport_tracks_title">Impedir a reimportação de trilhas</string>
     <string name="stats_loss">Perda</string>
     <string name="stats_coordinates">Latitude/Longitude</string>

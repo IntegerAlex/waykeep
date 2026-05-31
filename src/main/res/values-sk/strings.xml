@@ -381,7 +381,7 @@ limitations under the License.
     <string name="settings_running_sensor">Spúšťanie</string>
     <string name="settings_cycling_sensor">Cyklistika</string>
     <string name="custom_layout_list_layout_removed">Rozloženie bolo odstránené</string>
-    <string name="settings_export_section">Exportujte</string>
+    <string name="settings_export_as_file_section">Exportujte</string>
     <string name="settings_import_section">Importovať</string>
     <string name="track_recording_notification_accuracy">Presnosť polohy: %1$s</string>
     <string name="stats_clock">Hodiny</string>

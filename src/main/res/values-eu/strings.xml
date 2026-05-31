@@ -458,7 +458,7 @@ GPS gailuak datu okerrak salatzen baditu (adibidez, kokapena, abiadura, kota), O
     <string name="settings_layout_reset_done">Diseinuaren ezarpen guztiak balio lehenetsietara itzuli dira</string>
     <string name="settings_all_reset">Berrezarri</string>
     <string name="settings_import_section">Inportatu</string>
-    <string name="settings_export_section">Esportatu</string>
+    <string name="settings_export_as_file_section">Esportatu</string>
     <string name="stats_coordinates">Latitudea /Longitudea</string>
     <string name="stats_clock">Erlojua</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>

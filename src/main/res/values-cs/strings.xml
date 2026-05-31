@@ -444,7 +444,7 @@ limitations under the License.
     <string name="settings_cycling_sensor">Cyklistika</string>
     <string name="settings_running_sensor">Běh</string>
     <string name="settings_import_section">Importovat</string>
-    <string name="settings_export_section">Exportovat</string>
+    <string name="settings_export_as_file_section">Exportovat</string>
     <string name="stats_sensors_power">Napájení</string>
     <string name="permission_bluetooth_failed_rejected">V nastavení systému je třeba ručně povolit aplikaci OpenTracks přístup k blízkým zařízením.</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>

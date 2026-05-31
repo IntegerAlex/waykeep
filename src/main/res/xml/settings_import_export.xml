@@ -17,7 +17,7 @@
             android:title="@string/settings_prevent_reimport_tracks_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_export_section">
+    <PreferenceCategory android:title="@string/settings_export_as_file_section">
         <Preference
             android:title="@string/menu_export_all">
             <intent
@@ -51,9 +51,38 @@
             android:key="@string/export_filename_format_key"
             android:title="@string/settings_export_filename_title"
             android:defaultValue="@string/export_filename_format_default" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_export_to_health_connect"
+        android:key="healthConnectCategory">
         <Preference
-            android:key="@string/health_connect_settings_key"
-            android:summary="@string/health_connect_settings_summary"
-            android:title="@string/health_connect_screen_title" />
+            android:persistent="false"
+            android:summary="@string/health_connect_open_settings_summary"
+            android:title="@string/health_connect_open_settings_title">
+            <intent
+                android:targetClass="de.dennisguse.opentracks.settings.HealthConnect$Settings"
+                android:targetPackage="@string/applicationId" />
+        </Preference>
+
+        <Preference
+            android:title="@string/health_connect_permissions_rationale_title"
+            android:key="healthConnectPermissions">
+            <intent
+                android:targetClass="de.dennisguse.opentracks.settings.HealthConnect$ConfigurePermissions"
+                android:targetPackage="@string/applicationId" />
+        </Preference>
+
+        <Preference android:title="@string/menu_export_all_to_health_connect">
+            <intent
+                android:targetClass="de.dennisguse.opentracks.settings.HealthConnect$ExportAll"
+                android:targetPackage="@string/applicationId" />
+        </Preference>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="@bool/post_workout_export_health_connect_enabled_default"
+            android:key="@string/post_workout_export_health_connect_enabled_key"
+            android:summary="@string/health_connect_export_enabled_summary"
+            android:title="@string/instant_export_enabled_title" />
     </PreferenceCategory>
 </PreferenceScreen>

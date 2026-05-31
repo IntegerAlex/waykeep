@@ -505,7 +505,7 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="settings_cycling_sensor">Cyclisme</string>
     <string name="settings_running_sensor">Course à pied</string>
     <string name="settings_import_section">Importer</string>
-    <string name="settings_export_section">Exporter</string>
+    <string name="settings_export_as_file_section">Exporter</string>
     <string name="settings_reset_summary">Réinitialiser les paramètres aux valeurs par défaut</string>
     <string name="settings_activity_defaults_category">Valeurs par défaut de l\'activité</string>
     <string name="settings_sensors_summary">Capteurs de cyclisme, Circonférence de roue, Capteurs de course à pied</string>

@@ -410,7 +410,7 @@
     <string name="settings_cycling_sensor">Ciclismo</string>
     <string name="settings_running_sensor">Correndo</string>
     <string name="settings_import_section">Importar</string>
-    <string name="settings_export_section">Exportar</string>
+    <string name="settings_export_as_file_section">Exportar</string>
     <string name="value_float_kilometer_hour">%1$.1f km/h</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/h (Recomendado)</string>
     <string name="stats_clock">Relógio</string>

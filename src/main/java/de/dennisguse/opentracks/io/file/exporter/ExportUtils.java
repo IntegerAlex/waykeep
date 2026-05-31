@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -28,7 +27,6 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.TrackFilenameGenerator;
-import de.dennisguse.opentracks.io.healthconnect.HealthConnectWorker;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.SettingsActivity;
 import de.dennisguse.opentracks.util.IntentUtils;
@@ -38,7 +36,7 @@ public class ExportUtils {
     private static final String TAG = ExportUtils.class.getSimpleName();
 
     public static void postWorkoutExport(AppCompatActivity context, Track.Id trackId) {
-        if (PreferencesUtils.shouldInstantExportAfterWorkout()) {
+        if (PreferencesUtils.shouldInstantExportToFile()) {
             TrackFileFormat trackFileFormat = PreferencesUtils.getExportTrackFileFormat();
             DocumentFile directory = IntentUtils.toDocumentFile(context, PreferencesUtils.getDefaultExportDirectoryUri());
 
@@ -67,48 +65,6 @@ public class ExportUtils {
 
             workManager.enqueue(exportRequest);
         }
-    }
-
-    public static void postWorkoutHealthConnectExport(Context context, Track.Id trackId) {
-        if (!PreferencesUtils.shouldExportToHealthConnect()) {
-            return;
-        }
-
-        if (PreferencesUtils.shouldRunHealthConnectInitialSync()) {
-            startHealthConnectInitialSync(context, PreferencesUtils.getHealthConnectInitialSyncStartTimeMillis());
-            return;
-        }
-
-        WorkRequest request = new OneTimeWorkRequest.Builder(HealthConnectWorker.class)
-                .addTag(HealthConnectWorker.WORK_TAG)
-                .setInputData(new Data.Builder()
-                        .putString(HealthConnectWorker.MODE_KEY, HealthConnectWorker.MODE_SINGLE_TRACK)
-                        .putLong(HealthConnectWorker.TRACK_ID_KEY, trackId.id())
-                        .build())
-                .build();
-        WorkManager.getInstance(context).enqueue(request);
-    }
-
-    public static void startHealthConnectInitialSync(Context context, long startTimeMillis) {
-        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(HealthConnectWorker.class)
-                .addTag(HealthConnectWorker.WORK_TAG)
-                .setInputData(new Data.Builder()
-                        .putString(HealthConnectWorker.MODE_KEY, HealthConnectWorker.MODE_INITIAL_SYNC)
-                        .putLong(HealthConnectWorker.INITIAL_SYNC_START_TIME_MILLIS_KEY, startTimeMillis)
-                        .build())
-                .build();
-
-        WorkManager.getInstance(context).enqueueUniqueWork(
-                HealthConnectWorker.INITIAL_SYNC_WORK_NAME,
-                ExistingWorkPolicy.KEEP,
-                request
-        );
-    }
-
-    public static void cancelHealthConnectExport(Context context) {
-        WorkManager workManager = WorkManager.getInstance(context);
-        workManager.cancelUniqueWork(HealthConnectWorker.INITIAL_SYNC_WORK_NAME);
-        workManager.cancelAllWorkByTag(HealthConnectWorker.WORK_TAG);
     }
 
     public static void exportTrack(Context context, DocumentFile directory, @Nullable String filenameForMultiple, TrackFileFormat trackFileFormat, List<Track.Id> trackIds) {

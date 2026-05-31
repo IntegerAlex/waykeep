@@ -129,8 +129,8 @@ limitations under the License.
 
         <activity android:name=".AboutActivity" />
 
-        <activity android:name=".settings.HealthConnectSettingsActivity" />
-
+        <!-- Permissions -->
+        <!-- until Android 13 -->
         <activity
             android:name=".HealthConnectPermissionsRationaleActivity"
             android:exported="true">
@@ -138,7 +138,7 @@ limitations under the License.
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
         </activity>
-
+        <!-- for Android 14 -->
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
@@ -150,9 +150,11 @@ limitations under the License.
             </intent-filter>
         </activity-alias>
 
-        <activity
-            android:name=".HelpActivity"
-            android:label="@string/menu_help" />
+        <activity android:name=".settings.HealthConnect$Settings" />
+        <activity android:name=".settings.HealthConnect$ConfigurePermissions" />
+        <activity android:name=".settings.HealthConnect$ExportAll" />
+
+        <activity android:name=".HelpActivity" />
 
         <activity android:name=".io.file.importer.DirectoryChooserActivity$ImportDirectoryChooserActivity" />
 

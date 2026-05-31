@@ -333,7 +333,7 @@
     <string name="settings_public_api_dashboard_enabled_summary_on">ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಿದ ಅಪ್ಲಿಕೇಶನ್ ರೆಕಾರ್ಡ್ ಮಾಡಿದ ಡೇಟಾವನ್ನು ಸಹ ಪ್ರವೇಶಿಸಬಹುದು.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">ರೆಕಾರ್ಡ್ ಮಾಡಲಾದ ಡೇಟಾವನ್ನು ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳೊಂದಿಗೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹಂಚಿಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ.</string>
     <string name="settings_import_section">ಆಮದು</string>
-    <string name="settings_export_section">ರಫ್ತು</string>
+    <string name="settings_export_as_file_section">ರಫ್ತು</string>
     <string name="settings_prevent_reimport_tracks_title">ಟ್ರ್ಯಾಕ್‌ಗಳ ಮರು-ಆಮದು ತಡೆಯಿರಿ</string>
     <string name="share_track_share_file_body">ನೀವು ಈ ಟ್ರ್ಯಾಕ್‌ನಲ್ಲಿ ಆಸಕ್ತಿ ಹೊಂದಿರಬಹುದು ಎಂದು ನಾನು ಭಾವಿಸುತ್ತೇನೆ.
 \n
