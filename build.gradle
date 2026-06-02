@@ -33,7 +33,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    compileSdk = 36
+    compileSdk = 37
 
     buildFeatures {
         viewBinding = true
@@ -53,7 +53,7 @@ android {
         buildConfigField "String", "VERSION_NAME_FULL", "\"${getVersionName()}\""
 
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
 
         testInstrumentationRunner 'de.dennisguse.opentracks.TestRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
