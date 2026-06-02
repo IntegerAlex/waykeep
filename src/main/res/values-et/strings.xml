@@ -599,4 +599,5 @@ limitations under the License.
     <string name="description_sensor_temperature">Temperatuur (Celsius)</string>
     <string name="sensor_state_temperature">Termomeeter</string>
     <string name="stats_sensors_temperature">Temperatuur</string>
+    <string name="activity_type_gravel_biking">rattasõit kruusateedel</string>
 </resources>
