@@ -603,4 +603,5 @@ limitations under the License.
     <string name="description_sensor_temperature">Температура (Цельсій)</string>
     <string name="sensor_state_temperature">Термометр</string>
     <string name="stats_sensors_temperature">Температура</string>
+    <string name="activity_type_gravel_biking">гравійний велосипед</string>
 </resources>
