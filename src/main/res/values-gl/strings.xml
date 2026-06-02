@@ -607,4 +607,5 @@ limitations under the License.
     <string name="stats_sensors_temperature">Temperatura</string>
     <string name="description_sensor_temperature">Temperatura (Celsius)</string>
     <string name="sensor_state_temperature">Termómetro</string>
+    <string name="activity_type_gravel_biking">ciclismo por grava</string>
 </resources>
