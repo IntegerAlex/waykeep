@@ -150,7 +150,7 @@ limitations under the License.
     <string name="menu_aggregated_statistics">集計統計</string>
     <string name="menu_delete">削除</string>
     <string name="menu_edit">編集</string>
-    <string name="menu_export_all">すべてエクスポート</string>
+    <string name="menu_export_all">すべてエクスポート（トラックごとに別ファイル）</string>
     <string name="menu_help">ヘルプ</string>
     <string name="menu_import_all">すべてインポート</string>
     <string name="menu_insert_marker">マーカーを追加</string>
@@ -313,4 +313,24 @@ limitations under the License.
     <string name="import_progress_summary_ok_msg">インポート完了</string>
     <string name="import_progress_summary_exists_msg">既に存在しています</string>
     <string name="help_track_map_content">小さな地図のアイコンを使います.\n a) (live updates) <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>をインストールして下さい。 <a href="https://www.openstreetmap.org">OpenStreetMap</a> を利用したオンラインまたはオフラインの地図を使用できるようになります。\n実際、OSMDashbordは (一時的に保存された) 表示するトラッキングデータにだけアクセスする独立したアプリケーションです。\n b) 一般的な地図アプリケーションを使用 (e.g., <a href="http://osmand.net/">OsmAnd</a> and <a href="https://maps.me/">MAPS.ME</a>) 。 KMZフォーマットをサポートしている必要があります (位置及びタイムスタンプのみを含む)。 加えて、 MIME <i>application/vnd.google-earth.kmz</i> の <i>ACTION_VIEW</i> をサポートしている必要もあります。</string>
+    <string name="help_storage_pictures_title">マーカーとして撮影した写真の保存場所</string>
+    <string name="help_storage_pictures_content">アプリケーションの内部ストレージ（つまり、OpenTracks内部からのみアクセス可能な場所）に保存されます。</string>
+    <string name="help_track_export_title">記録したトラックのエクスポート/共有方法</string>
+    <string name="stats_sensors_temperature">温度</string>
+    <string name="settings_announcements_average_heart_rate">平均心拍数</string>
+    <string name="description_speed_source_gps">GPS</string>
+    <string name="export_dir_not_writable">" (書き込み失敗!)"</string>
+    <string name="export_progress_summary_overwrite_msg">上書きされたファイル</string>
+    <string name="export_progress_summary_skip_msg">スキップされたファイル</string>
+    <string name="export_progress_summary_errors_msg">エラー</string>
+    <string name="generic_separator_done_total">/</string>
+    <string name="generic_today">今日</string>
+    <string name="generic_yesterday">昨日</string>
+    <string name="gps_disabled_msg">GPSが無効化されています</string>
+    <string name="import_no_kml_file_found">KMZ中にkmlファイルが見つかりませんでした</string>
+    <string name="import_error_info">%1$s: %2$s</string>
+    <string name="create_marker_error">マーカーを作成することができませんでした。もう一度やり直して下さい。</string>
+    <string name="menu_export_all_one_file">すべてエクスポート（全てのトラックを1つのファイルに）</string>
+    <string name="menu_select_layout">レイアウトを選択</string>
+    <string name="permission_gps_failed">OpenTracksはGPSにアクセスする権限が必要です。</string>
 </resources>
