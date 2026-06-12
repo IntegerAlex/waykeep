@@ -588,4 +588,8 @@ limitations under the License.
     <string name="stats_sensors_temperature">Temperatur</string>
     <string name="sensor_state_temperature">Termometer</string>
     <string name="description_sensor_temperature">Temperatur (Celsius)</string>
+    <string name="activity_type_gravel_biking">gravelsykling</string>
+    <string name="settings_night_mode_option_day_dynamic">Dag (DynamicColor)</string>
+    <string name="settings_night_mode_option_night_dynamic">Natt (DynamicColor)</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">OLED-vennlig (DynamicColor)</string>
 </resources>
