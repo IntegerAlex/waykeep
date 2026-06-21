@@ -67,7 +67,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         contentProviderUtils = new ContentProviderUtils(context);
     }
 
-    Track.Id startNewTrack() {
+    synchronized Track.Id startNewTrack() {
         TrackPoint segmentStartTrackPoint = trackPointCreator.createSegmentStartManual();
 
         ZoneOffset zoneOffset = ZoneOffset.systemDefault().getRules().getOffset(segmentStartTrackPoint.getTime());
@@ -103,7 +103,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     /**
      * @return if the recording could be started.
      */
-    boolean resumeExistingTrack(@NonNull Track.Id resumeTrackId) {
+    synchronized boolean resumeExistingTrack(@NonNull Track.Id resumeTrackId) {
         trackId = resumeTrackId;
         Track track = contentProviderUtils.getTrack(trackId);
         if (track == null) {
@@ -119,7 +119,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         return true;
     }
 
-    void endCurrentTrack() {
+    synchronized void endCurrentTrack() {
         TrackPoint segmentEnd = trackPointCreator.createSegmentEnd();
         insertTrackPoint(segmentEnd, true);
 
@@ -149,7 +149,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public void onIdle() {
+    public synchronized void onIdle() {
         Log.d(TAG, "Becoming idle");
         onNewTrackPoint(trackPointCreator.createIdle());
 
