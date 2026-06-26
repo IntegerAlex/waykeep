@@ -62,7 +62,7 @@
     <string name="activity_type_train">treino</string>
     <string name="activity_type_ultimate_frisbee">frisbee definitivo</string>
     <string name="activity_type_unknown">desconhecida</string>
-    <string name="activity_type_wakeboarding">esqui aquático</string>
+    <string name="activity_type_wakeboarding">wakeboarding</string>
     <string name="activity_type_walking">caminhada</string>
     <string name="activity_type_water_skiing">esqui aquático</string>
     <string name="activity_type_wind_surfing">windsurfe</string>
@@ -136,7 +136,7 @@
     <string name="recording_service">Serviço de gravação</string>
     <string name="sensor_state_heart_rate">Frequência cardíaca</string>
     <string name="sensor_state_heart_rate_value">%1$d bom</string>
-    <string name="sensor_state_power">Alimentação</string>
+    <string name="sensor_state_power">Potência</string>
     <string name="settings_advanced">Avançado</string>
     <string name="settings_chart_by_distance">Por distância</string>
     <string name="settings_chart_by_time">Por tempo</string>
@@ -280,7 +280,7 @@
     <string name="settings_default_export_uri_title">Diretório de exportação de trilhas</string>
     <string name="stats_split_interval">Intervalo de divisão</string>
     <string name="track_recording_notification_accuracy">Precisão da localização: %1$s</string>
-    <string name="about_preference_title">Sobre OpenTracks</string>
+    <string name="about_preference_title">Sobre</string>
     <string name="about_description"><i>OpenTracks</i> é um aplicativo de rastreamento de esportes que respeita totalmente a sua privacidade.</string>
     <string name="help_feature_content">* criar trilhas de GPS
 \n* use um sensor de frequência cardíaca (apenas Bluetooth LE)
@@ -288,10 +288,7 @@
 \n* criar marcadores (incluindo imagens)
 \n* funciona completamente offline
 \n* mostrar trilhas em um mapa (veja abaixo)</string>
-    <string name="help_track_map_content"> Use o pequeno ícone do mapa.
-\n a) (atualizações ao vivo) Instale <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Ele fornece mapas online ou offline via <a href="https://www.openstreetmap.org">OpenStreetMap</a>.
-\n Na verdade, OSMDashboard é um aplicativo separado que só pode acessar (temporariamente) os dados da(s) trilha(s) que serão mostradas.
-\n b) Por meio de um aplicativo de mapa normal (por exemplo, <a href="http://osmand.net/">OsmAn </a> e <a href="https://maps.me/">MAPS.ME</a>). Esses aplicativos precisam ser compatíveis com o formato de arquivo KMZ (apenas locais e marcações de data/hora). Na verdade, um aplicativo precisa ser compatível com<i>ACTION_VIEW</i> com MIME<i> application/vnd.google-earth.kmz</i>. </string>
+    <string name="help_track_map_content">Use o pequeno ícone no mapa.\n a) (atualizações ao vivo) Instale <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Ele fornece mapas online ou offline via <a href="https://www.openstreetmap.org">OpenStreetMap</a>.\n Na verdade, OSMDashboard é um aplicativo separado que só pode acessar (temporariamente) os dados da(s) trilha(s) que serão mostradas. \n b) Por meio de um aplicativo de mapa normal (por exemplo:, <a href="http://osmand.net/">OsmAnd</a> e <a href="https://maps.me/">MAPS.ME</a>). Esses aplicativos precisam ser compatíveis com o formato de arquivo KMZ (apenas locais e marcações de data/hora). Na verdade, um aplicativo precisa ser compatível com <i>ACTION_VIEW</i> com MIME <i>application/vnd.google-earth.kmz</i>.</string>
     <string name="help_data_storage_content"> Os dados do sensor são armazenados por local registrado. Em termos de sensor de frequência cardíaca, isso significa que apenas <i>uma</i> medição de frequência cardíaca é armazenada por local. Se você estiver parado ou dentro de casa, nenhum dado do sensor será registrado (mas será mostrado). </string>
     <string name="help_support_content"> Você pode:
 \n a) espalhe a palavra sobre OpenTracks,
@@ -304,6 +301,7 @@
     <string name="activity_type_escooter">escolta</string>
     <plurals name="generic_completed_with_errors">
         <item quantity="one">Concluído com %1$d erro</item>
+        <item quantity="many">Concluído com %1$d erros</item>
         <item quantity="other">Concluído com %1$d erros</item>
     </plurals>
     <string name="import_unsupported_format">Formato de arquivo não suportado</string>
@@ -372,7 +370,7 @@
     <string name="import_progress_summary_exists_msg">Já existe</string>
     <string name="import_progress_summary_errors_msg">Erros</string>
     <string name="sensor_state_heart_rate_max">Freqüência cardíaca máxima</string>
-    <string name="sensor_state_power_avg">Energia Avg</string>
+    <string name="sensor_state_power_avg">Potência Média</string>
     <string name="sensor_state_heart_rate_avg">Ritmo cardíaco Avg</string>
     <string name="sensor_state_cadence_max">Ritmo cardíaco médio</string>
     <string name="sensor_state_cadence_avg">Avg Cadência</string>
@@ -396,7 +394,7 @@
     <string name="settings_layout_reset_done">Todas as configurações de layout foram revertidas para os valores padrão</string>
     <string name="settings_all_reset">Redefinir</string>
     <string name="stats_coordinates">Latitude/Longitude</string>
-    <string name="stats_sensors_power">Poder</string>
+    <string name="stats_sensors_power">Potência</string>
     <string name="field_set_primary">Primário</string>
     <string name="field_set_secondary">Secundário</string>
     <string name="field_remove_from_layout">Remover</string>
@@ -500,4 +498,76 @@
     <string name="show_on_dashboard">Painel API do OpenTracks</string>
     <string name="always">Sempre</string>
     <string name="description_speed_nautical">Velocidade (nós)</string>
+    <string name="help_data_google_play_services_content">Não</string>
+    <string name="activity_type_gravel_biking">ciclismo de gravel</string>
+    <string name="activity_type_kickscooter">patinete</string>
+    <string name="description_sensor_temperature">Temperatura (Celsius)</string>
+    <string name="create_marker_error">Incapaz de criar um marcador. Tente outra vez.</string>
+    <string name="marker_detail_title">%1$d de %2$d: %3$s</string>
+    <string name="menu_export_all_one_file">Exportar tudo (Um arquivo para todas as trilhas)</string>
+    <string name="permission_recording_failed">OpenTracks precisa de permissão para acessar a sua localização e dispositivos próximos.</string>
+    <string name="sensor_state_cadence_unit">rpm</string>
+    <string name="sensor_state_heart_rate_unit">bpm</string>
+    <string name="sensor_state_temperature">Termômetro</string>
+    <string name="sensor_state_pressure">Barômetro</string>
+    <string name="sensor_state_power_max">Potência Máxima</string>
+    <string name="sensor_state_power_unit">W</string>
+    <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
+    <string name="settings_announcements_idle_category_title">Anúncios de Inatividade</string>
+    <string name="settings_announcements_idle_title">Inativo</string>
+    <string name="settings_charts_title">Gráficos</string>
+    <string name="settings_chart_display_elevation_title">Mostrar elevação</string>
+    <string name="settings_chart_display_pace_or_speed_title">Mostrar ritmo ou velocidade</string>
+    <string name="settings_chart_display_heart_rate_title">Mostrar frequência cardíaca</string>
+    <string name="settings_recording_title">Gravação</string>
+    <string name="settings_theme_switch_restart">Mudanças de tema podem exigir uma reinicialização manual.</string>
+    <string name="settings_ui_dynamic_colors_title">Cores Dinâmicas</string>
+    <string name="settings_ui_dynamic_colors_summary">Utilizar Cores Dinâmicas definidas pelo usuário (Android 12+ apenas; necessita de reinicialização manual.)</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Aviso de GPS desabilitado</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Ao gravar, exibir um aviso se o GPS estiver desabilitado.</string>
+    <string name="settings_recording_min_required_accuracy_summary">Localização é ignorada se sua precisão for maior que %1$s</string>
+    <string name="settings_recording_idle_timeout_title">Limiar inativo</string>
+    <string name="settings_locale_title">Língua</string>
+    <string name="settings_locale_system_default">Padrão do sistema</string>
+    <string name="settings_night_mode_option_system_dynamic">Sistema (Cores Dinâmicas)</string>
+    <string name="settings_night_mode_option_day_dynamic">Dia (Cores Dinâmicas)</string>
+    <string name="settings_night_mode_option_night_dynamic">Noite (Cores Dinâmicas)</string>
+    <string name="settings_night_mode_option_night_oled">OLED compatível</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Compatível OLED (Cores Dinâmicas)</string>
+    <string name="settings_announcements_segment_average_speed_pace">Velocidade/ritmo médio (Segmento)</string>
+    <string name="settings_announcements_unit">Unidade de distância/velocidade</string>
+    <string name="settings_sensor_bluetooth_service_filter_title">Filtrar Dispositivos Bluetooth</string>
+    <string name="settings_sensor_bluetooth_service_filter_off">Mostrar todos os dispositivos Bluetooth detectáveis</string>
+    <string name="settings_sensor_heart_rate_max">Zonas: Frequência cardíaca máxima (bpm)</string>
+    <string name="settings_stats_units_imperial_meter">Imperial (mi, m)</string>
+    <string name="settings_api_summary">API de controle remoto e estatísticas para outros apps</string>
+    <string name="stats_average_segment_pace">Ritmo médio no segmento</string>
+    <string name="stats_elapsed_segment_time">Tempo decorrido no segmento</string>
+    <string name="stats_gain_loss">Ganhos e Perdas</string>
+    <string name="stats_sensors_temperature">Temperatura</string>
+    <string name="track_edit_time_offset">Deslocamento de fuso horário</string>
+    <string name="value_internal_sensor">Sensor interno</string>
+    <string name="value_int_seconds">%1$d s (recomendado)</string>
+    <string name="voiceIdle">Ficando inativo.</string>
+    <string name="voiceHoursPlural">{n, plural, =1 {1 hora} other {{n,number} horas} }</string>
+    <string name="voiceMinutesPlural">{n, plural, =1 {1 minuto} other {{n,number} minutos} }</string>
+    <string name="voiceSecondsPlural">{n, plural, =1 {1 segundo} other {{n,number} segundos} }</string>
+    <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 quilômetro por hora} other {{n,number,#.0} quilômetros por hora} }</string>
+    <string name="voiceSpeedMilesPerHourPlural">{n, plural, =1 {1 milha por hora} other {{n,number,#.0} milhas por hora} }</string>
+    <string name="voiceSpeedMKnotsPlural">{n, plural, =1 {1 nó} other {{n,number,#.0} nós} }</string>
+    <string name="voiceSpeed">{n, plural, =1 {1} other {{n,number,#.0}} }</string>
+    <string name="voice_on_device_speaker_title">Use o alto-falante do dispositivo</string>
+    <string name="voiceDistanceKilometersPlural">{n, plural, =1 {1 quilômetro} other {{n,number,#.0} quilômetros} }</string>
+    <string name="voiceDistanceMilesPlural">{n, plural, =1 {1 milha} other {{n,number,#.0} milhas} }</string>
+    <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 milha náutica} other {{n,number,#.0} milhas náuticas} }</string>
+    <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
+    <string name="lap_heart_rate">Frequência cardíaca na volta</string>
+    <string name="no_compatible_camera_installed">Nenhum aplicativo compatível de camera instalado</string>
+    <string name="no_compatible_gallery_installed">Nenhum aplicativo compatível de galeria de imagens instalado</string>
+    <string name="settings_recording_min_sampling_interval_title">Intervalo de tempo de amostragem</string>
+    <string name="settings_recording_location_distance_summary">%1$s entre localizações gravadas</string>
+    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
+    <string name="settings_announcements_lap_power">Potência por volta</string>
+    <string name="power_x_watt">Potência {x, plural, =1 {1 watt} other {# watts} }</string>
+    <string name="power">Potência</string>
 </resources>
