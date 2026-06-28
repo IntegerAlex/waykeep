@@ -510,7 +510,6 @@
     <string name="sensor_state_cadence_unit">rpm</string>
     <string name="sensor_state_heart_rate_unit">bpm</string>
     <string name="settings_night_mode_option_night_oled">OLED-chairdiúil</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power">Cumhacht</string>
     <string name="value_int_seconds">%1$d s (molta)</string>
     <string name="menu_export_all_one_file">Easpórtáil gach ceann (comhad amháin do gach traic)</string>

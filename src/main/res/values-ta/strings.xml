@@ -62,7 +62,6 @@
     <string name="introduction_osm_dashboard">ஓபன்ட்ராக்ச் ஒரு வரைபடத்தை வழங்காது. உங்கள் பதிவுகளை வரைபடத்தில் காண OSMDashboard ஐ நிறுவவும்.</string>
     <string name="settings_recording_min_sampling_interval_title">மாதிரி நேர இடைவெளி</string>
     <string name="settings_recording_location_distance_summary">பதிவுசெய்யப்பட்ட இடங்களுக்கு இடையில் %1$s</string>
-    <string name="voice_announce_lap_power_key">VoiceAnnouncelappower</string>
     <string name="settings_announcements_lap_power">மடியில் ஆற்றல்</string>
     <string name="power_x_watt">ஆற்றல் {x, plural, = 1 {1 watt} other {# வாட்ச்}}</string>
     <string name="power">விசை</string>

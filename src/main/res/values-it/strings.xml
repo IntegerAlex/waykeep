@@ -549,7 +549,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="voiceDistanceMilesPlural">{n, plural, =1 {un miglio} other {{n,number,#.0} miglia} }</string>
     <string name="no_compatible_gallery_installed">Nessuna delle applicazioni galleria (foto) installate è compatibile</string>
     <string name="no_compatible_camera_installed">Nessuna delle applicazioni telecamera installate è compatibile</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="settings_announcements_idle_category_title">Annunci di inattività</string>
     <string name="settings_announcements_idle_title">Inattività</string>
     <string name="settings_recording_title">Registrazione</string>

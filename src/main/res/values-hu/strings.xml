@@ -578,7 +578,6 @@ limitations under the License.
     <string name="settings_announcements_lap_power">Kör teljesítmény</string>
     <string name="create_marker_error">Nem sikerült jelölőt létrehozni. Próbálja újra.</string>
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power_x_watt">Teljesítmény {x, plural, =1 {1 watt} other {# watts} }</string>
     <string name="settings_locale_title">Nyelv</string>
     <string name="settings_locale_system_default">Rendszer alapértelmezett</string>

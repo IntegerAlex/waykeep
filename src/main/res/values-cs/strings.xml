@@ -580,7 +580,6 @@ limitations under the License.
     <string name="settings_announcements_unit">Jednotka vzdálenosti/rychlosti</string>
     <string name="voiceSpeed">{n, plural, =1 {1} few {{n,number}} other {{n,number,#.0}} }</string>
     <string name="voiceDistance">{n, plural, =1 {1 } few {{n,number}} other {{n,number,#.0}} }</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power">Výkon</string>
     <string name="settings_announcements_lap_power">Výkon kola</string>
     <string name="power_x_watt">Výkon {x, plural, =1 {1 watt} few {# watty} other {# wattů} }</string>

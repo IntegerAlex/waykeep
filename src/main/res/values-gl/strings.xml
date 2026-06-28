@@ -600,7 +600,6 @@ limitations under the License.
     <string name="settings_night_mode_option_day_dynamic">Día (Cores Dinámicas)</string>
     <string name="settings_night_mode_option_night_dynamic">Noite (Cores Dinámicas)</string>
     <string name="settings_night_mode_option_night_oled_dynamic">para OLED (Cores Dinámicas)</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="settings_announcements_segment_average_speed_pace">Velocidade/Ritmo medios (Tramo)</string>
     <string name="stats_average_segment_pace">Ritmo medio no Tramo</string>
     <string name="stats_elapsed_segment_time">Tempo transcurrido no tramo</string>

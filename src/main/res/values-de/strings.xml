@@ -635,7 +635,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="settings_recording_min_sampling_interval_title">Abtastzeitintervall</string>
     <string name="voiceIdle">Untätig werden.</string>
-    <string name="voice_announce_lap_power_key">StimmeAnkündigungLapPower</string>
     <string name="settings_announcements_lap_power">Rundenleistung</string>
     <string name="create_marker_error">Die Markierung konnte nicht erstellt werden. Versuchen Sie es erneut.</string>
     <string name="settings_locale_title">Sprache</string>

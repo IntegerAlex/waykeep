@@ -386,7 +386,6 @@ limitations under the License.
         <item quantity="many">اكتمل مع %1$d خطأ</item>
         <item quantity="other">اكتمل مع %1$d خطأ</item>
     </plurals>
-    <string name="voice_announce_lap_power_key">الإعلان الصوتي عن قوة اللفة voiceAnnounceLapPower</string>
     <string name="settings_defaults_title">الوحدات الافتراضية والنشاط</string>
     <string name="settings_defaults_summary">الوحدات المفضلة، النشاط الافتراضي، اسم المسار الافتراضي</string>
     <string name="settings_announcements_summary">الوقت، المسافة، سرعة الصوت</string>

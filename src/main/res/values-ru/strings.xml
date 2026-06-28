@@ -600,7 +600,6 @@ limitations under the License.
     <string name="settings_locale_system_default">Как в системе</string>
     <string name="settings_night_mode_option_night_oled">Полностью чёрный</string>
     <string name="settings_announcements_unit">Единицы расстояния/скорости</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power_x_watt">Мощность {x, plural, =1 {1 Ватт} few {# Ватта} other {# Ваттов} }</string>
     <string name="settings_recording_min_sampling_interval_title">Интервал выборки</string>
     <string name="settings_announcements_lap_power">Мощность на круге</string>

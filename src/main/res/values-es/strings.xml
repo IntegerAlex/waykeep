@@ -654,7 +654,6 @@ limitations under the License.
     <string name="settings_announcements_lap_power">Potencia por vuelta</string>
     <string name="power_x_watt">Potencia {x, plural, =1 {1 vatio} otros {# vatios} }</string>
     <string name="create_marker_error">No se ha podido crear un marcador. Inténtelo de nuevo.</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power">Potencia</string>
     <string name="settings_locale_title">Idioma</string>
     <string name="settings_locale_system_default">Predeterminado del sistema</string>

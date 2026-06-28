@@ -566,7 +566,6 @@
     <string name="no_compatible_gallery_installed">Nenhum aplicativo compatível de galeria de imagens instalado</string>
     <string name="settings_recording_min_sampling_interval_title">Intervalo de tempo de amostragem</string>
     <string name="settings_recording_location_distance_summary">%1$s entre localizações gravadas</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="settings_announcements_lap_power">Potência por volta</string>
     <string name="power_x_watt">Potência {x, plural, =1 {1 watt} other {# watts} }</string>
     <string name="power">Potência</string>

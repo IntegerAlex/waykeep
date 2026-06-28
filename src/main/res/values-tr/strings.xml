@@ -683,7 +683,6 @@ limitations under the License.
     <string name="introduction_osm_dashboard">OpenTracks kendi başına bir harita sunmaz. Kayıtlarınızı bir harita üzerinde görüntülemek için lütfen OSMDashboard\'u yükleyin.</string>
     <string name="settings_recording_min_sampling_interval_title">Örnekleme zaman aralığı</string>
     <string name="settings_recording_location_distance_summary">Kaydedilen konumlar arasında %1$s</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="settings_announcements_lap_power">Tur gücü</string>
     <string name="power_x_watt">Güç {x, plural,  =1 {1 watt} other {# watt} }</string>
     <string name="power">Güç</string>

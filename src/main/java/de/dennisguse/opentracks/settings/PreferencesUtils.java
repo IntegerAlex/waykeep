@@ -427,7 +427,7 @@ public class PreferencesUtils {
     }
 
     public static boolean shouldVoiceAnnounceLapPower() {
-        return getBoolean(R.string.voice_announce_lap_power_key, false);
+        return getBoolean(R.string.voice_announce_lap_power_key, getBoolean(R.bool.voice_announce_lap_power_default, false));
     }
 
     public static boolean shouldVoiceAnnounceHeartRateCurrent() {

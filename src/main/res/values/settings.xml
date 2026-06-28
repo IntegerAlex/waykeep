@@ -261,6 +261,9 @@
     <string name="voice_announce_lap_heart_rate_key" translatable="false">voiceAnnounceLapHeartRate</string>
     <bool name="voice_announce_lap_heart_rate_default" translatable="false">false</bool>
 
+    <string name="voice_announce_lap_power_key" translateable="false">voiceAnnounceLapPower</string>
+    <bool name="voice_announce_lap_power_default" translateable="false">false</bool>
+
     <string name="export_trackfileformat_key" translatable="false">exportTrackFileFormat</string>
     <!-- See TrackFileFormat -->
     <string name="export_trackfileformat_default" translatable="false">KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES</string>

@@ -581,7 +581,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="settings_announcements_unit">Afstand-/snelheidseenheid</string>
     <string name="voiceSpeed">{n, plural, =1 {1} other {{n,number,#.0}} }</string>
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
-    <string name="voice_announce_lap_power_key">voiceAnnounceLapPower</string>
     <string name="power">Power</string>
     <string name="settings_announcements_lap_power">Lap power</string>
     <string name="power_x_watt">Power {x, plural, =1 {1 watt} other {# watt} }</string>
