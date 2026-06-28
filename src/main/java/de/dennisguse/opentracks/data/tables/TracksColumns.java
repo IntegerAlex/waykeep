@@ -29,7 +29,9 @@ import de.dennisguse.opentracks.data.CustomContentProvider;
 public interface TracksColumns extends BaseColumns {
 
     String TABLE_NAME = "tracks";
+    @Deprecated
     Uri CONTENT_URI = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
+    @Deprecated
     Uri CONTENT_URI_SENSOR_STATS = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/sensorstats");
     String DEFAULT_SORT_ORDER = _ID;
 

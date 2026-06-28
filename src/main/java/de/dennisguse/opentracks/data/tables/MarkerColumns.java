@@ -32,8 +32,8 @@ import de.dennisguse.opentracks.data.CustomContentProvider;
 public interface MarkerColumns extends BaseColumns {
 
     String TABLE_NAME = "markers";
+    @Deprecated
     Uri CONTENT_URI = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
-    Uri CONTENT_URI_BY_TRACKID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/trackid");
     String DEFAULT_SORT_ORDER = _ID;
 
     // Columns

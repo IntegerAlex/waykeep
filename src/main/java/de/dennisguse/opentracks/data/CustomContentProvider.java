@@ -73,51 +73,39 @@ public class CustomContentProvider extends ContentProvider {
      */
     private final String SENSOR_STATS_QUERY =
             "WITH time_select AS " +
-                "(SELECT t1." + TrackPointsColumns.TIME + " * (t1." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")) time_value " +
-                "FROM " + TrackPointsColumns.TABLE_NAME + " t1 " +
-                "WHERE t1." + TrackPointsColumns._ID + " > t." + TrackPointsColumns._ID + " AND t1." + TrackPointsColumns.TRACKID + " = ? ORDER BY _id LIMIT 1) " +
+                    "(SELECT t1." + TrackPointsColumns.TIME + " * (t1." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")) time_value " +
+                    "FROM " + TrackPointsColumns.TABLE_NAME + " t1 " +
+                    "WHERE t1." + TrackPointsColumns._ID + " > t." + TrackPointsColumns._ID + " AND t1." + TrackPointsColumns.TRACKID + " = ? ORDER BY _id LIMIT 1) " +
 
-            "SELECT " +
-                "SUM(t." + TrackPointsColumns.SENSOR_HEARTRATE + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
-                "/ " +
-                "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_HR + ", " +
+                    "SELECT " +
+                    "SUM(t." + TrackPointsColumns.SENSOR_HEARTRATE + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
+                    "/ " +
+                    "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_HR + ", " +
 
-                "MAX(t." + TrackPointsColumns.SENSOR_HEARTRATE + ") " + TrackPointsColumns.ALIAS_MAX_HR + ", " +
+                    "MAX(t." + TrackPointsColumns.SENSOR_HEARTRATE + ") " + TrackPointsColumns.ALIAS_MAX_HR + ", " +
 
-                "SUM(t." + TrackPointsColumns.SENSOR_CADENCE + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
-                "/ " +
-                "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_CADENCE + ", " +
+                    "SUM(t." + TrackPointsColumns.SENSOR_CADENCE + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
+                    "/ " +
+                    "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_CADENCE + ", " +
 
-                "MAX(t." + TrackPointsColumns.SENSOR_CADENCE + ") " + TrackPointsColumns.ALIAS_MAX_CADENCE + ", " +
+                    "MAX(t." + TrackPointsColumns.SENSOR_CADENCE + ") " + TrackPointsColumns.ALIAS_MAX_CADENCE + ", " +
 
-                "SUM(t." + TrackPointsColumns.SENSOR_POWER + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
-                "/ " +
-                "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_POWER + ", " +
+                    "SUM(t." + TrackPointsColumns.SENSOR_POWER + " * (COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ")) " +
+                    "/ " +
+                    "SUM(COALESCE(MAX(t." + TrackPointsColumns.TIME + ", (SELECT time_value FROM time_select)), t." + TrackPointsColumns.TIME + ") - t." + TrackPointsColumns.TIME + ") " + TrackPointsColumns.ALIAS_AVG_POWER + ", " +
 
-                "MAX(t." + TrackPointsColumns.SENSOR_POWER + ") " + TrackPointsColumns.ALIAS_MAX_POWER + " " +
+                    "MAX(t." + TrackPointsColumns.SENSOR_POWER + ") " + TrackPointsColumns.ALIAS_MAX_POWER + " " +
 
-            "FROM " + TrackPointsColumns.TABLE_NAME + " t " +
-            "WHERE t." + TrackPointsColumns.TRACKID + " = ? " +
-            "AND t." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")";
+                    "FROM " + TrackPointsColumns.TABLE_NAME + " t " +
+                    "WHERE t." + TrackPointsColumns.TRACKID + " = ? " +
+                    "AND t." + TrackPointsColumns.TYPE + " NOT IN (" + TrackPoint.Type.SEGMENT_START_MANUAL.type_db + ")";
 
     public CustomContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath(), UrlType.TRACKPOINTS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_ID.getPath() + "/#", UrlType.TRACKPOINTS_BY_ID.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TrackPointsColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.TRACKPOINTS_BY_TRACKID.ordinal());
-
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath(), UrlType.TRACKS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_SENSOR_STATS.getPath() + "/#", UrlType.TRACKS_SENSOR_STATS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.TRACKS_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath() + "/*", UrlType.TRACKS_BY_ID.ordinal());
-
-        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath() + "/#", UrlType.MARKERS_BY_ID.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI_BY_TRACKID.getPath() + "/*", UrlType.MARKERS_BY_TRACKID.ordinal());
-
-        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKS_BY_IDS.getPath() + "*", UrlType.DASHBOARD_TRACKS_BY_IDS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.getPath() + "*", UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.ordinal());
+        UrlType[] urlTypes = UrlType.values();
+        for (int i = 0; i < urlTypes.length; i++) {
+            uriMatcher.addURI(AUTHORITY_PACKAGE, urlTypes[i].getPathWithFilter(), i);
+        }
     }
 
     @Override
@@ -262,7 +250,7 @@ public class CustomContentProvider extends ContentProvider {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
                 queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
             }
-            case DASHBOARD_TRACKS_BY_IDS ->  {
+            case DASHBOARD_TRACKS_BY_IDS -> {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
                 queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
                 queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_TRACKS);
@@ -420,54 +408,43 @@ public class CustomContentProvider extends ContentProvider {
     }
 
     public enum UrlType {
-        TRACKPOINTS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
-        TRACKPOINTS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        TRACKPOINTS("/trackpoints", "", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        TRACKPOINTS_BY_ID("/trackpoints", "#", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
         //TODO Check if still used
-        TRACKPOINTS_BY_TRACKID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
-        TRACKS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
-        TRACKS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
-        TRACKS_SENSOR_STATS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.sensorstats"),
-        TRACKS_AGGREGATED_STATISTICS( "/tracks/aggregated/", "vnd.android.cursor.dir/vnd.de.dennisguse.aggregatedstatistics"),
-        MARKERS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
-        MARKERS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
+        TRACKPOINTS_BY_TRACKID("/trackpoints/trackid", "*", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        TRACKS("/tracks", "", "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        TRACKS_BY_ID("/tracks", "#", "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        TRACKS_SENSOR_STATS("/tracks/sensorstats", "#", "vnd.android.cursor.dir/vnd.de.dennisguse.sensorstats"),
+        TRACKS_AGGREGATED_STATISTICS("/tracks/aggregated/", "", "vnd.android.cursor.dir/vnd.de.dennisguse.aggregatedstatistics"),
+        MARKERS("/markers", "", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
+        MARKERS_BY_ID("/markers", "#", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
         @Deprecated //TODO Should not be used anymore
-        MARKERS_BY_TRACKID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
+        MARKERS_BY_TRACKID("/markers/trackid", "*", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
 
-        DASHBOARD_TRACKS_BY_IDS("/dashboard/tracks/", "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
-        DASHBOARD_TRACKPOINTS_BY_TRACKIDS("/dashboard/trackpoints/", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
-        DASHBOARD_MARKERS_BY_TRACKIDS("/dashboard/markers/", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint");
+        DASHBOARD_TRACKS_BY_IDS("/dashboard/tracks", "*", "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        DASHBOARD_TRACKPOINTS_BY_TRACKIDS("/dashboard/trackpoints", "*", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        DASHBOARD_MARKERS_BY_TRACKIDS("/dashboard/markers", "*", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint");
 
-        private final Uri uri;
+        private final String path;
+
+        private final String filter;
 
         private final String contentType;
 
-        //TODO Add Uri as attribute:
-        //TODO Add ContentType as attribute:
-        @Deprecated()
-        UrlType() {
-            this.uri = null;
-            this.contentType = null;
-        }
-
-        UrlType(@NonNull String path, @NonNull String contentType) {
-            this(Uri.parse(CONTENT_BASE_URI + path), contentType);
-        }
-
-        UrlType(@NonNull Uri uri, @NonNull String contentType) {
-            this.uri = uri;
+        UrlType(@NonNull String path, String filter, @NonNull String contentType) {
+            this.path = path;
+            this.filter = filter;
             this.contentType = contentType;
         }
 
         public Uri getUri() {
-            return uri;
+            return Uri.parse(CONTENT_BASE_URI + path);
         }
 
-        String getPath() {
-            return uri.getPath();
-        }
-
-        public String getContentType() {
-            return contentType;
+        private String getPathWithFilter() {
+            if (TextUtils.isEmpty(filter))
+                return path;
+            return path + "/" + filter;
         }
     }
 }
