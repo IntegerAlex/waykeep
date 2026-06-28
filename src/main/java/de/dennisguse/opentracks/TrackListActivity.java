@@ -367,7 +367,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         if (itemId == R.id.list_context_menu_show_on_map) {
-            DataProvider.showTrackOnMap(this, false, trackIds);
+            DataProvider.showTrackOnMap(this, recordingStatus.isRecording(), trackIds);
             return true;
         }
 
