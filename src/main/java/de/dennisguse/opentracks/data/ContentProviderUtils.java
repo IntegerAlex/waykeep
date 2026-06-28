@@ -743,7 +743,7 @@ public class ContentProviderUtils {
     @NonNull
     public List<AggregatedStatistic> getAggregatedStatisticsForTracks(TrackSelection selection) {
         SelectionData data = selection.buildSelection();
-        try (Cursor cursor = contentResolver.query(TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS, null, data.selection(), data.getSelectionArgs(), null)) {
+        try (Cursor cursor = contentResolver.query(CustomContentProvider.UrlType.TRACKS_AGGREGATED_STATISTICS.getUri(), null, data.selection(), data.getSelectionArgs(), null)) {
             ArrayList<AggregatedStatistic> aggregatedStatistics = new ArrayList<>(cursor.getCount());
             while (cursor.moveToNext()) {
                 aggregatedStatistics.add(new AggregatedStatistic(

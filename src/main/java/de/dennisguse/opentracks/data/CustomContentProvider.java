@@ -108,7 +108,7 @@ public class CustomContentProvider extends ContentProvider {
 
         uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath(), UrlType.TRACKS.ordinal());
         uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_SENSOR_STATS.getPath() + "/#", UrlType.TRACKS_SENSOR_STATS.ordinal());
-        uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
+        uriMatcher.addURI(AUTHORITY_PACKAGE, UrlType.TRACKS_AGGREGATED_STATISTICS.getPath(), UrlType.TRACKS_AGGREGATED_STATISTICS.ordinal());
         uriMatcher.addURI(AUTHORITY_PACKAGE, TracksColumns.CONTENT_URI.getPath() + "/*", UrlType.TRACKS_BY_ID.ordinal());
 
         uriMatcher.addURI(AUTHORITY_PACKAGE, MarkerColumns.CONTENT_URI.getPath(), UrlType.MARKERS.ordinal());
@@ -180,23 +180,7 @@ public class CustomContentProvider extends ContentProvider {
 
     @Override
     public String getType(@NonNull Uri url) {
-        String contentType = getUrlType(url).contentType;
-        if (contentType != null) {
-            return contentType;
-        }
-
-        //TODO replace with getUrlType(url).getContentType()
-        return switch (getUrlType(url)) {
-            case TRACKPOINTS -> TrackPointsColumns.CONTENT_TYPE;
-            case TRACKPOINTS_BY_TRACKID -> TrackPointsColumns.CONTENT_ITEMTYPE;
-            case TRACKS -> TracksColumns.CONTENT_TYPE;
-            case MARKERS -> MarkerColumns.CONTENT_TYPE;
-            case MARKERS_BY_TRACKID -> MarkerColumns.CONTENT_ITEMTYPE;
-            case DASHBOARD_TRACKS_BY_IDS -> UrlType.DASHBOARD_TRACKS_BY_IDS.contentType;
-            case DASHBOARD_TRACKPOINTS_BY_TRACKIDS -> UrlType.DASHBOARD_TRACKPOINTS_BY_TRACKIDS.contentType;
-            case DASHBOARD_MARKERS_BY_TRACKIDS ->  UrlType.DASHBOARD_MARKERS_BY_TRACKIDS.contentType;
-            default -> throw new IllegalArgumentException("Unknown URL " + url);
-        };
+        return getUrlType(url).contentType;
     }
 
     @Override
@@ -435,24 +419,23 @@ public class CustomContentProvider extends ContentProvider {
         throw new SQLException("Failed to insert a marker " + url);
     }
 
-    //TODO Add ContentType as attribute
     public enum UrlType {
-        TRACKPOINTS,
-        TRACKPOINTS_BY_ID,
+        TRACKPOINTS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        TRACKPOINTS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
         //TODO Check if still used
-        TRACKPOINTS_BY_TRACKID,
-        TRACKS,
-        TRACKS_BY_ID,
-        TRACKS_SENSOR_STATS,
-        TRACKS_AGGREGATED_STATISTICS,
-        MARKERS,
-        MARKERS_BY_ID,
+        TRACKPOINTS_BY_TRACKID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        TRACKS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        TRACKS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        TRACKS_SENSOR_STATS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.sensorstats"),
+        TRACKS_AGGREGATED_STATISTICS( "/tracks/aggregated/", "vnd.android.cursor.dir/vnd.de.dennisguse.aggregatedstatistics"),
+        MARKERS((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
+        MARKERS_BY_ID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
         @Deprecated //TODO Should not be used anymore
-        MARKERS_BY_TRACKID,
+        MARKERS_BY_TRACKID((String) null, "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint"),
 
-        DASHBOARD_TRACKS_BY_IDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/tracks/"), TracksColumns.CONTENT_TYPE),
-        DASHBOARD_TRACKPOINTS_BY_TRACKIDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/trackpoints/"), TrackPointsColumns.CONTENT_TYPE),
-        DASHBOARD_MARKERS_BY_TRACKIDS(Uri.parse(CONTENT_BASE_URI + "/dashboard/markers/"), MarkerColumns.CONTENT_TYPE);
+        DASHBOARD_TRACKS_BY_IDS("/dashboard/tracks/", "vnd.android.cursor.dir/vnd.de.dennisguse.track"),
+        DASHBOARD_TRACKPOINTS_BY_TRACKIDS("/dashboard/trackpoints/", "vnd.android.cursor.dir/vnd.de.dennisguse.trackpoint"),
+        DASHBOARD_MARKERS_BY_TRACKIDS("/dashboard/markers/", "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint");
 
         private final Uri uri;
 
@@ -466,7 +449,11 @@ public class CustomContentProvider extends ContentProvider {
             this.contentType = null;
         }
 
-        UrlType(Uri uri, String contentType) {
+        UrlType(@NonNull String path, @NonNull String contentType) {
+            this(Uri.parse(CONTENT_BASE_URI + path), contentType);
+        }
+
+        UrlType(@NonNull Uri uri, @NonNull String contentType) {
             this.uri = uri;
             this.contentType = contentType;
         }
@@ -477,6 +464,10 @@ public class CustomContentProvider extends ContentProvider {
 
         String getPath() {
             return uri.getPath();
+        }
+
+        public String getContentType() {
+            return contentType;
         }
     }
 }

@@ -34,8 +34,6 @@ public interface MarkerColumns extends BaseColumns {
     String TABLE_NAME = "markers";
     Uri CONTENT_URI = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
     Uri CONTENT_URI_BY_TRACKID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/trackid");
-    String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.de.dennisguse.waypoint";
-    String CONTENT_ITEMTYPE = "vnd.android.cursor.item/vnd.de.dennisguse.waypoint";
     String DEFAULT_SORT_ORDER = _ID;
 
     // Columns
