@@ -195,7 +195,7 @@ limitations under the License.
     <string name="settings_stats_units_metric">Μετρικό (χλμ, μέτρα)</string>
     <string name="settings_stats_units_title">Προτιμώμενες μονάδες</string>
     <!-- Share Track -->
-    <string name="share_track_share_file_body">Νομίζω ότι μπορεί να σε ενδιαφέρει αυτό το ίχνος.\n\nΓια να δεις αυτό το ίχνος, χρησιμοποίησε το Google Earth ή άλλο λογισμικό χαρτογράφησης.\n\n%1$s</string>
+    <string name="share_track_share_file_body">Νομίζω ότι μπορεί να σε ενδιαφέρει αυτό το ίχνος.\n\n%1$s</string>
     <string name="share_track_subject">Θα ήθελα να μοιραστώ μία διαδρομή μαζί σου</string>
     <!-- Stats -->
     <string name="stats_average_moving_pace">Μέσος ρυθμός κίνησης</string>
