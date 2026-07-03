@@ -438,7 +438,7 @@ limitations under the License.
     <string name="settings_public_api_dashboard_enabled_summary_off">Kaydedilen veriler diğer uygulamalarla otomatik olarak paylaşılmayacaktır.</string>
     <!-- Settings import/export -->
     <string name="settings_import_section">İçe Aktar</string>
-    <string name="settings_export_section">Dışa Aktar</string>
+    <string name="settings_export_as_file_section">Dışa Aktar</string>
     <string name="settings_prevent_reimport_tracks_title">Parkurların yeniden içe aktarılmasını engelle</string>
     <!-- Share Track -->
     <string name="share_track_share_file_body">Bu parkurun ilginizi çekebileceğini düşündüm.\n\n%1$s</string>

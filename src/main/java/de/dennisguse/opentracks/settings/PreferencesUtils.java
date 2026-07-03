@@ -71,6 +71,7 @@ public class PreferencesUtils {
     private static SharedPreferences sharedPreferences;
 
     private static Resources resources;
+    private static final long LONG_UNSET = Long.MIN_VALUE;
 
     /**
      * Must be called during application startup.
@@ -168,24 +169,36 @@ public class PreferencesUtils {
         }
     }
 
+    private static long getLong(int keyId, long defaultValue) {
+        try {
+            return sharedPreferences.getLong(getKey(keyId), defaultValue);
+        } catch (ClassCastException e) {
+            // Ignore.
+        }
+
+        try {
+            String stringValue = sharedPreferences.getString(getKey(keyId), null);
+            return Long.parseLong(stringValue);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     public static String getString(int keyId, String defaultValue) {
         return sharedPreferences.getString(getKey(keyId), defaultValue);
     }
 
-    @VisibleForTesting
-    public static void setString(int keyId, String value) {
+    static void setString(int keyId, String value) {
         Editor editor = sharedPreferences.edit();
         editor.putString(getKey(keyId), value);
         editor.apply();
     }
 
-    @VisibleForTesting
-    public static void setString(int keyId, int valueId) {
+    static void setString(int keyId, int valueId) {
         setString(keyId, resources.getString(valueId));
     }
 
-    @VisibleForTesting
-    public static void setBoolean(int keyId, Boolean value) {
+    static void setBoolean(int keyId, Boolean value) {
         Editor editor = sharedPreferences.edit();
         editor.putBoolean(getKey(keyId), value);
         editor.apply();
@@ -194,6 +207,12 @@ public class PreferencesUtils {
     static void setInt(int keyId, int value) {
         Editor editor = sharedPreferences.edit();
         editor.putInt(getKey(keyId), value);
+        editor.apply();
+    }
+
+    private static void setLong(int keyId, long value) {
+        Editor editor = sharedPreferences.edit();
+        editor.putLong(getKey(keyId), value);
         editor.apply();
     }
 
@@ -660,10 +679,14 @@ public class PreferencesUtils {
         return entries;
     }
 
-
-    public static boolean shouldInstantExportAfterWorkout() {
+    public static boolean shouldInstantExportToFile() {
         final boolean INSTANT_POST_WORKOUT_EXPORT_DEFAULT = resources.getBoolean(R.bool.post_workout_export_enabled_default);
         return getBoolean(R.string.post_workout_export_enabled_key, INSTANT_POST_WORKOUT_EXPORT_DEFAULT) && isDefaultExportDirectoryUri();
+    }
+
+    public static boolean shouldInstantExportToHealthConnect() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.post_workout_export_health_connect_enabled_default);
+        return getBoolean(R.string.post_workout_export_health_connect_enabled_key, DEFAULT);
     }
 
     public static TrackFilenameGenerator getTrackFileformatGenerator() {

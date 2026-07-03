@@ -257,7 +257,7 @@
     <string name="settings_public_api_enabled_summary_off">Ní féidir ach le OpenTracks taifeadtaí a thosú agus a stopadh.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">Ní dhéanfar sonraí taifeadta a roinnt go huathoibríoch le feidhmchláir eile.</string>
     <string name="settings_import_section">Iompórtáil</string>
-    <string name="settings_export_section">Easpórtáil</string>
+    <string name="settings_export_as_file_section">Easpórtáil</string>
     <string name="share_track_share_file_body">Sílim go mb\'fhéidir go mbeadh suim agat sa rian seo.
 \n
 \n%1$s</string>

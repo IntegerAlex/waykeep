@@ -430,7 +430,7 @@
     <string name="settings_gps_summary">Intervalo de tiempo, Intervalo de distancia, Distancia máxima, Precisión</string>
     <string name="settings_sensors_title">Sensores</string>
     <string name="settings_sensors_summary">Sensores de ciclismo, Circunferencia de la rueda, Sensores de carrera</string>
-    <string name="settings_export_section">Exportar</string>
+    <string name="settings_export_as_file_section">Exportar</string>
     <string name="activity_type_swimming">Natación</string>
     <string name="activity_type_swimming_open">Natación en aguas abiertas</string>
     <string name="activity_type_workout">Entrenamiento</string>

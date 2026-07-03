@@ -456,7 +456,7 @@ limitations under the License.
     <string name="settings_recording_title">التسجيل</string>
     <string name="settings_public_api_enabled_title">واجهة برمجة التطبيقات العامة</string>
     <string name="settings_public_api_disabled_toast">واجهة برمجة التطبيقات العامة لـ المسارات المفتوحة معطلة: يمكن تفعيلها في الإعدادات.</string>
-    <string name="settings_export_section">التصدير</string>
+    <string name="settings_export_as_file_section">التصدير</string>
     <string name="instant_export_enabled_summary">تصدير المسار إلى التخزين بعد انتهاء التسجيل</string>
     <string name="create_marker_error">غير قادر على إنشاء علامة. حاول مرة أخرى.</string>
     <string name="sensor_state_heart_rate_avg">متوسط معدل ضربات القلب</string>

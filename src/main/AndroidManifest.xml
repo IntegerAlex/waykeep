@@ -69,6 +69,9 @@ limitations under the License.
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"
         android:minSdkVersion="33" />
 
+    <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
+    <uses-permission android:name="android.permission.health.WRITE_EXERCISE_ROUTE" />
+
     <application
         android:name=".Startup"
         android:allowBackup="true"
@@ -126,9 +129,32 @@ limitations under the License.
 
         <activity android:name=".AboutActivity" />
 
+        <!-- Permissions -->
+        <!-- until Android 13 -->
         <activity
-            android:name=".HelpActivity"
-            android:label="@string/menu_help" />
+            android:name=".HealthConnectPermissionsRationaleActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+        </activity>
+        <!-- for Android 14 -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE"
+            android:targetActivity=".HealthConnectPermissionsRationaleActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity android:name=".settings.HealthConnect$Settings" />
+        <activity android:name=".settings.HealthConnect$ConfigurePermissions" />
+        <activity android:name=".settings.HealthConnect$ExportAll" />
+
+        <activity android:name=".HelpActivity" />
 
         <activity android:name=".io.file.importer.DirectoryChooserActivity$ImportDirectoryChooserActivity" />
 
@@ -410,5 +436,6 @@ limitations under the License.
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
+        <package android:name="com.google.android.apps.healthdata" />
     </queries>
 </manifest>

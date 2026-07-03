@@ -471,7 +471,7 @@ limitations under the License.
     <string name="custom_layout_select_layout">Vælg layout</string>
     <string name="settings_running_sensor">Kører</string>
     <string name="settings_import_section">Importere</string>
-    <string name="settings_export_section">Eksport</string>
+    <string name="settings_export_as_file_section">Eksport</string>
     <string name="stats_clock">Ur</string>
     <string name="value_float_mile_hour_recommended">%1$.1f mi/h (anbefalet)</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>

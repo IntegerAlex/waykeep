@@ -36,7 +36,7 @@ public class ExportUtils {
     private static final String TAG = ExportUtils.class.getSimpleName();
 
     public static void postWorkoutExport(AppCompatActivity context, Track.Id trackId) {
-        if (PreferencesUtils.shouldInstantExportAfterWorkout()) {
+        if (PreferencesUtils.shouldInstantExportToFile()) {
             TrackFileFormat trackFileFormat = PreferencesUtils.getExportTrackFileFormat();
             DocumentFile directory = IntentUtils.toDocumentFile(context, PreferencesUtils.getDefaultExportDirectoryUri());
 

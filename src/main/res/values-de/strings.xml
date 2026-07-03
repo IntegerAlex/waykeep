@@ -511,7 +511,7 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="settings_sensor_bluetooth_service_filter_on">Zeige nur Bluetooth-Geräte, die benötigte Dienste bekanntmachen</string>
     <string name="settings_public_api_enabled_summary_on">Andere installierte Anwendungen können Aufzeichnungen starten oder stoppen.</string>
     <string name="settings_public_api_disabled_toast">OpenTracks öffentliche API ist deaktiviert: es kann in den Einstellungen aktiviert werden.</string>
-    <string name="settings_export_section">Export</string>
+    <string name="settings_export_as_file_section">Export</string>
     <string name="settings_public_api_enabled_summary_off">Nur OpenTracks kann Aufzeichnungen starten und stoppen.</string>
     <string name="settings_import_section">Import</string>
     <string name="settings_api_title">Öffentliche API</string>

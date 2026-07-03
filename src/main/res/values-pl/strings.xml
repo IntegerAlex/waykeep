@@ -450,7 +450,7 @@ limitations under the License.
     <string name="settings_cycling_sensor">Kolarstwo</string>
     <string name="settings_running_sensor">Bieganie</string>
     <string name="settings_import_section">Import</string>
-    <string name="settings_export_section">Eksport</string>
+    <string name="settings_export_as_file_section">Eksport</string>
     <string name="settings_generic_sensor">Domyślny</string>
     <string name="description_speed_source_gps">GPS</string>
     <string name="permission_bluetooth_failed">OpenTracks wymaga uprawnień do urzycia Bluetooth.</string>

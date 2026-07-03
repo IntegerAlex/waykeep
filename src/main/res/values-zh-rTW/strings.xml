@@ -393,7 +393,7 @@ limitations under the License.
     <string name="settings_public_api_dashboard_enabled_summary_off">記錄的資料將不會自動與其他應用程式共用。</string>
     <!-- Settings import/export -->
     <string name="settings_import_section">匯入</string>
-    <string name="settings_export_section">匯出</string>
+    <string name="settings_export_as_file_section">匯出</string>
     <string name="settings_prevent_reimport_tracks_title">防止重新匯入蹤跡</string>
     <!-- Share Track -->
     <string name="share_track_share_file_body">我想您應該會對這個路線感興趣。

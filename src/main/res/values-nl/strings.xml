@@ -465,7 +465,7 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="settings_cycling_sensor">Fietsen</string>
     <string name="settings_running_sensor">Hardlopen</string>
     <string name="settings_import_section">Invoer</string>
-    <string name="settings_export_section">Uitvoer</string>
+    <string name="settings_export_as_file_section">Uitvoer</string>
     <string name="settings_generic_sensor">Generiek</string>
     <string name="export_dir_not_writable">" (geen schrijfrecht!)"</string>
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/u (aanbevolen)</string>

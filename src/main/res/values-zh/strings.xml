@@ -539,7 +539,7 @@ limitations under the License.
     <string name="settings_public_api_disabled_toast">OpenTracks 公共 API 已禁用：可以在设置中启用。</string>
     <string name="settings_public_api_dashboard_enabled_title">自动数据传输</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">记录的数据不会自动与其他应用程序共享。</string>
-    <string name="settings_export_section">导出</string>
+    <string name="settings_export_as_file_section">导出</string>
     <string name="stats_loss">下降</string>
     <string name="stats_coordinates">纬度/经度</string>
     <string name="track_pace_notification">配速：%1$s</string>

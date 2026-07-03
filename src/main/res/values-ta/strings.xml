@@ -338,7 +338,7 @@
     <string name="settings_public_api_dashboard_enabled_summary_on">பதிவைத் தொடங்கிய பயன்பாடு பதிவு செய்யப்பட்ட தரவையும் அணுகலாம்.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">பதிவுசெய்யப்பட்ட தரவு மற்ற பயன்பாடுகளுடன் தானாக பகிரப்படாது.</string>
     <string name="settings_import_section">இறக்குமதி</string>
-    <string name="settings_export_section">ஏற்றுமதி</string>
+    <string name="settings_export_as_file_section">ஏற்றுமதி</string>
     <string name="share_track_share_file_body">இந்த பாதையில் நீங்கள் ஆர்வமாக இருக்கலாம் என்று நினைக்கிறேன்.\n\n %1$s</string>
     <string name="settings_prevent_reimport_tracks_title">தடங்களை மீண்டும் இறக்குமதி செய்வதைத் தடுக்கவும்</string>
     <string name="share_track_subject">நான் உங்களுடன் ஒரு பாதையைப் பகிர்ந்து கொள்ள விரும்புகிறேன்</string>

@@ -280,6 +280,7 @@ limitations under the License.
     <string name="menu_edit">Edit</string>
     <string name="menu_export_all">Export all (one file per track)</string>
     <string name="menu_export_all_one_file">Export all (one file for all tracks)</string>
+    <string name="menu_export_all_to_health_connect">Export all</string>
     <string name="menu_help">Help</string>
     <string name="menu_import_all">Import all</string>
     <string name="menu_insert_marker">Insert marker</string>
@@ -448,7 +449,8 @@ limitations under the License.
     <string name="settings_public_api_dashboard_enabled_summary_off">Recorded data will not be shared automatically with other applications.</string>
     <!-- Settings import/export -->
     <string name="settings_import_section">Import</string>
-    <string name="settings_export_section">Export</string>
+    <string name="settings_export_as_file_section">Export as file</string>
+    <string name="settings_export_to_health_connect">Export to Health Connect</string>
     <string name="settings_prevent_reimport_tracks_title">Prevent re-import of tracks</string>
     <!-- Share Track -->
     <string name="share_track_share_file_body">I think you might be interested in this track.\n\n%1$s</string>
@@ -679,6 +681,13 @@ limitations under the License.
     <string name="hold_to_stop">Hold to stop</string>
     <string name="instant_export_enabled_summary">Export track to storage after recording is finished</string>
     <string name="instant_export_enabled_title">Instant post-workout export</string>
+    <string name="health_connect_export_enabled_summary">Export activity to Health Connect after recording is finished</string>
+    <string name="health_connect_not_available">Health Connect is not available on this device</string>
+    <string name="health_connect_open_settings_title">Health Connect settings</string>
+    <string name="health_connect_open_settings_summary">Open the Health Connect settings</string>
+    <string name="health_connect_permissions_rationale_title">Health Connect permissions</string>
+    <string name="health_connect_permissions_rationale_heading">How OpenTracks uses Health Connect</string>
+    <string name="health_connect_permissions_rationale_summary">If enabled in the settings, OpenTracks writes exercise to Health Connect. OpenTracks does not read data from Health Connect.</string>
     <string name="settings_default_export_uri_title">Track export directory</string>
     <!-- Fields -->
     <string name="field_set_primary">Primary</string>

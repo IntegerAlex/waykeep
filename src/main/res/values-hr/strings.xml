@@ -305,7 +305,7 @@ limitations under the License.
     <string name="waypoint_type_water_fountain">fontana</string>
     <string name="waypoint_type_waypoint">točka na ruti</string>
     <string name="settings_import_section">Uvoz</string>
-    <string name="settings_export_section">Izvoz</string>
+    <string name="settings_export_as_file_section">Izvoz</string>
     <string name="settings_prevent_reimport_tracks_title">Spriječi ponovni uvoz ruta</string>
     <string name="menu_export_all_one_file">Izvezi sve (jedna datoteka za sve rute)</string>
     <string name="menu_select_layout">Odaberi raspored</string>

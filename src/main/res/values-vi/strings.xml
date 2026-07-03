@@ -455,7 +455,7 @@ limitations under the License.
     <string name="settings_cycling_sensor">Đạp xe</string>
     <string name="settings_running_sensor">Chạy</string>
     <string name="settings_import_section">Nhập</string>
-    <string name="settings_export_section">Xuất</string>
+    <string name="settings_export_as_file_section">Xuất</string>
     <string name="settings_generic_sensor">Chung chung</string>
     <string name="value_float_mile_hour">%1$.1f mi/h</string>
     <string name="value_float_mile_hour_recommended">%1$.1f mi/h (khuyến khích)</string>

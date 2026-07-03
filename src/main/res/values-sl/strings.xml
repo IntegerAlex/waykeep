@@ -352,7 +352,7 @@ limitations under the License.
     <string name="import_parser_error">Napaka analizatorja: %1$s</string>
     <string name="settings_sensor_cycling_cadence">Kadenca</string>
     <string name="menu_select_layout">Izberite postavitev</string>
-    <string name="settings_export_section">Izvoz</string>
+    <string name="settings_export_as_file_section">Izvoz</string>
     <string name="stats_sensors_cadence">Kadenca</string>
     <string name="stats_sensors_heart_rate">Srčni utrip</string>
     <string name="settings_ui_title">Uporabniški vmesnik</string>

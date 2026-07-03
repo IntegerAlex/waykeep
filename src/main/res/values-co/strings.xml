@@ -456,7 +456,7 @@
     <string name="settings_stats_units_imperial_meter">Imperiale (mi, m)</string>
     <string name="settings_stats_units_metric">Metrica (km, m)</string>
     <string name="settings_import_section">Impurtà</string>
-    <string name="settings_export_section">Espurtà</string>
+    <string name="settings_export_as_file_section">Espurtà</string>
     <string name="settings_public_api_package_title">Nome di u pacchettu per l’API publica</string>
     <string name="settings_public_api_enabled_summary_off">Solu OpenTracks pò lancià è piantà l’arregistramenti.</string>
     <string name="settings_public_api_enabled_summary_on">D’altre appiecazioni installate ponu lancià o piantà l’arregistramenti.</string>
