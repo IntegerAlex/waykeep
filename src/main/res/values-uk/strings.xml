@@ -425,7 +425,7 @@ limitations under the License.
     <string name="field_remove_from_layout">Видалити</string>
     <string name="stats_clock">Годинник</string>
     <string name="settings_recording_customize_layout_select_columns">Поля даних у рядку</string>
-    <string name="settings_export_as_file_section">Експорт</string>
+    <string name="settings_export_as_file_section">Експорт у файл</string>
     <string name="field_set_secondary">Вторинний</string>
     <string name="settings_all_reset">Скидання</string>
     <string name="generic_filter">Фільтр</string>
@@ -603,4 +603,13 @@ limitations under the License.
     <string name="sensor_state_temperature">Термометр</string>
     <string name="stats_sensors_temperature">Температура</string>
     <string name="activity_type_gravel_biking">гравійний велосипед</string>
+    <string name="menu_export_all_to_health_connect">Експортувати все</string>
+    <string name="settings_export_to_health_connect">Експорт до Health Connect</string>
+    <string name="health_connect_open_settings_title">Налаштування Health Connect</string>
+    <string name="health_connect_open_settings_summary">Відкрити налаштування Health Connect</string>
+    <string name="health_connect_permissions_rationale_title">Дозволи Health Connect</string>
+    <string name="health_connect_not_available">Health Connect недоступний на цьому пристрої</string>
+    <string name="health_connect_permissions_rationale_heading">Як OpenTracks використовує застосунок Health Connect</string>
+    <string name="health_connect_permissions_rationale_summary">Якщо ввімкнено у налаштуваннях, OpenTracks записує дані про тренування в Health Connect. OpenTracks не зчитує дані з Health Connect.</string>
+    <string name="health_connect_export_enabled_summary">Експортувати дані до Health Connect після завершення запису</string>
 </resources>
