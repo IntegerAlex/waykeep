@@ -262,8 +262,8 @@
     <string name="share_image_subject">Me gustaría compartir una imagen contigo</string>
     <string name="share_image_body">Creo que esta imagen podría interesarte.</string>
     <string name="about_preference_title">Acerca de OpenTracks</string>
-    <string name="about_description"><i> OpenTracks </i> es una aplicación de seguimiento deportivo que respeta completamente su privacidad.</string>
-    <string name="about_url">Página web del proyecto: <a href="%1$s">%1$s</a></string>
+    <string name="about_description"><i> OpenTracks </i> es una aplicación de seguimiento deportivo que respeta completamente tu privacidad.</string>
+    <string name="about_url">Sitio web del proyecto: <a href="%1$s">%1$s</a></string>
     <string name="about_version_name">Nombre de la versión: %1$s</string>
     <string name="bluetooth_disabled">Por favor habilite Bluetooth.</string>
     <string name="settings_default_trackfileformat">Formato para exportar/compartir</string>
@@ -320,10 +320,7 @@
     <string name="track_distance_notification">Distancia: %1$s</string>
     <string name="aggregated_stats_empty_message">Grabe su primer recorrido para ver estadísticas agregadas</string>
     <string name="settings_default_export_uri_title">Directorio de exportación de recorrido</string>
-    <string name="help_track_map_content"> Utilice el pequeño icono de mapa.
-\na) (actualizaciones en vivo) Instale <a href="https://codeberg.org/OpenTracksApp/OSMDashboard"> OSMDashboard </a>. Proporciona mapas en línea o fuera de línea a través de <a href="https://www.openstreetmap.org"> OpenStreetMap </a>.
-\nEn realidad, OSMDashboard es una aplicación separada que solo puede acceder (temporalmente) a los datos de los recorridos que se mostrarán.
-\nb) A través de una aplicación de mapas normal (p. ej., <a href="http://osmand.net/"> OsmAnd </a> y <a href="https://maps.me/"> MAPS.ME </a>). Estas aplicaciones deben admitir el formato de archivo KMZ (solo ubicaciones y marcas de tiempo). De hecho, una aplicación debe admitir <i> ACTION_VIEW </i> con MIME <i> application / vnd.google-earth.kmz</i>. </string>
+    <string name="help_track_map_content">Utilice el pequeño icono de mapa. \na) (actualizaciones en vivo) Instale <a href="https://codeberg.org/OpenTracksApp/OSMDashboard"> OSMDashboard </a>. Proporciona mapas con o sin conexión a través de <a href="https://www.openstreetmap.org"> OpenStreetMap </a>. \nEn realidad, OSMDashboard es una aplicación separada que solo puede acceder (temporalmente) a los datos de los recorridos que se mostrarán. \nb) A través de una aplicación de mapas normal (p. ej., <a href="http://osmand.net/"> OsmAnd </a> y <a href="https://maps.me/"> MAPS.ME </a>). Estas aplicaciones deben admitir el formato de archivo KMZ (solo ubicaciones y marcas de tiempo). De hecho, una aplicación debe admitir <i> ACTION_VIEW </i> con MIME <i>application/vnd.google-earth.kmz</i>.</string>
     <string name="about_third_party_data">Datos de terceros</string>
     <string name="about_libraries">Bibliotecas</string>
     <string name="help_feature_title">OpenTracks tiene las siguientes características:</string>
@@ -483,4 +480,102 @@
     <string name="image_discard">Descartar</string>
     <string name="menu_export_all_one_file">Exportar todo (un archivo para todas las pistas)</string>
     <string name="permission_recording_failed">OpenTracks requiere permisos adicionales para acceder a tu ubicación y a tus dispositivos cercanos.</string>
+    <string name="activity_type_gravel_biking">Ciclismo en grava</string>
+    <string name="description_sensor_temperature">Temperatura (Celsius)</string>
+    <string name="create_marker_error">No se pudo crear un marcador. Inténtalo nuevamente.</string>
+    <string name="marker_detail_title">%1$d de %2$d: %3$s</string>
+    <string name="menu_export_all_to_health_connect">Exportar todo</string>
+    <string name="sensor_state_cadence_unit">rpm</string>
+    <string name="sensor_state_heart_rate_unit">ppm</string>
+    <string name="sensor_state_temperature">Termómetro</string>
+    <string name="sensor_state_pressure">Barómetro</string>
+    <string name="sensor_state_power_max">Potencia máxima</string>
+    <string name="sensor_state_power_unit">W</string>
+    <string name="bluetooth_sensor_summary">%1$s (%2$s)</string>
+    <string name="settings_announcements_idle_category_title">Anuncios de espera</string>
+    <string name="settings_announcements_idle_title">Espera</string>
+    <string name="settings_charts_title">Gráficas</string>
+    <string name="settings_chart_display_elevation_title">Mostrar elevación</string>
+    <string name="settings_chart_display_pace_or_speed_title">Mostrar ritmo o velocidad</string>
+    <string name="settings_chart_display_heart_rate_title">Mostrar frecuencia cardiaca</string>
+    <string name="settings_recording_title">Registro</string>
+    <string name="settings_theme_switch_restart">Los cambios en el tema pueden requerir un reinicio manual.</string>
+    <string name="settings_ui_dynamic_colors_title">Colores dinámicos</string>
+    <string name="settings_ui_dynamic_colors_summary">Usar colores dinámicos definidos por el usuario (solo para Android 12+; requiere reiniciar manualmente)</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">Alerta de GPS desactivado</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Durante el registro, mostrar una advertencia si el GPS está desactivado.</string>
+    <string name="settings_recording_min_required_accuracy_summary">La ubicación es ignorada si su precisión es mayor que %1$s</string>
+    <string name="settings_recording_idle_timeout_title">Umbral de inactividad</string>
+    <string name="settings_locale_title">Idioma</string>
+    <string name="settings_locale_system_default">Predeterminado del sistema</string>
+    <string name="settings_night_mode_option_system_dynamic">Sistema (DynamicColor)</string>
+    <string name="settings_night_mode_option_day_dynamic">Día (DynamicColor)</string>
+    <string name="settings_night_mode_option_night_dynamic">Noche (DynamicColor)</string>
+    <string name="settings_night_mode_option_night_oled">Optimizado para OLED</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Optimizado para OLED (DynamicColor)</string>
+    <string name="settings_announcements_average_heart_rate">Frecuencia cardiaca promedio</string>
+    <string name="settings_announcements_lap_heart_rate">Frecuencia cardiaca por vuelta</string>
+    <string name="settings_announcements_average_speed_pace">Ritmo/velocidad promedio</string>
+    <string name="settings_announcements_segment_average_speed_pace">Ritmo/velocidad promedio (segmento)</string>
+    <string name="settings_announcements_lap_speed_pace">Ritmo/velocidad por vuelta</string>
+    <string name="settings_announcements_unit">Unidad de distancia/velocidad</string>
+    <string name="settings_sensor_bluetooth_service_filter_title">Filtrar dispositivos bluetooth</string>
+    <string name="settings_sensor_bluetooth_service_filter_off">Mostrar todos los dispositivos bluetooth detectables</string>
+    <string name="settings_sensor_heart_rate_max">Zonas: frecuencia cardiaca máxima (ppm)</string>
+    <string name="settings_stats_units_imperial_meter">Imperial (mi, m)</string>
+    <string name="settings_stats_units_nautical">Náutica (NM, ft)</string>
+    <string name="settings_api_summary">Control remoto y API de estadísticas para otras aplicaciones</string>
+    <string name="settings_public_api_package_title">Nombre de paquete para la API pública</string>
+    <string name="settings_export_to_health_connect">Exportar a Health Connect</string>
+    <string name="stats_average_segment_pace">Ritmo promedio de segmento</string>
+    <string name="stats_elapsed_segment_time">Tiempo transcurrido del segmento</string>
+    <string name="stats_gain_loss">Ganancia y pérdida</string>
+    <string name="stats_sensors_temperature">Temperatura</string>
+    <string name="track_delete_number_of_tracks">%1$d pistas</string>
+    <string name="track_discarding">Pista descartada</string>
+    <string name="track_edit_time_offset">Diferencia horaria</string>
+    <string name="unit_nautical_mile">Milla Náutica</string>
+    <string name="unit_knots">nudo</string>
+    <string name="unit_minute_per_nautical_mile">minutos/nudo</string>
+    <string name="value_integer_knots">%1$d nudos</string>
+    <string name="value_float_knots">%1$.1f nudos</string>
+    <string name="value_float_knots_recommended">%1$.1f nudos (recomendado)</string>
+    <string name="value_internal_sensor">Sensor interno</string>
+    <string name="value_int_seconds">%1$d segundos (recomendado)</string>
+    <string name="voiceIdle">Pasando a inactivo.</string>
+    <string name="voiceHoursPlural">{n, plural, =1 {1 hora} otro {{n,número} horas} }</string>
+    <string name="voiceMinutesPlural">{n, plural, =1 {1 minuto} otro {{n,número} minutos} }</string>
+    <string name="voiceSecondsPlural">{n, plural, =1 {1 segundo} otro {{n,número} segundos}}</string>
+    <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 kilómetro por hora} otro {{n,número,#.0} kilómetros por hora}}</string>
+    <string name="voiceSpeedMilesPerHourPlural">{n, plural, =1 {1 milla por hora} otro {{n,número,#.0} millas por hora}}</string>
+    <string name="voiceSpeedMKnotsPlural">{n, plural, =1 {1 nudo} otro {{n,número} nudos}}</string>
+    <string name="voiceSpeed">{n, plural, =1 {1} otro {{n,número,#.0}} }</string>
+    <string name="voice_on_device_speaker_title">Usar el altavoz del dispositivo</string>
+    <string name="voice_per_nautical_mile">por milla náutica</string>
+    <string name="voiceDistanceKilometersPlural">{n, plural, =1 {1 kilómetro} otro {{n,número,#.0} kilómetros} }</string>
+    <string name="voiceDistanceMilesPlural">{n, plural, =1 {1 milla} otro {{n,número,#.0} millas} }</string>
+    <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 milla náutica} otro {{n,número,#.0} millas náuticas} }</string>
+    <string name="voiceDistance">{n, plural, =1 {1} otro {{n,número#.0}} }</string>
+    <string name="lap_heart_rate">Frecuencia cardiaca por vuelta</string>
+    <string name="health_connect_export_enabled_summary">Exportar actividad a Health Connect después de finalizar el registro</string>
+    <string name="health_connect_not_available">Health Connect no está disponible en este dispositivo</string>
+    <string name="health_connect_open_settings_title">Ajustes de Health Connect</string>
+    <string name="health_connect_open_settings_summary">Abrir los ajustes de Health Connect</string>
+    <string name="health_connect_permissions_rationale_title">Permisos de Health Connect</string>
+    <string name="health_connect_permissions_rationale_heading">Como OpenTracks usa Health Connect</string>
+    <string name="health_connect_permissions_rationale_summary">Si está activado en la configuración, OpenTracks registrará la actividad en Health Connect. OpenTracks no obtiene ningún dato de Health Connect.</string>
+    <string name="no_compatible_camera_installed">No hay alguna aplicación de cámara compatible instalada</string>
+    <string name="no_compatible_gallery_installed">No hay alguna aplicación compatible de galería de imágenes instalada</string>
+    <string name="error_crash_title">%1$s se cerró inesperadamente</string>
+    <string name="share_crash_report">Compartir informe de errores</string>
+    <string name="report_bug">Reportar fallo</string>
+    <string name="show_on_dashboard">API del panel de control de OpenTracks</string>
+    <string name="show_on_dashboard_not_installed">No se encontró instalada alguna aplicación que soporte la API del panel de control de OpenTracks.</string>
+    <string name="always">Siempre</string>
+    <string name="introduction_osm_dashboard">OpenTracks no provee mapas por sí mismo. Instala OSMDashboard para ver tus registros en un mapa.</string>
+    <string name="settings_recording_min_sampling_interval_title">Intervalo de tiempo de muestreo</string>
+    <string name="settings_recording_location_distance_summary">%1$s entre ubicaciones registradas</string>
+    <string name="settings_announcements_lap_power">Potencia por vuelta</string>
+    <string name="power_x_watt">Potencia {x, plural, =1 {1 vatio} other {# vatios} }</string>
+    <string name="power">Potencia</string>
 </resources>
