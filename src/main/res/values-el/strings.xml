@@ -348,7 +348,6 @@ limitations under the License.
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="voiceHoursPlural">{n, plural, =1 {1 ώρα} other {{n,number} ώρες} }</string>
     <string name="settings_import_section">Εισαγωγή</string>
-    <string name="settings_export_section">Εξαγωγή</string>
     <string name="settings_api_title">Δημόσιο API</string>
     <string name="settings_public_api_enabled_title">Δημόσιο API</string>
     <string name="settings_public_api_package_title">Όνομα πακέτου για Δημόσιο API</string>
