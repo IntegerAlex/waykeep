@@ -358,7 +358,7 @@ limitations under the License.
     <string name="description_default_speed_or_pace">按活动类型</string>
     <!-- Share image -->
     <string name="hold_to_stop">按住即可停止</string>
-    <string name="instant_export_enabled_summary">记录完成后将轨迹导出至存储空间</string>
+    <string name="instant_export_enabled_summary">记录完成后将轨迹导出到存储空间</string>
     <string name="instant_export_enabled_title">运动数据即时导出</string>
     <string name="settings_default_export_uri_title">轨迹导出目录</string>
     <string name="help_recording_content">OpenTracks 使用设备的 GPS 传感器持续记录位置信息。如果 GPS 设备报告的数据（例如位置、速度、海拔）不准确，OpenTracks 对此无法采取任何措施。</string>
@@ -561,7 +561,7 @@ limitations under the License.
     <string name="settings_units_category">单位</string>
     <string name="settings_recording_customize_layout_select_columns">每行数据字段数</string>
     <string name="settings_announcements_average_heart_rate">平均心率</string>
-    <string name="settings_layout_reset_done">所有布局设置已恢复至默认值</string>
+    <string name="settings_layout_reset_done">所有布局设置已恢复为默认值</string>
     <string name="settings_all_reset">重置</string>
     <string name="track_delete_not_recording">此轨迹正在记录中，无法删除。</string>
     <string name="error_crash_title">%1$s 崩溃了</string>
@@ -634,4 +634,13 @@ limitations under the License.
     <string name="sensor_state_temperature">温度计</string>
     <string name="stats_sensors_temperature">温度</string>
     <string name="activity_type_gravel_biking">砾石骑行</string>
+    <string name="menu_export_all_to_health_connect">全部导出</string>
+    <string name="settings_export_to_health_connect">导出到 Health Connect</string>
+    <string name="health_connect_export_enabled_summary">记录完成后将活动导出到 Health Connect</string>
+    <string name="health_connect_not_available">Health Connect 在此设备上不可用</string>
+    <string name="health_connect_open_settings_title">Health Connect 设置</string>
+    <string name="health_connect_open_settings_summary">打开 Health Connect 设置</string>
+    <string name="health_connect_permissions_rationale_title">Health Connect 权限</string>
+    <string name="health_connect_permissions_rationale_heading">OpenTracks 如何使用 Health Connect</string>
+    <string name="health_connect_permissions_rationale_summary">如果在设置中已启用，OpenTracks 会将运动数据写入 Health Connect。OpenTracks 不会从 Health Connect 读取数据。</string>
 </resources>
