@@ -607,4 +607,13 @@ limitations under the License.
     <string name="description_sensor_temperature">Temperatura (Celsius)</string>
     <string name="sensor_state_temperature">Termómetro</string>
     <string name="activity_type_gravel_biking">ciclismo por grava</string>
+    <string name="menu_export_all_to_health_connect">Exportar todo</string>
+    <string name="settings_export_to_health_connect">Exportar a Saúde conectada</string>
+    <string name="health_connect_export_enabled_summary">Exportar a actividade a Saúde conectada unha vez finaliza a gravación</string>
+    <string name="health_connect_not_available">Este dispositivo non é compatible con Saúde conectada</string>
+    <string name="health_connect_open_settings_title">Axustes de Saúde conectada</string>
+    <string name="health_connect_open_settings_summary">Abrir os axustes de Saúde conectada</string>
+    <string name="health_connect_permissions_rationale_title">Permisos para Saúde conectada</string>
+    <string name="health_connect_permissions_rationale_heading">De que xeito utiliza OpenTracks a Saúde conectada</string>
+    <string name="health_connect_permissions_rationale_summary">Se o activas nos axustes, OpenTracks rexistra a actividade en Saúde conectada. OpenTracks non le os datos de Saúde conectada.</string>
 </resources>
