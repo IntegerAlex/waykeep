@@ -188,17 +188,20 @@ public class PreferencesUtils {
         return sharedPreferences.getString(getKey(keyId), defaultValue);
     }
 
-    static void setString(int keyId, String value) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static void setString(int keyId, String value) {
         Editor editor = sharedPreferences.edit();
         editor.putString(getKey(keyId), value);
         editor.apply();
     }
 
-    static void setString(int keyId, int valueId) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static void setString(int keyId, int valueId) {
         setString(keyId, resources.getString(valueId));
     }
 
-    static void setBoolean(int keyId, Boolean value) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static void setBoolean(int keyId, Boolean value) {
         Editor editor = sharedPreferences.edit();
         editor.putBoolean(getKey(keyId), value);
         editor.apply();
