@@ -561,7 +561,6 @@ limitations under the License.
     <string name="settings_recording_min_sampling_interval_title">Tidsinterval mellem samplinger</string>
     <string name="settings_night_mode_option_day_dynamic">Dag (DynamicColor)</string>
     <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 kilometer i timen} other {{n,number,#.0} kilometre i timen} }</string>
-    <string name="empty">tom</string>
     <string name="settings_chart_display_elevation_title">Vis højde</string>
     <string name="settings_chart_display_pace_or_speed_title">Vis tempo eller hastighed</string>
     <string name="settings_chart_display_heart_rate_title">Vis puls</string>

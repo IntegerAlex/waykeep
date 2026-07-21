@@ -603,7 +603,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="voiceSpeed">{n, plural, =1 {1} other {{n,number,#.0}} }</string>
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="lap_heart_rate">Frequenza cardiaca del giro</string>
-    <string name="empty">vuoto</string>
     <string name="settings_recording_show_gps_disabled_warning_summary">Durante la registrazione, mostra un avviso se il GPS è disabilitato.</string>
     <string name="settings_night_mode_option_day_dynamic">Giorno (colore dinamico)</string>
     <string name="track_edit_time_offset">Compensazione fuso orario</string>
