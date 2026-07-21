@@ -58,7 +58,6 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
         if (!healthConnectAvailable) {
             findPreference(getString(R.string.post_workout_export_health_connect_enabled_key))
                     .setSummary(R.string.health_connect_not_available);
-            return;
         }
     }
 

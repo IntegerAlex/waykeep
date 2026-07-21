@@ -63,8 +63,8 @@ public class RecordingLayoutTest extends TestCase {
         RecordingLayout recordingLayout = RecordingLayoutIO.fromCsvLine(csv1, resources);
 
         // then layout and data fields are built correctly
-        assertEquals(recordingLayout.getName(), "Default Layout");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
+        assertEquals("Default Layout", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
         assertEquals(PreferencesUtils.getDefaultLayout().getFields(), recordingLayout.getFields());
     }
 
@@ -78,8 +78,8 @@ public class RecordingLayoutTest extends TestCase {
         List<DataField> dataFieldList = recordingLayout.getFields();
 
         // then layout and data fields are built correctly
-        assertEquals(recordingLayout.getName(), "Default Layout");
-        assertEquals(recordingLayout.getColumnsPerRow(), 2);
+        assertEquals("Default Layout", recordingLayout.getName());
+        assertEquals(2, recordingLayout.getColumnsPerRow());
         assertEquals(PreferencesUtils.getDefaultLayout().getFields(), recordingLayout.getFields());
     }
 
@@ -144,6 +144,6 @@ public class RecordingLayoutTest extends TestCase {
         String csv = recordingLayout.toCsv();
 
         // then csv is well built
-        assertEquals(csv, "Test Layout;2;key1,0,0,0;key2,0,1,0;key3,1,0,0;key4,1,1,0;key5,1,1,1;");
+        assertEquals("Test Layout;2;key1,0,0,0;key2,0,1,0;key3,1,0,0;key4,1,1,0;key5,1,1,1;", csv);
     }
 }

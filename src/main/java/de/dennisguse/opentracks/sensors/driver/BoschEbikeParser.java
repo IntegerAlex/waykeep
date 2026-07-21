@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.dennisguse.opentracks.data.models.Cadence;
@@ -98,7 +99,7 @@ public final class BoschEbikeParser {
                 .filter(BoschEbikeParser::isValidFrame)
                 .filter(BoschEbikeParser::isSupportedFrame)
                 .map(BoschEbikeParser::decodeFrame)
-                .filter(decodedFrame -> decodedFrame != null)
+                .filter(Objects::nonNull)
                 .reduce(null,
                         BoschEbikeParser::processMessage,
                         (left, right) -> right);

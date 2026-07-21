@@ -384,10 +384,7 @@ public class GPXTrackExporter implements TrackExporter {
 
         printWriter.println("</trkpt>");
 
-        if (cumulativeDistance != null) {
-            return cumulativeDistance;
-        }
-        return Distance.ZERO;
+        return Objects.requireNonNullElse(cumulativeDistance, Distance.ZERO);
     }
 
     private Double cumulateSensorData(TrackPoint trackPoint, List<TrackPoint> sensorPoints, Function<TrackPoint, Double> map) {

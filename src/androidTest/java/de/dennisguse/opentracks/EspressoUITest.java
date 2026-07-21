@@ -5,10 +5,11 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static de.dennisguse.opentracks.util.EspressoUtils.performLongClickOnAncestor;
 import static de.dennisguse.opentracks.util.EspressoUtils.selectTabAtIndex;
-import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
 import static de.dennisguse.opentracks.util.EspressoUtils.waitForResumedViewCondition;
+import static de.dennisguse.opentracks.util.EspressoUtils.waitUntilDisplayed;
 import static de.dennisguse.opentracks.util.EspressoUtils.withSelectedTab;
 import static de.dennisguse.opentracks.util.EspressoUtils.withViewPagerCurrentItem;
 import static de.dennisguse.opentracks.util.TestEnvironmentUtils.resetTrackRecordingServiceAndDeleteTracks;
@@ -16,7 +17,6 @@ import static de.dennisguse.opentracks.util.TrackUiTestUtils.finishStoppedTrack;
 import static de.dennisguse.opentracks.util.TrackUiTestUtils.resumeStoppedTrack;
 import static de.dennisguse.opentracks.util.TrackUiTestUtils.startRecordingFromTrackList;
 import static de.dennisguse.opentracks.util.TrackUiTestUtils.stopRecordingToTrackStopped;
-import static org.hamcrest.Matchers.allOf;
 
 import android.util.Pair;
 
@@ -27,7 +27,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
