@@ -30,7 +30,7 @@ public enum ActivityType {
     FERRY("ferry", R.string.activity_type_ferry, R.drawable.ic_activity_boat_24dp, true),
     FRISBEE("frisbee", R.string.activity_type_frisbee, ActivityIcon.ICON_UNKNOWN, true),
     GLIDING("gliding", R.string.activity_type_gliding, ActivityIcon.ICON_UNKNOWN, true),
-    GRAVEL_BIKING("gravel biking", R.string.activity_type_biking, R.drawable.ic_activity_bike_24dp, true),
+    GRAVEL_BIKING("gravel biking", R.string.activity_type_gravel_biking, R.drawable.ic_activity_bike_24dp, true),
     HANG_GLIDING("hang gliding", R.string.activity_type_hang_gliding, ActivityIcon.ICON_UNKNOWN, true),
     HELICOPTER("helicopter", R.string.activity_type_helicopter, ActivityIcon.ICON_UNKNOWN, true),
     HIKING("hiking", R.string.activity_type_hiking, R.drawable.ic_activity_walk_24dp, false),
