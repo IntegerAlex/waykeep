@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">正在等待更好的 GPS 信号</string>
     <string name="gps_wait_for_signal">正在等待 GPS 信号</string>
     <!-- Image -->
-    <string name="image_arrow">箭头</string>
     <string name="image_marker_count">标记数</string>
     <string name="image_photo_marker">照片标记</string>
     <string name="image_record">记录</string>
@@ -347,7 +346,6 @@ limitations under the License.
     <string name="waypoint_type_waypoint">路标</string>
     <string name="about_url">项目主页：<a href="%1$s">%1$s</a></string>
     <string name="about_history">OpenTracks 是 2016 年停止维护的 <a href="https://code.google.com/archive/p/mytracks/"><i>Google MyTracks</i></a> 的分支版本。</string>
-    <string name="open_track_as_trackfileformat">作为 %1$s 文件打开</string>
     <string name="about_preference_title">关于</string>
     <string name="about_version_name">版本名称：%1$s</string>
     <string name="about_version_code">版本号：%1$d</string>
@@ -568,7 +566,6 @@ limitations under the License.
     <string name="share_crash_report">分享崩溃报告</string>
     <string name="report_bug">报告错误</string>
     <string name="show_on_dashboard">OpenTracks 仪表板 API</string>
-    <string name="always">始终</string>
     <string name="track_speed_notification">速度：%1$s</string>
     <string name="settings_stats_units_imperial_meter">英制（英里、米）</string>
     <string name="voice_on_device_speaker_title">使用设备的扬声器</string>

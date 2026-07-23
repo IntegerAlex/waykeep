@@ -13,7 +13,6 @@
     <string name="help_recording_title">Cumu OpenTracks arregistreghja i dati ?</string>
     <string name="help_gps_troubleshooting_title">OpenTracks ùn arregistreghja micca e pusizioni ?</string>
     <string name="help_support_title">Cumu possu sustene OpenTracks ?</string>
-    <string name="open_track_as_trackfileformat">Apre cum’è %1$s</string>
     <string name="activity_type_airplane">aviò</string>
     <string name="activity_type_atv">fora di strada</string>
     <string name="activity_type_biking">bicicletta</string>
@@ -123,7 +122,6 @@
     <string name="gps_disabled_msg">GPS disattivatu</string>
     <string name="gps_fixed_and_ready">GPS fissu è prontu</string>
     <string name="gps_recording_status">%1$s : %2$s</string>
-    <string name="image_arrow">Freccia</string>
     <string name="image_marker_count">Numeru di stantelle</string>
     <string name="image_stop">Piantà</string>
     <string name="image_discard">Scartà</string>
@@ -524,7 +522,6 @@
     <string name="field_set_secondary">Secundariu</string>
     <string name="field_remove_from_layout">Caccià</string>
     <string name="no_compatible_gallery_installed">Nisuna appiecazione cumpatibile di galleria di fiure ùn hè installata</string>
-    <string name="always">Sempre</string>
     <string name="share_crash_report">Sparte u raportu d’accidente</string>
     <string name="settings_announcements_lap_power">Putenza à u giru</string>
     <string name="introduction_osm_dashboard">OpenTracks ùn pruvede micca carta da per ellu. Ci vole à installà OSMDashboard per vede i vostri arregistramenti nant’à una carta.</string>

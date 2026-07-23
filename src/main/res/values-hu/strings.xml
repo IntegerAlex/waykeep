@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Várakozás jobb GPS-jelre</string>
     <string name="gps_wait_for_signal">Várakozás GPS-jelre</string>
     <!-- Image -->
-    <string name="image_arrow">Nyíl</string>
     <string name="image_marker_count">Jelölőszámláló</string>
     <string name="image_photo_marker">Fényképjelölő</string>
     <string name="image_record">Felvétel</string>
@@ -320,7 +319,6 @@ limitations under the License.
     <string name="help_track_map_title">Hogyan jelenítsünk meg egy nyomvonalat a térképen?</string>
     <string name="help_gps_troubleshooting_title">Az OpenTracks nem veszi fel a helyeket?</string>
     <string name="help_support_title">Hogyan tudom támogatni az OpenTracks-et?</string>
-    <string name="open_track_as_trackfileformat">Megnyitás mint %1$s</string>
     <string name="activity_type_escooter">elektromos roller</string>
     <string name="help_recording_content">Az OpenTracks az eszköz GPS-érzékelőjét használja a hely folyamatos rögzítésére. Ha a GPS-eszköz pontatlan adatokat (pl. hely, sebesség, magasság) jelent, az OpenTracks semmit sem tehet ellene.</string>
     <string name="help_data_storage_title">Hogyan tárolja az OpenTracks az érzékelőadatokat\?</string>
@@ -477,7 +475,6 @@ limitations under the License.
     <string name="stats_custom_layout_default_layout">Alapértelmezett elrendezés</string>
     <string name="settings_layout_reset">Egyéni elrendezés visszaállítása</string>
     <string name="settings_cycling_sensor">Kerékpározás</string>
-    <string name="always">Mindig</string>
     <string name="error_crash_title">Az %1$s összeomlott</string>
     <string name="settings_announcements_summary">Idő, távolság, beszédhang sebessége</string>
     <string name="settings_units_category">Egységek</string>

@@ -160,7 +160,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="gps_wait_for_better_signal">Wachten op een beter GPS-signaal</string>
     <string name="gps_wait_for_signal">Wachten op GPS-signaal</string>
     <!-- Image -->
-    <string name="image_arrow">Pijl</string>
     <string name="image_marker_count">Aantal markeringen</string>
     <string name="image_photo_marker">Fotomarkering</string>
     <string name="image_record">Opnemen</string>
@@ -359,7 +358,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="export_track_errors">Bestanden niet geëxporteerd</string>
     <string name="description_altitude_loss">Hoogteverlies: %1$d m (%2$d ft)</string>
     <string name="export_error_post_workout">Uitvoer na de training mislukt, controleer de uitvoermap.</string>
-    <string name="open_track_as_trackfileformat">Als %1$s openen</string>
     <string name="activity_type_escooter">scooter</string>
     <string name="export_all_do_it_for_all">doe het voor alle conflicten</string>
     <string name="export_progress_summary_new_msg">Nieuwe bestanden geëxporteerd</string>
@@ -521,7 +519,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <string name="track_discarding">Track weggooien</string>
     <string name="settings_announcements_lap_speed_pace">Snelheid/tred per ronde</string>
     <string name="show_on_dashboard">OpenTracks Dashboard API</string>
-    <string name="always">Altijd</string>
     <string name="show_on_dashboard_not_installed">Er is geen app geïnstalleerd die OpenTracks Dashboard API ondersteunt.</string>
     <string name="help_data_google_play_services_content">Nee</string>
     <string name="introduction_osm_dashboard">OpenTracks zelf biedt geen kaart. Installeer OSMDashboard om uw opnames op een kaart te bekijken.</string>

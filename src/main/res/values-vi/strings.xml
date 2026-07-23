@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Đang chờ tín hiệu GPS tốt hơn</string>
     <string name="gps_wait_for_signal">Đang chờ tín hiệu GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Mũi tên</string>
     <string name="image_marker_count">Số lượng điểm đánh dấu</string>
     <string name="image_photo_marker">Điểm đánh dấu ảnh</string>
     <string name="image_record">Ghi</string>
@@ -325,7 +324,6 @@ limitations under the License.
     <string name="about_third_party_data">Dữ liệu bên thứ ba</string>
     <string name="help_storage_pictures_title">OpenTracks lưu trữ ảnh được chụp làm điểm đánh dấu như thế nào\?</string>
     <string name="generic_show_errors">Hiện lỗi</string>
-    <string name="open_track_as_trackfileformat">Mở dưới dạng %1$s</string>
     <string name="export_track_errors">Tệp không được xuất</string>
     <string name="export_progress_summary_new_msg">Đã xuất tệp mới</string>
     <string name="generic_overwrite">Ghi đè</string>
@@ -543,7 +541,6 @@ limitations under the License.
     <string name="share_crash_report">Chia sẻ báo cáo dừng đột ngột</string>
     <string name="report_bug">Báo cáo lỗi</string>
     <string name="show_on_dashboard">API Bảng điều khiển OpenTracks</string>
-    <string name="always">Luôn luôn</string>
     <string name="track_delete_number_of_tracks">%1$d tuyến đường</string>
     <string name="sensor_state_heart_rate_unit">bpm</string>
     <string name="voiceDistanceNauticalMilesPlural">{n, số nhiều, =1 {1 hải lý} khác {{n,số,#.0} hải lý} }</string>

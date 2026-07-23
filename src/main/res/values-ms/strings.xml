@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Menunggu isyarat GPS yang lebih baik</string>
     <string name="gps_wait_for_signal">Menunggu isyarat GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Anak panah</string>
     <string name="image_marker_count">Kiraan penanda</string>
     <string name="image_photo_marker">Penanda foto</string>
     <string name="image_record">Rakam</string>

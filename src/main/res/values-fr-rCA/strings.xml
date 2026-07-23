@@ -103,7 +103,6 @@
     <string name="gps_starting">Lancement du GPS en cours…</string>
     <string name="gps_wait_for_better_signal">En attente d\'un signal GPS de meilleure qualité…</string>
     <string name="gps_wait_for_signal">En attente du signal GPS…</string>
-    <string name="image_arrow">Flèche</string>
     <string name="image_marker_count">Nombre de repères</string>
     <string name="image_photo_marker">Repère de photo</string>
     <string name="image_record">Enregistrer</string>

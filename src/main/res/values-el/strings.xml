@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Αναμονή για καλύτερο σήμα GPS</string>
     <string name="gps_wait_for_signal">Αναμονή για σήμα GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Βέλος</string>
     <string name="image_marker_count">Αριθμός δείκτη</string>
     <string name="image_photo_marker">Δείκτης φωτογραφίας</string>
     <string name="image_record">Εγγραφή</string>
@@ -315,13 +314,11 @@ limitations under the License.
     <string name="help_track_map_title">Πώς να εμφανιστεί ένα ίχνος στον χάρτη;</string>
     <string name="help_gps_troubleshooting_title">Το OpenTracks δεν καταγράφει τοποθεσίες;</string>
     <string name="help_support_title">Πώς να υποστηρίξω το OpenTracks;</string>
-    <string name="open_track_as_trackfileformat">Ανοίγμα ως %1$s</string>
     <string name="activity_type_escooter">ηλεκτρικό πατίνι</string>
     <string name="activity_type_kickscooter">πατίνι</string>
     <string name="power_x_watt">Ισχύς {x, plural, =1 {1 watt} other {# watts} }</string>
     <string name="power">Ισχύς</string>
     <string name="report_bug">Αναφορά προβλήματος</string>
-    <string name="always">Πάντα</string>
     <string name="settings_recording_min_sampling_interval_title">Χρονικό μεσοδιάστημα δειγματοληψίας</string>
     <string name="settings_recording_location_distance_summary">%1$s μεταξύ καταγεγραμμένων τοποθεσιών</string>
     <string name="field_remove_from_layout">Αφαίρεση</string>

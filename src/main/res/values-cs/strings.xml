@@ -158,7 +158,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Čekání na lepší signál GPS</string>
     <string name="gps_wait_for_signal">Čekání na signál GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Šipka</string>
     <string name="image_marker_count">Počet značek</string>
     <string name="image_photo_marker">Fotografická značka</string>
     <string name="image_record">Zaznamenat</string>
@@ -353,7 +352,6 @@ limitations under the License.
     <!-- Share image -->
     <string name="share_image_subject">Chtěl bych s vámi sdílet obrázek</string>
     <string name="share_image_body">Myslím, že by vás mohl tento obrázek zajímat.</string>
-    <string name="open_track_as_trackfileformat">Otevřít jako %1$s</string>
     <string name="export_all_do_it_for_all">provést pro všechny konflikty</string>
     <string name="export_track_errors">Soubory nebyly exportovány</string>
     <string name="generic_separator_done_total">/</string>
@@ -525,7 +523,6 @@ limitations under the License.
     <string name="report_bug">Nahlásit chybu</string>
     <string name="settings_announcements_lap_heart_rate">Srdeční tep kola</string>
     <string name="introduction_osm_dashboard">OpenTracks sám o sobě mapu neposkytuje. Pro zobrazení záznamů na mapě si nainstalujte OSMDashboard.</string>
-    <string name="always">Vždy</string>
     <string name="help_data_google_play_services_content">Ne</string>
     <string name="description_speed_nautical">Rychlost (uzly)</string>
     <string name="settings_export_filename_title">Formát názvu souboru</string>

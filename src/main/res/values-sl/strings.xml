@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Čakanje na boljši signal GPS</string>
     <string name="gps_wait_for_signal">Čakanje na signal GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Puščica</string>
     <string name="image_marker_count">Število oznak</string>
     <string name="image_photo_marker">Oznaka fotografije</string>
     <string name="image_record">Snemaj</string>
@@ -410,7 +409,6 @@ limitations under the License.
     <string name="about_version_code">Koda različice: %1$d</string>
     <string name="help_storage_pictures_content">Ti so shranjeni v notranjem pomnilniku aplikacije (tj. dostopni so samo v aplikaciji OpenTracks).</string>
     <string name="help_recording_title">Kako OpenTracks beleži podatke\?</string>
-    <string name="open_track_as_trackfileformat">Odpri kot %1$s</string>
     <string name="about_description"><i>OpenTracks</i> je aplikacija za sledenje športu, ki popolnoma spoštuje vašo zasebnost.</string>
     <string name="help_feature_title">OpenTracks ima naslednje funkcije:</string>
     <string name="about_third_party_data">Podatki tretjih oseb</string>
@@ -444,7 +442,6 @@ limitations under the License.
     <string name="stats_clock">Ura</string>
     <string name="settings_import_section">Uvoz</string>
     <string name="share_image_subject">Rad bi z vami delil sliko</string>
-    <string name="always">Vedno</string>
     <string name="error_crash_title">%1$s se je zrušilo</string>
     <string name="share_crash_report">Skupna raba poročila o nesreči</string>
     <string name="about_version_name">Ime različice: %1$s</string>

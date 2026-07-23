@@ -103,7 +103,6 @@
     <string name="gps_starting">Iniciando GPS</string>
     <string name="gps_wait_for_better_signal">Aguardando sinal de GPS melhor</string>
     <string name="gps_wait_for_signal">Aguardando sinal de GPS</string>
-    <string name="image_arrow">Seta</string>
     <string name="image_marker_count">Contagem do marcador</string>
     <string name="image_photo_marker">Marcador de foto</string>
     <string name="image_record">Gravar</string>
@@ -267,7 +266,6 @@
     <string name="help_data_google_play_services_content">Não</string>
     <string name="help_recording_title">Como guarda o OpenTracks dados?</string>
     <string name="help_support_title">Como posso suportar o OpenTracks?</string>
-    <string name="open_track_as_trackfileformat">Abrir como %1$s</string>
     <string name="activity_type_escooter">escolta</string>
     <string name="activity_type_swimming_open">nadando em águas abertas</string>
     <string name="export_progress_summary_skip_msg">Trilhas puladas</string>
@@ -498,7 +496,6 @@
     <string name="share_crash_report">Compartilhar relatório de falha</string>
     <string name="report_bug">Relatório de problema</string>
     <string name="show_on_dashboard">Painel API do OpenTracks</string>
-    <string name="always">Sempre</string>
     <string name="show_on_dashboard_not_installed">Nenhuma aplicação compatível com o painel API do OpenTracks instalado.</string>
     <string name="introduction_osm_dashboard">O próprio OpenTracks não fornece um mapa. Instale o OSMDashboard para visualizar as suas gravações num mapa.</string>
 </resources>

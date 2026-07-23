@@ -58,7 +58,6 @@
     <string name="error_crash_title">%1$s செயலிழந்தன</string>
     <string name="show_on_dashboard">Opentracks முகப்புப்பெட்டி பநிஇ</string>
     <string name="show_on_dashboard_not_installed">Opentracks டாச்போர்டு பநிஇ ஐ ஆதரிக்கும் எந்த பயன்பாடும் நிறுவப்படவில்லை.</string>
-    <string name="always">எப்போதும்</string>
     <string name="introduction_osm_dashboard">ஓபன்ட்ராக்ச் ஒரு வரைபடத்தை வழங்காது. உங்கள் பதிவுகளை வரைபடத்தில் காண OSMDashboard ஐ நிறுவவும்.</string>
     <string name="settings_recording_min_sampling_interval_title">மாதிரி நேர இடைவெளி</string>
     <string name="settings_recording_location_distance_summary">பதிவுசெய்யப்பட்ட இடங்களுக்கு இடையில் %1$s</string>
@@ -182,7 +181,6 @@
     <string name="gps_fixed_and_ready">சி.பி.எச் நிலையான மற்றும் தயாராக உள்ளது</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">சிபிஎச் தரவு இல்லாமல் ஓபென்ட்ராக்ச் பதிவு செய்கிறது.</string>
-    <string name="image_arrow">அம்பு</string>
     <string name="image_marker_count">மார்க்கர் எண்ணிக்கை</string>
     <string name="image_photo_marker">புகைப்பட மார்க்கர்</string>
     <string name="image_record">பதிவு</string>
@@ -500,7 +498,6 @@
     <string name="help_gps_troubleshooting_content">நீங்கள் என்ன செய்ய முடியும்:\n a) சி.பி.எச் இயக்கப்பட்டதா என்பதை சரிபார்க்கவும்,\n b) சி.பி.எச் வரவேற்பை மேம்படுத்தவும் (எ.கா., வெளியில் செல்லுங்கள்),\n c) <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/"> gpstest </a> பயன்பாடு, மற்றும்\n ஈ) ஆற்றல் சேமிப்பை முடக்கு.\n\n எல்லாம் உதவாவிட்டால் தயவுசெய்து ஒரு பிழையைப் புகாரளிக்கவும்.</string>
     <string name="help_support_title">ஓபன்ட்ராக்சை நான் எவ்வாறு ஆதரிக்க முடியும்?</string>
     <string name="help_support_content">உங்களால் முடியும்:\n அ) ஓபன்ட்ராக்சைப் பற்றிப் பரப்பவும்,\n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">அம்சங்களை முன்மொழிகிறது </a>,,\n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues"> பிழைகள் </a>,\n d) மென்பொருள் மேம்பாட்டில் உதவி,\n e) <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">கூகிள் கடையில்</a> வாங்கு\n f) நன்கொடை, மற்றும்\n g) நீங்கள் நினைப்பதைச் செய்யுங்கள்.</string>
-    <string name="open_track_as_trackfileformat">%1$s என திறந்திருக்கும்</string>
     <string name="activity_type_airplane">வானூர்தி</string>
     <string name="activity_type_atv">ஏடிவி</string>
     <string name="activity_type_biking">பைக்கிங்</string>

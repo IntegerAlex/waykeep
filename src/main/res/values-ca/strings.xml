@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Esperant un millor senyal GPS</string>
     <string name="gps_wait_for_signal">Esperant el senyal GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Fletxa</string>
     <string name="image_marker_count">Recompte de marcadors</string>
     <string name="image_photo_marker">Marcador de fotos</string>
     <string name="image_record">Enregistra</string>

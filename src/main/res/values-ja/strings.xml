@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">GPS信号の精度が上がるまで待機しています</string>
     <string name="gps_wait_for_signal">GPS信号を待機しています</string>
     <!-- Image -->
-    <string name="image_arrow">矢印</string>
     <string name="image_marker_count">マーカー数</string>
     <string name="image_photo_marker">写真マーカー</string>
     <string name="image_record">記録</string>

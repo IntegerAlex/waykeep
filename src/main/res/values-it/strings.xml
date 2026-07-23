@@ -46,7 +46,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="help_data_storage_title">In che modo OpenTracks memorizza i dati dei sensori?</string>
     <string name="help_gps_troubleshooting_title">OpenTracks non registra la posizione\?</string>
     <string name="help_support_title">Come posso supportare OpenTracks?</string>
-    <string name="open_track_as_trackfileformat">Apri come %1$s</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">aereo</string>
     <string name="activity_type_atv">fuoristrada</string>
@@ -158,7 +157,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="gps_wait_for_better_signal">In attesa di un miglior segnale GPS</string>
     <string name="gps_wait_for_signal">In attesa del segnale GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Freccia</string>
     <string name="image_marker_count">Contatore indicatori</string>
     <string name="image_photo_marker">Indicatore fotografico</string>
     <string name="image_record">Registra</string>
@@ -583,7 +581,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <string name="unit_nautical_mile">MN</string>
     <string name="help_data_google_play_services_content">No</string>
     <string name="generic_dismiss">Ignora</string>
-    <string name="always">Sempre</string>
     <string name="activity_type_swimming">nuoto</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="activity_type_swimming_open">nuoto in mare</string>

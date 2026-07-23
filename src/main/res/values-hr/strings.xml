@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Čeka se bolji GPS signal</string>
     <string name="gps_wait_for_signal">Čeka se GPS signal</string>
     <!-- Image -->
-    <string name="image_arrow">Strelica</string>
     <string name="image_marker_count">Broj oznaka</string>
     <string name="image_photo_marker">Oznaka fotografije</string>
     <string name="image_record">Snimi</string>
@@ -453,7 +452,6 @@ limitations under the License.
     <string name="custom_layout_select_layout">Odaberi raspored</string>
     <string name="settings_activity_defaults_category">Standardne vrijednosti aktivnosti</string>
     <string name="settings_sensor_bluetooth_service_filter_on">Prikaži samo Bluetooth uređaje koji najavljuju potrebne usluge</string>
-    <string name="open_track_as_trackfileformat">Otvori kao %1$s</string>
     <string name="settings_api_title">Javni API</string>
     <string name="settings_announcements_distance_frequency">Duljina runde</string>
     <string name="unit_nautical_mile">NM</string>
@@ -473,7 +471,6 @@ limitations under the License.
     <string name="value_float_kilometer_hour_recommended">%1$.1f km/h (preporučeno)</string>
     <string name="import_parser_error">Greška u obradi: %1$s</string>
     <string name="lap_speed">Brzina runde</string>
-    <string name="always">Uvijek</string>
     <string name="settings_sensor_wheel_circumference">Opseg kotača (mm)</string>
     <string name="lap_time">Vrijeme runde</string>
     <string name="help_track_map_title">Kako prikazati rutu na karti\?</string>

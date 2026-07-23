@@ -103,7 +103,6 @@
     <string name="gps_starting">Iniciando GPS</string>
     <string name="gps_wait_for_better_signal">Esperando una mejor señal de GPS</string>
     <string name="gps_wait_for_signal">Esperando señal de GPS</string>
-    <string name="image_arrow">Flecha</string>
     <string name="image_marker_count">Recuento de marcadores</string>
     <string name="image_photo_marker">Marcador de foto</string>
     <string name="image_record">Grabar</string>
@@ -341,7 +340,6 @@
     <string name="help_data_storage_title">¿Cómo almacena OpenTracks los datos de los sensores\?</string>
     <string name="help_gps_troubleshooting_title">¿OpenTracks no registra ubicaciones\?</string>
     <string name="help_support_title">¿Cómo puedo ayudar a OpenTracks\?</string>
-    <string name="open_track_as_trackfileformat">Abrir como %1$s</string>
     <string name="activity_type_escooter">moto</string>
     <string name="description_speed_ms">Velocidad (m/s)</string>
     <string name="description_default_speed_or_pace">Por tipo de actividad</string>
@@ -571,7 +569,6 @@
     <string name="report_bug">Reportar fallo</string>
     <string name="show_on_dashboard">API del panel de control de OpenTracks</string>
     <string name="show_on_dashboard_not_installed">No se encontró instalada alguna aplicación que soporte la API del panel de control de OpenTracks.</string>
-    <string name="always">Siempre</string>
     <string name="introduction_osm_dashboard">OpenTracks no provee mapas por sí mismo. Instala OSMDashboard para ver tus registros en un mapa.</string>
     <string name="settings_recording_min_sampling_interval_title">Intervalo de tiempo de muestreo</string>
     <string name="settings_recording_location_distance_summary">%1$s entre ubicaciones registradas</string>

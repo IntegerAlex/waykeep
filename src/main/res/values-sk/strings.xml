@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Čaká sa na lepší signál systému GPS</string>
     <string name="gps_wait_for_signal">Čaká sa na signál systému GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Šípka</string>
     <string name="image_marker_count">Počet značiek</string>
     <string name="image_photo_marker">Fotografická značka</string>
     <string name="image_record">Zaznamenať</string>
@@ -353,7 +352,6 @@ limitations under the License.
 \n * vytvárať značky (vrátane obrázkov)
 \n * funguje úplne offline
 \n * zobrazenie tratí na mape (pozri nižšie)</string>
-    <string name="open_track_as_trackfileformat">Otvoriť ako %1$s</string>
     <string name="help_track_export_content"> Skladby je možné exportovať z nastavení ako KMZ, KML alebo GPX. KMZ / KML všetky dáta; GPX iba miesta. Skladby zdieľané prostredníctvom <i>Ikona zdieľania</i>sa zdieľajú ako KMZ. </string>
     <string name="help_support_title">Ako môžem podporiť OpenTracks\?</string>
     <string name="activity_type_escooter">skúter</string>

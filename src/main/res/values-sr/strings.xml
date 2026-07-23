@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Чека се бољи GPS сигнал</string>
     <string name="gps_wait_for_signal">Чека се GPS сигнал</string>
     <!-- Image -->
-    <string name="image_arrow">Стрелица</string>
     <string name="image_marker_count">Број означивача</string>
     <string name="image_photo_marker">Означивач слика</string>
     <string name="image_record">Снимите</string>

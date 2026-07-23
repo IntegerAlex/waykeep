@@ -103,7 +103,6 @@
     <string name="gps_starting">正在啟用 GPS</string>
     <string name="gps_wait_for_better_signal">正在等待更清晰的 GPS 訊號</string>
     <string name="gps_wait_for_signal">正在等待 GPS 訊號</string>
-    <string name="image_arrow">箭頭</string>
     <string name="image_marker_count">標記數</string>
     <string name="image_photo_marker">相片標記</string>
     <string name="image_record">記錄</string>

@@ -44,7 +44,6 @@ limitations under the License.
     <string name="help_gps_troubleshooting_content">Podes intentar: \n a) comproba que o GPS esté activado, \n b) mellora a recepción GPS (ex. sae ao exterior), \n c) comprobaa coa app <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/">GPSTest</a>, e \n d) desactiva o aforro de enerxía. \n \n Se isto non axuda, infórmanos do problema.</string>
     <string name="help_support_title">Como podo axudar a OpenTracks\?</string>
     <string name="help_support_content">Podes: \n a) falar de OpenTracks coas túas amizades, \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">propoñer novas funcións</a>, \n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">informar de fallos</a>, \n d) axudar no desenvolvemento, \n e) mercar a app na <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>, \n f) facer unha doazón, e \n g) calquera cousa que estimes axuda a OpenTracks.</string>
-    <string name="open_track_as_trackfileformat">Abrir como %1$s</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">avión</string>
     <string name="activity_type_atv">Quad</string>
@@ -162,7 +161,6 @@ limitations under the License.
     <string name="gps_disabled_msg">GPS desactivado</string>
     <string name="gps_fixed_and_ready">GPS fixado e preparado</string>
     <!-- Image -->
-    <string name="image_arrow">Frecha</string>
     <string name="image_marker_count">Reconto de marcadores</string>
     <string name="image_photo_marker">Marcador de fotos</string>
     <string name="image_record">Gravar</string>
@@ -529,7 +527,6 @@ limitations under the License.
     <string name="value_float_knots_recommended">%1$.1f nós (recomendado)</string>
     <string name="voice_per_nautical_mile">por milla náutica</string>
     <string name="show_on_dashboard_not_installed">Non hai ningunha aplicación instalada compatible coa API de OpenTracks.</string>
-    <string name="always">Sempre</string>
     <string name="error_crash_title">%1$s fallou</string>
     <string name="report_bug">Informar do problema</string>
     <string name="settings_public_api_package_title">Nome do paquete para Public API</string>

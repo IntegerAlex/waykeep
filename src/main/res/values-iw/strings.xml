@@ -103,7 +103,6 @@
     <string name="gps_starting">מפעיל את ה-GPS</string>
     <string name="gps_wait_for_better_signal">ממתין לאות GPS טוב יותר</string>
     <string name="gps_wait_for_signal">ממתין לאות GPS</string>
-    <string name="image_arrow">חץ</string>
     <string name="image_marker_count">ספירת סמן</string>
     <string name="image_photo_marker">סמן תמונות</string>
     <string name="image_record">הקלט</string>

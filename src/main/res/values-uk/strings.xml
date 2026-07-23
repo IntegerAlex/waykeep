@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Очікування кращого сигналу GPS</string>
     <string name="gps_wait_for_signal">Очікування сигналу GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Стрілка</string>
     <string name="image_marker_count">Кількість маркерів</string>
     <string name="image_photo_marker">Фотомаркер</string>
     <string name="image_record">Записати</string>
@@ -337,7 +336,6 @@ limitations under the License.
     <string name="settings_night_mode_title">Тема UI</string>
     <string name="help_gps_troubleshooting_title">OpenTracks не записує моє місцезнаходження?</string>
     <string name="help_support_title">Як я можу підтримати OpenTracks\?</string>
-    <string name="open_track_as_trackfileformat">Відкрити як %1$s</string>
     <string name="activity_type_escooter">електросамокат</string>
     <string name="settings_sensor_wheel_circumference">Окружність колеса (мм)</string>
     <string name="description_altitude_loss">Спуск: %1$d м (%2$d футів)</string>
@@ -535,7 +533,6 @@ limitations under the License.
     <string name="no_compatible_gallery_installed">Не встановлено сумісну програму галереї зображень</string>
     <string name="report_bug">Повідомити про помилку</string>
     <string name="voice_per_nautical_mile">за морську милю</string>
-    <string name="always">Завжди</string>
     <string name="value_integer_knots">%1$d вузлів</string>
     <string name="value_float_knots">%1$.1f вузлів</string>
     <string name="total_distance">Загальна відстань</string>

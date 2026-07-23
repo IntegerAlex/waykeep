@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">في انتظار إشارة أفضل ‏‫لنظام تحديد المواقع العالمي (GPS)‬</string>
     <string name="gps_wait_for_signal">في انتظار إشارة نظام تحديد المواقع العالمي (GPS)‬</string>
     <!-- Image -->
-    <string name="image_arrow">سهم</string>
     <string name="image_marker_count">عدد العلامات</string>
     <string name="image_photo_marker">علامة الصورة</string>
     <string name="image_record">تسجيل</string>
@@ -502,7 +501,6 @@ limitations under the License.
     <string name="help_feature_content">* إنشاء مسارات GPS \n* استخدام مستشعر معدل ضربات القلب (Bluetooth LE فقط) \n* إعلانات صوتية (حسب الوقت أو المسافة) \n* إنشاء علامات (بما في ذلك الصور) \n* يعمل بدون اتصال بالإنترنت \n* عرض المسارات على خريطة (انظر أدناه)</string>
     <string name="settings_recording_fullscreen_on_while_recording_summary">أثناء التسجيل، اعرضه في وضع ملء الشاشة.</string>
     <string name="settings_gps_summary">الفاصل الزمني، فاصل المسافة، أقصى مسافة، الدقة</string>
-    <string name="open_track_as_trackfileformat">فتح كـ %1$s</string>
     <string name="sensor_state_power_unit">واط</string>
     <string name="about_url">صفحة المشروع: <a href="%1$s">%1$s</a></string>
     <string name="help_data_google_play_services_title">هل يتطلب المسارات المفتوحة استخدام خدمات Google Play؟</string>
@@ -547,7 +545,6 @@ limitations under the License.
     <string name="report_bug">الإبلاغ عن خطأ</string>
     <string name="show_on_dashboard">واجهة برمجة تطبيقات لوحة تحكم المسارات المفتوحة</string>
     <string name="show_on_dashboard_not_installed">لا يوجد تطبيق يدعم واجهة برمجة تطبيقات لوحة تحكم المسارات المفتوحة مثبت.</string>
-    <string name="always">دائمًا</string>
     <string name="settings_announcements_lap_power">طاقة الدورة</string>
     <string name="power_x_watt">الطاقة {x, plural, =1 {1 واط} other {# واط} }</string>
     <string name="power">الطاقة</string>

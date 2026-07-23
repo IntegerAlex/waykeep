@@ -135,7 +135,6 @@ limitations under the License.
     <string name="gps_disabled_msg">GPS niedostępny</string>
     <string name="gps_fixed_and_ready">Pozycja GPS ustalona</string>
     <!-- Image -->
-    <string name="image_arrow">Strzałka</string>
     <string name="image_marker_count">Liczba znaczników</string>
     <string name="image_photo_marker">Znacznik zdjęcia</string>
     <string name="image_record">Rejestruj</string>
@@ -343,7 +342,6 @@ limitations under the License.
     <string name="about_libraries">Biblioteki</string>
     <string name="help_feature_title">OpenTracks posiada następujące funkcje:</string>
     <string name="help_track_map_title">Jak pokazywać trasę na mapie\?</string>
-    <string name="open_track_as_trackfileformat">Otwórz jako %1$s</string>
     <string name="about_description"><i>OpenTracks</i> to aplikacja do śledzenia aktywności sportowej która całkowicie respektuje Twoją prywatność.</string>
     <string name="hold_to_stop">Przytrzymaj, aby zatrzymać</string>
     <string name="instant_export_enabled_title">Automatyczny eksport po ćwiczeniu</string>
@@ -572,7 +570,6 @@ limitations under the License.
     <string name="settings_public_api_enabled_title">Publiczne API</string>
     <string name="settings_announcements_idle_category_title">Powiadomienia o przerwach</string>
     <string name="pace">Tempo</string>
-    <string name="always">Zawsze</string>
     <string name="settings_night_mode_option_system_dynamic">Systemowy (dynamiczne kolory)</string>
     <string name="settings_night_mode_option_day_dynamic">Dzień (dynamiczne kolory)</string>
     <string name="settings_night_mode_option_night_dynamic">Noc (dynamiczne kolory)</string>

@@ -62,7 +62,6 @@ limitations under the License.
 \ne) osta <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore"> Google Play -kaupasta </a>,
 \nf) lahjoittaa ja
 \ng) tee mitä tahansa mielestäsi auttaa OpenTracksia. </string>
-    <string name="open_track_as_trackfileformat">Avaa %1$s-muodossa</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">lentokone</string>
     <string name="activity_type_atv">mönkijä</string>
@@ -177,7 +176,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Odotetaan parempaa GPS-signaalia</string>
     <string name="gps_wait_for_signal">Odotetaan GPS-signaalia</string>
     <!-- Image -->
-    <string name="image_arrow">Nuoli</string>
     <string name="image_marker_count">Merkkien määrä</string>
     <string name="image_photo_marker">Kuvamerkki</string>
     <string name="image_record">Tallenna</string>
@@ -514,7 +512,6 @@ limitations under the License.
     <string name="speed">Nopeus</string>
     <string name="lap_speed">Kierrosnopeus</string>
     <string name="total_distance">Kokonaismatka</string>
-    <string name="always">Aina</string>
     <string name="error_crash_title">%1$s kaatui</string>
     <string name="share_crash_report">Jaa kaatumisraportti</string>
     <string name="report_bug">Ilmoita virheestä</string>

@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Gaida spēcīgāku GPS signālu</string>
     <string name="gps_wait_for_signal">Gaida GPS signālu</string>
     <!-- Image -->
-    <string name="image_arrow">Bultiņa</string>
     <string name="image_marker_count">Atzīmju numerācija</string>
     <string name="image_photo_marker">Fotoattēlu atzīme</string>
     <string name="image_record">Ierakstīt</string>
@@ -392,7 +391,6 @@ limitations under the License.
     <string name="import_error_list_dialog_title">Faili nav importēti</string>
     <string name="settings_recording_fullscreen_on_while_recording_title">Pilna ekrāna</string>
     <string name="generic_skip">Izlaist .</string>
-    <string name="open_track_as_trackfileformat">Atvērts kā %1$s</string>
     <string name="settings_recording_keep_screen_on_while_recording_title">Ekrāna ieslēgšana</string>
     <string name="share_image_body">Domāju, ka jūs varētu ieinteresēt šis attēls.</string>
     <string name="export_progress_summary_overwrite_msg">Pārrakstītās dziesmas</string>

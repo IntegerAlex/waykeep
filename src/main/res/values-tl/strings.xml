@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Naghihintay para sa isang mas mahusay na signal ng GPS</string>
     <string name="gps_wait_for_signal">Naghihintay para sa signal ng GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Arrow</string>
     <string name="image_marker_count">Bilang ng marker</string>
     <string name="image_photo_marker">Marker ng larawan</string>
     <string name="image_record">Mag-record</string>

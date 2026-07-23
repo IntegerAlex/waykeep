@@ -33,7 +33,6 @@
 \n 
 \n \u0020 ಎಲ್ಲವೂ ಸಹಾಯ ಮಾಡದಿದ್ದರೆ ದಯವಿಟ್ಟು ದೋಷವನ್ನು ವರದಿ ಮಾಡಿ. \u0020</string>
     <string name="help_support_title">ನಾನು OpenTracks ಅನ್ನು ಹೇಗೆ ಬೆಂಬಲಿಸಬಹುದು?</string>
-    <string name="open_track_as_trackfileformat">%1$s ನಂತೆ ತೆರೆಯಿರಿ</string>
     <string name="activity_type_airplane">ವಿಮಾನ</string>
     <string name="activity_type_atv">ATV</string>
     <string name="activity_type_biking">ಬೈಕಿಂಗ್</string>
@@ -180,7 +179,6 @@
     <string name="gps_fixed_and_ready">GPS ಸ್ಥಿರವಾಗಿದೆ ಮತ್ತು ಸಿದ್ಧವಾಗಿದೆ</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">OpenTracks GPS ಡೇಟಾ ಇಲ್ಲದೆ ರೆಕಾರ್ಡಿಂಗ್ ಮಾಡುತ್ತಿದೆ.</string>
-    <string name="image_arrow">ಬಾಣ</string>
     <string name="image_marker_count">ಮಾರ್ಕರ್ ಎಣಿಕೆ</string>
     <string name="image_photo_marker">ಚಿತ್ರ ಮಾರ್ಕರ್</string>
     <string name="image_record">ರೆಕಾರ್ಡ್ ಮಾಡಿ</string>
@@ -493,7 +491,6 @@
     <string name="report_bug">ದೋಷವನ್ನು ವರದಿ ಮಾಡಿ</string>
     <string name="show_on_dashboard">OpenTracks ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ API</string>
     <string name="show_on_dashboard_not_installed">OpenTracks ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ API ಅನ್ನು ಬೆಂಬಲಿಸುವ ಯಾವುದೇ ಅಪ್ಲಿಕೇಶನ್ ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ.</string>
-    <string name="always">ಯಾವಾಗಲೂ</string>
     <string name="settings_announcements_distance_frequency">ಲ್ಯಾಪ್ ಉದ್ದ</string>
     <string name="help_track_export_content"> \u0020ಟ್ರ್ಯಾಕ್‌ಗಳನ್ನು ಸೆಟ್ಟಿಂಗ್‌ಗಳಿಂದ KMZ, KML ಅಥವಾ GPX ಆಗಿ ರಫ್ತು ಮಾಡಬಹುದು. KMZ/KML ಎಲ್ಲಾ ಡೇಟಾ; GPX ಮಾತ್ರ ಸ್ಥಳಗಳು. <i>ಹಂಚಿಕೆ ಐಕಾನ್</i> ಮೂಲಕ ಹಂಚಲಾದ ಟ್ರ್ಯಾಕ್‌ಗಳನ್ನು KMZ ನಂತೆ ಹಂಚಿಕೊಳ್ಳಲಾಗುತ್ತದೆ. \u0020</string>
     <string name="help_recording_content">ಸ್ಥಳವನ್ನು ನಿರಂತರವಾಗಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು OpenTracks ಸಾಧನದ GPS ಸಂವೇದಕವನ್ನು ಬಳಸುತ್ತದೆ. GPS ಸಾಧನವು ತಪ್ಪಾದ ಡೇಟಾವನ್ನು ವರದಿ ಮಾಡಿದರೆ (ಉದಾ., ಸ್ಥಳ, ವೇಗ, ಎತ್ತರ), OpenTracks ಅದರ ಬಗ್ಗೆ ಏನನ್ನೂ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ.</string>

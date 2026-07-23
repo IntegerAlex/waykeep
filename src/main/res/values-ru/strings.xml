@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Ожидание улучшения приема GPS</string>
     <string name="gps_wait_for_signal">Ожидание сигнала GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Стрелка</string>
     <string name="image_marker_count">Количество маркеров</string>
     <string name="image_photo_marker">Фотомаркер</string>
     <string name="image_record">Запись</string>
@@ -361,7 +360,6 @@ limitations under the License.
     <string name="import_progress_summary_ok_msg">Файлы импортированы</string>
     <string name="menu_resume_track">Продолжить путь</string>
     <string name="settings_night_mode_title">Тема интерфейса</string>
-    <string name="open_track_as_trackfileformat">Открыть как %1$s</string>
     <string name="help_support_title">Как я могу поддержать OpenTracks?</string>
     <string name="help_gps_troubleshooting_title">OpenTracks не записывает точки местоположения?</string>
     <string name="activity_type_escooter">электросамокат</string>
@@ -539,7 +537,6 @@ limitations under the License.
     <string name="value_float_knots_recommended">%1$.1f узла (рекомендуется)</string>
     <string name="settings_announcements_average_heart_rate">Средний пульс</string>
     <string name="settings_stats_units_nautical">Морская система (морские мили, футы)</string>
-    <string name="always">Всегда</string>
     <string name="voice_per_nautical_mile">за морскую милю</string>
     <string name="settings_announcements_average_speed_pace">Средняя скорость/темп</string>
     <string name="unit_minute_per_nautical_mile">минут на морскую милю</string>

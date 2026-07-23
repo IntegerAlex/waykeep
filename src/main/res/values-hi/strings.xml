@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">बेहतर GPS सिग्नल की प्रतीक्षा की जा रही है</string>
     <string name="gps_wait_for_signal">GPS सिग्नल की प्रतीक्षा की जा रही है</string>
     <!-- Image -->
-    <string name="image_arrow">तीर</string>
     <string name="image_marker_count">मार्कर गणना</string>
     <string name="image_photo_marker">फ़ोटो मार्कर</string>
     <string name="image_record">रिकॉर्ड करें</string>

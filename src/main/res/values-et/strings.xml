@@ -153,7 +153,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Ootan paremat GPS-signaali</string>
     <string name="gps_wait_for_signal">Ootan GPS-signaali</string>
     <!-- Image -->
-    <string name="image_arrow">Nool</string>
     <string name="image_marker_count">Markerite arv</string>
     <string name="image_photo_marker">Fotomarker</string>
     <string name="image_record">Salvesta</string>
@@ -346,7 +345,6 @@ limitations under the License.
     <!-- Share image -->
     <string name="share_image_subject">Tahaksin sinuga pilti jagada</string>
     <string name="share_image_body">Ma arvan, et see pilt võiks sind huvitada.</string>
-    <string name="open_track_as_trackfileformat">Ava kui %1$s</string>
     <string name="activity_type_escooter">elektritõukeratas</string>
     <string name="description_altitude_loss">Kõrguse langus: %1$d m (%2$d jalga)</string>
     <string name="export_all_do_it_for_all">tee seda iga konfilkti puhul</string>
@@ -544,7 +542,6 @@ limitations under the License.
     <string name="voiceSpeedKilometersPerHourPlural">{n, plural, =1 {1 kilomeeter tunnis} other {{n,number,#.0} kilomeetrit tunnis} }</string>
     <string name="voiceSpeedMilesPerHourPlural">{n, plural, =1 {1 miil tunnis} other {{n,number,#.0} miili tunnis} }</string>
     <string name="voiceSpeedMKnotsPlural">{n, plural, =1 {1 sõlm} other {{n,number,#.0} sõlme} }</string>
-    <string name="always">Alati</string>
     <string name="power">Võimsus</string>
     <string name="power_x_watt">Võimsus {x, plural, =1 {1 vatt} other {# vatti} }</string>
     <string name="settings_announcements_lap_power">Ringi võimsus</string>

@@ -103,7 +103,6 @@
     <string name="gps_starting">Iniciando GPS</string>
     <string name="gps_wait_for_better_signal">Aguardando sinal de GPS melhor</string>
     <string name="gps_wait_for_signal">Aguardando sinal de GPS</string>
-    <string name="image_arrow">Seta</string>
     <string name="image_marker_count">Contagem do marcador</string>
     <string name="image_photo_marker">Marcador de foto</string>
     <string name="image_record">Gravar</string>
@@ -335,7 +334,6 @@
 \n
 \n Se tudo não ajudar, por favor relate um bug. </string>
     <string name="help_support_title">Como posso oferecer suporte a OpenTracks\?</string>
-    <string name="open_track_as_trackfileformat">Abrir como %1$s</string>
     <string name="help_track_export_title">Como posso exportar/compartilhar trilhas gravadas\?</string>
     <string name="description_speed_ms">Velocidade (m/s)</string>
     <string name="description_default_speed_or_pace">Por tipo de atividade</string>
@@ -496,7 +494,6 @@
     <string name="error_crash_title">%1$s falharam</string>
     <string name="share_crash_report">Compartilhar relatório de falha</string>
     <string name="show_on_dashboard">Painel API do OpenTracks</string>
-    <string name="always">Sempre</string>
     <string name="description_speed_nautical">Velocidade (nós)</string>
     <string name="help_data_google_play_services_content">Não</string>
     <string name="activity_type_gravel_biking">ciclismo de gravel</string>

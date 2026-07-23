@@ -16,7 +16,6 @@
     <string name="help_data_storage_title">Conas a stórálann OpenTracks sonraí braiteora\?</string>
     <string name="help_recording_content">OpenTracks úsáideann an braiteoir GPS an fheiste chun an suíomh a thaifeadadh go leanúnach. Má thuairiscíonn an gléas GPS sonraí míchruinne (m.sh., suíomh, luas, ingearchló), Ní féidir Le OpenTracks aon rud a dhéanamh faoi.</string>
     <string name="help_gps_troubleshooting_content">Cad is féidir leat a dhéanamh: \n a) seiceáil an bhfuil GPS cumasaithe, \n b) feabhas a chur ar fáiltiú GPS (e.g., dul amuigh faoin AER), \n c) seiceáil le <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/">gpstest</a> app, agus \n d) díchumasaigh coigilt cumhachta. \n \nMura gcabhraíonn gach rud le do thoil tuairiscigh fabht.</string>
-    <string name="open_track_as_trackfileformat">Oscail mar %1$s</string>
     <string name="activity_type_airplane">eitleán</string>
     <string name="activity_type_biking">rothaíocht</string>
     <string name="activity_type_blimp">blimpname</string>
@@ -140,7 +139,6 @@
     <string name="generic_yesterday">Inné</string>
     <string name="generic_dismiss">Díbhe</string>
     <string name="gps_starting">Ag tosú GPS</string>
-    <string name="image_arrow">Saighead</string>
     <string name="image_marker_count">Comhaireamh marcóra</string>
     <string name="image_photo_marker">Marcóir grianghraf</string>
     <string name="image_record">Taifead</string>
@@ -347,7 +345,6 @@
     <string name="settings_prevent_reimport_tracks_title">Cosc a chur ar ath-allmhairiú rianta</string>
     <string name="stats_average_pace">Meánluas</string>
     <string name="track_delete_multiple_confirm_message">Scriosfar na rianta roghnaithe agus a gcuid marcóirí go buan ón bhfeiste.</string>
-    <string name="always">I gcónaí</string>
     <string name="show_on_dashboard_not_installed">Níl aon fheidhmchlár a thacaíonn le OpenTracks Dashboard API suiteáilte.</string>
     <string name="share_image_body">Sílim go mb\'fhéidir go mbeadh suim agat san íomhá seo.</string>
     <string name="help_support_content">You can: \n a) spread the word about OpenTracks, \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">propose features</a>, \nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">report bugs</a>, \n d) help in software development, \n e) buy in <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>, \n f) donate, and \n g) do whatever you think helps OpenTracks.</string>

@@ -61,7 +61,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
 \ne) es im <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a> kaufen,
 \nf) spenden, und
 \ng) das tun, was OpenTracks Deiner Meinung nach hilft. \u0020</string>
-    <string name="open_track_as_trackfileformat">Als %1$s öffnen</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">Flugzeug</string>
     <string name="activity_type_atv">Quad</string>
@@ -176,7 +175,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="gps_wait_for_better_signal">Warte auf besseres GPS-Signal</string>
     <string name="gps_wait_for_signal">Warte auf GPS-Signal</string>
     <!-- Image -->
-    <string name="image_arrow">Pfeil</string>
     <string name="image_marker_count">Anzahl der Markierungen</string>
     <string name="image_photo_marker">Fotomarkierung</string>
     <string name="image_record">Aufzeichnen</string>
@@ -566,7 +564,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="field_remove_from_layout">Entfernen</string>
     <string name="error_crash_title">%1$s ist abgestürzt</string>
     <string name="share_crash_report">Absturzbericht teilen</string>
-    <string name="always">Immer</string>
     <string name="settings_layout_reset_confirm_message">Alle Layout-Einstellungen werden auf die Standardwerte zurückgesetzt. Aufzeichnungen werden nicht vom Gerät gelöscht.</string>
     <string name="report_bug">Fehler melden</string>
     <string name="settings_ui_summary">Erscheinungsbild, Aufzeichnungslayout, Theme</string>

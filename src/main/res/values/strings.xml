@@ -78,7 +78,6 @@ limitations under the License.
         f) donate, and\n
         g) do whatever you think helps OpenTracks.
     </string>
-    <string name="open_track_as_trackfileformat">Open as %1$s</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">airplane</string>
     <string name="activity_type_atv">ATV</string>
@@ -237,7 +236,6 @@ limitations under the License.
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">OpenTracks is recording without GPS data.</string>
     <!-- Image -->
-    <string name="image_arrow">Arrow</string>
     <string name="image_marker_count">Marker count</string>
     <string name="image_photo_marker">Photo marker</string>
     <string name="image_record">Record</string>
@@ -701,7 +699,6 @@ limitations under the License.
     <string name="report_bug">Report bug</string>
     <string name="show_on_dashboard">OpenTracks Dashboard API</string>
     <string name="show_on_dashboard_not_installed">No application supporting OpenTracks Dashboard API installed.</string>
-    <string name="always">Always</string>
     <string name="introduction_osm_dashboard">OpenTracks itself does not provide a map. Please install OSMDashboard to view your recordings on a map.</string>
     <string name="settings_recording_min_sampling_interval_title">Sampling time interval</string>
     <string name="settings_recording_location_distance_summary">%1$s between recorded locations</string>

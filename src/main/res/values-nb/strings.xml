@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Venter på bedre GPS-signal</string>
     <string name="gps_wait_for_signal">Venter på GPS-signal</string>
     <!-- Image -->
-    <string name="image_arrow">Pil</string>
     <string name="image_marker_count">Markørantall</string>
     <string name="image_photo_marker">Bildemarkør</string>
     <string name="image_record">Ta opp</string>
@@ -342,7 +341,6 @@ limitations under the License.
     <string name="settings_default_export_uri_title">Mappe for sporeksport</string>
     <string name="share_image_body">Jeg tror du kan være interessert i dette bildet.</string>
     <string name="about_preference_title">Om</string>
-    <string name="open_track_as_trackfileformat">Åpne som %1$s</string>
     <string name="export_with_photos">med bilder</string>
     <string name="export_track_already_exists_msg">Filen %1$s finnes allerede i målmappen.</string>
     <string name="import_unsupported_format">Filformatet støttes ikke</string>
@@ -505,7 +503,6 @@ limitations under the License.
     <string name="share_crash_report">Del krasjrapport</string>
     <string name="report_bug">Rapporter feil</string>
     <string name="show_on_dashboard">OpenTracks dashbord API</string>
-    <string name="always">Alltid</string>
     <string name="settings_announcements_average_heart_rate">Gjennomsnittlig puls</string>
     <string name="settings_announcements_lap_heart_rate">Runde-puls</string>
     <string name="settings_announcements_average_speed_pace">Gjen. hastighet/tempo</string>

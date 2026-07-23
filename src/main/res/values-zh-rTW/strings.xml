@@ -67,7 +67,6 @@ limitations under the License.
         f) 贊助，以及\n
         g) 做任何您認為對 OpenTracks 有幫助的事情。
     </string>
-    <string name="open_track_as_trackfileformat">開啟為 %1$s</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">飛機</string>
     <string name="activity_type_atv">越野車</string>
@@ -222,7 +221,6 @@ limitations under the License.
     <string name="gps_recording_status">%1$s：%2$s</string>
     <string name="gps_recording_without_signal">OpenTracks 紀錄中，不包含 GPS 資料。</string>
     <!-- Image -->
-    <string name="image_arrow">箭頭</string>
     <string name="image_marker_count">標記數</string>
     <string name="image_photo_marker">相片標記</string>
     <string name="image_record">記錄</string>
@@ -561,7 +559,6 @@ limitations under the License.
     <string name="report_bug">回報 bug</string>
     <string name="show_on_dashboard">OpenTracks 儀表板 API</string>
     <string name="show_on_dashboard_not_installed">沒有安裝支援 OpenTracks 儀表板 API 的應用程式。</string>
-    <string name="always">總是</string>
     <string name="introduction_osm_dashboard">OpenTracks 本身不提供地圖。請安裝 OSMDashboard 以在地圖上檢視您的紀錄。</string>
     <string name="voice_on_device_speaker_title">使用裝置的揚聲器</string>
     <string name="settings_stats_units_imperial_meter">英制（英里、公尺）</string>

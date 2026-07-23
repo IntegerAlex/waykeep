@@ -174,7 +174,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Venter på et bedre GPS-signal</string>
     <string name="gps_wait_for_signal">Venter på GPS-signal</string>
     <!-- Image -->
-    <string name="image_arrow">Pil</string>
     <string name="image_marker_count">Antal markører</string>
     <string name="image_photo_marker">Billedmarkør</string>
     <string name="image_record">Registrer</string>
@@ -369,7 +368,6 @@ limitations under the License.
     <!-- Share image -->
     <string name="share_image_subject">Jeg vil gerne dele et billede med dig</string>
     <string name="share_image_body">Jeg tror, du måske er interesseret i dette billede.</string>
-    <string name="open_track_as_trackfileformat">Åbn som %1$s</string>
     <string name="activity_type_escooter">elløbehjulskørsel</string>
     <string name="generic_click_twice_cancel">Stryg tilbage igen for at annullere</string>
     <string name="import_unable_to_import_file">Kunne ikke importere filen:%1$s</string>
@@ -596,7 +594,6 @@ limitations under the License.
     <string name="error_crash_title">%1$s gik ned</string>
     <string name="share_crash_report">Del fejlrapport</string>
     <string name="report_bug">Rapporter fejl</string>
-    <string name="always">Altid</string>
     <string name="introduction_osm_dashboard">OpenTracks indeholder ikke selv et kort. Installer venligst OSMDashboard for at se registreringer på et kort.</string>
     <string name="settings_recording_location_distance_summary">%1$s mellem registrerede lokationer</string>
     <string name="settings_announcements_lap_power">Omgangseffekt</string>

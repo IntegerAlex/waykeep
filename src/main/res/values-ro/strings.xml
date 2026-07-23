@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Se așteaptă un semnal GPS mai bun</string>
     <string name="gps_wait_for_signal">Se așteaptă semnal GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Săgeată</string>
     <string name="image_marker_count">Număr marcator</string>
     <string name="image_photo_marker">Marcator fotografie</string>
     <string name="image_record">Înregistrați</string>
@@ -332,7 +331,6 @@ limitations under the License.
 \n * afișați trasee pe o hartă (a se vedea mai jos)</string>
     <string name="help_data_storage_title">Cum stochează OpenTracks datele senzorilor\?</string>
     <string name="help_support_title">Cum pot sprijini OpenTracks\?</string>
-    <string name="open_track_as_trackfileformat">Deschideți ca %1$s</string>
     <string name="generic_separator_done_total">/</string>
     <string name="generic_open_track">Pista deschisă</string>
     <string name="about_url">Pagina web a proiectului: <a href="%1$s">%1$s</a></string>

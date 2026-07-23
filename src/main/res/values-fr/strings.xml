@@ -176,7 +176,6 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="gps_wait_for_better_signal">En attente d\'un signal GPS de meilleure qualité</string>
     <string name="gps_wait_for_signal">En attente du signal GPS</string>
     <!-- Image -->
-    <string name="image_arrow">Flèche</string>
     <string name="image_marker_count">Nombre de repères</string>
     <string name="image_photo_marker">Repère de photo</string>
     <string name="image_record">Enregistrer</string>
@@ -423,7 +422,6 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="instant_export_enabled_summary">Exportation du tracé dans le stockage à la fin de l\'enregistrement</string>
     <string name="hold_to_stop">Maintenir pour arrêter</string>
     <string name="track_distance_notification">Distance : %1$s</string>
-    <string name="open_track_as_trackfileformat">Ouvrir comme %1$s</string>
     <string name="activity_type_escooter">éscooter</string>
     <string name="settings_sensor_wheel_circumference">Circonférence de la roue (mm)</string>
     <string name="export_error_post_workout">L\'exportation du post-travail a échoué, veuillez vérifier le répertoire d\'exportation.</string>
@@ -576,7 +574,6 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <string name="pace">Rythme</string>
     <string name="lap_speed">Vitesse par tour</string>
     <string name="show_on_dashboard">Tableau de bord de l\'API OpenTracks</string>
-    <string name="always">Toujours</string>
     <string name="share_crash_report">Partager le rapport de crash</string>
     <string name="report_bug">Signaler un problème</string>
     <string name="error_crash_title">%1$s a crashé</string>

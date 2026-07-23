@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Laukiama geresnio GPS signalo</string>
     <string name="gps_wait_for_signal">Laukiama GPS signalo</string>
     <!-- Image -->
-    <string name="image_arrow">Rodyklė</string>
     <string name="image_marker_count">Žymeklių skaičius</string>
     <string name="image_photo_marker">Nuotraukos žymeklis</string>
     <string name="image_record">Įrašyti</string>
@@ -346,7 +345,6 @@ limitations under the License.
     <string name="help_track_map_title">Kaip parodyti takelį žemėlapyje\?</string>
     <string name="settings_default_export_uri_title">Sekti eksporto katalogą</string>
     <string name="sensor_state_cadence_avg">Vidutinis Kadencija</string>
-    <string name="open_track_as_trackfileformat">Atidaryti kaip %1$s</string>
     <string name="help_feature_content">* sukurti GPS takelius
 \n * naudokite širdies ritmo jutiklį (tik „Bluetooth LE“)
 \n * balso pranešimai (pagal laiką ar atstumą)

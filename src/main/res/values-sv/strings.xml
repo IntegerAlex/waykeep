@@ -125,7 +125,6 @@ limitations under the License.
     <string name="gps_wait_for_better_signal">Väntar på en bättre GPS-signal</string>
     <string name="gps_wait_for_signal">Väntar på GPS-signal</string>
     <!-- Image -->
-    <string name="image_arrow">Pil</string>
     <string name="image_marker_count">Antal markörer</string>
     <string name="image_photo_marker">Fotomarkör</string>
     <string name="image_record">Spela in</string>
@@ -377,7 +376,6 @@ limitations under the License.
     <string name="generic_skip">Hoppa</string>
     <string name="description_default_speed_or_pace">Efter verksamhetstyp</string>
     <string name="generic_click_twice_cancel">Klicka på tillbaka igen för att avbryta</string>
-    <string name="open_track_as_trackfileformat">Öppna som %1$s</string>
     <string name="help_storage_pictures_title">Hur lagrar OpenTracks bilder som tagits som markörer\?</string>
     <string name="about_version_name">Versionsnamn: %1$s</string>
     <string name="settings_recording_fullscreen_on_while_recording_title">Helskärmsläge</string>
