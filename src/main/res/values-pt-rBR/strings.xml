@@ -562,7 +562,7 @@
     <string name="voiceDistanceNauticalMilesPlural">{n, plural, =1 {1 milha náutica} other {{n,number,#.0} milhas náuticas} }</string>
     <string name="voiceDistance">{n, plural, =1 {1 } other {{n,number,#.0}} }</string>
     <string name="lap_heart_rate">Frequência cardíaca na volta</string>
-    <string name="no_compatible_camera_installed">Nenhum aplicativo compatível de camera instalado</string>
+    <string name="no_compatible_camera_installed">Nenhum aplicativo compatível de câmera instalado</string>
     <string name="no_compatible_gallery_installed">Nenhum aplicativo compatível de galeria de imagens instalado</string>
     <string name="settings_recording_min_sampling_interval_title">Intervalo de tempo de amostragem</string>
     <string name="settings_recording_location_distance_summary">%1$s entre localizações gravadas</string>

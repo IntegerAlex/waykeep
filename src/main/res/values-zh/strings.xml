@@ -609,7 +609,6 @@ limitations under the License.
     <string name="settings_chart_display_elevation_title">显示海拔</string>
     <string name="settings_chart_display_pace_or_speed_title">显示配速或速度</string>
     <string name="settings_chart_display_heart_rate_title">显示心率</string>
-    <string name="voice_announce_lap_power_key">语音播报单圈功率</string>
     <string name="settings_recording_show_gps_disabled_warning_title">GPS 禁用警告</string>
     <string name="settings_recording_show_gps_disabled_warning_summary">记录时，如果 GPS 被禁用，则显示警告。</string>
     <string name="lap_heart_rate">单圈心率</string>

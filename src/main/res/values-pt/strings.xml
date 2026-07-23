@@ -514,7 +514,7 @@ limitations under the License.
     <string name="average_heart_rate">Frequência cardíaca média</string>
     <string name="voiceDistanceKilometersPlural">
         { n, plural,
-        one {{n,number,#.0} quilómetro}
+        one {{n,number,#.0} quilômetro}
         many {{n,number,#.0} quilómetros}
         other {{n,number,#.0} quilómetros}
         }
