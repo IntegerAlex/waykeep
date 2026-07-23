@@ -3,7 +3,6 @@ package de.dennisguse.opentracks.util;
 import android.database.Cursor;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -54,7 +53,6 @@ public abstract class AutoCloseableIterator<T> implements Iterator<T>, AutoClose
         return get();
     }
 
-    @VisibleForTesting
     public final int getCount() {
         return cursor.getCount();
     }
