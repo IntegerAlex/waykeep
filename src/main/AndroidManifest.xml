@@ -40,9 +40,7 @@ limitations under the License.
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE"
-        android:maxSdkVersion="33" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"
         android:minSdkVersion="34" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"
