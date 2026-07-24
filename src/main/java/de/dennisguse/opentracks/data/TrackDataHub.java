@@ -34,8 +34,6 @@ import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.statistics.TrackStatisticsUpdater;
-import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
-import de.dennisguse.opentracks.data.tables.TracksColumns;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.AltitudeCorrectionManager;
@@ -120,7 +118,7 @@ public class TrackDataHub {
                 notifyTracksTableUpdate(listeners);
             }
         };
-        contentResolver.registerContentObserver(TracksColumns.CONTENT_URI, false, tracksTableObserver);
+        contentResolver.registerContentObserver(CustomContentProvider.UrlType.TRACKS.getUri(), false, tracksTableObserver);
 
         trackPointsTableObserver = new ContentObserver(handler) {
             @Override
@@ -128,7 +126,7 @@ public class TrackDataHub {
                 notifyTrackPointsTableUpdate(true, listeners);
             }
         };
-        contentResolver.registerContentObserver(TrackPointsColumns.CONTENT_URI_BY_ID, false, trackPointsTableObserver);
+        contentResolver.registerContentObserver(CustomContentProvider.UrlType.TRACKPOINTS_BY_ID.getUri(), false, trackPointsTableObserver);
     }
 
     public void stop() {

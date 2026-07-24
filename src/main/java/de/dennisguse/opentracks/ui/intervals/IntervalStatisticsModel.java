@@ -17,12 +17,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.CustomContentProvider;
 import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.Distance;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
-import de.dennisguse.opentracks.data.tables.TrackPointsColumns;
 import de.dennisguse.opentracks.settings.UnitSystem;
 
 /**
@@ -85,7 +85,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
                 loadIntervalStatistics(trackId);
             }
         };
-        contentResolver.registerContentObserver(TrackPointsColumns.CONTENT_URI_BY_TRACKID, false, trackPointsTableObserver);
+        contentResolver.registerContentObserver(CustomContentProvider.UrlType.TRACKPOINTS_BY_TRACKID.getUri(), false, trackPointsTableObserver);
 
         return intervalsLiveData;
     }

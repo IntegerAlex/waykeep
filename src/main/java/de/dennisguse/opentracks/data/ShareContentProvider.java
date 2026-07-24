@@ -88,7 +88,7 @@ public class ShareContentProvider extends CustomContentProvider {
         }
         trackIdBuilder.deleteCharAt(trackIdBuilder.lastIndexOf(TRACKID_DELIMITER));
 
-        Uri uri = Uri.parse(TracksColumns.CONTENT_URI + "/" + trackFileFormat.getPreferenceId() + "/" + trackIdBuilder + "/" + Uri.encode(filename));
+        Uri uri = Uri.parse(UrlType.TRACKS.getUri() + "/" + trackFileFormat.getPreferenceId() + "/" + trackIdBuilder + "/" + Uri.encode(filename));
 
         Log.d(TAG, "Created uri " + uri + " with MIME " + trackFileFormat.getMimeType());
 
@@ -192,7 +192,7 @@ public class ShareContentProvider extends CustomContentProvider {
         String[] trackIdsString = trackIds.stream().map(id -> String.valueOf(id.id())).toArray(String[]::new);
         String whereClause = String.format(TracksColumns._ID + " IN (%s)", TextUtils.join(",", Collections.nCopies(trackIds.size(), "?")));
 
-        try (Cursor cursor = super.query(TracksColumns.CONTENT_URI, null, whereClause, trackIdsString, TracksColumns._ID)) {
+        try (Cursor cursor = super.query(UrlType.TRACKS.getUri(), null, whereClause, trackIdsString, TracksColumns._ID)) {
             while (cursor.moveToNext()) {
                 tracks.add(ContentProviderUtils.createTrack(cursor));
             }

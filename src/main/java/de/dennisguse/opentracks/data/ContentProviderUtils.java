@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -131,7 +132,7 @@ public class ContentProviderUtils {
     @VisibleForTesting
     public void deleteAllTracks(Context context) {
         // Delete tracks last since it triggers a database vacuum call
-        contentResolver.delete(TracksColumns.CONTENT_URI, null, null);
+        contentResolver.delete(CustomContentProvider.UrlType.TRACKS.getUri(), null, null);
 
         File dir = FileUtils.getPhotoDir(context);
         FileUtils.deleteDirectoryRecurse(dir);
@@ -144,13 +145,13 @@ public class ContentProviderUtils {
         }
 
         String whereClause = String.format(TracksColumns._ID + " IN (%s)", TextUtils.join(",", Collections.nCopies(trackIds.size(), "?")));
-        contentResolver.delete(TracksColumns.CONTENT_URI, whereClause, trackIds.stream().map(trackId -> Long.toString(trackId.id())).toArray(String[]::new));
+        contentResolver.delete(CustomContentProvider.UrlType.TRACKS.getUri(), whereClause, trackIds.stream().map(trackId -> Long.toString(trackId.id())).toArray(String[]::new));
     }
 
     public void deleteTrack(Context context, @NonNull Track.Id trackId) {
         // Delete track folder resources.
         FileUtils.deleteDirectoryRecurse(FileUtils.getPhotoDir(context, trackId));
-        contentResolver.delete(TracksColumns.CONTENT_URI, TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
+        contentResolver.delete(CustomContentProvider.UrlType.TRACKS.getUri(), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
     }
 
     //TODO Only use for tests; also move to tests.
@@ -194,7 +195,7 @@ public class ContentProviderUtils {
             selectionArgs = new String[]{"%" + searchQuery + "%", "%" + searchQuery + "%", "%" + searchQuery + "%"};
         }
 
-        return new TrackListIterator(contentResolver.query(TracksColumns.CONTENT_URI, PROJECTION, selection, selectionArgs, sortOrder));
+        return new TrackListIterator(contentResolver.query(CustomContentProvider.UrlType.TRACKS.getUri(), PROJECTION, selection, selectionArgs, sortOrder));
     }
 
     public Track getTrack(@NonNull Track.Id trackId) {
@@ -225,7 +226,7 @@ public class ContentProviderUtils {
      * @param sortOrder     the sort order. Can be null
      */
     Cursor getTrackCursor(String selection, String[] selectionArgs, String sortOrder) {
-        return contentResolver.query(TracksColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
+        return contentResolver.query(CustomContentProvider.UrlType.TRACKS.getUri(), null, selection, selectionArgs, sortOrder);
     }
 
     /**
@@ -237,7 +238,7 @@ public class ContentProviderUtils {
      */
     public Track.Id insertTrack(Track track) {
         //TODO Unset trackId
-        Uri uri = contentResolver.insert(TracksColumns.CONTENT_URI, createContentValues(track));
+        Uri uri = contentResolver.insert(CustomContentProvider.UrlType.TRACKS.getUri(), createContentValues(track));
         return new Track.Id(ContentUris.parseId(uri));
     }
 
@@ -248,7 +249,7 @@ public class ContentProviderUtils {
      * @param track the track
      */
     public void updateTrack(Track track) {
-        contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(track), TracksColumns._ID + "=?", new String[]{Long.toString(track.id().id())});
+        contentResolver.update(CustomContentProvider.UrlType.TRACKS.getUri(), createContentValues(track), TracksColumns._ID + "=?", new String[]{Long.toString(track.id().id())});
     }
 
     private ContentValues createContentValues(Track track) {
@@ -270,7 +271,7 @@ public class ContentProviderUtils {
     }
 
     public void updateTrackStatistics(@NonNull Track.Id trackId, @NonNull Statistics trackStatistics) {
-        contentResolver.update(TracksColumns.CONTENT_URI, createContentValues(trackStatistics), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
+        contentResolver.update(CustomContentProvider.UrlType.TRACKS.getUri(), createContentValues(trackStatistics), TracksColumns._ID + "=?", new String[]{Long.toString(trackId.id())});
     }
 
     private ContentValues createContentValues(Statistics trackStatistics) {
@@ -362,7 +363,7 @@ public class ContentProviderUtils {
     public void deleteMarker(Context context, Marker.Id markerId) {
         final Marker marker = getMarker(markerId);
         deleteMarkerPhoto(context, marker);
-        contentResolver.delete(MarkerColumns.CONTENT_URI, MarkerColumns._ID + "=?", new String[]{Long.toString(markerId.id())});
+        contentResolver.delete(CustomContentProvider.UrlType.MARKERS.getUri(), MarkerColumns._ID + "=?", new String[]{Long.toString(markerId.id())});
     }
 
     /**
@@ -422,7 +423,7 @@ public class ContentProviderUtils {
         if (updateMarker.photoUrl() == null) {
             deleteMarkerPhoto(context, savedMarker);
         }
-        int rows = contentResolver.update(MarkerColumns.CONTENT_URI, createContentValues(updateMarker, updateMarker.trackId()), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.id().id())});
+        int rows = contentResolver.update(CustomContentProvider.UrlType.MARKERS.getUri(), createContentValues(updateMarker, updateMarker.trackId()), MarkerColumns._ID + "=?", new String[]{Long.toString(updateMarker.id().id())});
         return rows == 1;
     }
 
@@ -430,7 +431,7 @@ public class ContentProviderUtils {
         assert marker.id() == null;
         assert marker.trackId() != null;
 
-        Uri uri = contentResolver.insert(MarkerColumns.CONTENT_URI, createContentValues(marker, marker.trackId()));
+        Uri uri = contentResolver.insert(CustomContentProvider.UrlType.MARKERS.getUri(), createContentValues(marker, marker.trackId()));
         return new Marker.Id(ContentUris.parseId(uri));
     }
 
@@ -491,7 +492,7 @@ public class ContentProviderUtils {
         if (maxCount >= 0) {
             sortOrder += " LIMIT " + maxCount;
         }
-        return contentResolver.query(MarkerColumns.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+        return contentResolver.query(CustomContentProvider.UrlType.MARKERS.getUri(), projection, selection, selectionArgs, sortOrder);
     }
 
     public MarkerIterator searchMarkers(Track.Id trackId, String query) {
@@ -509,7 +510,7 @@ public class ContentProviderUtils {
                     MarkerColumns.DESCRIPTION + " LIKE ? OR " +
                     MarkerColumns.TYPE_LOCALIZED + " LIKE ?";
             selectionArgs = new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
-            sortOrder = MarkerColumns.DEFAULT_SORT_ORDER + " DESC";
+            sortOrder = BaseColumns._ID + " DESC";
         }
 
         return new MarkerIterator(this, getMarkerCursor(null, selection, selectionArgs, sortOrder, -1));
@@ -567,7 +568,7 @@ public class ContentProviderUtils {
         for (int i = 0; i < trackPoints.size(); i++) {
             values[i] = createContentValues(trackPoints.get(i), trackId);
         }
-        return contentResolver.bulkInsert(TrackPointsColumns.CONTENT_URI_BY_ID, values);
+        return contentResolver.bulkInsert(CustomContentProvider.UrlType.TRACKPOINTS_BY_ID.getUri(), values);
     }
 
     //TODO Set trackId in this method.
@@ -576,7 +577,7 @@ public class ContentProviderUtils {
         for (int i = 0; i < markers.size(); i++) {
             values[i] = createContentValues(markers.get(i), trackId);
         }
-        return contentResolver.bulkInsert(MarkerColumns.CONTENT_URI, values);
+        return contentResolver.bulkInsert(CustomContentProvider.UrlType.MARKERS.getUri(), values);
     }
 
     /**
@@ -597,7 +598,7 @@ public class ContentProviderUtils {
             selectionArgs = new String[]{Long.toString(trackId.id())};
         }
 
-        return getTrackPointCursor(null, selection, selectionArgs, TrackPointsColumns.DEFAULT_SORT_ORDER);
+        return getTrackPointCursor(null, selection, selectionArgs, BaseColumns._ID);
     }
 
     /**
@@ -608,7 +609,7 @@ public class ContentProviderUtils {
      * @return the content provider URI of the inserted trackPoint
      */
     public Uri insertTrackPoint(TrackPoint trackPoint, Track.Id trackId) {
-        return contentResolver.insert(TrackPointsColumns.CONTENT_URI_BY_ID, createContentValues(trackPoint, trackId));
+        return contentResolver.insert(CustomContentProvider.UrlType.TRACKPOINTS_BY_ID.getUri(), createContentValues(trackPoint, trackId));
     }
 
     /**
@@ -683,7 +684,7 @@ public class ContentProviderUtils {
      * @param sortOrder     the sort order
      */
     private Cursor getTrackPointCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return contentResolver.query(TrackPointsColumns.CONTENT_URI_BY_ID, projection, selection, selectionArgs, sortOrder);
+        return contentResolver.query(CustomContentProvider.UrlType.TRACKPOINTS_BY_ID.getUri(), projection, selection, selectionArgs, sortOrder);
     }
 
     public static String formatIdListForUri(Track.Id... trackIds) {
@@ -718,7 +719,7 @@ public class ContentProviderUtils {
 
     public SensorStatistics getSensorStats(@NonNull Track.Id trackId) {
         SensorStatistics sensorStatistics = null;
-        try (Cursor cursor = contentResolver.query(ContentUris.withAppendedId(TracksColumns.CONTENT_URI_SENSOR_STATS, trackId.id()), null, null, null, null)) {
+        try (Cursor cursor = contentResolver.query(ContentUris.withAppendedId(CustomContentProvider.UrlType.TRACKS_SENSOR_STATS.getUri(), trackId.id()), null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 final int MAX_HR_INDEX = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALIAS_MAX_HR);
                 final int AVG_HR_INDEX = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALIAS_AVG_HR);

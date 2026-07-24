@@ -27,6 +27,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -223,7 +224,7 @@ public class CustomContentProvider extends ContentProvider {
         switch (getUrlType(url)) {
             case TRACKPOINTS -> {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
-                sortOrder = sort != null ? sort : TrackPointsColumns.DEFAULT_SORT_ORDER;
+                sortOrder = sort != null ? sort : BaseColumns._ID;
             }
             case TRACKPOINTS_BY_ID -> {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
@@ -244,7 +245,7 @@ public class CustomContentProvider extends ContentProvider {
                 } else {
                     queryBuilder.setTables(TracksColumns.TABLE_NAME);
                 }
-                sortOrder = sort != null ? sort : TracksColumns.DEFAULT_SORT_ORDER;
+                sortOrder = sort != null ? sort : BaseColumns._ID;
             }
             case TRACKS_BY_ID -> {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
@@ -275,7 +276,7 @@ public class CustomContentProvider extends ContentProvider {
             }
             case MARKERS -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
-                sortOrder = sort != null ? sort : MarkerColumns.DEFAULT_SORT_ORDER;
+                sortOrder = sort != null ? sort : BaseColumns._ID;
             }
             case MARKERS_BY_ID -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
@@ -386,7 +387,7 @@ public class CustomContentProvider extends ContentProvider {
         }
         long rowId = db.insert(TrackPointsColumns.TABLE_NAME, TrackPointsColumns._ID, values);
         if (rowId >= 0) {
-            return ContentUris.appendId(TrackPointsColumns.CONTENT_URI_BY_ID.buildUpon(), rowId).build();
+            return ContentUris.appendId(UrlType.TRACKPOINTS_BY_ID.getUri().buildUpon(), rowId).build();
         }
         throw new SQLiteException("Failed to insert a track point " + url);
     }
@@ -394,7 +395,7 @@ public class CustomContentProvider extends ContentProvider {
     private Uri insertTrack(Uri url, ContentValues contentValues) {
         long rowId = db.insert(TracksColumns.TABLE_NAME, TracksColumns._ID, contentValues);
         if (rowId >= 0) {
-            return ContentUris.appendId(TracksColumns.CONTENT_URI.buildUpon(), rowId).build();
+            return ContentUris.appendId(UrlType.TRACKS.getUri().buildUpon(), rowId).build();
         }
         throw new SQLException("Failed to insert a track " + url);
     }
@@ -402,7 +403,7 @@ public class CustomContentProvider extends ContentProvider {
     private Uri insertMarker(Uri url, ContentValues contentValues) {
         long rowId = db.insert(MarkerColumns.TABLE_NAME, MarkerColumns._ID, contentValues);
         if (rowId >= 0) {
-            return ContentUris.appendId(MarkerColumns.CONTENT_URI.buildUpon(), rowId).build();
+            return ContentUris.appendId(UrlType.MARKERS.getUri().buildUpon(), rowId).build();
         }
         throw new SQLException("Failed to insert a marker " + url);
     }

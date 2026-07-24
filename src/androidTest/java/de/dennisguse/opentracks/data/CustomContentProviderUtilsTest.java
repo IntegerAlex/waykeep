@@ -227,13 +227,13 @@ public class CustomContentProviderUtilsTest {
 
     private void assertCount(int trackCount, int trackPointCount, int markerCount) {
         ContentResolver contentResolver = context.getContentResolver();
-        try (Cursor tracksCursor = contentResolver.query(TracksColumns.CONTENT_URI, null, null, null, TracksColumns._ID)) {
+        try (Cursor tracksCursor = contentResolver.query(CustomContentProvider.UrlType.TRACKS.getUri(), null, null, null, TracksColumns._ID)) {
             assertEquals(trackCount, tracksCursor.getCount());
         }
-        try (Cursor tracksPointsCursor = contentResolver.query(TrackPointsColumns.CONTENT_URI_BY_ID, null, null, null, TrackPointsColumns._ID)) {
+        try (Cursor tracksPointsCursor = contentResolver.query(CustomContentProvider.UrlType.TRACKPOINTS_BY_ID.getUri(), null, null, null, TrackPointsColumns._ID)) {
             assertEquals(trackPointCount, tracksPointsCursor.getCount());
         }
-        try (Cursor markerCursor = contentResolver.query(MarkerColumns.CONTENT_URI, null, null, null, MarkerColumns._ID)) {
+        try (Cursor markerCursor = contentResolver.query(CustomContentProvider.UrlType.MARKERS.getUri(), null, null, null, MarkerColumns._ID)) {
             assertEquals(markerCount, markerCursor.getCount());
         }
     }

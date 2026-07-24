@@ -16,10 +16,7 @@
 
 package de.dennisguse.opentracks.data.tables;
 
-import android.net.Uri;
 import android.provider.BaseColumns;
-
-import de.dennisguse.opentracks.data.CustomContentProvider;
 
 /**
  * Constants for the track points table.
@@ -29,11 +26,6 @@ import de.dennisguse.opentracks.data.CustomContentProvider;
 public interface TrackPointsColumns extends BaseColumns {
 
     String TABLE_NAME = "trackpoints";
-    @Deprecated
-    Uri CONTENT_URI_BY_ID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME);
-    @Deprecated
-    Uri CONTENT_URI_BY_TRACKID = Uri.parse(CustomContentProvider.CONTENT_BASE_URI + "/" + TABLE_NAME + "/trackid");
-    String DEFAULT_SORT_ORDER = _ID;
 
     // Columns
     String TRACKID = "trackid";
