@@ -27,8 +27,6 @@ import kotlinx.coroutines.BuildersKt;
  */
 public class HealthConnectUtils {
 
-    private static final String TAG = HealthConnectUtils.class.getSimpleName();
-
     static final String WRITE_EXERCISE_PERMISSION = HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(ExerciseSessionRecord.class));
     static final String WRITE_EXERCISE_ROUTE_PERMISSION = HealthPermission.PERMISSION_WRITE_EXERCISE_ROUTE;
 

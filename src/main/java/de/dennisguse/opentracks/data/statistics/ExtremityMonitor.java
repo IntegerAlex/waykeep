@@ -51,28 +51,10 @@ public class ExtremityMonitor {
     }
 
     /**
-     * Sets the minimum value.
-     *
-     * @param min the minimum value
-     */
-    public void setMin(double min) {
-        this.min = min;
-    }
-
-    /**
      * Gets the maximum value seen.
      */
     public double getMax() {
         return max;
-    }
-
-    /**
-     * Sets the maximum value.
-     *
-     * @param max the maximum value
-     */
-    public void setMax(double max) {
-        this.max = max;
     }
 
     /**

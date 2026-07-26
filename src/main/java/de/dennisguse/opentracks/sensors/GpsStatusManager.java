@@ -20,8 +20,6 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
  */
 class GpsStatusManager {
 
-    private static final String TAG = GpsStatusManager.class.getSimpleName();
-
     // The duration that GpsStatus waits from minimal interval to consider GPS lost.
     @VisibleForTesting
     public static final Duration SIGNAL_LOST_THRESHOLD = Duration.ofSeconds(30);

@@ -136,12 +136,6 @@ public class FilterDialogFragment extends DialogFragment {
         public final String value;
         public boolean isChecked;
 
-        public FilterItem(String id, String value) {
-            this.id = id;
-            this.value = value;
-            this.isChecked = true;
-        }
-
         public FilterItem(String id, String value, boolean isChecked) {
             this.id = id;
             this.value = value;

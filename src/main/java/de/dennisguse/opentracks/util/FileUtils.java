@@ -104,10 +104,6 @@ public class FileUtils {
         return fileName.substring(index + 1);
     }
 
-    public static String getExtension(DocumentFile file) {
-        return getExtension(file.getName());
-    }
-
     public static String getExtension(Uri uri) {
         return getExtension(uri.toString());
     }

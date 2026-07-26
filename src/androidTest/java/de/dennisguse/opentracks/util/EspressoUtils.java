@@ -1,8 +1,8 @@
 package de.dennisguse.opentracks.util;
 
-import static org.hamcrest.Matchers.allOf;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static org.hamcrest.Matchers.allOf;
 
 import android.app.Activity;
 import android.os.SystemClock;
@@ -14,11 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.util.HumanReadables;
+import androidx.test.espresso.util.TreeIterables;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
-import androidx.test.espresso.util.HumanReadables;
-import androidx.test.espresso.util.TreeIterables;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -32,8 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 public class EspressoUtils {
-
-    private static final long VIEW_POLLING_INTERVAL_MS = 50;
 
     public static Matcher<View> withRecyclerViewItemCount(final int count) {
         return new TypeSafeMatcher<>() {
