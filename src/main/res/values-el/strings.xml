@@ -302,7 +302,7 @@ limitations under the License.
     <string name="waypoint_type_water_fountain">συντριβάνι</string>
     <string name="waypoint_type_waypoint">σημείο διαδρομής</string>
     <string name="about_preference_title">Σχετικά</string>
-    <string name="about_url">Ιστότοπους εγχειρήματος: <a href="%1$s">%1$s</a></string>
+    <string name="about_url">Ιστότοπος εγχειρήματος: <a href="%1$s">%1$s</a></string>
     <string name="about_version_name">Όνομα έκδοσης: %1$s</string>
     <string name="about_version_code">Κωδικός έκδοσης: %1$d</string>
     <string name="about_third_party_data">Δεδομένα από τρίτους</string>
