@@ -96,6 +96,7 @@ public class BluetoothLeAdapter extends BaseAdapter {
             this.name = name;
         }
 
+        @NonNull
         public String getAddress() {
             return address;
         }

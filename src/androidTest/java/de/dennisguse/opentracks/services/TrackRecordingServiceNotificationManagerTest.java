@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -91,6 +92,7 @@ public class TrackRecordingServiceNotificationManagerTest {
             setSmallIcon(R.drawable.ic_logo_color_24dp);
         }
 
+        @NonNull
         @Override
         public NotificationCompat.Builder setOnlyAlertOnce(boolean onlyAlertOnce) {
             onlyAlertOnceValues.add(onlyAlertOnce);
