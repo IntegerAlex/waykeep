@@ -598,4 +598,11 @@ limitations under the License.
     <string name="activity_type_gravel_biking">rattasõit kruusateedel</string>
     <string name="menu_export_all_to_health_connect">Ekspordi kõik</string>
     <string name="settings_export_to_health_connect">Ekspordi „Health Connect“ liidesesse</string>
+    <string name="health_connect_export_enabled_summary">Peale salvestamise lõppemist ekspordi tegevus „Health Connect“ taustateenusesse</string>
+    <string name="health_connect_not_available">„Health Connect“ taustateenus pole selles seadmes saadaval</string>
+    <string name="health_connect_open_settings_title">„Health Connect“ taustateenuse seadistused</string>
+    <string name="health_connect_open_settings_summary">Ava „Health Connect“ taustateenuse seadistused</string>
+    <string name="health_connect_permissions_rationale_title">„Health Connect“ taustateenuse õigused</string>
+    <string name="health_connect_permissions_rationale_heading">Kuidas OpenTracks kasutab „Health Connect“ taustateenust</string>
+    <string name="health_connect_permissions_rationale_summary">Kui see on seadistustest lubatud, siis OpenTracks salvestab treeningute andmed ka „Health Connect“ taustateenusesse. OpenTracks ei loe andmeid „Health Connect“ taustateenusest.</string>
 </resources>
