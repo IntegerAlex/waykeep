@@ -6,16 +6,22 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.health.connect.client.HealthConnectClient;
+import androidx.health.connect.client.records.DistanceRecord;
+import androidx.health.connect.client.records.ElevationGainedRecord;
 import androidx.health.connect.client.records.ExerciseRoute;
 import androidx.health.connect.client.records.ExerciseSessionRecord;
+import androidx.health.connect.client.records.Record;
+import androidx.health.connect.client.records.SpeedRecord;
 import androidx.health.connect.client.records.metadata.Device;
 import androidx.health.connect.client.records.metadata.Metadata;
 import androidx.health.connect.client.units.Length;
+import androidx.health.connect.client.units.Velocity;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
@@ -111,27 +117,65 @@ public class HealthConnectWorker extends Worker {
             throw new RuntimeException("Track not found: " + trackId);
         }
 
-        ExerciseRoute exerciseRoute = createExerciseRoute(contentProviderUtils, trackId);
-
         HealthConnectClient client = HealthConnectClient.getOrCreate(context);
+        Metadata metadata = Metadata.activelyRecorded(
+                new Device(Device.TYPE_PHONE, Build.MANUFACTURER, Build.MODEL),
+                track.uuid().toString()
+        );
 
-        ExerciseSessionRecord record = new ExerciseSessionRecord(
+        List<Record> records = new ArrayList<>();
+
+        ExerciseData exerciseData = createExerciseData(contentProviderUtils, trackId);
+
+        //Avoid bug in HealthConnect: data must be within ExerciseSessionRecord.startTime and ExerciseSessionRecord.stopTime
+        List<ExerciseRoute.Location> locations = exerciseData.locations.stream()
+                .filter(i -> track.startTime().toInstant().isBefore(i.getTime()) && track.stopTime().toInstant().isAfter(i.getTime()))
+                .toList();
+
+        records.add(new ExerciseSessionRecord(
                 track.startTime().toInstant(),
                 track.startTime().getOffset(),
                 track.stopTime().toInstant(),
                 track.stopTime().getOffset(),
-                Metadata.activelyRecorded(
-                        new Device(Device.TYPE_PHONE, Build.MANUFACTURER, Build.MODEL),
-                        track.uuid().toString()
-                ),
+                metadata,
                 toExerciseType(track.activityType()),
                 track.name(),
                 track.description(),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                exerciseRoute);
+                new ExerciseRoute(locations)));
 
-        List<ExerciseSessionRecord> records = Collections.singletonList(record);
+        records.add(new DistanceRecord(
+                track.startTime().toInstant(),
+                track.startTime().getOffset(),
+                track.stopTime().toInstant(),
+                track.stopTime().getOffset(),
+                Length.meters(track.statistics().totalDistance().toM()),
+                metadata
+        ));
+
+        if (track.statistics().altitudeGainLoss() != null) {
+            records.add(new ElevationGainedRecord(
+                    track.startTime().toInstant(),
+                    track.startTime().getOffset(),
+                    track.stopTime().toInstant(),
+                    track.stopTime().getOffset(),
+                    Length.meters(track.statistics().altitudeGainLoss().gain_m()),
+                    metadata
+            ));
+        }
+
+        if (!exerciseData.speeds.isEmpty()) {
+            records.add(new SpeedRecord(
+                    track.startTime().toInstant(),
+                    track.startTime().getOffset(),
+                    track.stopTime().toInstant(),
+                    track.stopTime().getOffset(),
+                    exerciseData.speeds,
+                    metadata
+            ));
+        }
+
         Object ignored = BuildersKt.runBlocking(
                 kotlin.coroutines.EmptyCoroutineContext.INSTANCE,
                 (Function2) (scope, cont) -> client.insertRecords(records, (Continuation) cont));
@@ -140,29 +184,49 @@ public class HealthConnectWorker extends Worker {
         return new ExportResult(track.name());
     }
 
-    private static ExerciseRoute createExerciseRoute(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
-        List<ExerciseRoute.Location> route = new ArrayList<>();
+    private static ExerciseData createExerciseData(ContentProviderUtils contentProviderUtils, Track.Id trackId) {
+        List<ExerciseRoute.Location> locations = new LinkedList<>();
+        List<SpeedRecord.Sample> speeds = new LinkedList<>();
 
         try (TrackPointIterator iterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
-            while (iterator.hasNext()) {
+            while (iterator.hasNext()) { //TODO iterator.iterator.forEachRemaining()
                 TrackPoint trackPoint = iterator.next();
-                if (trackPoint.type() != TrackPoint.Type.TRACKPOINT) continue;
+                if (trackPoint.type() != TrackPoint.Type.TRACKPOINT) continue; //TODO Include SEGMENT_START_AUTOMATIC?
 
                 Position position = trackPoint.position();
 
-                route.add(new ExerciseRoute.Location(
-                        trackPoint.getTime(),
-                        position.latitude(),
-                        position.longitude(),
-                        position.horizontalAccuracy() != null ? Length.meters(position.horizontalAccuracy().toM()) : null,
-                        position.verticalAccuracy() != null ? Length.meters(position.verticalAccuracy().toM()) : null,
-                        position.altitude() != null ? Length.meters(position.altitude().toM()) : null)
-                );
+                if (position.hasLocation()) {
+                    locations.add(new ExerciseRoute.Location(
+                            trackPoint.getTime(),
+                            position.latitude(),
+                            position.longitude(),
+                            position.horizontalAccuracy() != null ? Length.meters(position.horizontalAccuracy().toM()) : null,
+                            position.verticalAccuracy() != null ? Length.meters(position.verticalAccuracy().toM()) : null,
+                            position.altitude() != null ? Length.meters(position.altitude().toM()) : null)
+                    );
+                }
+
+                if (position.hasSpeed()) {
+                    speeds.add(new SpeedRecord.Sample(
+                            trackPoint.getTime(),
+                            Velocity.metersPerSecond(position.speed().toMPS())
+                    ));
+                }
+
+                //TODO Cadence
+                //TODO Power
+                //TODO Heartrate
             }
         }
 
-        return new ExerciseRoute(route);
+        return new ExerciseData(locations, speeds);
     }
+
+    private record ExerciseData(
+            List<ExerciseRoute.Location> locations,
+            List<SpeedRecord.Sample> speeds
+    ) {}
+
 
     private static int toExerciseType(ActivityType activityType) {
         return switch (activityType) {

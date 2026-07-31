@@ -5,7 +5,10 @@ import android.content.Context;
 import androidx.health.connect.client.HealthConnectClient;
 import androidx.health.connect.client.PermissionController;
 import androidx.health.connect.client.permission.HealthPermission;
+import androidx.health.connect.client.records.DistanceRecord;
+import androidx.health.connect.client.records.ElevationGainedRecord;
 import androidx.health.connect.client.records.ExerciseSessionRecord;
+import androidx.health.connect.client.records.SpeedRecord;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -27,11 +30,13 @@ import kotlinx.coroutines.BuildersKt;
  */
 public class HealthConnectUtils {
 
-    static final String WRITE_EXERCISE_PERMISSION = HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(ExerciseSessionRecord.class));
-    static final String WRITE_EXERCISE_ROUTE_PERMISSION = HealthPermission.PERMISSION_WRITE_EXERCISE_ROUTE;
-
-    //TODO Should be package private
-    public static final Set<String> PERMISSIONS = Set.of(WRITE_EXERCISE_PERMISSION, WRITE_EXERCISE_ROUTE_PERMISSION);
+    public static final Set<String> PERMISSIONS = Set.of(
+            HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(ExerciseSessionRecord.class)),
+            HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(DistanceRecord.class)),
+            HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(ElevationGainedRecord.class)),
+            HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(SpeedRecord.class)),
+            HealthPermission.PERMISSION_WRITE_EXERCISE_ROUTE
+    );
 
     private HealthConnectUtils() {
     }
