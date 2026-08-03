@@ -41,6 +41,9 @@ public class HealthConnectUtils {
     }
 
     public static Set<String> getGrantedPermissions(Context context) {
+        if (!isAvailable(context))
+            return Set.of();
+
         try {
             HealthConnectClient client = HealthConnectClient.getOrCreate(context);
             PermissionController controller = client.getPermissionController();
