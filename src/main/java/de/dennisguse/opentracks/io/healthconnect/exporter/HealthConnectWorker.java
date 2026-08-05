@@ -196,14 +196,17 @@ public class HealthConnectWorker extends Worker {
                 Position position = trackPoint.position();
 
                 if (position.hasLocation()) {
-                    locations.add(new ExerciseRoute.Location(
-                            trackPoint.getTime(),
-                            position.latitude(),
-                            position.longitude(),
-                            position.horizontalAccuracy() != null ? Length.meters(position.horizontalAccuracy().toM()) : null,
-                            position.verticalAccuracy() != null ? Length.meters(position.verticalAccuracy().toM()) : null,
-                            position.altitude() != null ? Length.meters(position.altitude().toM()) : null)
-                    );
+                    //ExcerciseRoute does not allow duplicated timestamps.
+                    if (locations.stream().noneMatch(location -> location.getTime().equals(position.time()))) {
+                        locations.add(new ExerciseRoute.Location(
+                                trackPoint.getTime(),
+                                position.latitude(),
+                                position.longitude(),
+                                position.horizontalAccuracy() != null ? Length.meters(position.horizontalAccuracy().toM()) : null,
+                                position.verticalAccuracy() != null ? Length.meters(position.verticalAccuracy().toM()) : null,
+                                position.altitude() != null ? Length.meters(position.altitude().toM()) : null)
+                        );
+                    }
                 }
 
                 if (position.hasSpeed()) {
