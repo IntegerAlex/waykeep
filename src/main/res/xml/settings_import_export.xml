@@ -65,14 +65,6 @@
                 android:targetPackage="@string/applicationId" />
         </Preference>
 
-        <Preference
-            android:title="@string/health_connect_permissions_rationale_title"
-            android:key="healthConnectPermissions">
-            <intent
-                android:targetClass="de.dennisguse.opentracks.settings.HealthConnect$ConfigurePermissions"
-                android:targetPackage="@string/applicationId" />
-        </Preference>
-
         <Preference android:title="@string/menu_export_all_to_health_connect">
             <intent
                 android:targetClass="de.dennisguse.opentracks.settings.HealthConnect$ExportAll"

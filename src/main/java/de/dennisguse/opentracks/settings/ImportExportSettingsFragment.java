@@ -27,11 +27,6 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
         setExportTrackFileFormatOptions();
         setExportDirectorySummary();
         setFilenameTemplate();
-
-        findPreference("healthConnectPermissions").setSummaryProvider(preference -> {
-            //TODO This should be localized and prefixes trimmed.
-            return String.join(",", HealthConnectUtils.getGrantedPermissions(getActivity()));
-        });
     }
 
     @Override
