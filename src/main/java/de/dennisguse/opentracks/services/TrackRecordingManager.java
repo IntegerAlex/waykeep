@@ -120,6 +120,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     synchronized void endCurrentTrack() {
+        handler.removeCallbacks(ON_IDLE);
         TrackPoint segmentEnd = trackPointCreator.createSegmentEnd();
         insertTrackPoint(segmentEnd, true);
 
