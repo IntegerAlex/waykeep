@@ -57,16 +57,11 @@ public class GpsInternal implements Driver {
             return;
         }
 
-        LocationRequestCompat locationRequest = new LocationRequestCompat.Builder(PreferencesUtils.getMinSamplingInterval().toMillis())
-                .setQuality(LocationRequestCompat.QUALITY_HIGH_ACCURACY)
-                .setMaxUpdateDelayMillis(0)
-                .build();
-
         if (PermissionRequester.GPS.hasPermission(context)) {
             try {
-                Log.i(TAG, "Register for location updates " + context);
+                Log.i(TAG, "Register for location updates");
                 driverObserver.onConnected(null, null);
-                LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, locationRequest, handler::post, locationListenerCompat);
+                LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, createLocationRequest(), handler::post, locationListenerCompat);
                 return;
             } catch (SecurityException e) {
                 Log.e(TAG, "Could not register location listener; permissions not granted.", e);
@@ -74,6 +69,16 @@ public class GpsInternal implements Driver {
         }
 
         driverObserver.onDisconnected();
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @Override
+    public void updateDriverParameters(Context context, Handler handler) {
+        if (!isConnected()) return;
+
+        Log.i(TAG, "Update for location updates");
+        driverObserver.onConnected(null, null);
+        LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, createLocationRequest(), handler::post, locationListenerCompat);
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -87,9 +92,15 @@ public class GpsInternal implements Driver {
         driverObserver.onDisconnected();
     }
 
-
     @Override
     public boolean isConnected() {
         return locationManager != null;
+    }
+
+    private LocationRequestCompat createLocationRequest() {
+        return new LocationRequestCompat.Builder(PreferencesUtils.getMinSamplingInterval().toMillis())
+                .setQuality(LocationRequestCompat.QUALITY_HIGH_ACCURACY)
+                .setMaxUpdateDelayMillis(0)
+                .build();
     }
 }

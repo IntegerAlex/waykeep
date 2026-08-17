@@ -45,8 +45,9 @@ public class GpsHandler extends SensorHandler<Location, Position> {
                 gpsStatusManager.onMinSamplingIntervalChanged(PreferencesUtils.getMinSamplingInterval());
             }
 
-            //TODO
-            connect();
+            if (driver != null) {
+                driver.updateDriverParameters(getContext(), sensorManager.getHandler());
+            }
         }
     };
 

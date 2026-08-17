@@ -11,5 +11,9 @@ public interface Driver {
     //TODO Remove from interface?
     boolean isConnected();
 
+    default void updateDriverParameters(Context context, Handler handler) {
+        throw new UnsupportedOperationException();
+    }
+
     void disconnect();
 }

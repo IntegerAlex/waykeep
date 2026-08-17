@@ -21,10 +21,10 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     private static final String TAG = SensorHandler.class.getSimpleName();
 
-    private final SensorManager sensorManager;
-
     @VisibleForTesting
     public Driver driver;
+
+    protected final SensorManager sensorManager;
 
     protected Aggregator<AggregatorInput, AggregatorOutput> aggregator;
 
