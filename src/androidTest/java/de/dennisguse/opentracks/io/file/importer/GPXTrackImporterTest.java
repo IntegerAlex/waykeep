@@ -285,8 +285,8 @@ public class GPXTrackImporterTest {
     public void importExportTest_timezone() throws IOException {
         // given
         XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
-        InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone);
-        try (InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_timezone)) {
+        InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx11_timezone);
+        try (InputStream inputStreamExpected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx11_timezone)) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             // when
