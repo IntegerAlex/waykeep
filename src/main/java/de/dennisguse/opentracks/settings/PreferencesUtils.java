@@ -71,7 +71,6 @@ public class PreferencesUtils {
     private static SharedPreferences sharedPreferences;
 
     private static Resources resources;
-    private static final long LONG_UNSET = Long.MIN_VALUE;
 
     /**
      * Must be called during application startup.
