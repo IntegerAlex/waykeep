@@ -122,6 +122,47 @@ public class GPXTrackImporterTest {
 
     @LargeTest
     @Test
+    public void gpx_missing_time() throws IOException {
+        // given
+        XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
+        InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx11_missing_time);
+
+        // when
+        // 1. import
+        importTrackId = importer.importFile(inputStream).get(0);
+
+        // then
+        // 2. track
+        Track importedTrack = contentProviderUtils.getTrack(importTrackId);
+        assertNotNull(importedTrack);
+        assertEquals("", importedTrack.activityTypeLocalized());
+        assertEquals("", importedTrack.description());
+        assertEquals("20210907_213924.gpx", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
+
+        // 3. trackstatistics
+        Statistics trackStatistics = importedTrack.statistics();
+        assertEquals(0, trackStatistics.maxSpeed().toMPS(), 0.01);
+        assertEquals(Duration.ofSeconds(0), trackStatistics.movingDuration());
+
+        // 4. trackpoints
+        List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
+        assertEquals(1, importedTrackPoints.size());
+
+        TrackPointAssert a = new TrackPointAssert();
+        a.assertEquals(List.of(
+                new TrackPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                        new Position(
+                                Instant.parse("2021-09-07T22:12:00Z"),
+                                30.14185982, -40.3863038, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                null))
+        ), importedTrackPoints);
+    }
+
+    @LargeTest
+    @Test
     public void gpx_speed_no_namespace() throws IOException {
         // given
         XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));

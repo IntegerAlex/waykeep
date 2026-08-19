@@ -18,7 +18,10 @@ package de.dennisguse.opentracks.io.file.importer;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -178,7 +181,10 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
                 zoneOffset = null;
             }
             case TAG_TRACK_SEGMENT -> onTrackSegmentEnd();
-            case TAG_TRACK_POINT -> currentSegment.add(createTrackPoint());
+            case TAG_TRACK_POINT -> {
+                TrackPoint trackPoint = createTrackPoint();
+                if (trackPoint != null) currentSegment.add(trackPoint);
+            }
             case TAG_NAME -> {
                 if (content != null) {
                     name = content.trim();
@@ -284,8 +290,10 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         currentSegment.clear();
     }
 
-
+    @Nullable
     private TrackPoint createTrackPoint() throws ParsingException {
+        if (TextUtils.isEmpty(time)) return null;
+
         OffsetDateTime parsedTime;
         try {
             parsedTime = StringUtils.parseTime(time);
@@ -468,7 +476,10 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
         }
 
         TrackPoint trackPoint = createTrackPoint();
-
+        if (trackPoint == null) {
+            Log.w(TAG, "Marker with no TrackPoint");
+            return;
+        }
         if (!trackPoint.position().hasLocation()) {
             Log.w(TAG, "Marker with invalid coordinates ignored: " + trackPoint.position());
             return;
