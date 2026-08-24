@@ -282,10 +282,11 @@ public class GPXTrackExporter implements TrackExporter {
         Statistics trackStatistics = track.statistics();
         printWriter.println("<gpxtrkx:TrackStatsExtension>");
         printWriter.println("<gpxtrkx:Distance>" + trackStatistics.totalDistance().toM() + "</gpxtrkx:Distance>");
-        printWriter.println("<gpxtrkx:TimerTime>" + trackStatistics.totalDuration().getSeconds() + "</gpxtrkx:TimerTime>");
+        printWriter.println("<gpxtrkx:TotalElapsedTime>" + trackStatistics.totalDuration().getSeconds() + "</gpxtrkx:TotalElapsedTime>");
         printWriter.println("<gpxtrkx:MovingTime>" + trackStatistics.movingDuration().getSeconds() + "</gpxtrkx:MovingTime>");
         printWriter.println("<gpxtrkx:StoppedTime>" + trackStatistics.getStoppedTime().getSeconds() + "</gpxtrkx:StoppedTime>");
         printWriter.println("<gpxtrkx:MaxSpeed>" + trackStatistics.maxSpeed().toMPS() + "</gpxtrkx:MaxSpeed>");
+        printWriter.println("<gpxtrkx:MovingSpeed>" + trackStatistics.getAverageMovingSpeed().toMPS() + "</gpxtrkx:MovingSpeed>");
         if (trackStatistics.altitudeGainLoss() != null) {
             printWriter.println("<gpxtrkx:Ascent>" + trackStatistics.altitudeGainLoss().gain_m() + "</gpxtrkx:Ascent>");
             printWriter.println("<gpxtrkx:Descent>" + trackStatistics.altitudeGainLoss().loss_m() + "</gpxtrkx:Descent>");

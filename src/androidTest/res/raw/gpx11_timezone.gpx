@@ -28,10 +28,11 @@ xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/
 <opentracks:typeTranslated><![CDATA[unknown]]></opentracks:typeTranslated>
 <gpxtrkx:TrackStatsExtension>
 <gpxtrkx:Distance>0.0</gpxtrkx:Distance>
-<gpxtrkx:TimerTime>0</gpxtrkx:TimerTime>
+<gpxtrkx:TotalElapsedTime>0</gpxtrkx:TotalElapsedTime>
 <gpxtrkx:MovingTime>0</gpxtrkx:MovingTime>
 <gpxtrkx:StoppedTime>0</gpxtrkx:StoppedTime>
 <gpxtrkx:MaxSpeed>0.0</gpxtrkx:MaxSpeed>
+<gpxtrkx:MovingSpeed>0.0</gpxtrkx:MovingSpeed>
 </gpxtrkx:TrackStatsExtension>
 </extensions>
 <trkseg>
