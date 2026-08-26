@@ -74,28 +74,44 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
     private static final String TAG_TRACK_POINT = "trkpt";
     private static final String TAG_TRACK_SEGMENT = "trkseg";
     private static final String TAG_TYPE = "type";
-    private static final String TAG_TYPE_LOCALIZED = "opentracks:typeTranslated";
     private static final String TAG_MARKER = "wpt";
-    private static final String TAG_ID = "opentracks:trackid";
 
     private static final String ATTRIBUTE_LAT = "lat";
     private static final String ATTRIBUTE_LON = "lon";
 
-    private static final String TAG_EXTENSION_SPEED = "gpxtpx:speed";
     /**
      * Often speed is exported without the proper namespace.
      */
     private static final String TAG_EXTENSION_SPEED_COMPAT = "speed";
-    private static final String TAG_EXTENSION_HEARTRATE = "gpxtpx:hr";
-    private static final String TAG_EXTENSION_TEMPERATURE = "gpxtpx:atemp";
-    private static final String TAG_EXTENSION_CADENCE = "gpxtpx:cad";
-    private static final String TAG_EXTENSION_POWER = "pwr:PowerInWatts";
 
-    private static final String TAG_EXTENSION_GAIN = "opentracks:gain";
-    private static final String TAG_EXTENSION_LOSS = "opentracks:loss";
-    private static final String TAG_EXTENSION_DISTANCE = "opentracks:distance";
-    private static final String TAG_EXTENSION_ACCURACY_HORIZONTAL = "opentracks:accuracy_horizontal";
-    private static final String TAG_EXTENSION_ACCURACY_VERTICAL = "opentracks:accuracy_vertical";
+    /**
+     * Garmin Trackpoint Extensions.
+     */
+    private static final String NS_GARMIN_TRACKPOINT_EXTENSION_V1 = "http://www.garmin.com/xmlschemas/TrackPointExtension/v1";
+    private static final String NS_GARMIN_TRACKPOINT_EXTENSION_V2 = "http://www.garmin.com/xmlschemas/TrackPointExtension/v2";
+    private static final String TAG_GARMIN_TPX_EXTENSION_SPEED = "speed";
+    private static final String TAG_GARMIN_TPX_EXTENSION_HEARTRATE = "hr";
+    private static final String TAG_GARMIN_TPX_EXTENSION_TEMPERATURE = "atemp";
+    private static final String TAG_GARMIN_TPX_EXTENSION_CADENCE = "cad";
+
+    /**
+     * Garmin Trackpoint Extensions.
+     */
+    private static final String NS_GARMIN_POWER_EXTENSION_V1 = "http://www.garmin.com/xmlschemas/PowerExtension/v1";
+    private static final String TAG_GARMIN_PWR_EXTENSION_POWER = "PowerInWatts";
+
+    /**
+     * OpenTracks Extensions.
+     */
+    private static final String NS_OPENTRACKS = "http://opentracksapp.com/xmlschemas/v1";
+    private static final String TAG_OPENTRACKS_EXTENSION_TRACK_ID = "trackid";
+    private static final String TAG_OPENTRACKS_EXTENSION_TYPE_LOCALIZED = "typeTranslated";
+    private static final String TAG_OPENTRACKS_EXTENSION_GAIN = "gain";
+    private static final String TAG_OPENTRACKS_EXTENSION_LOSS = "loss";
+    private static final String TAG_OPENTRACKS_EXTENSION_DISTANCE = "distance";
+    private static final String TAG_OPENTRACKS_EXTENSION_ACCURACY_HORIZONTAL = "accuracy_horizontal";
+    private static final String TAG_OPENTRACKS_EXTENSION_ACCURACY_VERTICAL = "accuracy_vertical";
+
     private Locator locator;
 
     private final Context context;
@@ -169,107 +185,127 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-        switch (qName) {
-            case TAG_GPX -> onFileEnd();
-            case TAG_MARKER -> onMarkerEnd();
-            case TAG_TRACK -> {
-                if (activityTypeLocalized == null) {
-                    // Backward compatibility: up v4.9.1 as <type> contained localized content.
-                    activityTypeLocalized = activityType;
+        if (NS_GARMIN_TRACKPOINT_EXTENSION_V1.equals(uri) || NS_GARMIN_TRACKPOINT_EXTENSION_V2.equals(uri)) {
+            switch (localName) {
+                case TAG_GARMIN_TPX_EXTENSION_SPEED -> {
+                    if (content != null) {
+                        speed = content.trim();
+                    }
                 }
-                trackImporter.setTrackData(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
-                zoneOffset = null;
-            }
-            case TAG_TRACK_SEGMENT -> onTrackSegmentEnd();
-            case TAG_TRACK_POINT -> {
-                TrackPoint trackPoint = createTrackPoint();
-                if (trackPoint != null) currentSegment.add(trackPoint);
-            }
-            case TAG_NAME -> {
-                if (content != null) {
-                    name = content.trim();
+                case TAG_GARMIN_TPX_EXTENSION_HEARTRATE -> {
+                    if (content != null) {
+                        heartrate = content.trim();
+                    }
                 }
-            }
-            case TAG_DESCRIPTION -> {
-                if (content != null) {
-                    description = content.trim();
+                case TAG_GARMIN_TPX_EXTENSION_TEMPERATURE -> {
+                    if (content != null) {
+                        temperature = content.trim();
+                    }
                 }
-            }
-            case TAG_TYPE -> { //Track or Marker/WPT
-                if (content != null) {
-                    // In older  version this might be localized content.
-                    activityType = content.trim();
-                    markerType = content.trim();
+                case TAG_GARMIN_TPX_EXTENSION_CADENCE -> {
+                    if (content != null) {
+                        cadence = content.trim();
+                    }
                 }
+                default -> Log.w(TAG, "Unknown Garmin trackpoint extension tag " + localName);
             }
-            case TAG_TYPE_LOCALIZED -> {
-                if (content != null) {
-                    activityTypeLocalized = content.trim();
+        } else if (NS_GARMIN_POWER_EXTENSION_V1.equals(uri)) {
+            //noinspection SwitchStatementWithTooFewBranches
+            switch (localName) {
+                case TAG_GARMIN_PWR_EXTENSION_POWER -> {
+                    if (content != null) {
+                        power = content.trim();
+                    }
                 }
+                default -> Log.w(TAG, "Unknown Garmin power extension tag " + localName);
             }
-            case TAG_TIME -> {
-                if (content != null) {
-                    time = content.trim();
+        } else if (NS_OPENTRACKS.equals(uri)) {
+            switch (localName) {
+                case TAG_OPENTRACKS_EXTENSION_TRACK_ID -> {
+                    if (content != null) {
+                        uuid = content.trim();
+                    }
                 }
-            }
-            case TAG_ALTITUDE -> {
-                if (content != null) {
-                    altitude = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_TYPE_LOCALIZED -> {
+                    if (content != null) {
+                        activityTypeLocalized = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_SPEED, TAG_EXTENSION_SPEED_COMPAT -> {
-                if (content != null) {
-                    speed = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_GAIN -> {
+                    if (content != null) {
+                        gain = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_HEARTRATE -> {
-                if (content != null) {
-                    heartrate = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_LOSS -> {
+                    if (content != null) {
+                        loss = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_TEMPERATURE -> {
-                if (content != null) {
-                    temperature = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_DISTANCE -> {
+                    if (content != null) {
+                        sensorDistance = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_CADENCE -> {
-                if (content != null) {
-                    cadence = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_ACCURACY_HORIZONTAL -> {
+                    if (content != null) {
+                        accuracyHorizontal = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_POWER -> {
-                if (content != null) {
-                    power = content.trim();
+                case TAG_OPENTRACKS_EXTENSION_ACCURACY_VERTICAL -> {
+                    if (content != null) {
+                        accuracyVertical = content.trim();
+                    }
                 }
+                default -> Log.w(TAG, "Unknown OpenTracks extension tag " + localName);
             }
-            case TAG_ID -> {
-                if (content != null) {
-                    uuid = content.trim();
+        } else {
+            switch (qName) {
+                case TAG_GPX -> onFileEnd();
+                case TAG_MARKER -> onMarkerEnd();
+                case TAG_TRACK -> {
+                    if (activityTypeLocalized == null) {
+                        // Backward compatibility: up v4.9.1 as <type> contained localized content.
+                        activityTypeLocalized = activityType;
+                    }
+                    trackImporter.setTrackData(context, name, uuid, description, activityTypeLocalized, activityType, zoneOffset);
+                    zoneOffset = null;
                 }
-            }
-            case TAG_EXTENSION_GAIN -> {
-                if (content != null) {
-                    gain = content.trim();
+                case TAG_TRACK_SEGMENT -> onTrackSegmentEnd();
+                case TAG_TRACK_POINT -> {
+                    TrackPoint trackPoint = createTrackPoint();
+                    if (trackPoint != null) currentSegment.add(trackPoint);
                 }
-            }
-            case TAG_EXTENSION_LOSS -> {
-                if (content != null) {
-                    loss = content.trim();
+                case TAG_NAME -> {
+                    if (content != null) {
+                        name = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_DISTANCE -> {
-                if (content != null) {
-                    sensorDistance = content.trim();
+                case TAG_DESCRIPTION -> {
+                    if (content != null) {
+                        description = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_ACCURACY_HORIZONTAL -> {
-                if (content != null) {
-                    accuracyHorizontal = content.trim();
+                case TAG_TYPE -> { //Track or Marker/WPT
+                    if (content != null) {
+                        // In older  version this might be localized content.
+                        activityType = content.trim();
+                        markerType = content.trim();
+                    }
                 }
-            }
-            case TAG_EXTENSION_ACCURACY_VERTICAL -> {
-                if (content != null) {
-                    accuracyVertical = content.trim();
+                case TAG_TIME -> {
+                    if (content != null) {
+                        time = content.trim();
+                    }
+                }
+                case TAG_ALTITUDE -> {
+                    if (content != null) {
+                        altitude = content.trim();
+                    }
+                }
+                case TAG_EXTENSION_SPEED_COMPAT -> {
+                    if (content != null) {
+                        speed = content.trim();
+                    }
                 }
             }
         }

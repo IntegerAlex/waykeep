@@ -163,6 +163,143 @@ public class GPXTrackImporterTest {
 
     @LargeTest
     @Test
+    public void gpx_with_power_pwd() throws IOException {
+        // given
+        XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
+        InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_with_power_pwr);
+
+        // when
+        // 1. import
+        importTrackId = importer.importFile(inputStream).get(0);
+
+        // then
+        // 2. track
+        Track importedTrack = contentProviderUtils.getTrack(importTrackId);
+        assertNotNull(importedTrack);
+        assertEquals("", importedTrack.activityTypeLocalized());
+        assertEquals("", importedTrack.description());
+        assertEquals("gpx with power", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
+
+        // 3. trackpoints
+        List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
+        assertEquals(3, importedTrackPoints.size());
+
+        TrackPointAssert a = new TrackPointAssert();
+        a.assertEquals(List.of(
+                new TrackPoint(null, TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                        new Position(
+                                Instant.parse("2021-09-07T22:10:19Z"),
+                                30.14185982, -40.3863038, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                null),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(100f),
+                        null
+                ),
+                new TrackPoint(null, TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2021-09-07T22:11:07Z"),
+                                30.14184657, -40.38670089, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                Speed.of(0.7976524233818054)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(110f),
+                        null),
+                new TrackPoint(null, TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2021-09-07T22:12:00Z"),
+                                30.14185982, -40.3863038, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                Speed.of(0.7224021553993225)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(150f),
+                        null)
+        ), importedTrackPoints);
+    }
+    @LargeTest
+    @Test
+    public void gpx_with_power_gpxpx() throws IOException {
+        // given
+        XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
+        InputStream inputStream = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.gpx_with_power_gpxpx);
+
+        // when
+        // 1. import
+        importTrackId = importer.importFile(inputStream).get(0);
+
+        // then
+        // 2. track
+        Track importedTrack = contentProviderUtils.getTrack(importTrackId);
+        assertNotNull(importedTrack);
+        assertEquals("", importedTrack.activityTypeLocalized());
+        assertEquals("", importedTrack.description());
+        assertEquals("gpx with power", importedTrack.name());
+        assertEquals(ActivityType.UNKNOWN, importedTrack.activityType());
+
+        // 3. trackpoints
+        List<TrackPoint> importedTrackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, importTrackId);
+        assertEquals(3, importedTrackPoints.size());
+
+        TrackPointAssert a = new TrackPointAssert();
+        a.assertEquals(List.of(
+                new TrackPoint(null, TrackPoint.Type.SEGMENT_START_AUTOMATIC,
+                        new Position(
+                                Instant.parse("2021-09-07T22:10:19Z"),
+                                30.14185982, -40.3863038, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                null),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(100f),
+                        null
+                ),
+                new TrackPoint(null, TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2021-09-07T22:11:07Z"),
+                                30.14184657, -40.38670089, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                Speed.of(0.7976524233818054)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(110f),
+                        null),
+                new TrackPoint(null, TrackPoint.Type.TRACKPOINT,
+                        new Position(
+                                Instant.parse("2021-09-07T22:12:00Z"),
+                                30.14185982, -40.3863038, null,
+                                Altitude.WGS84.of(-5), null,
+                                null,
+                                Speed.of(0.7224021553993225)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Power(150f),
+                        null)
+        ), importedTrackPoints);
+    }
+
+    @LargeTest
+    @Test
     public void gpx_speed_no_namespace() throws IOException {
         // given
         XMLImporter importer = new XMLImporter(new GPXTrackImporter(context, trackImporter));
