@@ -146,8 +146,8 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     }
 
     @Override
-    public void startElement(String uri, String localName, String tag, Attributes attributes) throws SAXException {
-        switch (tag) {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        switch (qName) {
             case TAG_PLACEMARK, TAG_PHOTO_OVERLAY ->
                 // Note that a track is contained in a Placemark, calling onMarkerStart will clear various track variables like name, typeLocalized, and description.
                     onMarkerStart();
@@ -168,8 +168,8 @@ public class KMLTrackImporter extends DefaultHandler implements XMLImporter.Trac
     }
 
     @Override
-    public void endElement(String uri, String localName, String tag) throws SAXException {
-        switch (tag) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        switch (qName) {
             case TAG_KML -> onFileEnd();
             case TAG_PLACEMARK, TAG_PHOTO_OVERLAY ->
                 // Note that a track is contained in a Placemark, calling onMarkerEnd is save since markerType is not set for a track.

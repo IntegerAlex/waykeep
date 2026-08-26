@@ -145,8 +145,8 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
     }
 
     @Override
-    public void startElement(String uri, String localName, String tag, Attributes attributes) {
-        switch (tag) {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        switch (qName) {
             case TAG_MARKER:
                 onMarkerStart(attributes);
                 break;
@@ -168,8 +168,8 @@ public class GPXTrackImporter extends DefaultHandler implements XMLImporter.Trac
     }
 
     @Override
-    public void endElement(String uri, String localName, String tag) {
-        switch (tag) {
+    public void endElement(String uri, String localName, String qName) {
+        switch (qName) {
             case TAG_GPX -> onFileEnd();
             case TAG_MARKER -> onMarkerEnd();
             case TAG_TRACK -> {
