@@ -81,7 +81,9 @@
 
     <string name="max_recording_distance_key" translatable="false">maxRecordingDistance</string>
     <string name="max_recording_distance_default" translatable="false">200</string>
+    <string name="max_recording_distance_off" translatable="false">2147483647</string><!-- MAX_INT -->
     <string-array name="max_recording_distance_values">
+        <item>@string/max_recording_distance_off</item>
         <item>50</item>
         <item>100</item>
         <item>@string/max_recording_distance_default</item>

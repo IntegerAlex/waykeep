@@ -539,6 +539,7 @@ public class PreferencesUtils {
         String[] entries = new String[entryValues.length];
 
         final int maxRecordingDistanceDefault = Integer.parseInt(resources.getString(R.string.max_recording_distance_default));
+        final int maxRecordingDistanceOff = Integer.parseInt(resources.getString(R.string.max_recording_distance_off));
         UnitSystem unitSystem = getUnitSystem();
 
         DistanceFormatter formatter = DistanceFormatter.Builder()
@@ -555,6 +556,9 @@ public class PreferencesUtils {
                 case METRIC, IMPERIAL_METER -> {
                     if (value == maxRecordingDistanceDefault) {
                         entries[i] = resources.getString(R.string.value_integer_meter_recommended, value);
+                    }
+                    if (value == maxRecordingDistanceOff) {
+                        entries[i] = resources.getString(R.string.value_off);
                     } else {
                         entries[i] = displayValue;
                     }
@@ -562,6 +566,9 @@ public class PreferencesUtils {
                 case IMPERIAL_FEET, NAUTICAL_IMPERIAL -> {
                     if (value == maxRecordingDistanceDefault) {
                         entries[i] = resources.getString(R.string.value_integer_feet_recommended, (int) distance.toFT());
+                    }
+                    if (value == maxRecordingDistanceOff) {
+                        entries[i] = resources.getString(R.string.value_off);
                     } else {
                         entries[i] = displayValue;
                     }
