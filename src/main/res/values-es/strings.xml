@@ -15,11 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --><resources>
     <string name="about_preference_title">Acerca de</string>
-    <string name="about_description"><i> OpenTracks </i> es una aplicación de seguimiento deportivo que respeta completamente su privacidad.</string>
+    <string name="about_description"><i>OpenTracks</i> ies una aplicación de seguimiento deportivo que respeta por completo tu privacidad.</string>
     <string name="about_url">Página web del proyecto: <a href="%1$s">%1$s</a></string>
     <string name="about_version_name">Nombre de la versión: %1$s</string>
     <string name="about_version_code">Código de versión: %1$d</string>
-    <string name="about_history">OpenTracks es una bifurcación de <a href="https://code.google.com/archive/p/mytracks/"> <i> MyTracks de Google </i> </a> (descontinuado en 2016).</string>
+    <string name="about_history">OpenTracks es una bifurcación de <a href="https://code.google.com/archive/p/mytracks/"><i>MyTracks de Google</i></a> (descontinuada en 2016).</string>
     <string name="about_libraries">Bibliotecas</string>
     <!-- Help -->
     <string name="help_feature_title">OpenTracks tiene las siguientes características:</string>
@@ -30,10 +30,7 @@ limitations under the License.
 \n* funciona completamente sin conexión
 \n* mostrar pistas en un mapa (ver más abajo)</string>
     <string name="help_track_map_title">¿Cómo mostrar un recorrido en un mapa\?</string>
-    <string name="help_track_map_content"> Utilice el pequeño icono de mapa.
-\na) (actualizaciones en vivo) Instale <a href="https://codeberg.org/OpenTracksApp/OSMDashboard"> OSMDashboard </a>. Proporciona mapas en línea o fuera de línea a través de <a href="https://www.openstreetmap.org"> OpenStreetMap </a>.
-\nEn realidad, OSMDashboard es una aplicación separada que solo puede acceder (temporalmente) a los datos de los recorridos que se mostrarán.
-\nb) A través de una aplicación de mapas normal (p. ej., <a href="http://osmand.net/"> OsmAnd </a> y <a href="https://maps.me/"> MAPS.ME </a>). Estas aplicaciones deben admitir el formato de archivo KMZ (solo ubicaciones y marcas de tiempo). De hecho, una aplicación debe admitir <i> ACTION_VIEW </i> con MIME <i> application / vnd.google-earth.kmz</i>. </string>
+    <string name="help_track_map_content">Utiliza el icono del mapa pequeño.\n a) (actualizaciones en tiempo real) Instala <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>. Ofrece mapas en línea o sin conexión a través de <a href="https://www.openstreetmap.org">OpenStreetMap</a>.\n En realidad, OSMDashboard es una aplicación independiente que solo puede acceder (temporalmente) a los datos de las rutas que se van a mostrar.\n b) A través de una aplicación de mapas normal (por ejemplo, <a href="http://osmand.net/">OsmAnd</a> y <a href="https://maps.me/">MAPS.ME</a>). Estas aplicaciones deben ser compatibles con el formato de archivo KMZ (solo ubicaciones y marcas de tiempo). De hecho, una aplicación debe ser compatible con <i>ACTION_VIEW</i> con el MIME <i>application/vnd.google-earth.kmz</i>.</string>
     <string name="help_storage_pictures_title">¿Cómo almacena OpenTracks las imágenes que se tomaron como marcadores\?</string>
     <string name="help_storage_pictures_content">Estos se almacenan en el almacenamiento interno de la aplicación (es decir, solo se puede acceder a ellos dentro de OpenTracks).</string>
     <string name="help_track_export_title">¿Cómo puedo exportar/compartir recorridos grabados\?</string>
@@ -44,22 +41,9 @@ limitations under the License.
     <string name="help_data_storage_title">¿Cómo almacena OpenTracks los datos de los sensores?</string>
     <string name="help_data_storage_content"> Los datos del sensor se almacenan por ubicación registrada. En términos de un sensor de frecuencia cardíaca, esto significa que solo se almacena <i>una</i> medición de frecuencia cardíaca por ubicación. Si está parado o está en interiores, no se registrarán los datos del sensor (pero se mostrarán). </string>
     <string name="help_gps_troubleshooting_title">¿OpenTracks no registra ubicaciones\?</string>
-    <string name="help_gps_troubleshooting_content"> Lo que puedes hacer:
-\na) compruebe si el GPS está habilitado,
-\nb) mejorar la recepción del GPS (por ejemplo, salir al aire libre),
-\nc) verifique con la aplicación <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/"> GPSTest </a>, y
-\nd) desactivar el ahorro de energía.
-\n
-\nSi todo no ayuda, informe un error. </string>
+    <string name="help_gps_troubleshooting_content">¿Qué puedes hacer?:\n a) comprueba si el GPS está activado,\n b) mejora la recepción del GPS (por ejemplo, sal al aire libre),\n c) compruébalo con la aplicación <a href="https://f-droid.org/en/packages/com.android.gpstest.osmdroid/">GPSTest</a>, y\n d) desactiva el modo de ahorro de energía.\n \n Si nada de esto funciona, por favor, informa de un error.</string>
     <string name="help_support_title">¿Cómo puedo ayudar a OpenTracks\?</string>
-    <string name="help_support_content"> Usted puede:
-\na) haga correr la voz sobre OpenTracks,
-\nb) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues"> proponer funciones </a>,
-\nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues"> informar errores </a>,
-\nd) ayuda en el desarrollo de software,
-\ne) comprar en <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore"> Google Play Store </a>,
-\nf) donar, y
-\ng) haga lo que crea que ayuda a OpenTracks. </string>
+    <string name="help_support_content">Puedes:\n a) dar a conocer OpenTracks,\n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">proponer nuevas funciones</a>,\n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">informar de errores</a>,\n d) colaborar en el desarrollo del software,\n e) comprarlo en <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>,\n f) hacer una donación, y\n g) hacer lo que creas que ayuda a OpenTracks.</string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">avión</string>
     <string name="activity_type_atv">vehículos todo terreno</string>
@@ -655,4 +639,33 @@ limitations under the License.
     <string name="settings_locale_title">Idioma</string>
     <string name="settings_locale_system_default">Predeterminado del sistema</string>
     <string name="stats_gain_loss">Ganancia y pérdida</string>
+    <string name="health_connect_permissions_rationale_title">Permisos de Health Connect</string>
+    <string name="health_connect_permissions_rationale_heading">¿Cómo usa OpenTracks Health Connect?</string>
+    <string name="health_connect_permissions_rationale_summary">Si se activa en los ajustes, OpenTracks registra los entrenamientos en Health Connect. OpenTracks no lee datos de Health Connect.</string>
+    <string name="activity_type_gravel_biking">ciclismo de grava</string>
+    <string name="description_sensor_temperature">Temperatura (Celsius)</string>
+    <string name="marker_detail_title">%1$d de %2$d: %3$s</string>
+    <string name="menu_export_all_to_health_connect">Exportar todo</string>
+    <string name="sensor_state_temperature">Termómetro</string>
+    <string name="settings_charts_title">Gráficos</string>
+    <string name="settings_chart_display_elevation_title">Mostrar altitud</string>
+    <string name="settings_chart_display_pace_or_speed_title">Ver ritmo o velocidad</string>
+    <string name="settings_chart_display_heart_rate_title">Ver pulso</string>
+    <string name="settings_recording_show_gps_disabled_warning_title">GPS desactivado</string>
+    <string name="settings_recording_show_gps_disabled_warning_summary">Aviso de GPS desactivado al grabar.</string>
+    <string name="settings_night_mode_option_system_dynamic">Sistema (Color dinámico)</string>
+    <string name="settings_night_mode_option_day_dynamic">Día (Color dinámico)</string>
+    <string name="settings_night_mode_option_night_dynamic">Noche (Color dinámico)</string>
+    <string name="settings_night_mode_option_night_oled_dynamic">Optimizado para OLED (Color dinámico)</string>
+    <string name="settings_announcements_segment_average_speed_pace">Velocidad/ritmo medio (tramo)</string>
+    <string name="settings_export_to_health_connect">Exportar a Health Connect</string>
+    <string name="stats_average_segment_pace">Ritmo medio del tramo</string>
+    <string name="stats_elapsed_segment_time">Tiempo de tramo transcurrido</string>
+    <string name="stats_sensors_temperature">Temperatura</string>
+    <string name="track_edit_time_offset">Diferencia horaria</string>
+    <string name="lap_heart_rate">Pulso (vuelta)</string>
+    <string name="health_connect_export_enabled_summary">Exportar la actividad a Health Connect al finalizar</string>
+    <string name="health_connect_not_available">Dispositivo no compatible con Health Connect</string>
+    <string name="health_connect_open_settings_title">Ajustes de Health Connect</string>
+    <string name="health_connect_open_settings_summary">Abrir los ajustes de Health Connect</string>
 </resources>
