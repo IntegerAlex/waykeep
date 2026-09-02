@@ -13,5 +13,5 @@ Correcciones de errores:
 - Se ha corregido la exportación a KML/KMZ
 
 Desarrollador:
-- Las pruebas son ejecutables (pero muchas fallan)
+- Las pruebas se pueden ejecutar (aunque muchas fallan)
 - Se ha habilitado la integración continua con TravisCI (sin pruebas)

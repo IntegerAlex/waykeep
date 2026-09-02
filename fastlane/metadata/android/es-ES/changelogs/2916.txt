@@ -1,15 +1,15 @@
 v3.0.0: OpenTracks
 
-Primer lanzamiento de OpenTracks (es decir, una bifurcación de MyTracks)
+Primera versión de OpenTracks (es decir, una bifurcación dura de MyTracks)
 
 Cambios:
 - Cambio de nombre de MyTracks a OpenTracks
-- Se agregó un sensor de frecuencia cardíaca Bluetooth LE
-- Se eliminaron todas las funciones que requieren acceso a Internet.
-- Se eliminó la integración de Google Maps
-- Se eliminó el uso de los servicios de Google Play.
-- Se eliminaron los sensores ANT+
-- Se eliminaron los sensores clásicos de Bluetooth.
-- Se eliminó Protobuf
-- Se eliminaron la estimación de calorías y la estimación de actividad.
-- Se eliminó la API del servicio MyTracks (es decir, no hay integración con otras aplicaciones)
+- Se ha añadido el sensor de frecuencia cardíaca Bluetooth LE
+- Se han eliminado todas las funciones que requerían acceso a Internet
+- Se ha eliminado la integración con Google Maps
+- Se ha eliminado el uso de los servicios de Google Play
+- Se han eliminado los sensores ANT+
+- Se han eliminado los sensores Bluetooth clásicos
+- Se ha eliminado Protobuf
+- Se han eliminado la estimación de calorías y la estimación de actividad
+- Se ha eliminado la API del servicio MyTracks (es decir, no hay integración con otras aplicaciones)
