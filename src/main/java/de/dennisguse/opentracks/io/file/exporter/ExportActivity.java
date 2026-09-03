@@ -105,7 +105,7 @@ public class ExportActivity extends AbstractActivity {
     private ContentProviderUtils contentProviderUtils;
 
     // List of tracks to be exported.
-    private ArrayList<ExportTask> exportTasks;
+    private final ArrayList<ExportTask> exportTasks = new ArrayList<>();
 
     private final LinkedBlockingQueue<PendingConflict> conflictsQueue = new LinkedBlockingQueue<>();
     private final Handler conflictsHandler = new Handler();
@@ -183,7 +183,7 @@ public class ExportActivity extends AbstractActivity {
             trackExportTotalCount = savedInstanceState.getInt(BUNDLE_TOTAL_COUNT);
             directoryFiles = savedInstanceState.getStringArrayList(BUNDLE_DIRECTORY_FILES);
             trackErrors = savedInstanceState.getStringArrayList(BUNDLE_TRACK_ERRORS);
-            exportTasks = new ArrayList<>(savedInstanceState.getParcelableArrayList(BUNDLE_EXPORT_TASKS));
+            exportTasks.addAll(savedInstanceState.getParcelableArrayList(BUNDLE_EXPORT_TASKS));
             setProgress();
             nextExport(null);
         }
@@ -226,7 +226,6 @@ public class ExportActivity extends AbstractActivity {
             return false;
         }
 
-        exportTasks = new ArrayList<>();
         if (allInOneFile) {
             String filename = "OpenTracks-Backup";
             exportTasks.add(new ExportTask(filename, trackFileFormat, tracks.stream().map(Track::id).toList()));
