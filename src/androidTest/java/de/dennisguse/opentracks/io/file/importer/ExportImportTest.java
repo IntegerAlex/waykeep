@@ -156,7 +156,7 @@ public class ExportImportTest {
 
         Distance sensorDistance = Distance.of(10); // recording distance interval
 
-        sendLocation(trackPointCreator, "2020-02-02T02:02:03Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 1f);
+        Position position = sendLocation(trackPointCreator, "2020-02-02T02:02:03Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 1f);
         contentProviderUtils.insertMarker(
                 new Marker(
                         null,
@@ -164,15 +164,7 @@ public class ExportImportTest {
                         "Marker 1",
                         "Marker 1 desc",
                         "Marker 1 typeLocalized",
-                        new Position(
-                                Instant.parse("2020-02-02T02:02:03Z"),
-                                3.1234567, 14.0014567,
-                                Distance.of(10),
-                                Altitude.WGS84.of(1020.25),
-                                Distance.of(13),
-                                null,
-                                Speed.of(15)
-                        ),
+                        position,
                         null
                 ));
 
@@ -187,7 +179,7 @@ public class ExportImportTest {
         trackPointCreator.setClock("2020-02-02T02:02:16Z");
         mockSensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f, null, 30); //Distance will be added to next TrackPoint
 
-        sendLocation(trackPointCreator, "2020-02-02T02:02:17Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 0f);
+        position = sendLocation(trackPointCreator, "2020-02-02T02:02:17Z", 3.1234567, 14.0014567, 10, 13, 15, 1020.25, 0f);
         contentProviderUtils.insertMarker(
                 new Marker(
                         null,
@@ -195,7 +187,7 @@ public class ExportImportTest {
                         "Marker 2",
                         "Marker 2 desc",
                         "Marker 2 typeLocalized",
-                        service.getLastStoredTrackPointWithLocation().position(),
+                        position,
                         null
                 ));
 
