@@ -57,6 +57,17 @@ public class TrackBuilder {
         this.trackStatistics = track.statistics();
     }
 
+    public TrackBuilder(Track track, UUID uuid) {
+        this.id = track.id();
+        this.uuid = uuid;
+        this.name = track.name();
+        this.description = track.description();
+        this.activityTypeLocalized = track.activityTypeLocalized();
+        this.activityType = track.activityType();
+        this.zoneOffset = track.zoneOffset();
+        this.trackStatistics = track.statistics();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

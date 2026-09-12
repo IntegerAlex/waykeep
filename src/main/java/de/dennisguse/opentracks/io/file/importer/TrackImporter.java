@@ -131,7 +131,7 @@ public class TrackImporter {
             }
 
             //TODO This is a workaround until we have proper UI.
-            trackData.uuid = UUID.randomUUID();
+            trackData.uuid = null;
         }
 
         trackPoints.sort(Comparator.comparing(TrackPoint::getTime));

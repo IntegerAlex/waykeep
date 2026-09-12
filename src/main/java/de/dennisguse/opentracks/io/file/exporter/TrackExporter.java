@@ -30,5 +30,6 @@ import de.dennisguse.opentracks.data.models.Track;
  */
 public interface TrackExporter {
 
+    //TODO Pass track.Id instead of track?
     boolean writeTrack(List<Track> tracks, @NonNull OutputStream outputStream);
 }

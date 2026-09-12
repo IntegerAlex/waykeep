@@ -79,7 +79,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         trackId = contentProviderUtils.insertTrack(
                 new Track(
                         null,
-                        UUID.randomUUID(), //TODO This is not really cool: should happen in ContentProviderUtils?
+                        null,
                         "",
                         "",
                         activityTypeLocalized,

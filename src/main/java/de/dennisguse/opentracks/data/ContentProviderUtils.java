@@ -51,6 +51,7 @@ import de.dennisguse.opentracks.data.models.Speed;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Temperature;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackBuilder;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.data.statistics.SensorStatistics;
 import de.dennisguse.opentracks.data.tables.MarkerColumns;
@@ -232,12 +233,16 @@ public class ContentProviderUtils {
     /**
      * Inserts a track.
      * NOTE: This doesn't insert any trackPoints.
+     * NOTE: if the track.uuid is null, a random value will be assigned.
      *
      * @param track the track
      * @return the content provider URI of the inserted track.
      */
     public Track.Id insertTrack(Track track) {
-        //TODO Unset trackId
+        //TODO Unset trackId as it should be database generated
+        if (track.uuid() == null) {
+            track = new TrackBuilder(track, UUID.randomUUID()).getTrack();
+        }
         Uri uri = contentResolver.insert(CustomContentProvider.UrlType.TRACKS.getUri(), createContentValues(track));
         return new Track.Id(ContentUris.parseId(uri));
     }
