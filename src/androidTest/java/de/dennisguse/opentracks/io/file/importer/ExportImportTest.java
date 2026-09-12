@@ -127,6 +127,7 @@ public class ExportImportTest {
 
     @Before
     public void fileSetup() throws IOException, TimeoutException {
+        //TODO Replace with a ByteArrayOutputStream instead of storing a file?
         tmpFile = File.createTempFile("test", "test", context.getFilesDir());
         tmpFileUri = Uri.fromFile(tmpFile);
 
@@ -769,7 +770,8 @@ public class ExportImportTest {
         sensorManager.getAltitudeChangeHandler().setAggregator(aggregatorBarometer);
     }
 
-    public static void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {
+    //TODO Use return value (for markers)
+    public static Position sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, double altitude, Float altitudeGain) {
         Location location = new Location("mock");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
@@ -782,5 +784,7 @@ public class ExportImportTest {
 
         trackPointCreator.setClock(time);
         trackPointCreator.getSensorManager().getGpsHandler().onDataReceived(location);
+
+        return Position.of(location, Instant.parse(time));
     }
 }
