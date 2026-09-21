@@ -49,6 +49,8 @@ import de.dennisguse.opentracks.util.StringUtils;
  * Convert {@link Track} incl. {@link Marker} and {@link TrackPoint} to KML version 2.3.
  * <a href="https://docs.opengeospatial.org/is/12-007r2/12-007r2.html">...</a>
  *
+ * WARNING: exporting multiple tracks (each with markers) into one file, will not allow to restore to which track a marker belonged.
+ *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
  * @author Leif Hendrik Wilden
