@@ -473,4 +473,10 @@ limitations under the License.
     <string name="create_marker_error">Nu s-a putut crea semnul. Încearcă din nou.</string>
     <string name="marker_detail_title">%1$d al %2$d:%3$s</string>
     <string name="menu_export_all_one_file">Exportă tot (un fișier pentru toate traseele)</string>
+    <string name="gps_recording_without_signal">OpenTracks înregistrează fără date GPS.</string>
+    <string name="activity_type_kickscooter">scuter</string>
+    <string name="menu_export_all_to_health_connect">Exportă tot</string>
+    <string name="permission_recording_failed">OpenTracks are nevoie de permisiunea de a accesa locația și dispozitivele în apropiere.</string>
+    <string name="permission_bluetooth_failed">OpenTracks necesită permisiunea de a utiliza Bluetooth.</string>
+    <string name="permission_bluetooth_failed_rejected">Îți trebuie să permiți OpenTracks pentru a accesa la Dispozitive din Apropriere în setările sistemului.</string>
 </resources>
