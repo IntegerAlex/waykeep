@@ -61,7 +61,7 @@ public abstract class AbstractTrackDeleteActivity extends AbstractActivity imple
         WorkManager workManager = WorkManager.getInstance(this);
         WorkRequest deleteRequest = new OneTimeWorkRequest.Builder(TrackDeletionWorker.class)
                 .setInputData(new Data.Builder()
-                        .putLongArray(TrackDeletionWorker.TRACKIDS_KEY, Arrays.stream(trackIds).mapToLong(Track.Id::id).toArray())
+                        .putLongArray(TrackDeletionWorker.TRACKIDS_KEY, trackIdList.stream().mapToLong(Track.Id::id).toArray())
                         .build())
                 .build();
 
