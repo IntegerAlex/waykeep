@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
@@ -34,6 +35,7 @@ import de.dennisguse.opentracks.data.ContentProviderUtils;
 import de.dennisguse.opentracks.data.MarkerIterator;
 import de.dennisguse.opentracks.data.models.Marker;
 import de.dennisguse.opentracks.data.models.Track;
+import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.MarkerListBinding;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
@@ -178,8 +180,17 @@ public class MarkerListActivity extends AbstractActivity implements DeleteMarker
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (trackId != null && item.getItemId() == R.id.marker_list_insert_marker) {
+            // MarkerEditActivity requires a location: Markers are inserted at the current position.
+            TrackRecordingService service = trackRecordingServiceConnection.getTrackRecordingService();
+            TrackPoint trackPoint = service != null ? service.getLastStoredTrackPointWithLocation() : null;
+            if (trackPoint == null) {
+                Toast.makeText(this, R.string.marker_add_error, Toast.LENGTH_LONG).show();
+                return true;
+            }
+
             Intent intent = IntentUtils.newIntent(this, MarkerEditActivity.class)
-                    .putExtra(MarkerEditActivity.EXTRA_TRACK_ID, trackId);
+                    .putExtra(MarkerEditActivity.EXTRA_TRACK_ID, trackId)
+                    .putExtra(MarkerEditActivity.EXTRA_LOCATION, trackPoint.position().toLocation());
             startActivity(intent);
             return true;
         }

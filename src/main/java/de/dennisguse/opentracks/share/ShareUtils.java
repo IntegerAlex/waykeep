@@ -62,9 +62,17 @@ public class ShareUtils {
             mime = uriAndMime.second;
         }
 
-        return new Intent(Intent.ACTION_SEND_MULTIPLE)
+        // #2405: single track must use ACTION_SEND with one EXTRA_STREAM, otherwise apps whose
+        // filter only accepts ACTION_SEND_MULTIPLE for application/* (e.g. Signal) are excluded
+        // from the chooser.
+        Intent intent = uris.size() == 1
+                ? new Intent(Intent.ACTION_SEND)
+                        .putExtra(Intent.EXTRA_STREAM, uris.get(0))
+                : new Intent(Intent.ACTION_SEND_MULTIPLE)
+                        .putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+
+        return intent
                 .setType(mime)
-                .putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 .putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_track_subject))
                 .putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_track_share_file_body, trackDescription));
