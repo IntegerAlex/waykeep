@@ -25,6 +25,7 @@
 
     <style name="TextAppearance.OpenTracks.PrimaryValue" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
@@ -34,6 +35,7 @@
 
     <style name="TextAppearance.OpenTracks.SecondaryValue" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
@@ -52,6 +54,21 @@
 
     <style name="TextAppearance.OpenTracks.PrimaryUnit" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- Stat cell used by the activity feed cards -->
+    <style name="TextAppearance.OpenTracks.StatValue" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.StatLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
         <item name="android:singleLine">true</item>
     </style>
 </resources>

@@ -48,6 +48,12 @@ limitations under the License.
 
     <color name="splashscreen_background">#272727</color>
 
+    <!-- Redesign tokens -->
+    <color name="thumb_gradient_start">#22304A</color>
+    <color name="thumb_gradient_end">#0E1623</color>
+    <color name="icon_badge_surface">#E6FFFFFF</color>
+    <color name="hero_scrim_end">#B3000000</color>
+
     <color name="heart_rate_zone_textcolor_5">#FF0000</color>
     <color name="heart_rate_zone_textcolor_4">#FFBD04</color>
     <color name="heart_rate_zone_textcolor_3">#6ACC2B</color>

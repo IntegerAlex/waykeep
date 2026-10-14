@@ -1,163 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.OpenTracks.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/activated_background"
-    android:paddingHorizontal="8dp"
-    android:paddingTop="8dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="false">
 
-    <!-- Icon -->
-    <ImageView
-        android:id="@+id/track_list_item_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:contentDescription="@string/image_track"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_activity_bike_24dp" />
-
-    <!-- Name -->
-    <TextView
-        android:id="@+id/track_list_item_name"
-        style="?attr/textAppearanceBody1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toStartOf="@id/track_list_item_date"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Main Text" />
-
-    <!-- Date -->
-    <TextView
-        android:id="@+id/track_list_item_date"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="2022-02-17" />
-
-    <!-- Total time and distance -->
     <LinearLayout
-        android:id="@+id/track_list_item_duration_distance_wrapper"
-        android:layout_width="150dp"
-        android:layout_height="18dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/track_list_item_duration"
-            android:layout_width="0dp"
+        <!-- Hero: route panel + overlay -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="168dp">
+
+            <ImageView
+                android:id="@+id/track_list_item_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/image_track"
+                android:scaleType="fitXY"
+                android:src="@drawable/bg_route_placeholder" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_hero_scrim" />
+
+            <ImageView
+                android:id="@+id/track_list_item_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_icon_circle"
+                android:contentDescription="@string/image_track"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                tools:src="@drawable/ic_activity_bike_24dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/track_list_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="10:10:10" />
+
+                <TextView
+                    android:id="@+id/track_list_item_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    tools:text="2022-02-17" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Body -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="012:50:43" />
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="14dp">
 
-        <TextView
-            android:id="@+id/track_list_item_distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="(50.00km)"
-            android:textAlignment="textEnd" />
+            <TextView
+                android:id="@+id/track_list_item_name"
+                style="?attr/textAppearanceTitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="Evening Ride" />
 
+            <!-- Activity type + marker chip -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/track_list_item_activity_type_localized"
+                    style="@style/TextAppearance.OpenTracks.StatLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="Cycling" />
+
+                <LinearLayout
+                    android:id="@+id/track_list_item_marker_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/track_list_item_marker_count_icon"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="@string/image_marker_count"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_marker_show_24dp" />
+
+                    <TextView
+                        android:id="@+id/track_list_item_marker_count"
+                        style="?attr/textAppearanceLabelLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        tools:text="3" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Stats grid: Distance | Time  /  Pace | Elevation -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/track_list_item_distance"
+                        style="@style/TextAppearance.OpenTracks.StatValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="50.00 km" />
+
+                    <TextView
+                        style="@style/TextAppearance.OpenTracks.StatLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats_distance" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/track_list_item_duration"
+                        style="@style/TextAppearance.OpenTracks.StatValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="02:50:43" />
+
+                    <TextView
+                        style="@style/TextAppearance.OpenTracks.StatLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats_total_time" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/track_list_item_pace"
+                        style="@style/TextAppearance.OpenTracks.StatValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="5:12 /km" />
+
+                    <TextView
+                        android:id="@+id/track_list_item_pace_label"
+                        style="@style/TextAppearance.OpenTracks.StatLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats_pace" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/track_list_item_elevation"
+                        style="@style/TextAppearance.OpenTracks.StatValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="320 m" />
+
+                    <TextView
+                        style="@style/TextAppearance.OpenTracks.StatLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats_altitude" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/track_list_item_description"
+                style="?attr/textAppearanceBodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Description" />
+        </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/track_list_item_distance_marker_separator"
-        android:layout_width="10dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text=" ‧"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_duration_distance_wrapper"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_duration_distance_wrapper"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name" />
-
-    <!-- Marker Count Icon -->
-    <ImageView
-        android:id="@+id/track_list_item_marker_count_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/image_marker_count"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_marker_show_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/track_list_item_distance_marker_separator"
-        app:layout_constraintStart_toEndOf="@+id/track_list_item_distance_marker_separator"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name" />
-
-    <!-- Marker count -->
-    <TextView
-        android:id="@+id/track_list_item_marker_count"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_marker_count_icon"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_marker_count_icon"
-        tools:text="2" />
-
-    <!-- Time -->
-    <TextView
-        android:id="@+id/track_list_item_time"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name"
-        tools:text="10:10:10" />
-
-    <!-- Second row barrier -->
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/track_list_item_barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="track_list_item_duration_distance_wrapper,track_list_item_marker_count_icon,track_list_item_marker_count,track_list_item_time" />
-
-    <!-- Category and description -->
-    <TextView
-        android:id="@+id/track_list_item_activity_type_localized"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_barrier"
-        tools:text="Cycling" />
-
-    <TextView
-        android:id="@+id/track_list_item_description"
-        style="?attr/textAppearanceBodySmall"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_activity_type_localized"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_activity_type_localized"
-        tools:text="Description" />
-
-    <!-- Bottom Line -->
-    <View
-        android:id="@+id/marker_list_item_bottom_line"
-        style="@style/HorizontalLine"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/track_list_item_description" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

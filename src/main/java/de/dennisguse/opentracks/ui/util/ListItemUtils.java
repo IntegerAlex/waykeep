@@ -53,18 +53,14 @@ public class ListItemUtils {
 
     public static String getDistanceText(Context context, UnitSystem unitSystem, boolean isRecording, Distance totalDistance) {
 
-        StringBuilder builder = new StringBuilder();
-
-        if (!isRecording) {
-            String distanceText = DistanceFormatter.Builder()
-                    .setUnit(unitSystem)
-                    .build(context)
-                    .formatDistance(totalDistance);
-
-            builder.append("(").append(distanceText).append(")");
+        if (isRecording) {
+            return "";
         }
 
-        return builder.toString();
+        return DistanceFormatter.Builder()
+                .setUnit(unitSystem)
+                .build(context)
+                .formatDistance(totalDistance);
     }
 
     public static void setDateAndTime(Context context, TextView dateView, TextView timeView, Instant time, ZoneOffset timeZone) {

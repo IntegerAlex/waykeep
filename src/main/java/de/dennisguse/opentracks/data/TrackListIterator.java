@@ -3,6 +3,7 @@ package de.dennisguse.opentracks.data;
 import android.database.Cursor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -32,6 +33,8 @@ public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.I
         final int startTimeOffsetIndex = cursor.getColumnIndexOrThrow(TracksColumns.STARTTIME_OFFSET);
         final int totalDistanceIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE);
         final int totalTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALTIME);
+        final int movingTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.MOVINGTIME);
+        final int altitudeGainIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN);
         final int markerCountIndex = cursor.getColumnIndexOrThrow(TracksColumns.MARKER_COUNT);
 
         return new Item(
@@ -43,7 +46,9 @@ public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.I
                 Instant.ofEpochMilli(cursor.getLong(startTimeIndex)),
                 ZoneOffset.ofTotalSeconds(cursor.getInt(startTimeOffsetIndex)),
                 Duration.ofMillis(cursor.getLong(totalTimeIndex)),
+                Duration.ofMillis(cursor.getLong(movingTimeIndex)),
                 Distance.of(cursor.getFloat(totalDistanceIndex)),
+                cursor.isNull(altitudeGainIndex) ? null : cursor.getFloat(altitudeGainIndex),
                 cursor.getInt(markerCountIndex)
         );
     }
@@ -74,7 +79,13 @@ public class TrackListIterator extends AutoCloseableIterator<TrackListIterator.I
             Duration totalTime,
 
             @NonNull
+            Duration movingTime,
+
+            @NonNull
             Distance totalDistance,
+
+            @Nullable
+            Float altitudeGain_m,
 
             int markerCount
     ) {

@@ -100,4 +100,11 @@ limitations under the License.
     <style name="MaterialSwitchPreferenceCompat" parent="@style/Preference.SwitchPreferenceCompat.Material">
         <item name="widgetLayout">@layout/view_preference_switch</item>
     </style>
+
+    <!-- Redesign: feed cards -->
+    <style name="Widget.OpenTracks.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">@color/card_bg</item>
+    </style>
 </resources>

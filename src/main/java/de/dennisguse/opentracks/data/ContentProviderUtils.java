@@ -182,6 +182,8 @@ public class ContentProviderUtils {
                 TracksColumns.STARTTIME_OFFSET,
                 TracksColumns.TOTALDISTANCE,
                 TracksColumns.TOTALTIME,
+                TracksColumns.MOVINGTIME,
+                TracksColumns.ALTITUDE_GAIN,
                 TracksColumns.MARKER_COUNT,
         };
 

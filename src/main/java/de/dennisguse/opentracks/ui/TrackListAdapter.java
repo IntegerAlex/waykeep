@@ -2,6 +2,7 @@ package de.dennisguse.opentracks.ui;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,13 +22,18 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TrackRecordedActivity;
 import de.dennisguse.opentracks.TrackRecordingActivity;
 import de.dennisguse.opentracks.data.TrackListIterator;
+import de.dennisguse.opentracks.data.models.Speed;
+import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.TrackListItemBinding;
 import de.dennisguse.opentracks.services.RecordingStatus;
+import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
+import de.dennisguse.opentracks.ui.trackmap.TrackThumbnailLoader;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.ListItemUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
+import de.dennisguse.opentracks.util.StringUtils;
 
 public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
 
@@ -35,6 +41,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final AppCompatActivity context;
     private final RecyclerView recyclerView;
     private final SparseBooleanArray selection = new SparseBooleanArray();
+    private final TrackThumbnailLoader thumbnailLoader;
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
     private TrackListIterator trackIterator;
@@ -47,6 +54,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.recyclerView = recyclerView;
         this.recordingStatus = recordingStatus;
         this.unitSystem = unitSystem;
+        this.thumbnailLoader = new TrackThumbnailLoader(context);
         setHasStableIds(true);
     }
 
@@ -190,6 +198,9 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewBinding.trackListItemIcon.setImageResource(iconId);
             viewBinding.trackListItemIcon.setContentDescription(context.getString(iconDesc));
 
+            viewBinding.trackListItemThumbnail.setImageResource(R.drawable.bg_route_placeholder);
+            renderThumbnail();
+
             viewBinding.trackListItemName.setText(tracksListItem.name());
 
             String timeText = ListItemUtils.getTimeText(context, isRecordingThisTrackRecording, tracksListItem.totalTime());
@@ -198,16 +209,15 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewBinding.trackListItemDistance.setText(distanceText);
             viewBinding.trackListItemDuration.setText(timeText);
 
+            bindPace(tracksListItem);
+            bindElevation(tracksListItem);
+
             if (tracksListItem.markerCount() > 0) {
-                viewBinding.trackListItemDistanceMarkerSeparator.setVisibility(View.VISIBLE);
-                viewBinding.trackListItemMarkerCountIcon.setVisibility(View.VISIBLE);
+                viewBinding.trackListItemMarkerChip.setVisibility(View.VISIBLE);
                 viewBinding.trackListItemMarkerCount.setText(Integer.toString(tracksListItem.markerCount()));
             } else {
-                viewBinding.trackListItemDistanceMarkerSeparator.setVisibility(View.GONE);
-                viewBinding.trackListItemMarkerCountIcon.setVisibility(View.GONE);
-                viewBinding.trackListItemMarkerCount.setText(null);
+                viewBinding.trackListItemMarkerChip.setVisibility(View.GONE);
             }
-
 
             ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, tracksListItem.startTime(), tracksListItem.zoneOffset());
 
@@ -218,6 +228,56 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(tracksListItem.description()) ? View.GONE : View.VISIBLE);
 
             setSelected(selection.get((int) trackId.id()));
+        }
+
+        /**
+         * Shows average speed or pace (per the user's speed/pace preference for this activity type).
+         */
+        private void bindPace(TrackListIterator.Item item) {
+            boolean reportSpeed = PreferencesUtils.isReportSpeed(item.activityTypeLocalized());
+            viewBinding.trackListItemPaceLabel.setText(reportSpeed ? R.string.stats_speed : R.string.stats_pace);
+
+            Speed averageSpeed = Speed.of(item.totalDistance(), item.movingTime());
+            if (averageSpeed.isInvalid()) {
+                averageSpeed = Speed.ZERO;
+            }
+
+            SpeedFormatter formatter = SpeedFormatter.Builder()
+                    .setUnit(unitSystem)
+                    .setReportSpeedOrPace(reportSpeed)
+                    .build(context);
+            viewBinding.trackListItemPace.setText(formatter.formatSpeed(averageSpeed));
+        }
+
+        /**
+         * Shows altitude gain; falls back to the unknown placeholder when the track has no elevation data.
+         */
+        private void bindElevation(TrackListIterator.Item item) {
+            Float gain = item.altitudeGain_m();
+            if (gain == null) {
+                viewBinding.trackListItemElevation.setText(R.string.value_unknown);
+                return;
+            }
+
+            Pair<String, String> parts = StringUtils.getAltitudeParts(context, gain, unitSystem);
+            viewBinding.trackListItemElevation.setText(context.getString(R.string.altitude_with_unit, parts.first, parts.second));
+        }
+
+        /**
+         * Renders the route into the hero. The bitmap is delivered asynchronously; a stale result
+         * (this holder was recycled to another track) is discarded.
+         */
+        private void renderThumbnail() {
+            float density = context.getResources().getDisplayMetrics().density;
+            int width = context.getResources().getDisplayMetrics().widthPixels - Math.round(24 * density);
+            int height = TrackThumbnailLoader.heroHeightPx(context);
+            Track.Id boundId = trackId;
+
+            thumbnailLoader.load(boundId, width, height, bitmap -> {
+                if (bitmap != null && boundId.equals(trackId)) {
+                    viewBinding.trackListItemThumbnail.setImageBitmap(bitmap);
+                }
+            });
         }
 
         public void setSelected(boolean isSelected) {
