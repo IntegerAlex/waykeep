@@ -122,6 +122,7 @@ public class ChartValueSeriesTest {
     static ChartPoint withAltitude(double altitude) {
         return new ChartPoint(
                 0,
+                0,
                 altitude,
                 null,
                 null,

@@ -48,6 +48,7 @@ limitations under the License.
 
     <string name="sensor_unit_beats_per_minute" translatable="false">bpm</string>
     <string name="chart_metric_key" translatable="false">chart_metric</string>
+    <string name="chart_axis_key" translatable="false">chart_axis</string>
     <string name="sensor_unit_rounds_per_minute" translatable="false">rpm</string>
     <string name="sensor_unit_power" translatable="false">W</string>
     <string name="sensor_unit_temperature" translatable="false">C</string>

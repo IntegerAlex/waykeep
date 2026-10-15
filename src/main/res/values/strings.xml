@@ -187,6 +187,8 @@ limitations under the License.
     <string name="chart_metric_heart_rate">Heart rate</string>
     <string name="chart_metric_cadence">Cadence</string>
     <string name="chart_metric_power">Power</string>
+    <string name="chart_axis_time">Time</string>
+    <string name="chart_axis_distance">Distance</string>
     <string name="chart_empty_title">No chart data yet</string>
     <string name="chart_empty_message">This track has no elevation, speed, heart rate, cadence or power data to plot.</string>
     <string name="description_total_distance">Total distance: %1$.2f km (%2$.1f mi)</string>
@@ -507,6 +509,7 @@ limitations under the License.
     <string name="track_detail_stats_tab">Stats</string>
     <string name="track_detail_intervals_tab">Intervals</string>
     <string name="track_detail_map_tab">Map</string>
+    <string name="track_detail_chart_tab">Chart</string>
     <!-- Map -->
     <string name="track_map_recenter">Recenter on location</string>
     <string name="track_map_zoom_in">Zoom in</string>

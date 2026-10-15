@@ -67,7 +67,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     private static final String CURRENT_TAB_TAG_KEY = "current_tab_tag_key";
 
-    private static final int MAP_TAB_POSITION = 4;
+    private static final int MAP_TAB_POSITION = 3;
 
     private Snackbar snackbar;
 
@@ -352,9 +352,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
             return switch (position) {
                 case 0 -> StatisticsRecordingFragment.newInstance();
                 case 1 -> IntervalsFragment.newInstance(trackId, false);
-                case 2 -> ChartFragment.newInstance(false);
-                case 3 -> ChartFragment.newInstance(true);
-                case 4 -> TrackMapFragment.newInstance();
+                case 2 -> ChartFragment.newInstance();
+                case 3 -> TrackMapFragment.newInstance();
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };
@@ -362,16 +361,15 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         @Override
         public int getItemCount() {
-            return 5;
+            return 4;
         }
 
         public CharSequence getPageTitle(int position) {
             return switch (position) {
                 case 0 -> getString(R.string.track_detail_stats_tab);
                 case 1 -> getString(R.string.track_detail_intervals_tab);
-                case 2 -> getString(R.string.settings_chart_by_time);
-                case 3 -> getString(R.string.settings_chart_by_distance);
-                case 4 -> getString(R.string.track_detail_map_tab);
+                case 2 -> getString(R.string.track_detail_chart_tab);
+                case 3 -> getString(R.string.track_detail_map_tab);
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };

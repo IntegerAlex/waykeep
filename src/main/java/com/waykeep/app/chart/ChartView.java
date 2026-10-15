@@ -436,7 +436,27 @@ public class ChartView extends View {
     }
 
     public void setChartByDistance(boolean chartByDistance) {
+        boolean changed = this.chartByDistance != chartByDistance;
         this.chartByDistance = chartByDistance;
+        if (changed) {
+            recomputeXExtremities();
+            updateSeries();
+            updateDimensions();
+            invalidate();
+        }
+    }
+
+    /**
+     * Recomputes the X range for the current axis. Both time and distance are stored per point,
+     * so switching the axis does not require reloading the track.
+     */
+    private void recomputeXExtremities() {
+        synchronized (chartPoints) {
+            xExtremityMonitor.reset();
+            for (ChartPoint point : chartPoints) {
+                xExtremityMonitor.update(point.x(chartByDistance));
+            }
+        }
     }
 
     public UnitSystem getUnitSystem() {
@@ -554,7 +574,7 @@ public class ChartView extends View {
         synchronized (chartPoints) {
             chartPoints.addAll(dataPoints);
             for (ChartPoint dataPoint : dataPoints) {
-                xExtremityMonitor.update(dataPoint.timeOrDistance());
+                xExtremityMonitor.update(dataPoint.x(chartByDistance));
                 for (ChartValueSeries i : seriesList) {
                     i.update(dataPoint);
                 }
@@ -1134,7 +1154,7 @@ public class ChartView extends View {
         ChartPoint nearest = null;
         double bestDistance = Double.MAX_VALUE;
         for (ChartPoint point : chartPoints) {
-            double distance = Math.abs(point.timeOrDistance() - xValue);
+            double distance = Math.abs(point.x(chartByDistance) - xValue);
             if (distance < bestDistance) {
                 bestDistance = distance;
                 nearest = point;
@@ -1154,7 +1174,7 @@ public class ChartView extends View {
         if (inspectionPoint == null) {
             return;
         }
-        int x = getX(inspectionPoint.timeOrDistance());
+        int x = getX(inspectionPoint.x(chartByDistance));
         if (x < getScrollX() + leftBorder || x > getScrollX() + leftBorder + effectiveWidth) {
             return;
         }
@@ -1180,7 +1200,7 @@ public class ChartView extends View {
         if (inspectionPoint == null) {
             return;
         }
-        int crosshairX = getX(inspectionPoint.timeOrDistance());
+        int crosshairX = getX(inspectionPoint.x(chartByDistance));
         if (crosshairX < getScrollX() + leftBorder || crosshairX > getScrollX() + leftBorder + effectiveWidth) {
             return;
         }
@@ -1188,7 +1208,7 @@ public class ChartView extends View {
 
         List<String> lines = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
-        lines.add(formatXValue(inspectionPoint.timeOrDistance()));
+        lines.add(formatXValue(inspectionPoint.x(chartByDistance)));
         colors.add(ThemeUtils.getTextColorPrimary(getContext()));
         for (ChartValueSeries series : seriesList) {
             if (!series.isEnabled() || !series.hasData() || !series.isChartPointValid(inspectionPoint)) {
@@ -1262,7 +1282,7 @@ public class ChartView extends View {
                 continue;
             }
             double value = series.extractDataFromChartPoint(point);
-            float x = getX(point.timeOrDistance());
+            float x = getX(point.x(chartByDistance));
             float y = clampGraphY(getY(series, value), yCorner);
             points.add(new float[]{x, y});
         }

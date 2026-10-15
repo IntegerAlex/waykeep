@@ -49,15 +49,11 @@ import com.waykeep.app.settings.UnitSystem;
  */
 public class ChartFragment extends Fragment implements TrackDataHub.Listener {
 
-    private static final String KEY_CHART_VIEW_BY_DISTANCE_KEY = "chartViewByDistance";
+    private static final String AXIS_TIME = "time";
+    private static final String AXIS_DISTANCE = "distance";
 
-    public static ChartFragment newInstance(boolean chartByDistance) {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(KEY_CHART_VIEW_BY_DISTANCE_KEY, chartByDistance);
-
-        ChartFragment chartFragment = new ChartFragment();
-        chartFragment.setArguments(bundle);
-        return chartFragment;
+    public static ChartFragment newInstance() {
+        return new ChartFragment();
     }
 
     private TrackDataHub trackDataHub;
@@ -133,13 +129,14 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        chartByDistance = getArguments().getBoolean(KEY_CHART_VIEW_BY_DISTANCE_KEY, true);
+        chartByDistance = AXIS_DISTANCE.equals(PreferencesUtils.getString(R.string.chart_axis_key, AXIS_TIME));
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewBinding = ChartBinding.inflate(inflater, container, false);
         viewBinding.chartView.setChartByDistance(chartByDistance);
+        setupAxisToggle();
         setupMetricChips();
         return viewBinding.getRoot();
     }
@@ -206,7 +203,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
 
     public void onSampledInTrackPoint(@NonNull TrackPoint trackPoint, @NonNull Statistics trackStatistics) {
         if (isResumed()) {
-            ChartPoint point = ChartPoint.create(trackStatistics, trackPoint, trackPoint.position().speed(), chartByDistance, viewBinding.chartView.getUnitSystem());
+            ChartPoint point = ChartPoint.create(trackStatistics, trackPoint, trackPoint.position().speed(), viewBinding.chartView.getUnitSystem());
             pendingPoints.add(point);
         }
     }
@@ -232,6 +229,26 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         if (needUpdate) {
             viewBinding.chartView.postInvalidate();
         }
+    }
+
+    /**
+     * Wires the X-axis toggle (time / distance) and restores the persisted choice.
+     */
+    private void setupAxisToggle() {
+        viewBinding.chartAxisGroup.check(chartByDistance ? R.id.chart_axis_distance : R.id.chart_axis_time);
+        viewBinding.chartAxisGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+            boolean byDistance = checkedId == R.id.chart_axis_distance;
+            if (byDistance == chartByDistance) {
+                return;
+            }
+            chartByDistance = byDistance;
+            PreferencesUtils.setString(R.string.chart_axis_key, byDistance ? AXIS_DISTANCE : AXIS_TIME);
+            viewBinding.chartView.setChartByDistance(byDistance);
+            viewBinding.chartView.resetScroll();
+        });
     }
 
     /**
@@ -295,6 +312,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
     }
 
     private void showEmptyState() {
+        viewBinding.chartAxisRow.setVisibility(View.GONE);
         viewBinding.chartMetricScroll.setVisibility(View.GONE);
         viewBinding.chartView.setVisibility(View.GONE);
         viewBinding.chartEmptyState.setVisibility(View.VISIBLE);
@@ -302,6 +320,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
 
     private void showChart() {
         viewBinding.chartEmptyState.setVisibility(View.GONE);
+        viewBinding.chartAxisRow.setVisibility(View.VISIBLE);
         viewBinding.chartMetricScroll.setVisibility(View.VISIBLE);
         viewBinding.chartView.setVisibility(View.VISIBLE);
     }
