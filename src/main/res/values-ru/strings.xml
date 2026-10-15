@@ -410,7 +410,7 @@ limitations under the License.
 \n б) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">предлагать возможности</a>,
 \n в) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">сообщать об ошибках</a>,
 \n d) помочь в написании кода приложения,
-\n д) купить приложение в <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>,
+\n д) купить приложение в <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Google Play Store</a>,
 \n f) пожертвовать денежные средства, и
 \n g) сделать что-то другое, что, по вашему мнению, поможет OpenTracks. </string>
     <string name="settings_night_mode_option_system">Системная</string>

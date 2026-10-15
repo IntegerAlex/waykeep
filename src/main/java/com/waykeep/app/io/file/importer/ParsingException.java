@@ -1,0 +1,16 @@
+package com.waykeep.app.io.file.importer;
+
+import androidx.annotation.NonNull;
+
+public class ParsingException extends RuntimeException {
+
+    protected ParsingException(@NonNull String message, Exception cause) {
+        super(message, cause);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getMessage();
+    }
+}

@@ -25,7 +25,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_generic_sensor">
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeHeartRatePreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeHeartRatePreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_heart_rate_key"
             android:title="@string/sensor_state_heart_rate" />
@@ -35,26 +35,26 @@
             android:key="@string/settings_sensor_heart_rate_max_key"
             android:title="@string/settings_sensor_heart_rate_max"
             app:useSimpleSummaryProvider="true" />
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeTemperaturePreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeTemperaturePreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_temperature_key"
             android:title="@string/sensor_state_temperature" />
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLePressurePreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLePressurePreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_pressure_key"
             android:title="@string/sensor_state_pressure" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_cycling_sensor">
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeCyclingCadencePreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeCyclingCadencePreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_cycling_cadence_key"
             android:title="@string/settings_sensor_cycling_cadence" />
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeCyclingPowerPreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeCyclingPowerPreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_cycling_power_key"
             android:title="@string/sensor_state_power" />
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeCyclingSpeedPreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeCyclingSpeedPreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_cycling_speed_key"
             android:title="@string/settings_sensor_cycling_distance_speed" />
@@ -67,7 +67,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_running_sensor">
-        <de.dennisguse.opentracks.settings.bluetooth.BluetoothLeRunningSpeedAndCadencePreference
+        <com.waykeep.app.settings.bluetooth.BluetoothLeRunningSpeedAndCadencePreference
             android:defaultValue="@string/sensor_type_value_none"
             android:key="@string/settings_sensor_bluetooth_running_speed_and_cadence_key"
             android:title="@string/settings_sensor_running_speed_and_cadence" />

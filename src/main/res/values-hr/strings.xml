@@ -571,7 +571,7 @@ limitations under the License.
 \n \u0020b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">predložiti funkcije</a>,
 \n \u0020c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">prijaviti greške</a>,
 \n \u0020d) pomoći u razvoju softvera, 
-\n \u0020e) kupiti na stranici <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Trgovina Google Play</a>, 
+\n \u0020e) kupiti na stranici <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Trgovina Google Play</a>, 
 \n \u0020f) donirati 
 \n \u0020g) učiniti sve što misliš da pomaže aplikaciji OpenTracks. \u0020</string>
     <string name="settings_public_api_dashboard_enabled_summary_on">Aplikacija koja je pokrenula snimanje također može pristupiti snimljenim podacima.</string>

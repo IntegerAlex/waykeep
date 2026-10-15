@@ -347,7 +347,7 @@
     <string name="track_delete_multiple_confirm_message">Scriosfar na rianta roghnaithe agus a gcuid marcóirí go buan ón bhfeiste.</string>
     <string name="show_on_dashboard_not_installed">Níl aon fheidhmchlár a thacaíonn le OpenTracks Dashboard API suiteáilte.</string>
     <string name="share_image_body">Sílim go mb\'fhéidir go mbeadh suim agat san íomhá seo.</string>
-    <string name="help_support_content">You can: \n a) spread the word about OpenTracks, \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">propose features</a>, \nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">report bugs</a>, \n d) help in software development, \n e) buy in <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>, \n f) donate, and \n g) do whatever you think helps OpenTracks.</string>
+    <string name="help_support_content">You can: \n a) spread the word about OpenTracks, \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">propose features</a>, \nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">report bugs</a>, \n d) help in software development, \n e) buy in <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Google Play Store</a>, \n f) donate, and \n g) do whatever you think helps OpenTracks.</string>
     <string name="settings_public_api_disabled_toast">Tá OpenTracks Public API díchumasaithe: is féidir é a chumasú sna socruithe.</string>
     <string name="stats_altitude">Airde</string>
     <string name="stats_max_speed">Luas uasta</string>

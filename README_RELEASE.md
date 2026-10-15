@@ -11,8 +11,8 @@
 6. ... wait until reproducibility is verified by F-Droid
 
 Two releases will be created:
-* Application id: `de.dennisguse.opentracks` (irreproducible)
-* Application id: `de.dennisguse.opentracks.playstore` (reproducible)
+* Application id: `com.waykeep.app` (irreproducible)
+* Application id: `com.waykeep.app.playstore` (reproducible)
 
 For F-Droid the build status can be found [here](https://monitor.f-droid.org/builds/build).
 

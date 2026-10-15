@@ -372,7 +372,7 @@ limitations under the License.
     <string name="help_gps_troubleshooting_content">您可以采取以下措施：\n 一、检查 GPS 是否已启用，\n 二、改善 GPS 信号接收（例如移步室外），\n 三、使用 <a href="https://f-droid.org/zh_Hans/packages/com.android.gpstest.osmdroid/">GPSTest</a> 应用进行检测，\n 四、禁用省电模式。\n \n 如果以上措施无效，请提交错误报告。</string>
     <string name="help_storage_pictures_title">OpenTracks 如何存储作为标记拍摄的照片？</string>
     <string name="help_track_export_content">轨迹可以从设置中以 KMZ、KML 或 GPX 格式导出。KMZ/KML 包含所有数据，GPX 仅包含位置数据。通过<i>分享图标</i>分享的轨迹将以 KMZ 格式分享。</string>
-    <string name="help_support_content">您可以通过以下方式贡献力量：\n 一、宣传推广 OpenTracks，\n 二、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提出功能建议</a>，\n 三、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提交错误报告</a>，\n 四、参与软件开发，\n 五、在 <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play 商店</a>购买本应用，\n 六、直接捐赠，\n 七、采取任何您认为有助于 OpenTracks 的方式。</string>
+    <string name="help_support_content">您可以通过以下方式贡献力量：\n 一、宣传推广 OpenTracks，\n 二、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提出功能建议</a>，\n 三、<a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">提交错误报告</a>，\n 四、参与软件开发，\n 五、在 <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Google Play 商店</a>购买本应用，\n 六、直接捐赠，\n 七、采取任何您认为有助于 OpenTracks 的方式。</string>
     <string name="activity_type_swimming">游泳</string>
     <string name="export_with_photos">带照片</string>
     <string name="export_progress_summary_skip_msg">文件已跳过</string>

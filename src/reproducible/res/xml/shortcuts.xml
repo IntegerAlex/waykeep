@@ -9,7 +9,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="de.dennisguse.opentracks.ui.aggregatedStatistics.AggregatedStatisticsActivity"
-            android:targetPackage="de.dennisguse.opentracks.playstore" />
+            android:targetClass="com.waykeep.app.ui.aggregatedStatistics.AggregatedStatisticsActivity"
+            android:targetPackage="com.waykeep.app.playstore" />
     </shortcut>
 </shortcuts>

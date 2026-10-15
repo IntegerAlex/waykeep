@@ -46,7 +46,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'de.dennisguse.opentracks'
+        applicationId 'com.waykeep.app'
         versionCode 6766
         versionName "v4.29.0"
 
@@ -55,7 +55,7 @@ android {
         minSdk = 26
         targetSdk = 37
 
-        testInstrumentationRunner 'de.dennisguse.opentracks.TestRunner'
+        testInstrumentationRunner 'com.waykeep.app.TestRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
     testOptions {
@@ -88,7 +88,7 @@ android {
         }
     }
 
-    namespace = 'de.dennisguse.opentracks'
+    namespace = 'com.waykeep.app'
 
     buildTypes {
         debug {
@@ -105,28 +105,28 @@ android {
     productFlavors {
         nightly {
             dimension 'version'
-            applicationId 'de.dennisguse.opentracks.nightly'
+            applicationId 'com.waykeep.app.nightly'
 
             versionCode getVersionCodeNightly()
             versionName getVersionName()
-            base.archivesName = "de.dennisguse.opentracks.nightly_${getVersionCodeNightly()}"
+            base.archivesName = "com.waykeep.app.nightly_${getVersionCodeNightly()}"
 
             signingConfig = signingConfigs.nightly
         }
         irreproducible {
-            // Non-reproducible: https://f-droid.org/de/packages/de.dennisguse.opentracks/
+            // Non-reproducible: https://f-droid.org/de/packages/com.waykeep.app/
             dimension 'version'
-            applicationId 'de.dennisguse.opentracks'
+            applicationId 'com.waykeep.app'
             versionNameSuffix 'irreproducible'
         }
         reproducible {
-            // Developer Binaries: https://codeberg.org/OpenTracksApp/OSMDashboard/releases/download/v%v/de.dennisguse.opentracks.playstore_%v.apk
-            // FDroid: https://f-droid.org/de/packages/de.dennisguse.opentracks.playstore
-            // PlayStore: https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore
+            // Developer Binaries: https://codeberg.org/OpenTracksApp/OSMDashboard/releases/download/v%v/com.waykeep.app.playstore_%v.apk
+            // FDroid: https://f-droid.org/de/packages/com.waykeep.app.playstore
+            // PlayStore: https://play.google.com/store/apps/details?id=com.waykeep.app.playstore
             dimension 'version'
-            applicationId 'de.dennisguse.opentracks.playstore'
+            applicationId 'com.waykeep.app.playstore'
 
-            base.archivesName = "de.dennisguse.opentracks.playstore_${getVersionName()}_${android.defaultConfig.versionCode}"
+            base.archivesName = "com.waykeep.app.playstore_${getVersionName()}_${android.defaultConfig.versionCode}"
 
             signingConfig = signingConfigs.release
         }

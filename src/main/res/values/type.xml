@@ -3,6 +3,7 @@
 <resources>
 
     <style name="TextAppearance.OpenTracks.PrimaryHeader" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:textStyle">bold</item>
@@ -11,12 +12,14 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.SecondaryHeader" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:singleLine">true</item>
     </style>
 
     <style name="TextAppearance.OpenTracks.HiddenHeader" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@color/light_gray</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:textAllCaps">true</item>
@@ -24,6 +27,7 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.PrimaryValue" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
@@ -34,6 +38,7 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.SecondaryValue" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
@@ -44,6 +49,7 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.HiddenValue" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">@color/light_gray</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textStyle">bold</item>
@@ -53,12 +59,14 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.PrimaryUnit" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:singleLine">true</item>
     </style>
 
     <!-- Stat cell used by the activity feed cards -->
     <style name="TextAppearance.OpenTracks.StatValue" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFeatureSettings">tnum</item>
@@ -66,6 +74,7 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.StatLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.08</item>

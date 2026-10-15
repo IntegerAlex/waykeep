@@ -22,7 +22,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_activity_defaults_category">
-        <de.dennisguse.opentracks.settings.ActivityTypePreference
+        <com.waykeep.app.settings.ActivityTypePreference
             android:defaultValue="@string/default_activity_default"
             android:key="@string/default_activity_key"
             android:title="@string/settings_recording_default_activity_title" />

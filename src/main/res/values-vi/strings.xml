@@ -364,7 +364,7 @@ limitations under the License.
 \n b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">đề nghị các tính năng</a>,
 \n c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">báo cáo lỗi</a>,
 \n d) giúp đỡ trong việc phát triển phần mềm,
-\n e) mua trong <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">CH Play</a>,
+\n e) mua trong <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">CH Play</a>,
 \n f) ủng hộ, và
 \n g) làm những gì bạn nghĩ là sẽ giúp đỡ OpenTracks. </string>
     <string name="description_altitude_loss">Giảm độ cao: %1$d m (%2$d ft)</string>

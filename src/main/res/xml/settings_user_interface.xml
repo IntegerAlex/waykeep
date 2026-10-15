@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/settings_ui_title">
 
-    <de.dennisguse.opentracks.settings.LocalePreference
+    <com.waykeep.app.settings.LocalePreference
         android:key="@string/locale_key"
         android:persistent="false"
         android:title="@string/settings_locale_title"
@@ -24,7 +24,7 @@
             app:key="@string/stats_custom_layout_key"
             app:title="@string/settings_recording_customize_layout_title" />
 
-        <de.dennisguse.opentracks.settings.ResetDialogPreference
+        <com.waykeep.app.settings.ResetDialogPreference
             android:dialogMessage="@string/settings_layout_reset_confirm_message"
             android:dialogTitle="@string/settings_layout_reset_confirm_title"
             android:key="@string/settings_layout_reset_key"

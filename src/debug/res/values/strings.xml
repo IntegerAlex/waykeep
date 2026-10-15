@@ -14,5 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <resources>
-    <string name="launcher_name" translatable="false">OpenTracks (Debug)</string>
+    <string name="launcher_name" translatable="false">Waykeep (Debug)</string>
 </resources>

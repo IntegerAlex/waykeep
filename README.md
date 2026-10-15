@@ -12,7 +12,7 @@ _OpenTracks_ is a sport tracking application that completely respects your priva
     </tr>
     <tr>
         <td align="center">
-            <a href="https://f-droid.org/packages/de.dennisguse.opentracks.playstore">
+            <a href="https://f-droid.org/packages/com.waykeep.app.playstore">
                 <img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="60" align="middle">
             </a>
         </td>
@@ -29,11 +29,11 @@ _OpenTracks_ is a sport tracking application that completely respects your priva
     </tr>
     <tr>
         <td align="center">
-            <img alt="OpenTracks version published on F-Droid" src="https://img.shields.io/f-droid/v/de.dennisguse.opentracks.playstore.svg" align="middle" >
+            <img alt="OpenTracks version published on F-Droid" src="https://img.shields.io/f-droid/v/com.waykeep.app.playstore.svg" align="middle" >
         </td>
         <td></td>
         <td align="center">
-            <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">
+            <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">
                 <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60" align="middle">
             </a>
         </td>
@@ -103,21 +103,21 @@ OpenTracks includes an API for starting/stopping recording by another installed 
 The API is disabled by default to protect the user's privacy, but it can easily be enabled in the settings. Once enabled, the API can be invoked by sending an explicit Intent to start an activity.
 
 `Package`  (depends on the variant installed):
-* F-Droid: `de.dennisguse.opentracks`
-* GooglePlay: `de.dennisguse.opentracks.playStore`
-* Debug: `de.dennisguse.opentracks.debug`
-* Nightly: `de.dennisguse.opentracks.nightly`
+* F-Droid: `com.waykeep.app`
+* GooglePlay: `com.waykeep.app.playStore`
+* Debug: `com.waykeep.app.debug`
+* Nightly: `com.waykeep.app.nightly`
 
 `Classes`:
-* **Start a recording:**  `de.dennisguse.opentracks.publicapi.StartRecording`
+* **Start a recording:**  `com.waykeep.app.publicapi.StartRecording`
     * Set track data: `TRACK_NAME`, `TRACK_DESCRIPTION`, `TRACK_CATEGORY`, and `TRACK_ICON` (
       see `ActivityType.id` defined in [/src/main/java/de/dennisguse/opentracks/util/TrackIconUtils.java#L38](/src/main/java/de/dennisguse/opentracks/data/model/ActivityType.java)).
       NOTE: if `TRACK_ICON` is not present, `TRACK_CATEGORY` will be used to determine the icon (
       localized).
     * Send recorded data to another application via _Dashboard API_: `STATS_TARGET_PACKAGE` and
       `STATS_TARGET_CLASS`
-* **Stop a recording:**  `de.dennisguse.opentracks.publicapi.StopRecording`
-* **Create a marker:**  `de.dennisguse.opentracks.publicapi.CreateMarker`
+* **Stop a recording:**  `com.waykeep.app.publicapi.StopRecording`
+* **Create a marker:**  `com.waykeep.app.publicapi.CreateMarker`
 
 For testing the API using adb, the general command syntax is:
 
@@ -128,7 +128,7 @@ adb shell am start -e someParameter someValue -n "package/class"
 Depending on the package and class, a complete command could look something like this:
 
 ```shell
-adb shell am start -n "de.dennisguse.opentracks.playstore/de.dennisguse.opentracks.publicapi.StartRecording"
+adb shell am start -n "com.waykeep.app.playstore/com.waykeep.app.publicapi.StartRecording"
 ```
 
 ## File formats compatibility with open-source software
@@ -167,7 +167,7 @@ The developer documentation is in [README_API.md](README_API.md).
 ## Backup
 
 OpenTracks stores the data in the app-internal space:
-`/data/data/de.dennisguse.opentracks[|.playstore]`
+`/data/data/com.waykeep.app[|.playstore]`
 
 There is a SQLite database `database.db` that contains the tracks as well as the markers.
 Pictures attached to markers are stored as separate files.

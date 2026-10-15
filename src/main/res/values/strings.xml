@@ -15,15 +15,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --><resources>
     <string name="about_preference_title">About</string>
-    <string name="about_description"><i>OpenTracks</i> is a sport tracking application that completely respects your privacy.</string>
+    <string name="about_description"><i>Waykeep</i> is a sport tracking application that completely respects your privacy.</string>
+    <string name="app_tagline">Your routes, on your phone.</string>
     <string name="about_url">Project webpage: <a href="%1$s">%1$s</a></string>
     <string name="about_version_name">Version name: %1$s</string>
     <string name="about_version_code">Version code: %1$d</string>
-    <string name="about_history">OpenTracks is a fork of <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (discontinued in 2016).</string>
+    <string name="about_history">Waykeep is based on <a href="https://codeberg.org/OpenTracksApp/OpenTracks"><i>OpenTracks</i></a>, an open-source sport tracker, itself a fork of <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (discontinued in 2016).</string>
     <string name="about_third_party_data">Third-party data</string>
     <string name="about_libraries">Libraries</string>
     <!-- Help -->
-    <string name="help_feature_title">OpenTracks has the following features:</string>
+    <string name="help_feature_title">Waykeep has the following features:</string>
     <string name="help_feature_content">* create GPS tracks
 \n* use a heart rate sensor (Bluetooth LE only)
 \n* voice announcements (by time or distance)
@@ -44,20 +45,20 @@ limitations under the License.
         These apps need to support the KMZ file format (only locations and timestamps).
         In fact, an app needs to support <i>ACTION_VIEW</i> with MIME <i>application/vnd.google-earth.kmz</i>.
     </string>
-    <string name="help_storage_pictures_title">How does OpenTracks store pictures that were taken as markers?</string>
-    <string name="help_storage_pictures_content">These are stored in the app internal storage (i.e., only accessible within OpenTracks).</string>
+    <string name="help_storage_pictures_title">How does Waykeep store pictures that were taken as markers?</string>
+    <string name="help_storage_pictures_content">These are stored in the app internal storage (i.e., only accessible within Waykeep).</string>
     <string name="help_track_export_title">How can I export/share recorded tracks?</string>
     <string name="help_track_export_content"> Tracks can be exported from the Settings as KMZ, KML, or GPX. KMZ/KML all data; GPX only locations. Tracks shared via the <i>share icon</i> are shared as KMZ. </string>
-    <string name="help_data_google_play_services_title">Does OpenTracks require/use Google Play Service?</string>
+    <string name="help_data_google_play_services_title">Does Waykeep require/use Google Play Service?</string>
     <string name="help_data_google_play_services_content">No</string>
-    <string name="help_recording_title">How does OpenTracks record data?</string>
+    <string name="help_recording_title">How does Waykeep record data?</string>
     <string name="help_recording_content">
-        OpenTracks uses the GPS sensor of the device to record the location continuously.
-        If the GPS device reports inaccurate data (e.g., location, speed, elevation), OpenTracks cannot do anything about it.
+        Waykeep uses the GPS sensor of the device to record the location continuously.
+        If the GPS device reports inaccurate data (e.g., location, speed, elevation), Waykeep cannot do anything about it.
     </string>
-    <string name="help_data_storage_title">How does OpenTracks store sensor data?</string>
+    <string name="help_data_storage_title">How does Waykeep store sensor data?</string>
     <string name="help_data_storage_content"> Sensor data is stored per recorded location. In terms of a heart rate sensor, this means that only <i>one</i> heart rate measurement is stored per location. If you are standing still or are indoors, no sensor data will be recorded (but it will be shown). </string>
-    <string name="help_gps_troubleshooting_title">OpenTracks is not recording locations?</string>
+    <string name="help_gps_troubleshooting_title">Waykeep is not recording locations?</string>
     <string name="help_gps_troubleshooting_content">
         What you can do:\n
         a) check if GPS is enabled,\n
@@ -67,16 +68,16 @@ limitations under the License.
         \n
         If everything does not help please report a bug.
     </string>
-    <string name="help_support_title">How can I support OpenTracks?</string>
+    <string name="help_support_title">How can I support Waykeep?</string>
     <string name="help_support_content">
         You can:\n
-        a) spread the word about OpenTracks,\n
+        a) spread the word about Waykeep,\n
         b) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">propose features</a>,\n
         c) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">report bugs</a>,\n
         d) help in software development,\n
-        e) buy in <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>,\n
+        e) buy in <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Google Play Store</a>,\n
         f) donate, and\n
-        g) do whatever you think helps OpenTracks.
+        g) do whatever you think helps Waykeep.
     </string>
     <!-- Activity Type -->
     <string name="activity_type_airplane">airplane</string>
@@ -234,7 +235,7 @@ limitations under the License.
     <string name="gps_disabled_msg">GPS disabled</string>
     <string name="gps_fixed_and_ready">GPS fixed and ready</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
-    <string name="gps_recording_without_signal">OpenTracks is recording without GPS data.</string>
+    <string name="gps_recording_without_signal">Waykeep is recording without GPS data.</string>
     <!-- Image -->
     <string name="image_marker_count">Marker count</string>
     <string name="image_photo_marker">Photo marker</string>
@@ -295,13 +296,13 @@ limitations under the License.
     <string name="menu_resume_track">Resume track</string>
     <string name="menu_add_custom_layout">New Layout</string>
     <string name="menu_filter">Filter</string>
-    <!-- OpenTracks -->
+    <!-- Waykeep -->
     <string name="recording_service">Recording service</string>
     <!-- Permission -->
-    <string name="permission_gps_failed">OpenTracks requires permission to use GPS.</string>
-    <string name="permission_recording_failed">OpenTracks requires permission to access your location as well as nearby devices.</string>
-    <string name="permission_bluetooth_failed">OpenTracks requires permission to use Bluetooth.</string>
-    <string name="permission_bluetooth_failed_rejected">You manually need to grant OpenTracks access to Nearby Devices in system settings.</string>
+    <string name="permission_gps_failed">Waykeep requires permission to use GPS.</string>
+    <string name="permission_recording_failed">Waykeep requires permission to access your location as well as nearby devices.</string>
+    <string name="permission_bluetooth_failed">Waykeep requires permission to use Bluetooth.</string>
+    <string name="permission_bluetooth_failed_rejected">You manually need to grant Waykeep access to Nearby Devices in system settings.</string>
     <!-- Search -->
     <!-- Sensor State -->
     <string name="sensor_state_cadence_avg">Avg Cadence</string>
@@ -440,8 +441,8 @@ limitations under the License.
     <string name="settings_public_api_package_title">Package name for Public API</string>
     <string name="settings_public_api_enabled_title">Public API</string>
     <string name="settings_public_api_enabled_summary_on">Other installed applications can start or stop recordings.</string>
-    <string name="settings_public_api_enabled_summary_off">Only OpenTracks can start and stop recordings.</string>
-    <string name="settings_public_api_disabled_toast">OpenTracks Public API is disabled: it can be enabled in the settings.</string>
+    <string name="settings_public_api_enabled_summary_off">Only Waykeep can start and stop recordings.</string>
+    <string name="settings_public_api_disabled_toast">Waykeep Public API is disabled: it can be enabled in the settings.</string>
     <string name="settings_public_api_dashboard_enabled_title">Automatic data transfer</string>
     <string name="settings_public_api_dashboard_enabled_summary_on">An application that started a recording can also access the recorded data.</string>
     <string name="settings_public_api_dashboard_enabled_summary_off">Recorded data will not be shared automatically with other applications.</string>
@@ -732,7 +733,7 @@ limitations under the License.
     <string name="monthly_recap_activities">Activities</string>
     <string name="monthly_recap_activities_value">%1$d</string>
     <string name="monthly_recap_share">Share recap</string>
-    <string name="monthly_recap_share_body">My %1$s on OpenTracks.</string>
+    <string name="monthly_recap_share_body">My %1$s on Waykeep.</string>
     <string name="monthly_recap_prev">‹</string>
     <string name="monthly_recap_next">›</string>
     <string name="hold_to_stop">Hold to stop</string>
@@ -743,8 +744,8 @@ limitations under the License.
     <string name="health_connect_open_settings_title">Health Connect settings</string>
     <string name="health_connect_open_settings_summary">Open the Health Connect settings</string>
     <string name="health_connect_permissions_rationale_title">Health Connect permissions</string>
-    <string name="health_connect_permissions_rationale_heading">How OpenTracks uses Health Connect</string>
-    <string name="health_connect_permissions_rationale_summary">If enabled in the settings, OpenTracks writes exercise to Health Connect. OpenTracks does not read data from Health Connect.</string>
+    <string name="health_connect_permissions_rationale_heading">How Waykeep uses Health Connect</string>
+    <string name="health_connect_permissions_rationale_summary">If enabled in the settings, Waykeep writes exercise to Health Connect. Waykeep does not read data from Health Connect.</string>
     <string name="settings_default_export_uri_title">Track export directory</string>
     <!-- Fields -->
     <string name="field_set_primary">Primary</string>
@@ -756,9 +757,9 @@ limitations under the License.
     <string name="error_crash_title">%1$s crashed</string>
     <string name="share_crash_report">Share crash report</string>
     <string name="report_bug">Report bug</string>
-    <string name="show_on_dashboard">OpenTracks Dashboard API</string>
-    <string name="show_on_dashboard_not_installed">No application supporting OpenTracks Dashboard API installed.</string>
-    <string name="introduction_osm_dashboard">OpenTracks itself does not provide a map. Please install OSMDashboard to view your recordings on a map.</string>
+    <string name="show_on_dashboard">Waykeep Dashboard API</string>
+    <string name="show_on_dashboard_not_installed">No application supporting Waykeep Dashboard API installed.</string>
+    <string name="introduction_osm_dashboard">Waykeep shows your recordings on a built-in offline map. For a live external dashboard, you can additionally install OSMDashboard.</string>
     <string name="settings_recording_min_sampling_interval_title">Sampling time interval</string>
     <string name="settings_recording_location_distance_summary">%1$s between recorded locations</string>
     <string name="settings_announcements_lap_power">Lap power</string>

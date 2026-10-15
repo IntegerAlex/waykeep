@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/settings_recording_customize_layout_select_columns">
 
-            <de.dennisguse.opentracks.ui.util.AutoCompleteTextViewForDropdown
+            <com.waykeep.app.ui.util.AutoCompleteTextViewForDropdown
                 android:id="@+id/rows_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

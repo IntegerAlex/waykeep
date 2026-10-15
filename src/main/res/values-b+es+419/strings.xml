@@ -303,7 +303,7 @@
 \nb) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues"> proponer funciones </a>,
 \nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues"> informar errores </a>,
 \nd) ayuda en el desarrollo de software,
-\ne) comprar en <a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore"> Google Play Store </a>,
+\ne) comprar en <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore"> Google Play Store </a>,
 \nf) donar, y
 \ng) haga lo que crea que ayuda a OpenTracks. </string>
     <string name="export_error_post_workout">La exportación posterior al entrenamiento falló, consulte el directorio de exportación.</string>

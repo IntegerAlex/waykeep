@@ -51,7 +51,7 @@
         android:summary="@string/settings_api_summary"
         android:title="@string/settings_api_title" />
 
-    <de.dennisguse.opentracks.settings.ResetDialogPreference
+    <com.waykeep.app.settings.ResetDialogPreference
         android:dialogMessage="@string/settings_reset_confirm_message"
         android:dialogTitle="@string/settings_reset_confirm_title"
         android:icon="@drawable/ic_baseline_autorenew_24"

@@ -13,9 +13,20 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/jetbrains_mono"
+        android:gravity="center_horizontal"
+        android:text="@string/app_tagline"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="24sp" />
+
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/about_description"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:gravity="center_horizontal"/>
 

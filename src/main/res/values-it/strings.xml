@@ -355,7 +355,7 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
 \nb) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">proporre delle nuove funzioni</a>,
 \nc) <a href="https://codeberg.org/OpenTracksApp/OpenTracks/issues">Segnalare un bug</a>,
 \nd) Aiutare nello sviluppo del software,
-\ne) Comprare OpenTracks su<a href="https://play.google.com/store/apps/details?id=de.dennisguse.opentracks.playstore">Google Play Store</a>,
+\ne) Comprare OpenTracks su<a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">Google Play Store</a>,
 \nf) Fare una donazione, infine
 \ng) Fare tutto ciò che si pensa possa aiutare OpenTracks. </string>
     <string name="activity_type_escooter">Scooter elettrico</string>

@@ -16,10 +16,19 @@ limitations under the License.
 <resources>
     <color name="oled_friendly">@android:color/black</color>
     <!-- Brand colors -->
-    <color name="opentracks">#FF6D00</color>
-    <color name="opentracks_transparent">#55FF6D00</color> <!-- TODO REMOVE -->
+    <!-- Waykeep: high-visibility cyan; darkened for light backgrounds, bright on OLED (values-night). -->
+    <color name="waykeep_cyan">#00A6B8</color>
+    <color name="waykeep_cyan_dim">#007A87</color>
+    <color name="opentracks">@color/waykeep_cyan</color>
+    <color name="opentracks_transparent">@color/waykeep_cyan_transparent</color> <!-- TODO REMOVE -->
+    <color name="waykeep_cyan_transparent">#5500A6B8</color>
 
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- Waykeep semantic / tactical tokens -->
+    <color name="semantic_recording_red">#FF3B30</color> <!-- Pulsing record indicator, HR Zone 5 -->
+    <color name="semantic_offline_amber">#FF9F0A</color> <!-- Cached map warning / GPS searching -->
+    <color name="map_polyline_stroke">#000000</color> <!-- 1px border around the route so it never blends into OSM rivers/forests -->
+
+    <color name="ic_launcher_background">#000000</color>
 
     <!-- Chart colors -->
     <color name="chart_cadence_border">#FFF128F3</color> <!-- pink -->
@@ -46,7 +55,7 @@ limitations under the License.
     <color name="stats_separator">#99999999</color> <!-- light gray -->
     <color name="text_gradient_center">#B2000000</color> <!-- black 70% opacity -->
 
-    <color name="splashscreen_background">#272727</color>
+    <color name="splashscreen_background">#000000</color>
 
     <!-- Redesign tokens -->
     <color name="thumb_gradient_start">#22304A</color>
