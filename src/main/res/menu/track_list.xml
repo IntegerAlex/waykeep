@@ -43,4 +43,9 @@ limitations under the License.
         android:icon="@drawable/ic_baseline_info_24"
         android:title="@string/about_preference_title" />
 
+    <item
+        android:id="@+id/track_list_exit"
+        android:icon="@drawable/ic_baseline_exit_to_app_24"
+        android:title="@string/menu_exit" />
+
 </menu>

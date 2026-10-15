@@ -328,6 +328,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             return true;
         }
 
+        if (item.getItemId() == R.id.track_list_exit) {
+            finishAndRemoveTask();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

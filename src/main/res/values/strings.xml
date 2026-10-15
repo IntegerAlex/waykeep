@@ -289,6 +289,7 @@ limitations under the License.
     <string name="menu_export_all_one_file">Export all (one file for all tracks)</string>
     <string name="menu_export_all_to_health_connect">Export all</string>
     <string name="menu_help">Help</string>
+    <string name="menu_exit">Exit</string>
     <string name="menu_import_all">Import all</string>
     <string name="menu_insert_marker">Insert marker</string>
     <string name="menu_insert_photo">Insert photo</string>
