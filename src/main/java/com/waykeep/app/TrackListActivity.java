@@ -146,7 +146,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         service.getGpsStatusObservable()
                 .observe(TrackListActivity.this, this::onGpsStatusChanged);
 
-        updateGpsMenuItem(true, recordingStatus.isRecording());
+        updateGpsMenuItem(gpsStatusValue.isGpsStarted(), recordingStatus.isRecording());
     };
 
     @Override
@@ -167,6 +167,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 if (gpsStatusValue.isGpsStarted()) {
                     recordingStatusConnection.stopService(this);
                 } else {
+                    // Optimistic feedback: the service start + first fix take seconds, during
+                    // which the button would otherwise sit unchanged on the off icon.
+                    gpsStatusValue = GpsStatusValue.GPS_ENABLED;
+                    updateGpsMenuItem(true, recordingStatus.isRecording());
                     startSensorsOrRecording((service, connection) -> service.tryStartSensors());
                 }
             }
@@ -380,7 +384,12 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         MaterialButton startGpsMenuItem = viewBinding.sensorStartButton;
         startGpsMenuItem.setVisibility(!isRecording ? View.VISIBLE : View.INVISIBLE);
         if (!isRecording) {
-            startGpsMenuItem.setIcon(AppCompatResources.getDrawable(this, isGpsStarted ? gpsStatusValue.icon : R.drawable.ic_gps_off_24dp));
+            android.graphics.drawable.Drawable icon = AppCompatResources.getDrawable(this,
+                    isGpsStarted ? gpsStatusValue.icon : R.drawable.ic_gps_off_24dp);
+            if (icon == null) {
+                icon = AppCompatResources.getDrawable(this, R.drawable.ic_gps_off_24dp);
+            }
+            startGpsMenuItem.setIcon(icon);
             if (startGpsMenuItem.getIcon() instanceof AnimatedVectorDrawable animatedVectorDrawable) {
                 animatedVectorDrawable.start();
             }
@@ -458,7 +467,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
     public void onGpsStatusChanged(GpsStatusValue newStatus) {
         gpsStatusValue = newStatus;
-        updateGpsMenuItem(true, recordingStatus.isRecording());
+        updateGpsMenuItem(newStatus.isGpsStarted(), recordingStatus.isRecording());
     }
 
     private void setFloatButton() {
