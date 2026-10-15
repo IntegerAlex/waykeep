@@ -687,6 +687,24 @@ limitations under the License.
     <string name="share_image_style_route">Route only</string>
     <string name="share_image_stat_elevation_gain">Elev Gain</string>
     <string name="share_image_error">Could not create the share image.</string>
+    <!-- Personal bests -->
+    <string name="personal_bests_title">Personal bests</string>
+    <string name="personal_bests_empty">No activities yet. Your records will appear here.</string>
+    <string name="personal_best_longest_distance">Longest distance</string>
+    <string name="personal_best_longest_time">Longest time</string>
+    <string name="personal_best_fastest">Fastest average</string>
+    <string name="personal_best_most_elevation">Most elevation</string>
+    <string name="personal_best_top_speed">Top speed</string>
+    <string name="personal_best_track">%1$s · %2$s</string>
+    <!-- Monthly recap -->
+    <string name="monthly_recap_title">Monthly recap</string>
+    <string name="monthly_recap_empty">No activities this month.</string>
+    <string name="monthly_recap_activities">Activities</string>
+    <string name="monthly_recap_activities_value">%1$d</string>
+    <string name="monthly_recap_share">Share recap</string>
+    <string name="monthly_recap_share_body">My %1$s on OpenTracks.</string>
+    <string name="monthly_recap_prev">‹</string>
+    <string name="monthly_recap_next">›</string>
     <string name="hold_to_stop">Hold to stop</string>
     <string name="instant_export_enabled_summary">Export track to storage after recording is finished</string>
     <string name="instant_export_enabled_title">Instant post-workout export</string>

@@ -31,11 +31,15 @@ import androidx.fragment.app.Fragment;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.TrackPointIterator;
 import de.dennisguse.opentracks.data.models.DistanceFormatter;
+import de.dennisguse.opentracks.data.models.HeartRate;
+import de.dennisguse.opentracks.data.models.HeartRateZones;
 import de.dennisguse.opentracks.data.models.SpeedFormatter;
 import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackBuilder;
+import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
@@ -72,6 +76,8 @@ public class StatisticsRecordedFragment extends Fragment {
     private ContentProviderUtils contentProviderUtils;
 
     private StatisticsRecordedBinding viewBinding;
+
+    private final java.util.concurrent.ExecutorService zoneExecutor = java.util.concurrent.Executors.newSingleThreadExecutor();
 
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
     private boolean preferenceReportSpeed;
@@ -133,6 +139,12 @@ public class StatisticsRecordedFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         viewBinding = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        zoneExecutor.shutdownNow();
     }
 
     public void loadStatistics() {
@@ -249,6 +261,7 @@ public class StatisticsRecordedFragment extends Fragment {
             viewBinding.statsHeartRateGroup.setVisibility(View.VISIBLE);
             viewBinding.statsMaxHeartRateValue.setText(maxBPM);
             viewBinding.statsAvgHeartRateValue.setText(avgBPM);
+            loadHeartRateZones();
         }
         if (sensorStatistics.hasCadence()) {
             String maxRPM = String.valueOf(Math.round(sensorStatistics.maxCadence().getRPM()));
@@ -266,5 +279,66 @@ public class StatisticsRecordedFragment extends Fragment {
             viewBinding.statsMaxPowerValue.setText(maxW);
             viewBinding.statsAvgPowerValue.setText(avgW);
         }
+    }
+
+    /**
+     * Computes time spent in each HR zone by walking the track points off the UI thread.
+     * Each point's heart rate is held until the next timestamp; gaps over a minute
+     * (pauses, segment breaks) are skipped so they don't inflate a zone.
+     */
+    private void loadHeartRateZones() {
+        HeartRateZones zones = PreferencesUtils.getHeartRateZones();
+        Track.Id id = trackId;
+        zoneExecutor.execute(() -> {
+            long[] zoneSeconds = new long[6];
+            try (TrackPointIterator iterator = contentProviderUtils.getTrackPointIterator(id, null)) {
+                TrackPoint previous = null;
+                while (iterator.hasNext()) {
+                    TrackPoint current = iterator.next();
+                    if (previous != null
+                            && previous.heartRate() != null
+                            && previous.position().time() != null
+                            && current.position().time() != null) {
+                        long seconds = java.time.Duration.between(previous.position().time(), current.position().time()).getSeconds();
+                        if (seconds > 0 && seconds <= 60) {
+                            zoneSeconds[zones.getZone(previous.heartRate())] += seconds;
+                        }
+                    }
+                    previous = current;
+                }
+            } catch (RuntimeException e) {
+                return;
+            }
+
+            android.text.SpannableStringBuilder builder = new android.text.SpannableStringBuilder();
+            for (int zone = 5; zone >= 1; zone--) {
+                if (zoneSeconds[zone] <= 0) {
+                    continue;
+                }
+                if (builder.length() > 0) {
+                    builder.append(" · ");
+                }
+                int start = builder.length();
+                builder.append("Z").append(String.valueOf(zone)).append(" ")
+                        .append(StringUtils.formatElapsedTime(java.time.Duration.ofSeconds(zoneSeconds[zone])));
+                builder.setSpan(new android.text.style.ForegroundColorSpan(
+                                zones.getTextColorForZone(requireContext(), HeartRate.of(zones.getMax().getBPM() * (0.5f + 0.1f * zone)))),
+                        start, builder.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            android.text.Spanned result = builder.length() > 0 ? builder : null;
+
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (isResumed() && viewBinding != null && id.equals(trackId)) {
+                        if (result != null) {
+                            viewBinding.statsHeartRateZonesValue.setText(result);
+                            viewBinding.statsHeartRateZonesValue.setVisibility(View.VISIBLE);
+                        } else {
+                            viewBinding.statsHeartRateZonesValue.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        });
     }
 }

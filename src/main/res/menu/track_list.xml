@@ -26,6 +26,14 @@ limitations under the License.
         android:title="@string/menu_settings"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/track_list_personal_bests"
+        android:icon="@drawable/ic_statistics_24dp"
+        android:title="@string/personal_bests_title" />
+    <item
+        android:id="@+id/track_list_monthly_recap"
+        android:icon="@drawable/ic_baseline_date_range_24"
+        android:title="@string/monthly_recap_title" />
+    <item
         android:id="@+id/track_list_help"
         android:icon="@drawable/ic_help_24dp"
         android:title="@string/menu_help" />

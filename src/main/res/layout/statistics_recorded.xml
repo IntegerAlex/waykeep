@@ -411,7 +411,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="stats_heart_rate_horizontal_line,stats_max_heart_rate_label,stats_max_heart_rate_value,stats_max_heart_rate_unit,stats_avg_heart_rate_label,stats_avg_heart_rate_value,stats_avg_heart_rate_unit" />
+            app:constraint_referenced_ids="stats_heart_rate_horizontal_line,stats_max_heart_rate_label,stats_max_heart_rate_value,stats_max_heart_rate_unit,stats_avg_heart_rate_label,stats_avg_heart_rate_value,stats_avg_heart_rate_unit,stats_heart_rate_zones_value" />
 
         <TextView
             android:id="@+id/stats_max_heart_rate_label"
@@ -486,6 +486,17 @@
             app:barrierDirection="bottom"
             app:constraint_referenced_ids="stats_max_heart_rate_value,stats_avg_heart_rate_value" />
 
+        <TextView
+            android:id="@+id/stats_heart_rate_zones_value"
+            style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/stats_heart_rate_barrier"
+            tools:text="Z5 12:03 · Z4 5:41" />
+
         <!-- Cadence -->
         <View
             android:id="@+id/stats_cadence_horizontal_line"
@@ -493,7 +504,7 @@
             android:layout_margin="8dp"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@id/stats_heart_rate_barrier" />
+            app:layout_constraintTop_toBottomOf="@id/stats_heart_rate_zones_value" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/stats_cadence_group"

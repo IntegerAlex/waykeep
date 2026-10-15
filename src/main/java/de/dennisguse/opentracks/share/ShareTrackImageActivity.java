@@ -7,13 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -181,14 +177,13 @@ public class ShareTrackImageActivity extends AppCompatActivity {
                 reportShareError();
                 return;
             }
-            File file = writeImageFile(bitmap);
+            File file = ShareImageStore.save(this, bitmap, "share-track-" + trackId.id());
             bitmap.recycle();
             if (file == null) {
                 reportShareError();
                 return;
             }
-            purgeOldImages(file);
-            Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".fileprovider", file);
+            Uri uri = ShareImageStore.uri(this, file);
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) {
                     return;
@@ -212,36 +207,5 @@ public class ShareTrackImageActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.share_image_error, Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private File writeImageFile(@NonNull Bitmap bitmap) {
-        File dir = new File(getExternalFilesDir(null), "pictures");
-        if (!dir.exists() && !dir.mkdirs()) {
-            return null;
-        }
-        File file = new File(dir, "share-track-" + trackId.id() + "-" + System.currentTimeMillis() + ".png");
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)) {
-                return null;
-            }
-            out.flush();
-            return file;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private void purgeOldImages(File keep) {
-        File dir = new File(getExternalFilesDir(null), "pictures");
-        File[] files = dir.listFiles((d, name) -> name.startsWith("share-track-") && name.endsWith(".png"));
-        if (files == null) {
-            return;
-        }
-        long cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L;
-        for (File file : files) {
-            if (!file.equals(keep) && file.lastModified() < cutoff && !file.delete()) {
-                file.deleteOnExit();
-            }
-        }
     }
 }

@@ -92,6 +92,26 @@ public class TrackShareImageGenerator {
     public static Bitmap render(@NonNull Context context, @NonNull Track track,
                                @NonNull RouteSampler.Route route, @NonNull Style style,
                                int widthPx, int heightPx) {
+        String subtitle = StringUtils.formatDateTimeWithOffset(track.startTime())
+                + "  ·  " + track.activityTypeLocalized();
+        List<StatCard> cards = style == Style.STATS_CARD ? buildStats(context, track) : List.of();
+        return renderCard(context, track.name(), subtitle, route.points(), cards,
+                style == Style.ROUTE_ONLY, widthPx, heightPx);
+    }
+
+    /**
+     * Renders a stats-only card (e.g. monthly recap): title, subtitle, stat grid, no route.
+     */
+    public static Bitmap renderStats(@NonNull Context context, @NonNull String title,
+                                    @NonNull String subtitle, @NonNull List<StatCard> cards,
+                                    int widthPx, int heightPx) {
+        return renderCard(context, title, subtitle, List.of(), cards, false, widthPx, heightPx);
+    }
+
+    private static Bitmap renderCard(@NonNull Context context, @NonNull String title,
+                                    @NonNull String subtitle, @NonNull List<RouteSampler.LatLon> routePoints,
+                                    @NonNull List<StatCard> cards, boolean routeOnly,
+                                    int widthPx, int heightPx) {
         float density = context.getResources().getDisplayMetrics().density;
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
 
@@ -111,25 +131,25 @@ public class TrackShareImageGenerator {
         titlePaint.setColor(0xFFFFFFFF);
         titlePaint.setTextSize(34 * scaledDensity);
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText(ellipsize(track.name(), titlePaint, widthPx - 2 * padding), padding, y + 34 * scaledDensity, titlePaint);
+        canvas.drawText(ellipsize(title, titlePaint, widthPx - 2 * padding), padding, y + 34 * scaledDensity, titlePaint);
         y += 48 * scaledDensity;
 
         Paint subtitlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         subtitlePaint.setColor(0xB3FFFFFF);
         subtitlePaint.setTextSize(16 * scaledDensity);
-        String subtitle = StringUtils.formatDateTimeWithOffset(track.startTime())
-                + "  ·  " + track.activityTypeLocalized();
         canvas.drawText(ellipsize(subtitle, subtitlePaint, widthPx - 2 * padding), padding, y + 16 * scaledDensity, subtitlePaint);
         y += 40 * scaledDensity;
 
-        float routeTop = y;
-        float routeBottom = style == Style.ROUTE_ONLY ? heightPx - padding - 40 * scaledDensity : heightPx * 0.62f;
-        drawRoute(canvas, route.points(), padding, routeTop, widthPx - padding, routeBottom,
-                ContextCompat.getColor(context, R.color.opentracks), density);
+        if (!routePoints.isEmpty() || routeOnly) {
+            float routeTop = y;
+            float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.62f;
+            drawRoute(canvas, routePoints, padding, routeTop, widthPx - padding, routeBottom,
+                    ContextCompat.getColor(context, R.color.opentracks), density);
+            y = routeBottom + 24 * density;
+        }
 
-        if (style == Style.STATS_CARD) {
-            float statsTop = routeBottom + 24 * density;
-            drawStatsGrid(canvas, buildStats(context, track), padding, statsTop,
+        if (!cards.isEmpty()) {
+            drawStatsGrid(canvas, cards, padding, y,
                     widthPx - padding, heightPx - padding - 40 * scaledDensity, scaledDensity, density);
         }
 

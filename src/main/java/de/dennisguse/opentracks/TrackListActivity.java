@@ -65,6 +65,8 @@ import de.dennisguse.opentracks.ui.TrackListAdapter;
 import de.dennisguse.opentracks.ui.aggregatedStatistics.AggregatedStatisticsActivity;
 import de.dennisguse.opentracks.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
+import de.dennisguse.opentracks.ui.monthlyRecap.MonthlyRecapActivity;
+import de.dennisguse.opentracks.ui.personalBests.PersonalBestsActivity;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.ui.util.RecyclerViewSwipeDeleteCallback;
 import de.dennisguse.opentracks.util.IntentUtils;
@@ -290,6 +292,16 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.track_list_markers) {
             startActivity(IntentUtils.newIntent(this, MarkerListActivity.class));
+            return true;
+        }
+
+        if (item.getItemId() == R.id.track_list_personal_bests) {
+            startActivity(IntentUtils.newIntent(this, PersonalBestsActivity.class));
+            return true;
+        }
+
+        if (item.getItemId() == R.id.track_list_monthly_recap) {
+            startActivity(IntentUtils.newIntent(this, MonthlyRecapActivity.class));
             return true;
         }
 
