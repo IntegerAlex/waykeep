@@ -150,7 +150,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
                 bitmap = TrackShareImageGenerator.renderStats(this,
                         getString(R.string.monthly_recap_title),
                         monthTitle(selected) + "  ·  " + getString(R.string.monthly_recap_activities_value, tracks.size()),
-                        cards, SHARE_WIDTH_PX, SHARE_HEIGHT_PX);
+                        cards, TrackShareImageGenerator.loadBackground(this), SHARE_WIDTH_PX, SHARE_HEIGHT_PX);
             } catch (RuntimeException e) {
                 reportShareError();
                 return;

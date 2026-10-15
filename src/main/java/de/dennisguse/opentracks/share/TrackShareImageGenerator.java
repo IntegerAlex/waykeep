@@ -38,10 +38,40 @@ public class TrackShareImageGenerator {
         STATS_CARD
     }
 
+    public enum Background {
+        DARK,
+        LIGHT,
+        TRANSPARENT,
+        MAP_TINT
+    }
+
     public record StatCard(@NonNull String value, @NonNull String label) {
     }
 
+    /**
+     * Resolved colors for one background. Text is derived per background, never user-picked.
+     */
+    private record CardTheme(int textPrimary, int textSecondary, int cardFill, int placeholder) {
+    }
+
     private TrackShareImageGenerator() {
+    }
+
+    private static final String PREFS = "share_image_options";
+    private static final String PREF_BACKGROUND = "background";
+
+    public static Background loadBackground(@NonNull Context context) {
+        try {
+            return Background.valueOf(context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                    .getString(PREF_BACKGROUND, Background.DARK.name()));
+        } catch (IllegalArgumentException e) {
+            return Background.DARK;
+        }
+    }
+
+    public static void saveBackground(@NonNull Context context, @NonNull Background background) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putString(PREF_BACKGROUND, background.name()).apply();
     }
 
     public static List<StatCard> buildStats(@NonNull Context context, @NonNull Track track) {
@@ -91,12 +121,12 @@ public class TrackShareImageGenerator {
      */
     public static Bitmap render(@NonNull Context context, @NonNull Track track,
                                @NonNull RouteSampler.Route route, @NonNull Style style,
-                               int widthPx, int heightPx) {
+                               @NonNull Background background, int widthPx, int heightPx) {
         String subtitle = StringUtils.formatDateTimeWithOffset(track.startTime())
                 + "  ·  " + track.activityTypeLocalized();
         List<StatCard> cards = style == Style.STATS_CARD ? buildStats(context, track) : List.of();
         return renderCard(context, track.name(), subtitle, route.points(), cards,
-                style == Style.ROUTE_ONLY, widthPx, heightPx);
+                style == Style.ROUTE_ONLY, background, widthPx, heightPx);
     }
 
     /**
@@ -104,39 +134,79 @@ public class TrackShareImageGenerator {
      */
     public static Bitmap renderStats(@NonNull Context context, @NonNull String title,
                                     @NonNull String subtitle, @NonNull List<StatCard> cards,
-                                    int widthPx, int heightPx) {
-        return renderCard(context, title, subtitle, List.of(), cards, false, widthPx, heightPx);
+                                    @NonNull Background background, int widthPx, int heightPx) {
+        return renderCard(context, title, subtitle, List.of(), cards, false, background, widthPx, heightPx);
+    }
+
+    private static CardTheme themeFor(Background background) {
+        return switch (background) {
+            case LIGHT -> new CardTheme(0xFF1A1A1A, 0x8A000000, 0x14000000, 0x59000000);
+            case TRANSPARENT -> new CardTheme(0xFFFFFFFF, 0xE6FFFFFF, 0x40000000, 0x59FFFFFF);
+            case DARK, MAP_TINT -> new CardTheme(0xFFFFFFFF, 0xB3FFFFFF, 0x26FFFFFF, 0x59FFFFFF);
+        };
+    }
+
+    private static void drawBackground(@NonNull Context context, @NonNull Canvas canvas,
+                                      @NonNull Background background, int widthPx, int heightPx, float density) {
+        if (background == Background.TRANSPARENT) {
+            return;
+        }
+        Paint paint = new Paint();
+        if (background == Background.LIGHT) {
+            paint.setShader(new LinearGradient(0, 0, 0, heightPx, 0xFFFFFFFF, 0xFFE4E4E4, Shader.TileMode.CLAMP));
+        } else {
+            int top = ContextCompat.getColor(context, R.color.thumb_gradient_start);
+            int bottom = ContextCompat.getColor(context, R.color.thumb_gradient_end);
+            paint.setShader(new LinearGradient(0, 0, 0, heightPx, top, bottom, Shader.TileMode.CLAMP));
+        }
+        canvas.drawRect(0, 0, widthPx, heightPx, paint);
+
+        if (background == Background.MAP_TINT) {
+            // Faint graticule: technical map feel with zero network or battery cost.
+            Paint grid = new Paint();
+            grid.setColor(0x14FFFFFF);
+            grid.setStrokeWidth(Math.max(1, density));
+            float step = 48 * density;
+            for (float x = step; x < widthPx; x += step) {
+                canvas.drawLine(x, 0, x, heightPx, grid);
+            }
+            for (float y = step; y < heightPx; y += step) {
+                canvas.drawLine(0, y, widthPx, y, grid);
+            }
+        }
     }
 
     private static Bitmap renderCard(@NonNull Context context, @NonNull String title,
                                     @NonNull String subtitle, @NonNull List<RouteSampler.LatLon> routePoints,
                                     @NonNull List<StatCard> cards, boolean routeOnly,
-                                    int widthPx, int heightPx) {
+                                    @NonNull Background background, int widthPx, int heightPx) {
         float density = context.getResources().getDisplayMetrics().density;
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        CardTheme theme = themeFor(background);
 
         Bitmap bitmap = Bitmap.createBitmap(widthPx, heightPx, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
-        int top = ContextCompat.getColor(context, R.color.thumb_gradient_start);
-        int bottom = ContextCompat.getColor(context, R.color.thumb_gradient_end);
-        Paint background = new Paint();
-        background.setShader(new LinearGradient(0, 0, 0, heightPx, top, bottom, Shader.TileMode.CLAMP));
-        canvas.drawRect(0, 0, widthPx, heightPx, background);
+        drawBackground(context, canvas, background, widthPx, heightPx, density);
 
         float padding = 48 * density;
         float y = padding;
 
         Paint titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        titlePaint.setColor(0xFFFFFFFF);
+        titlePaint.setColor(theme.textPrimary());
         titlePaint.setTextSize(34 * scaledDensity);
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        Paint subtitlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        subtitlePaint.setColor(theme.textSecondary());
+        subtitlePaint.setTextSize(16 * scaledDensity);
+        if (background == Background.TRANSPARENT) {
+            // Readable over any photo.
+            titlePaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
+            subtitlePaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
+        }
         canvas.drawText(ellipsize(title, titlePaint, widthPx - 2 * padding), padding, y + 34 * scaledDensity, titlePaint);
         y += 48 * scaledDensity;
 
-        Paint subtitlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        subtitlePaint.setColor(0xB3FFFFFF);
-        subtitlePaint.setTextSize(16 * scaledDensity);
         canvas.drawText(ellipsize(subtitle, subtitlePaint, widthPx - 2 * padding), padding, y + 16 * scaledDensity, subtitlePaint);
         y += 40 * scaledDensity;
 
@@ -144,18 +214,21 @@ public class TrackShareImageGenerator {
             float routeTop = y;
             float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.62f;
             drawRoute(canvas, routePoints, padding, routeTop, widthPx - padding, routeBottom,
-                    ContextCompat.getColor(context, R.color.opentracks), density);
+                    ContextCompat.getColor(context, R.color.opentracks), theme.placeholder(), density);
             y = routeBottom + 24 * density;
         }
 
         if (!cards.isEmpty()) {
             drawStatsGrid(canvas, cards, padding, y,
-                    widthPx - padding, heightPx - padding - 40 * scaledDensity, scaledDensity, density);
+                    widthPx - padding, heightPx - padding - 40 * scaledDensity, theme, scaledDensity, density);
         }
 
         Paint brandPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        brandPaint.setColor(0xB3FFFFFF);
+        brandPaint.setColor(theme.textSecondary());
         brandPaint.setTextSize(14 * scaledDensity);
+        if (background == Background.TRANSPARENT) {
+            brandPaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
+        }
         String brand = context.getString(R.string.app_name);
         float brandWidth = brandPaint.measureText(brand);
         canvas.drawText(brand, widthPx - padding - brandWidth, heightPx - padding, brandPaint);
@@ -165,10 +238,10 @@ public class TrackShareImageGenerator {
 
     private static void drawRoute(Canvas canvas, List<RouteSampler.LatLon> points,
                                  float left, float top, float right, float bottom,
-                                 int color, float density) {
+                                 int color, int placeholderColor, float density) {
         if (points.size() < 2) {
             Paint empty = new Paint(Paint.ANTI_ALIAS_FLAG);
-            empty.setColor(0x59FFFFFF);
+            empty.setColor(placeholderColor);
             empty.setTextSize(18 * density);
             empty.setTextAlign(Paint.Align.CENTER);
             canvas.drawText("—", (left + right) / 2f, (top + bottom) / 2f, empty);
@@ -233,7 +306,7 @@ public class TrackShareImageGenerator {
 
     private static void drawStatsGrid(Canvas canvas, List<StatCard> cards,
                                      float left, float top, float right, float bottom,
-                                     float scaledDensity, float density) {
+                                     CardTheme theme, float scaledDensity, float density) {
         if (cards.isEmpty()) {
             return;
         }
@@ -244,16 +317,16 @@ public class TrackShareImageGenerator {
         float cellHeight = Math.min((bottom - top - gap * (rows - 1)) / rows, 110 * density);
 
         Paint valuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        valuePaint.setColor(0xFFFFFFFF);
+        valuePaint.setColor(theme.textPrimary());
         valuePaint.setTextSize(26 * scaledDensity);
         valuePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        labelPaint.setColor(0xB3FFFFFF);
+        labelPaint.setColor(theme.textSecondary());
         labelPaint.setTextSize(13 * scaledDensity);
 
         Paint cardPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cardPaint.setColor(0x26FFFFFF);
+        cardPaint.setColor(theme.cardFill());
 
         for (int i = 0; i < cards.size(); i++) {
             int row = i / columns;

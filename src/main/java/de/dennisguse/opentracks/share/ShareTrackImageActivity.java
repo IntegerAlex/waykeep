@@ -41,6 +41,7 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     private Bitmap previewBitmap;
     private boolean aspectStory;
     private TrackShareImageGenerator.Style style = TrackShareImageGenerator.Style.STATS_CARD;
+    private TrackShareImageGenerator.Background background = TrackShareImageGenerator.Background.DARK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,12 @@ public class ShareTrackImageActivity extends AppCompatActivity {
             updateToggleStates();
             renderPreview();
         });
+        viewBinding.shareImageBgDark.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.DARK));
+        viewBinding.shareImageBgLight.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.LIGHT));
+        viewBinding.shareImageBgTransparent.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.TRANSPARENT));
+        viewBinding.shareImageBgMap.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.MAP_TINT));
         viewBinding.shareImageShareButton.setOnClickListener(v -> shareImage());
+        background = TrackShareImageGenerator.loadBackground(this);
         updateToggleStates();
 
         loadTrackAsync();
@@ -93,11 +99,22 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding = null;
     }
 
+    private void setBackground(TrackShareImageGenerator.Background selected) {
+        background = selected;
+        TrackShareImageGenerator.saveBackground(this, selected);
+        updateToggleStates();
+        renderPreview();
+    }
+
     private void updateToggleStates() {
         viewBinding.shareImageAspectFeed.setSelected(!aspectStory);
         viewBinding.shareImageAspectStory.setSelected(aspectStory);
         viewBinding.shareImageStyleStats.setSelected(style == TrackShareImageGenerator.Style.STATS_CARD);
         viewBinding.shareImageStyleRoute.setSelected(style == TrackShareImageGenerator.Style.ROUTE_ONLY);
+        viewBinding.shareImageBgDark.setSelected(background == TrackShareImageGenerator.Background.DARK);
+        viewBinding.shareImageBgLight.setSelected(background == TrackShareImageGenerator.Background.LIGHT);
+        viewBinding.shareImageBgTransparent.setSelected(background == TrackShareImageGenerator.Background.TRANSPARENT);
+        viewBinding.shareImageBgMap.setSelected(background == TrackShareImageGenerator.Background.MAP_TINT);
     }
 
     private void loadTrackAsync() {
@@ -132,10 +149,11 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding.shareImageProgress.setVisibility(View.VISIBLE);
         TrackShareImageGenerator.Style selectedStyle = style;
         boolean selectedStory = aspectStory;
+        TrackShareImageGenerator.Background selectedBackground = background;
         executor.execute(() -> {
             Bitmap rendered;
             try {
-                rendered = TrackShareImageGenerator.render(this, track, route, selectedStyle,
+                rendered = TrackShareImageGenerator.render(this, track, route, selectedStyle, selectedBackground,
                         IMAGE_WIDTH_PX, selectedStory ? HEIGHT_9_16_PX : HEIGHT_4_5_PX);
             } catch (RuntimeException e) {
                 runOnUiThread(() -> {
@@ -168,10 +186,11 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding.shareImageProgress.setVisibility(View.VISIBLE);
         TrackShareImageGenerator.Style selectedStyle = style;
         boolean selectedStory = aspectStory;
+        TrackShareImageGenerator.Background selectedBackground = background;
         executor.execute(() -> {
             Bitmap bitmap;
             try {
-                bitmap = TrackShareImageGenerator.render(this, track, route, selectedStyle,
+                bitmap = TrackShareImageGenerator.render(this, track, route, selectedStyle, selectedBackground,
                         IMAGE_WIDTH_PX, selectedStory ? HEIGHT_9_16_PX : HEIGHT_4_5_PX);
             } catch (RuntimeException e) {
                 reportShareError();

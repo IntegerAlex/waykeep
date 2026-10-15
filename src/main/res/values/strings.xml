@@ -687,6 +687,10 @@ limitations under the License.
     <string name="share_image_style_stats">Stats card</string>
     <string name="share_image_style_route">Route only</string>
     <string name="share_image_stat_elevation_gain">Elev Gain</string>
+    <string name="share_image_bg_dark">Dark</string>
+    <string name="share_image_bg_light">Light</string>
+    <string name="share_image_bg_transparent">Clear</string>
+    <string name="share_image_bg_map">Map</string>
     <string name="share_image_error">Could not create the share image.</string>
     <!-- Personal bests -->
     <string name="personal_bests_title">Personal bests</string>
