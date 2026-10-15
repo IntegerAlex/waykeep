@@ -281,8 +281,10 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
 
         ChartView.Metric metric = firstAvailableMetric(hasElevation, hasSpeed, hasHeartRate, hasCadence, hasPower);
         if (metric == null) {
+            showEmptyState();
             return;
         }
+        showChart();
         int chipId = chipIdForMetric(metric);
         if (viewBinding.chartMetricGroup.getCheckedChipId() != chipId) {
             viewBinding.chartMetricGroup.check(chipId);
@@ -290,6 +292,18 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         if (chartView.getMetric() != metric) {
             chartView.setMetric(metric);
         }
+    }
+
+    private void showEmptyState() {
+        viewBinding.chartMetricScroll.setVisibility(View.GONE);
+        viewBinding.chartView.setVisibility(View.GONE);
+        viewBinding.chartEmptyState.setVisibility(View.VISIBLE);
+    }
+
+    private void showChart() {
+        viewBinding.chartEmptyState.setVisibility(View.GONE);
+        viewBinding.chartMetricScroll.setVisibility(View.VISIBLE);
+        viewBinding.chartView.setVisibility(View.VISIBLE);
     }
 
     private ChartView.Metric firstAvailableMetric(boolean elevation, boolean speed, boolean heartRate, boolean cadence, boolean power) {
