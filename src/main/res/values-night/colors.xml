@@ -6,6 +6,4 @@ Waykeep brand tokens for dark/OLED mode.
     <color name="waykeep_cyan">#00E5FF</color>
     <color name="waykeep_cyan_dim">#008B99</color>
     <color name="waykeep_cyan_transparent">#5500E5FF</color>
-    <!-- Glass surface only for night/OLED mode. -->
-    <color name="oled_glass">#59000000</color>
 </resources>

@@ -45,10 +45,10 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@color/oled_friendly</item>
 
-        <item name="colorSurface">@color/oled_glass</item>
-        <item name="colorSurfaceContainer">@color/oled_glass</item>
-        <item name="colorSurfaceDim">@color/oled_glass</item>
-        <item name="backgroundColor">@color/oled_glass</item>
+        <item name="colorSurface">@color/oled_friendly</item>
+        <item name="colorSurfaceContainer">@color/oled_friendly</item>
+        <item name="colorSurfaceDim">@color/oled_friendly</item>
+        <item name="backgroundColor">@color/oled_friendly</item>
         <item name="android:windowBackground">@color/oled_friendly</item>
 
         <!-- Material3-related: otherwise the actionbar does not overlay the SearchBar completely (with AppBarLayout) -->

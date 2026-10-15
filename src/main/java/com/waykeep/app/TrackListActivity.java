@@ -268,6 +268,17 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         adapter = null;
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        // The SearchBar logo is the ActionBar home button, and AppCompat routes its taps here
+        // (setNavigationOnClickListener is ignored once setSupportActionBar is used).
+        // Scroll to top instead of exiting; Exit lives in the overflow menu.
+        if (viewBinding != null) {
+            viewBinding.trackList.smoothScrollToPosition(0);
+        }
+        return true;
+    }
+
     @NonNull
     @Override
     protected View createRootView() {
