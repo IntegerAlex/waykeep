@@ -105,6 +105,16 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
     }
 
     /**
+     * Removes a track from the shown list without touching the database (used for the
+     * optimistic swipe-to-delete UI; the row comes back on the next query if not committed).
+     */
+    public void removeTrack(Track.Id trackId) {
+        List<TrackListIterator.Item> updated = new ArrayList<>(getCurrentList());
+        updated.removeIf(item -> item.id().equals(trackId));
+        submitList(updated);
+    }
+
+    /**
      * Bolds the current search matches in names/descriptions. The query is not part of the
      * diffed item content, so holders are rebound explicitly.
      */

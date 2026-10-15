@@ -43,6 +43,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -148,6 +150,12 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
 
+    // Swipe-to-delete staging: rows are removed optimistically and only deleted for real
+    // once the undo window lapses.
+    private final List<Track.Id> pendingDeleteIds = new ArrayList<>();
+    private Snackbar pendingDeleteSnackbar;
+    private Snackbar.Callback pendingDeleteCallback;
+
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
                 .observe(TrackListActivity.this, this::onRecordingStatusChanged);
@@ -198,13 +206,19 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(new RecyclerViewSwipeDeleteCallback(this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                TrackListActivity.this.deleteTracks(new Track.Id(viewHolder.getItemId()));
+                TrackListActivity.this.onTrackSwiped(new Track.Id(viewHolder.getItemId()));
             }
         });
         itemTouchhelper.attachToRecyclerView(viewBinding.trackList);
         viewBinding.trackListFabAction.setOnClickListener((view) -> {
             if (recordingStatus.isRecording()) {
-                Toast.makeText(TrackListActivity.this, getString(R.string.hold_to_stop), Toast.LENGTH_LONG).show();
+                // Explicit stop path; long-press remains as a shortcut.
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.stop_recording_title)
+                        .setMessage(R.string.stop_recording_message)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.image_stop, (dialog, which) -> stopRecordingFromFeed())
+                        .show();
                 return;
             }
 
@@ -225,11 +239,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             }
 
             // Recording -> Stop
-            ActivityUtils.vibrate(this, Duration.ofSeconds(1));
-            updateGpsMenuItem(false, false);
-            recordingStatusConnection.stopRecording(TrackListActivity.this);
-            viewBinding.trackListFabAction.setImageResource(R.drawable.ic_baseline_record_24);
-            viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
+            stopRecordingFromFeed();
             return true;
         });
 
@@ -274,6 +284,13 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         super.onDestroy();
         trackLoader.shutdownNow();
         searchHandler.removeCallbacksAndMessages(null);
+        if (pendingDeleteSnackbar != null) {
+            // Never commit a staged delete from a dead activity; the track simply stays.
+            pendingDeleteSnackbar.removeCallback(pendingDeleteCallback);
+            pendingDeleteSnackbar.dismiss();
+            pendingDeleteSnackbar = null;
+        }
+        pendingDeleteIds.clear();
         viewBinding = null;
         recordingStatusConnection = null;
         adapter = null;
@@ -388,6 +405,55 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void stopRecordingFromFeed() {
+        ActivityUtils.vibrate(this, Duration.ofSeconds(1));
+        updateGpsMenuItem(false, false);
+        recordingStatusConnection.stopRecording(TrackListActivity.this);
+        viewBinding.trackListFabAction.setImageResource(R.drawable.ic_baseline_record_24);
+        viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
+    }
+
+    /**
+     * Swipe-to-delete with an undo window: the row vanishes immediately, the track is only
+     * deleted once the Snackbar lapses without Undo. A second swipe commits the first one.
+     */
+    private void onTrackSwiped(Track.Id trackId) {
+        if (trackId.equals(recordingStatus.trackId())) {
+            Toast.makeText(this, getString(R.string.track_delete_not_recording), Toast.LENGTH_LONG).show();
+            loadData();
+            return;
+        }
+        commitPendingDelete();
+
+        pendingDeleteIds.add(trackId);
+        adapter.removeTrack(trackId);
+        pendingDeleteCallback = new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                    commitPendingDelete();
+                }
+            }
+        };
+        pendingDeleteSnackbar = Snackbar.make(viewBinding.getRoot(), R.string.track_deleted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.generic_undo, v -> {
+                    pendingDeleteIds.clear();
+                    loadData();
+                })
+                .addCallback(pendingDeleteCallback);
+        pendingDeleteSnackbar.show();
+    }
+
+    private void commitPendingDelete() {
+        if (pendingDeleteIds.isEmpty()) {
+            return;
+        }
+        Track.Id[] ids = pendingDeleteIds.toArray(new Track.Id[0]);
+        pendingDeleteIds.clear();
+        // Undo was the safety net, so this skips the confirm dialog on purpose.
+        onConfirmDeleteDone(ids);
     }
 
     private void loadData() {

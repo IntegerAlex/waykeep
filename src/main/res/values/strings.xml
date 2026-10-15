@@ -502,6 +502,7 @@ limitations under the License.
     <string name="track_delete_progress_message">Deleting…</string>
     <string name="track_delete_number_of_tracks">%1$d tracks</string>
     <string name="track_delete_not_recording">This track cannot be deleted as it is currently recorded.</string>
+    <string name="track_deleted">Track deleted</string>
     <string name="track_discarding">Discarding Track</string>
     <!-- Track Detail -->
     <string name="track_detail_stats_tab">Stats</string>
@@ -748,6 +749,8 @@ limitations under the License.
     <string name="monthly_recap_prev">‹</string>
     <string name="monthly_recap_next">›</string>
     <string name="hold_to_stop">Hold to stop</string>
+    <string name="stop_recording_title">Stop recording?</string>
+    <string name="stop_recording_message">The current track will be saved.</string>
     <string name="instant_export_enabled_summary">Export track to storage after recording is finished</string>
     <string name="instant_export_enabled_title">Instant post-workout export</string>
     <string name="health_connect_export_enabled_summary">Export activity to Health Connect after recording is finished</string>
