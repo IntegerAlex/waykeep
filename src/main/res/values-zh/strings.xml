@@ -173,8 +173,6 @@ limitations under the License.
     <string name="settings_advanced">高级</string>
     <string name="settings_default_trackfileformat">导出/分享文件格式</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">按距离</string>
-    <string name="settings_chart_by_time">按时间</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">锁屏显示统计数据</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">记录时，无需解锁设备即可显示统计数据。</string>

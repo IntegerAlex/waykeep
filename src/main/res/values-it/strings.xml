@@ -202,8 +202,6 @@ Infatti, un\'applicazione deve supportare <i>ACTION_VIEW</i> con MIME <i>applica
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avanzate</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Per distanza</string>
-    <string name="settings_chart_by_time">Per durata</string>
     <string name="settings_recording_default_activity_title">Tipo di attività predefinita</string>
     <string name="settings_recording_location_frequency_summary">%1$s tra posizioni marcate</string>
     <string name="settings_recording_max_recording_distance_summary">Viene creato un nuovo segmento se la distanza tra due punti è maggiore di %1$s</string>

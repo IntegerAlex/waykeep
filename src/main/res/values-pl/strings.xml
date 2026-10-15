@@ -183,8 +183,6 @@ limitations under the License.
     <string name="settings_advanced">Zaawansowane</string>
     <string name="settings_default_trackfileformat">Format pliku eksportu/udostępniania</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Wg odległości</string>
-    <string name="settings_chart_by_time">Wg czasu</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Pokazuj statystyki na ekeranie blokady</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Podczas nagrywania, pokazuj statystyki bez konieczności odblokowania urządzenia.</string>

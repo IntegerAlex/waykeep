@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Išplėstinės</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Pagal atstumą</string>
-    <string name="settings_chart_by_time">Pagal laiką</string>
     <string name="settings_recording_default_activity_title">Numatyt. veiklos tipas</string>
     <string name="settings_recording_location_frequency_summary">%1$s tarp įrašytų vietų</string>
     <string name="settings_recording_max_recording_distance_summary">Naujas segmentas sukuriamas, jei atstumas tarp dviejų vietų yra didesnis nei %1$s</string>

@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Προηγμένες</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Κατά απόσταση</string>
-    <string name="settings_chart_by_time">Κατά χρόνο</string>
     <string name="settings_recording_default_activity_title">Προεπιλεγμένος τύπος δραστηριότητας</string>
     <string name="settings_recording_location_frequency_summary">%1$s μεταξύ καταγεγραμμένων θέσεων</string>
     <string name="settings_recording_max_recording_distance_summary">Δημιουργείται ένα νέο τμήμα εάν η απόσταση ανάμεσα σε δύο θέσεις είναι μεγαλύτερη από %1$s</string>

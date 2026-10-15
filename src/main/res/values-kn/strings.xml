@@ -264,8 +264,6 @@
     <string name="settings_advanced">ಮುಂದುವರಿದ</string>
     <string name="settings_default_trackfileformat">ರಫ್ತು/ಹಂಚಿಕೆ ಫೈಲ್ ಫಾರ್ಮ್ಯಾಟ್</string>
     <string name="settings_export_filename_title">ಫೈಲ್ ಹೆಸರಿನ ಸ್ವರೂಪ</string>
-    <string name="settings_chart_by_distance">ಅಂತರದ ಮೂಲಕ</string>
-    <string name="settings_chart_by_time">ಸಮಯದಿಂದ</string>
     <string name="settings_recording_title">ರೆಕಾರ್ಡಿಂಗ್</string>
     <string name="settings_ui_dynamic_colors_title">ಡೈನಾಮಿಕ್ ಬಣ್ಣಗಳು</string>
     <string name="settings_ui_dynamic_colors_summary">ಬಳಕೆದಾರ-ವ್ಯಾಖ್ಯಾನಿತ ಡೈನಾಮಿಕ್ ಬಣ್ಣಗಳನ್ನು ಬಳಸಿ (Android 12+ ಮಾತ್ರ; ಹಸ್ತಚಾಲಿತ ಮರುಪ್ರಾರಂಭದ ಅಗತ್ಯವಿದೆ)</string>

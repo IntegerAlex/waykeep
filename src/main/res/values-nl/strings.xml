@@ -212,8 +212,6 @@ Als het GPS-apparaat onnauwkeurige gegevens rapporteert (bijv. locatie, snelheid
     <!-- Settings Advanced -->
     <string name="settings_advanced">Geavanceerd</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Op afstand</string>
-    <string name="settings_chart_by_time">Op tijd</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Toon de statistieken op het vergrendelingsscherm</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Toon tijdens de opname de statistieken zonder het apparaat te ontgrendelen.</string>

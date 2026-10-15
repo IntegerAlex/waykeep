@@ -137,8 +137,6 @@
     <string name="sensor_state_heart_rate_value">%1$d bpm</string>
     <string name="sensor_state_power">電源</string>
     <string name="settings_advanced">進階</string>
-    <string name="settings_chart_by_distance">依距離</string>
-    <string name="settings_chart_by_time">依時間</string>
     <string name="settings_recording_default_activity_title">預設活動類型</string>
     <string name="settings_recording_location_frequency_summary">每 %1$s記錄一次位置資訊</string>
     <string name="settings_recording_max_recording_distance_summary">系統會在兩個地點之間的距離大於 %1$s時建立新的區段</string>

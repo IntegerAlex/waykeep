@@ -139,8 +139,6 @@
     <string name="sensor_state_heart_rate_value">%1$d lpm</string>
     <string name="sensor_state_power">Potencia</string>
     <string name="settings_advanced">Opciones avanzadas</string>
-    <string name="settings_chart_by_distance">Por distancia</string>
-    <string name="settings_chart_by_time">Por tiempo</string>
     <string name="settings_recording_default_activity_title">Tipo de actividad predeterminada</string>
     <string name="settings_recording_location_frequency_summary">%1$s entre las ubicaciones grabadas</string>
     <string name="settings_recording_max_recording_distance_summary">Se crea un nuevo tramo si la distancia entre dos ubicaciones es superior a %1$s</string>

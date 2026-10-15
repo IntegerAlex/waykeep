@@ -137,8 +137,6 @@
     <string name="sensor_state_heart_rate_value">%1$d bpm</string>
     <string name="sensor_state_power">Daya</string>
     <string name="settings_advanced">Lanjutan</string>
-    <string name="settings_chart_by_distance">Menurut jarak</string>
-    <string name="settings_chart_by_time">Menurut waktu</string>
     <string name="settings_recording_default_activity_title">Jenis aktivitas default</string>
     <string name="settings_recording_location_frequency_summary">%1$s antara lokasi yang direkam</string>
     <string name="settings_recording_max_recording_distance_summary">Segmen baru dibuat jika jarak antara dua lokasi lebih besar dari %1$s</string>

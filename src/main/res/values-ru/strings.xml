@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Расширенные</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">По расстоянию</string>
-    <string name="settings_chart_by_time">По времени</string>
     <string name="settings_recording_default_activity_title">Вид активности по умолчанию</string>
     <string name="settings_recording_location_frequency_summary">%1$s между проверками местоположения</string>
     <string name="settings_recording_max_recording_distance_summary">Новый сегмент создается, если расстояние между двумя точками больше %1$s</string>

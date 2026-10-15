@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Nâng cao</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Theo khoảng cách</string>
-    <string name="settings_chart_by_time">Theo thời gian</string>
     <string name="settings_recording_default_activity_title">Loại hoạt động mặc định</string>
     <string name="settings_recording_location_frequency_summary">%1$s giữa các vị trí được ghi</string>
     <string name="settings_recording_max_recording_distance_summary">Một đoạn mới được tạo nếu khoảng cách giữa hai vị trí lớn hơn %1$s</string>

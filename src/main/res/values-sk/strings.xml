@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Rozšírené</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Podľa vzdialenosti</string>
-    <string name="settings_chart_by_time">Podľa času</string>
     <string name="settings_recording_default_activity_title">Predvolený typ aktivity</string>
     <string name="settings_recording_location_frequency_summary">%1$s medzi zaznamenanými polohami</string>
     <string name="settings_recording_max_recording_distance_summary">Nový segment bude vytvorený v prípade, že vzdialenosť medzi dvoma polohami prekoná %1$s</string>

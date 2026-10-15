@@ -215,8 +215,6 @@ Meldet das GPS-Gerät ungenaue Daten (z.B. Standort, Geschwindigkeit, Höhe), ka
     <string name="settings_advanced">Erweitert</string>
     <string name="settings_default_trackfileformat">Dateiformat für export/teilen</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Nach Strecke</string>
-    <string name="settings_chart_by_time">Nach Zeit</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Zeige Statistiken auf dem Sperrbildschirm</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Zeige während der Aufzeichnung Statistiken an, ohne das Gerät zu entsperren.</string>

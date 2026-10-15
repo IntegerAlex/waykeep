@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avançades</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Per distància</string>
-    <string name="settings_chart_by_time">Per temps</string>
     <string name="settings_recording_default_activity_title">Activitat predeterminada</string>
     <string name="settings_recording_location_frequency_summary">%1$s entre ubicacions registrades</string>
     <string name="settings_recording_max_recording_distance_summary">Es crea un segment nou si la distància entre dues ubicacions és més gran que %1$s</string>

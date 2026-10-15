@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">خيارات متقدمة</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">بحسب المسافة</string>
-    <string name="settings_chart_by_time">بحسب الوقت</string>
     <string name="settings_recording_default_activity_title">نوع النشاط الافتراضي</string>
     <string name="settings_recording_location_frequency_summary">%1$s بين فحوصات الموقع</string>
     <string name="settings_recording_max_recording_distance_summary">يتم إنشاء جزء جديد إذا كانت المسافة بين موقعين أكبر من %1$s</string>

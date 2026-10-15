@@ -137,8 +137,6 @@
     <string name="sensor_state_heart_rate_value">%1$d פעימות לדקה</string>
     <string name="sensor_state_power">הספק</string>
     <string name="settings_advanced">מתקדם</string>
-    <string name="settings_chart_by_distance">לפי מרחק</string>
-    <string name="settings_chart_by_time">לפי זמן</string>
     <string name="settings_recording_default_activity_title">ברירת המחדל לסוג פעילות</string>
     <string name="settings_recording_location_frequency_summary">%1$s בין מיקומים מוקלטים</string>
     <string name="settings_recording_max_recording_distance_summary">אם המרחק בין שני מיקומים גדול מ-%1$s, ייווצר קטע חדש</string>

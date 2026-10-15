@@ -205,8 +205,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Täpsemad seadistused</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Vahemaa järgi</string>
-    <string name="settings_chart_by_time">Aja järgi</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Kuva lukustusvaates statistikat</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Salvestamise ajal näita statistikat ilma seadet avamata.</string>

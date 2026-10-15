@@ -137,8 +137,6 @@
     <string name="sensor_state_heart_rate_value">%1$d bpm</string>
     <string name="sensor_state_power">Power</string>
     <string name="settings_advanced">Advanced</string>
-    <string name="settings_chart_by_distance">By distance</string>
-    <string name="settings_chart_by_time">By time</string>
     <string name="settings_recording_default_activity_title">Default activity type</string>
     <string name="settings_recording_location_frequency_summary">%1$s between recorded locations</string>
     <string name="settings_recording_max_recording_distance_summary">A new segment is created if the distance between two locations is greater than %1$s</string>

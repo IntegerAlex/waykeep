@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">پیشرفته</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">بر حسب مسافت</string>
-    <string name="settings_chart_by_time">بر حسب زمان</string>
     <string name="settings_recording_default_activity_title">نوع فعالیت پیش‌فرض</string>
     <string name="settings_recording_location_frequency_summary">%1$s بین موقعیت‌های مکانی ضبط شده</string>
     <string name="settings_recording_max_recording_distance_summary">چنانچه فاصله بین دو موقعیت مکانی بیشتر از %1$s باشد، یک قطعه جدید ایجاد شود</string>

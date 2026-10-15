@@ -204,8 +204,6 @@
     <string name="settings_advanced">Casta</string>
     <string name="settings_default_trackfileformat">Formáid comhaid a onnmhairiú/a roinnt</string>
     <string name="settings_export_filename_title">Formáid ainm an chomhaid</string>
-    <string name="settings_chart_by_distance">De réir achair</string>
-    <string name="settings_chart_by_time">De réir ama</string>
     <string name="settings_recording_customize_layout_title">Saincheap do leagan amach taifeadta</string>
     <string name="settings_recording_customize_layout_select_columns">Réimsí sonraí de réir a chéile</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Agus tú ag taifeadadh, taispeáin staitisticí gan an gléas a dhíghlasáil.</string>

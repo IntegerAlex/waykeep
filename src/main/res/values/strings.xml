@@ -355,8 +355,6 @@ limitations under the License.
     <string name="settings_default_trackfileformat">Export/sharing file format</string>
     <string name="settings_export_filename_title">Format of the filename</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">By distance</string>
-    <string name="settings_chart_by_time">By time</string>
     <string name="settings_charts_title">Charts</string>
     <string name="settings_chart_display_elevation_title">Display elevation</string>
     <string name="settings_chart_display_pace_or_speed_title">Display pace or speed</string>

@@ -226,8 +226,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avanceret</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Efter afstand</string>
-    <string name="settings_chart_by_time">Efter tid</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Vis statistik på låseskærm</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Vis statistik, mens du optager, uden at låse enheden op.</string>

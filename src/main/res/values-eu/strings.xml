@@ -228,8 +228,6 @@ GPS gailuak datu okerrak salatzen baditu (adibidez, kokapena, abiadura, kota), O
     <!-- Settings Advanced -->
     <string name="settings_advanced">Aurreratua</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Distantziaren arabera</string>
-    <string name="settings_chart_by_time">Denboraren arabera</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Erakutsi estatistika blokeo-pantailan</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Grabatzen ari zaren bitartean, erakutsi estatistikak gailua desblokeatu gabe.</string>

@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Напредно</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Према раздаљини</string>
-    <string name="settings_chart_by_time">Према времену</string>
     <string name="settings_recording_default_activity_title">Подразум. активност</string>
     <string name="settings_recording_location_frequency_summary">%1$s између забележених локација</string>
     <string name="settings_recording_max_recording_distance_summary">Нов сегмент се прави ако је раздаљина између две локације већа од %1$s</string>

@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avansert</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Etter avstand</string>
-    <string name="settings_chart_by_time">Etter tid</string>
     <string name="settings_recording_default_activity_title">Forvalgt aktivitetstype</string>
     <string name="settings_recording_location_frequency_summary">%1$s mellom posisjonskontroller</string>
     <string name="settings_recording_max_recording_distance_summary">Det blir opprettet et nytt segment hvis avstanden mellom to posisjoner er større enn %1$s</string>

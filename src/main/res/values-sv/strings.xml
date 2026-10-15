@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avancerat</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Efter avstånd</string>
-    <string name="settings_chart_by_time">Efter tid</string>
     <string name="settings_recording_default_activity_title">Standardaktivitetstyp</string>
     <string name="settings_recording_location_frequency_summary">%1$s mellan inspelade platser</string>
     <string name="settings_recording_max_recording_distance_summary">En nytt segment skapas om avståndet mellan två platser är längre än %1$s</string>

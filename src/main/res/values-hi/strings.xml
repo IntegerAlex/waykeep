@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">उन्नत</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">दूरी के अनुसार</string>
-    <string name="settings_chart_by_time">समय के अनुसार</string>
     <string name="settings_recording_default_activity_title">डिफ़ॉल्ट गतिविधि प्रकार</string>
     <string name="settings_recording_location_frequency_summary">रिकॉर्ड किए गए स्थानों के बीच %1$s</string>
     <string name="settings_recording_max_recording_distance_summary">यदि रिकॉर्ड किए गए दो स्थानों के बीच दूरी %1$s से अधिक हो तो एक नया खंड बनाया जाता है</string>

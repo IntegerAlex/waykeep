@@ -210,8 +210,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Opciones avanzadas</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Por distancia</string>
-    <string name="settings_chart_by_time">Por tiempo</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Mostrar estadísticas en pantalla de bloqueo</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Mientras graba, mostrar estadísticas sin desbloquear el dispositivo.</string>

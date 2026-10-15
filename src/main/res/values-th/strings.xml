@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">ขั้นสูง</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">ตามระยะทาง</string>
-    <string name="settings_chart_by_time">ตามเวลา</string>
     <string name="settings_recording_default_activity_title">ประเภทกิจกรรมเริ่มต้น</string>
     <string name="settings_recording_location_frequency_summary">บันทึกตำแหน่งทุก %1$s</string>
     <string name="settings_recording_max_recording_distance_summary">เซ็กเมนต์ใหม่จะถูกสร้างขึ้นถ้าระยะห่างระหว่างสองตำแหน่งมีค่ามากกว่า %1$s</string>

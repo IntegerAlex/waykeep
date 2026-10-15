@@ -339,8 +339,6 @@ limitations under the License.
     <string name="settings_default_trackfileformat">Dışa aktarma/paylaşma dosya biçimi</string>
     <string name="settings_export_filename_title">Dosya adı biçimi</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Mesafeye göre</string>
-    <string name="settings_chart_by_time">Zamana göre</string>
     <string name="settings_charts_title">Grafikler</string>
     <string name="settings_chart_display_elevation_title">Yüksekliği göster</string>
     <string name="settings_chart_display_pace_or_speed_title">Tempoyu veya hızı göster</string>

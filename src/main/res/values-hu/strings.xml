@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Speciális</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Távolság szerint</string>
-    <string name="settings_chart_by_time">Idő szerint</string>
     <string name="settings_recording_default_activity_title">Alapértelmezett tevékenységtípus</string>
     <string name="settings_recording_location_frequency_summary">%1$s a helyellenőrzések között</string>
     <string name="settings_recording_max_recording_distance_summary">Új szakasz jön létre, ha a két hely közötti távolság nagyobb, mint %1$s</string>

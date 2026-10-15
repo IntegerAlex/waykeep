@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">고급</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">거리 기준</string>
-    <string name="settings_chart_by_time">시간 기준</string>
     <string name="settings_recording_default_activity_title">기본 운동 유형</string>
     <string name="settings_recording_location_frequency_summary">위치 기록 주기는 %1$s입니다.</string>
     <string name="settings_recording_max_recording_distance_summary">두 위치의 거리가 %1$s(을)를 초과하는 경우 새 세그먼트가 생성됩니다.</string>

@@ -304,8 +304,6 @@ limitations under the License.
     <string name="settings_default_trackfileformat">匯出／分享檔案格式</string>
     <string name="settings_export_filename_title">檔名的格式</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">依距離</string>
-    <string name="settings_chart_by_time">依時間</string>
     <!-- Settings Recording -->
     <string name="settings_recording_customize_layout_title">自訂您的紀錄布局</string>
     <string name="settings_recording_customize_layout_select_columns">每列資料欄位</string>

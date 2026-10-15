@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Papildu iestatījumi</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Pēc attāluma</string>
-    <string name="settings_chart_by_time">Pēc laika</string>
     <string name="settings_recording_default_activity_title">Noklusējuma aktivitātes veids</string>
     <string name="settings_recording_location_frequency_summary">%1$s starp ierakstītajām atrašanās vietām</string>
     <string name="settings_recording_max_recording_distance_summary">Ja attālums starp divām atrašanās vietām ir lielāks par %1$s, tiek izveidots jauns atzars</string>

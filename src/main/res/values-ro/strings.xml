@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avansate</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">După distanță</string>
-    <string name="settings_chart_by_time">După durată</string>
     <string name="settings_recording_default_activity_title">Tip activitate standard</string>
     <string name="settings_recording_location_frequency_summary">%1$s între locațiile înregistrate</string>
     <string name="settings_recording_max_recording_distance_summary">Este creat un segment nou dacă distanța dintre două locații este mai mare decât %1$s</string>

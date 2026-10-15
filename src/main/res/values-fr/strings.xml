@@ -228,8 +228,6 @@ Si le dispositif GPS signale des données inexactes (par exemple, la localisatio
     <!-- Settings Advanced -->
     <string name="settings_advanced">Avancé</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">En fonction de la distance</string>
-    <string name="settings_chart_by_time">En fonction de la durée</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Afficher les statistiques sur l\'écran de verrouillage</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Pendant l\'enregistrement, afficher les statistiques sans déverrouiller l\'appareil.</string>

@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Розширені</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Відстань</string>
-    <string name="settings_chart_by_time">Час</string>
     <string name="settings_recording_default_activity_title">Тип за замовчуванням</string>
     <string name="settings_recording_location_frequency_summary">%1$s між перевірками місцезнаходження</string>
     <string name="settings_recording_max_recording_distance_summary">Кожні %1$s шляху відміряється новий відрізок</string>

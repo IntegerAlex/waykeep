@@ -170,8 +170,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">詳細設定</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">距離</string>
-    <string name="settings_chart_by_time">時間</string>
     <string name="settings_recording_default_activity_title">デフォルトのアクティビティタイプ</string>
     <string name="settings_recording_location_frequency_summary">現在地の記録頻度: %1$s</string>
     <string name="settings_recording_max_recording_distance_summary">2地点間の距離が%1$sを超える場合は新しいセグメントを作成します</string>

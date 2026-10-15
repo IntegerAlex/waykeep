@@ -229,8 +229,6 @@ limitations under the License.
     <string name="settings_advanced">Lisäasetukset</string>
     <string name="settings_default_trackfileformat">Tiedostomuoto vientiä ja jakamista varten</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Etäisyyden mukaan</string>
-    <string name="settings_chart_by_time">Ajan mukaan</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Näytä tilastot lukitusnäytöllä</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Näytä tilastot myös ilman laitteen lukituksen avaamista tallentaessa.</string>

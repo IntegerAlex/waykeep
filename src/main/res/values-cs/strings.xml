@@ -210,8 +210,6 @@ limitations under the License.
     <!-- Settings Advanced -->
     <string name="settings_advanced">Pokročilé</string>
     <!-- Settings Chart -->
-    <string name="settings_chart_by_distance">Podle vzdálenosti</string>
-    <string name="settings_chart_by_time">Podle doby</string>
     <!-- Settings Recording -->
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Zobrazit statistiky na uzamčené obrazovce</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">Během nahrávání zobrazte statistiky bez odemknutí zařízení.</string>
