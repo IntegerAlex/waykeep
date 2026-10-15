@@ -1,15 +1,20 @@
 package de.dennisguse.opentracks.share;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -67,23 +72,16 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding.shareImageAspectFeed.setOnClickListener(v -> setAspect(Aspect.FEED_4_5));
         viewBinding.shareImageAspectSquare.setOnClickListener(v -> setAspect(Aspect.SQUARE_1_1));
         viewBinding.shareImageAspectStory.setOnClickListener(v -> setAspect(Aspect.STORY_9_16));
-        viewBinding.shareImageStyleStats.setOnClickListener(v -> {
-            style = TrackShareImageGenerator.Style.STATS_CARD;
-            updateToggleStates();
-            renderPreview();
-        });
-        viewBinding.shareImageStyleRoute.setOnClickListener(v -> {
-            style = TrackShareImageGenerator.Style.ROUTE_ONLY;
-            updateToggleStates();
-            renderPreview();
-        });
+        viewBinding.shareImageStyleStats.setOnClickListener(v -> setStyle(TrackShareImageGenerator.Style.STATS_CARD));
+        viewBinding.shareImageStyleRoute.setOnClickListener(v -> setStyle(TrackShareImageGenerator.Style.ROUTE_ONLY));
         viewBinding.shareImageBgDark.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.DARK));
         viewBinding.shareImageBgLight.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.LIGHT));
         viewBinding.shareImageBgTransparent.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.TRANSPARENT));
         viewBinding.shareImageBgMap.setOnClickListener(v -> setBackground(TrackShareImageGenerator.Background.MAP_TINT));
         viewBinding.shareImageShareButton.setOnClickListener(v -> shareImage());
+        viewBinding.shareImageDownloadButton.setOnClickListener(v -> downloadImage());
         background = TrackShareImageGenerator.loadBackground(this);
-        updateToggleStates();
+        syncToggleGroups();
 
         loadTrackAsync();
     }
@@ -101,7 +99,11 @@ public class ShareTrackImageActivity extends AppCompatActivity {
 
     private void setAspect(Aspect selected) {
         aspect = selected;
-        updateToggleStates();
+        renderPreview();
+    }
+
+    private void setStyle(TrackShareImageGenerator.Style selected) {
+        style = selected;
         renderPreview();
     }
 
@@ -116,20 +118,21 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     private void setBackground(TrackShareImageGenerator.Background selected) {
         background = selected;
         TrackShareImageGenerator.saveBackground(this, selected);
-        updateToggleStates();
         renderPreview();
     }
 
-    private void updateToggleStates() {
-        viewBinding.shareImageAspectFeed.setSelected(aspect == Aspect.FEED_4_5);
-        viewBinding.shareImageAspectSquare.setSelected(aspect == Aspect.SQUARE_1_1);
-        viewBinding.shareImageAspectStory.setSelected(aspect == Aspect.STORY_9_16);
-        viewBinding.shareImageStyleStats.setSelected(style == TrackShareImageGenerator.Style.STATS_CARD);
-        viewBinding.shareImageStyleRoute.setSelected(style == TrackShareImageGenerator.Style.ROUTE_ONLY);
-        viewBinding.shareImageBgDark.setSelected(background == TrackShareImageGenerator.Background.DARK);
-        viewBinding.shareImageBgLight.setSelected(background == TrackShareImageGenerator.Background.LIGHT);
-        viewBinding.shareImageBgTransparent.setSelected(background == TrackShareImageGenerator.Background.TRANSPARENT);
-        viewBinding.shareImageBgMap.setSelected(background == TrackShareImageGenerator.Background.MAP_TINT);
+    /**
+     * Checks the persisted/initial state in the toggle groups (single-selection + required
+     * already keeps exactly one checked; this only aligns them on first load).
+     */
+    private void syncToggleGroups() {
+        viewBinding.shareImageAspectGroup.check(aspect == Aspect.SQUARE_1_1 ? R.id.share_image_aspect_square
+                : aspect == Aspect.STORY_9_16 ? R.id.share_image_aspect_story : R.id.share_image_aspect_feed);
+        viewBinding.shareImageStyleGroup.check(style == TrackShareImageGenerator.Style.ROUTE_ONLY
+                ? R.id.share_image_style_route : R.id.share_image_style_stats);
+        viewBinding.shareImageBgGroup.check(background == TrackShareImageGenerator.Background.LIGHT ? R.id.share_image_bg_light
+                : background == TrackShareImageGenerator.Background.TRANSPARENT ? R.id.share_image_bg_transparent
+                : background == TrackShareImageGenerator.Background.MAP_TINT ? R.id.share_image_bg_map : R.id.share_image_bg_dark);
     }
 
     private void loadTrackAsync() {
@@ -194,7 +197,15 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         });
     }
 
-    private void shareImage() {
+    private interface BitmapCallback {
+        void onBitmap(Bitmap bitmap);
+    }
+
+    /**
+     * Renders the current selection off the UI thread and delivers the bitmap on it.
+     * The receiver owns the bitmap (must recycle); it is recycled here if dead.
+     */
+    private void renderForExport(BitmapCallback callback) {
         if (track == null || route == null) {
             return;
         }
@@ -211,6 +222,19 @@ public class ShareTrackImageActivity extends AppCompatActivity {
                 reportShareError();
                 return;
             }
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) {
+                    bitmap.recycle();
+                    return;
+                }
+                viewBinding.shareImageProgress.setVisibility(View.GONE);
+                callback.onBitmap(bitmap);
+            });
+        });
+    }
+
+    private void shareImage() {
+        renderForExport(bitmap -> {
             File file = ShareImageStore.save(this, bitmap, "share-track-" + trackId.id());
             bitmap.recycle();
             if (file == null) {
@@ -218,20 +242,57 @@ public class ShareTrackImageActivity extends AppCompatActivity {
                 return;
             }
             Uri uri = ShareImageStore.uri(this, file);
+            Intent intent = new Intent(Intent.ACTION_SEND)
+                    .setType("image/png")
+                    .putExtra(Intent.EXTRA_STREAM, uri)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_image_subject))
+                    .putExtra(Intent.EXTRA_TEXT, getString(R.string.share_image_body_track, track.name()));
+            startActivity(Intent.createChooser(intent, null));
+        });
+    }
+
+    /**
+     * Saves the current card to the gallery (Pictures/OpenTracks on Android 10+,
+     * app pictures dir with a media scan below that). Needs no extra permission.
+     */
+    private void downloadImage() {
+        renderForExport(bitmap -> executor.execute(() -> {
+            boolean saved = saveToGallery(bitmap);
+            bitmap.recycle();
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) {
                     return;
                 }
-                viewBinding.shareImageProgress.setVisibility(View.GONE);
-                Intent intent = new Intent(Intent.ACTION_SEND)
-                        .setType("image/png")
-                        .putExtra(Intent.EXTRA_STREAM, uri)
-                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_image_subject))
-                        .putExtra(Intent.EXTRA_TEXT, getString(R.string.share_image_body_track, track.name()));
-                startActivity(Intent.createChooser(intent, null));
+                Toast.makeText(this, saved ? R.string.share_image_saved : R.string.share_image_error,
+                        Toast.LENGTH_LONG).show();
             });
-        });
+        }));
+    }
+
+    private boolean saveToGallery(Bitmap bitmap) {
+        String name = "opentracks-" + trackId.id() + "-" + System.currentTimeMillis() + ".png";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, name);
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/OpenTracks");
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (uri == null) {
+                return false;
+            }
+            try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+                return out != null && bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        File file = ShareImageStore.save(this, bitmap, "share-track-" + trackId.id());
+        if (file == null) {
+            return false;
+        }
+        MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, new String[]{"image/png"}, null);
+        return true;
     }
 
     private void reportShareError() {

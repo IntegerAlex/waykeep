@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -27,13 +28,23 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:orientation="horizontal">
+        android:text="@string/share_image_section_size" />
 
-        <Button
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/share_image_aspect_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:checkedButton="@id/share_image_aspect_feed"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_aspect_feed"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -41,33 +52,41 @@
             android:layout_weight="1"
             android:text="@string/share_image_aspect_feed" />
 
-        <Button
-            android:id="@+id/share_image_aspect_story"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:text="@string/share_image_aspect_story" />
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_aspect_square"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/share_image_aspect_square" />
 
-    </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/share_image_aspect_story"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/share_image_aspect_story" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <TextView
+        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:text="@string/share_image_section_content" />
 
-        <Button
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/share_image_style_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:checkedButton="@id/share_image_style_stats"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_style_stats"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -75,24 +94,33 @@
             android:layout_weight="1"
             android:text="@string/share_image_style_stats" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_style_route"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/share_image_style_route" />
 
-    </LinearLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:text="@string/share_image_section_background" />
 
-        <Button
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/share_image_bg_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:checkedButton="@id/share_image_bg_dark"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_bg_dark"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -100,40 +128,54 @@
             android:layout_weight="1"
             android:text="@string/share_image_bg_dark" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_bg_light"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/share_image_bg_light" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_bg_transparent"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/share_image_bg_transparent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_bg_map"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/share_image_bg_map" />
 
-    </LinearLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <Button
-        android:id="@+id/share_image_share_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="@string/menu_share" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/share_image_download_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/share_image_download" />
+
+        <Button
+            android:id="@+id/share_image_share_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/menu_share" />
+
+    </LinearLayout>
 
 </LinearLayout>

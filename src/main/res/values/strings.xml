@@ -687,6 +687,11 @@ limitations under the License.
     <string name="share_image_aspect_square">Square (1:1)</string>
     <string name="share_image_style_stats">Stats card</string>
     <string name="share_image_style_route">Route only</string>
+    <string name="share_image_section_size">Size</string>
+    <string name="share_image_section_content">Content</string>
+    <string name="share_image_section_background">Background</string>
+    <string name="share_image_download">Download</string>
+    <string name="share_image_saved">Saved to gallery.</string>
     <string name="share_image_stat_elevation_gain">Elev Gain</string>
     <string name="share_image_bg_dark">Dark</string>
     <string name="share_image_bg_light">Light</string>
