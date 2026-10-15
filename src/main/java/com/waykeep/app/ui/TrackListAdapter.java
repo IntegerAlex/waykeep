@@ -1,7 +1,11 @@
 package com.waykeep.app.ui;
 
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.waykeep.app.R;
 import com.waykeep.app.TrackRecordedActivity;
@@ -58,6 +63,7 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
     private final TrackThumbnailLoader thumbnailLoader;
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
+    private String highlightQuery;
     private boolean selectionMode = false;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
     private ActionMode actionMode;
@@ -96,6 +102,32 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
 
     public void swapData(@NonNull List<TrackListIterator.Item> items) {
         submitList(items);
+    }
+
+    /**
+     * Bolds the current search matches in names/descriptions. The query is not part of the
+     * diffed item content, so holders are rebound explicitly.
+     */
+    public void setHighlightQuery(String query) {
+        highlightQuery = query;
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    private CharSequence highlight(String text) {
+        if (TextUtils.isEmpty(highlightQuery) || TextUtils.isEmpty(text)) {
+            return text;
+        }
+        String lowerText = text.toLowerCase(Locale.getDefault());
+        String lowerQuery = highlightQuery.toLowerCase(Locale.getDefault());
+        SpannableString spannable = new SpannableString(text);
+        boolean found = false;
+        int index = 0;
+        while ((index = lowerText.indexOf(lowerQuery, index)) >= 0) {
+            spannable.setSpan(new StyleSpan(Typeface.BOLD), index, index + lowerQuery.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            index += lowerQuery.length();
+            found = true;
+        }
+        return found ? spannable : text;
     }
 
     public void updateRecordingStatus(RecordingStatus recordingStatus) {
@@ -200,7 +232,7 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
             viewBinding.trackListItemThumbnail.setImageResource(R.drawable.bg_route_placeholder);
             renderThumbnail();
 
-            viewBinding.trackListItemName.setText(tracksListItem.name());
+            viewBinding.trackListItemName.setText(highlight(tracksListItem.name()));
 
             String timeText = ListItemUtils.getTimeText(context, isRecordingThisTrackRecording, tracksListItem.totalTime());
             String distanceText = ListItemUtils.getDistanceText(context, unitSystem, isRecordingThisTrackRecording, tracksListItem.totalDistance());
@@ -224,7 +256,7 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
             viewBinding.trackListItemActivityTypeLocalized.setText(tracksListItem.activityTypeLocalized());
             viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(tracksListItem.activityTypeLocalized()) ? View.GONE : View.VISIBLE);
 
-            viewBinding.trackListItemDescription.setText(tracksListItem.description());
+            viewBinding.trackListItemDescription.setText(highlight(tracksListItem.description()));
             viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(tracksListItem.description()) ? View.GONE : View.VISIBLE);
 
             setSelected(selection.get((int) trackId.id()));

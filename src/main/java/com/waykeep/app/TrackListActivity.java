@@ -22,8 +22,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -138,7 +142,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
     // Menu items
 
+    private static final String KEY_SEARCH_QUERY = "searchQuery";
+
     private String searchQuery;
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable pendingSearch;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -154,6 +162,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+
+        if (savedInstanceState != null) {
+            searchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY);
+        }
 
         requestRequiredPermissions();
 
@@ -261,9 +273,16 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onDestroy() {
         super.onDestroy();
         trackLoader.shutdownNow();
+        searchHandler.removeCallbacksAndMessages(null);
         viewBinding = null;
         recordingStatusConnection = null;
         adapter = null;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_SEARCH_QUERY, searchQuery);
     }
 
     @Override
@@ -287,6 +306,32 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             viewBinding.trackListSearchView.hide();
             loadData();
             return true;
+        });
+        if (searchQuery != null) {
+            viewBinding.trackListSearchView.getEditText().setText(searchQuery);
+        }
+        // Live filtering: every keystroke re-queries after a short debounce.
+        viewBinding.trackListSearchView.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (pendingSearch != null) {
+                    searchHandler.removeCallbacks(pendingSearch);
+                }
+                final String text = s.toString();
+                pendingSearch = () -> {
+                    searchQuery = text;
+                    loadData();
+                };
+                searchHandler.postDelayed(pendingSearch, 300);
+            }
         });
 
         return viewBinding.getRoot();
@@ -363,6 +408,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             }
             runOnUiThread(() -> {
                 if (!isFinishing() && !isDestroyed() && adapter != null) {
+                    adapter.setHighlightQuery(query);
                     adapter.swapData(items);
                     boolean empty = items.isEmpty();
                     viewBinding.trackListEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
