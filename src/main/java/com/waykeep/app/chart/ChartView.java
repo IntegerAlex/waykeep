@@ -90,6 +90,8 @@ public class ChartView extends View {
     private final ChartValueSeries speedSeries;
     private final ChartValueSeries paceSeries;
     private final ChartValueSeries heartRateSeries;
+    private final ChartValueSeries cadenceSeries;
+    private final ChartValueSeries powerSeries;
 
     private final LinkedList<ChartPoint> chartPoints = new LinkedList<>();
     private final ExtremityMonitor xExtremityMonitor = new ExtremityMonitor();
@@ -132,7 +134,6 @@ public class ChartView extends View {
     private boolean chartByDistance = false;
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
     private boolean reportSpeed = true;
-    private boolean showPaceOrSpeed = true;
     private boolean showPointer = false;
 
     private final GestureDetectorCompat detectorScrollFlingTab = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -322,7 +323,7 @@ public class ChartView extends View {
         };
         seriesList.add(heartRateSeries);
 
-        seriesList.add(new ChartValueSeries(context,
+        cadenceSeries = new ChartValueSeries(context,
                 0,
                 Integer.MAX_VALUE,
                 new int[]{5, 10, 25, 50},
@@ -342,8 +343,10 @@ public class ChartView extends View {
             protected boolean drawIfChartPointHasNoData() {
                 return false;
             }
-        });
-        seriesList.add(new ChartValueSeries(context,
+        };
+        seriesList.add(cadenceSeries);
+
+        powerSeries = new ChartValueSeries(context,
                 0,
                 1000,
                 new int[]{5, 50, 100, 200},
@@ -363,7 +366,8 @@ public class ChartView extends View {
             protected boolean drawIfChartPointHasNoData() {
                 return false;
             }
-        });
+        };
+        seriesList.add(powerSeries);
 
         backgroundColor = ThemeUtils.getBackgroundColor(context);
         float density = context.getResources().getDisplayMetrics().density;
@@ -423,15 +427,7 @@ public class ChartView extends View {
         setClickable(true);
         updateDimensions();
 
-        // Either speedSeries or paceSeries should be enabled, if one is shown.
-        if (showPaceOrSpeed) {
-            speedSeries.setEnabled(reportSpeed);
-            paceSeries.setEnabled(!reportSpeed);
-        }
-
-        // Defaults for our chart series.
-        heartRateSeries.setEnabled(true);
-        elevationSeries.setEnabled(true);
+        applyMetricSelection();
     }
 
     @Override
@@ -465,10 +461,8 @@ public class ChartView extends View {
     }
 
     public boolean applyReportSpeed() {
-        if (!showPaceOrSpeed) {
-            paceSeries.setEnabled(false);
-            speedSeries.setEnabled(false);
-            return true;
+        if (selectedMetric != Metric.SPEED) {
+            return false;
         }
 
         if (reportSpeed) {
@@ -488,18 +482,68 @@ public class ChartView extends View {
         return false;
     }
 
-    void setShowElevation(boolean value) {
-        elevationSeries.setEnabled(value);
+    /**
+     * Which single metric the chart plots.
+     */
+    public enum Metric {
+        ELEVATION, SPEED, HEART_RATE, CADENCE, POWER
     }
-    void setShowPaceOrSpeed(boolean value) {
-        showPaceOrSpeed = value;
 
-        // we want to make sure we show whatever version the user has
-        // selected when we turn this back on.
-        applyReportSpeed();
+    private Metric selectedMetric = Metric.ELEVATION;
+
+    /**
+     * Selects a single metric to plot. Only that series is drawn, so the chart always has a
+     * single Y-axis. {@link Metric#SPEED} resolves to speed or pace depending on the
+     * speed/pace preference.
+     */
+    public void setMetric(Metric metric) {
+        if (metric == null) {
+            return;
+        }
+        selectedMetric = metric;
+        applyMetricSelection();
+        updateSeries();
+        updateDimensions();
+        requestLayout();
+        invalidate();
     }
-    void setShowHeartRate(boolean value) {
-        heartRateSeries.setEnabled(value);
+
+    public Metric getMetric() {
+        return selectedMetric;
+    }
+
+    /**
+     * Returns true when the selected chart has enough data to show this metric.
+     */
+    public boolean hasDataFor(Metric metric) {
+        return seriesFor(metric).hasData();
+    }
+
+    /**
+     * Resolves a metric to its series for the current speed/pace preference. When the metric is
+     * SPEED and no data exists for the preferred series, the other one is used.
+     */
+    private ChartValueSeries seriesFor(Metric metric) {
+        if (metric == Metric.SPEED) {
+            if (reportSpeed) {
+                return speedSeries.hasData() || !paceSeries.hasData() ? speedSeries : paceSeries;
+            }
+            return paceSeries.hasData() || !speedSeries.hasData() ? paceSeries : speedSeries;
+        }
+        return switch (metric) {
+            case ELEVATION -> elevationSeries;
+            case HEART_RATE -> heartRateSeries;
+            case CADENCE -> cadenceSeries;
+            case POWER -> powerSeries;
+            case SPEED -> speedSeries;
+        };
+    }
+
+    private void applyMetricSelection() {
+        for (ChartValueSeries series : seriesList) {
+            series.setEnabled(false);
+        }
+        seriesFor(selectedMetric).setEnabled(true);
     }
 
     public void setShowPointer(boolean value) {

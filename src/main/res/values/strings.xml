@@ -179,6 +179,14 @@ limitations under the License.
     <string name="description_speed_nautical">Speed (knots)</string>
     <string name="description_speed_metric">Speed (km/hr)</string>
     <string name="description_time">Time</string>
+
+    <!-- Chart metric chips -->
+    <string name="chart_metric_elevation">Elevation</string>
+    <string name="chart_metric_speed">Speed</string>
+    <string name="chart_metric_pace">Pace</string>
+    <string name="chart_metric_heart_rate">Heart rate</string>
+    <string name="chart_metric_cadence">Cadence</string>
+    <string name="chart_metric_power">Power</string>
     <string name="description_total_distance">Total distance: %1$.2f km (%2$.1f mi)</string>
     <string name="description_total_time">Total time: %1$s</string>
     <string name="description_speed_source_gps">GPS</string>

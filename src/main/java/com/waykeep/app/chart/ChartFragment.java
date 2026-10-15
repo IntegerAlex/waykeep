@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -101,19 +100,15 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
                 }
             }
 
-            if (PreferencesUtils.isKey(R.string.chart_display_elevation_key, key)) {
-                viewBinding.chartView.setShowElevation(PreferencesUtils.shouldShowElevation());
+            if (PreferencesUtils.isKey(R.string.chart_display_elevation_key, key)
+                    || PreferencesUtils.isKey(R.string.chart_display_pace_or_speed_key, key)
+                    || PreferencesUtils.isKey(R.string.chart_display_heart_rate_key, key)) {
                 refreshChart();
-            }
-
-            if (PreferencesUtils.isKey(R.string.chart_display_pace_or_speed_key, key)) {
-                viewBinding.chartView.setShowPaceOrSpeed(PreferencesUtils.shouldShowPaceOrSpeed());
-                refreshChart();
-            }
-
-            if (PreferencesUtils.isKey(R.string.chart_display_heart_rate_key, key)) {
-                viewBinding.chartView.setShowHeartRate(PreferencesUtils.shouldShowHeartRate());
-                refreshChart();
+                runOnUiThread(() -> {
+                    if (isResumed()) {
+                        refreshMetricChips();
+                    }
+                });
             }
         }
     };
@@ -145,6 +140,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewBinding = ChartBinding.inflate(inflater, container, false);
         viewBinding.chartView.setChartByDistance(chartByDistance);
+        setupMetricChips();
         return viewBinding.getRoot();
     }
 
@@ -186,6 +182,11 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
                 viewBinding.chartView.setReportSpeed(reportSpeed);
                 viewBinding.chartView.applyReportSpeed();
             }
+            runOnUiThread(() -> {
+                if (isResumed()) {
+                    refreshMetricChips();
+                }
+            });
         }
     }
 
@@ -197,6 +198,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             runOnUiThread(() -> {
                 if (isResumed()) {
                     viewBinding.chartView.resetScroll();
+                    refreshMetricChips();
                 }
             });
         }
@@ -215,7 +217,10 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             //Avoid ConcurrentModificationException exception
             viewBinding.chartView.addChartPoints(Collections.unmodifiableList(pendingPoints));
             pendingPoints.clear();
-            runOnUiThread(updateChart);
+            runOnUiThread(() -> {
+                refreshMetricChips();
+                updateChart.run();
+            });
         }
     }
 
@@ -227,6 +232,115 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         if (needUpdate) {
             viewBinding.chartView.postInvalidate();
         }
+    }
+
+    /**
+     * Wires the metric chips. One metric is plotted at a time, so the chart always has a single
+     * Y-axis and stays readable.
+     */
+    private void setupMetricChips() {
+        viewBinding.chartMetricGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) {
+                return;
+            }
+            ChartView.Metric metric = metricForChip(checkedIds.get(0));
+            if (metric != null) {
+                viewBinding.chartView.setMetric(metric);
+                PreferencesUtils.setString(R.string.chart_metric_key, metric.name());
+            }
+        });
+        refreshMetricChips();
+    }
+
+    /**
+     * Shows only the metrics that are both enabled in the settings and actually have data, and
+     * keeps a valid chip selected (falling back to the first available metric).
+     */
+    private void refreshMetricChips() {
+        if (viewBinding == null) {
+            return;
+        }
+        ChartView chartView = viewBinding.chartView;
+
+        boolean hasElevation = PreferencesUtils.shouldShowElevation() && chartView.hasDataFor(ChartView.Metric.ELEVATION);
+        boolean hasSpeed = PreferencesUtils.shouldShowPaceOrSpeed() && chartView.hasDataFor(ChartView.Metric.SPEED);
+        boolean hasHeartRate = PreferencesUtils.shouldShowHeartRate() && chartView.hasDataFor(ChartView.Metric.HEART_RATE);
+        boolean hasCadence = chartView.hasDataFor(ChartView.Metric.CADENCE);
+        boolean hasPower = chartView.hasDataFor(ChartView.Metric.POWER);
+
+        viewBinding.chartMetricElevation.setVisibility(hasElevation ? View.VISIBLE : View.GONE);
+        viewBinding.chartMetricSpeed.setVisibility(hasSpeed ? View.VISIBLE : View.GONE);
+        viewBinding.chartMetricHeartRate.setVisibility(hasHeartRate ? View.VISIBLE : View.GONE);
+        viewBinding.chartMetricCadence.setVisibility(hasCadence ? View.VISIBLE : View.GONE);
+        viewBinding.chartMetricPower.setVisibility(hasPower ? View.VISIBLE : View.GONE);
+
+        if (hasSpeed) {
+            viewBinding.chartMetricSpeed.setText(PreferencesUtils.isReportSpeed(activityTypeLocalized)
+                    ? R.string.chart_metric_speed : R.string.chart_metric_pace);
+        }
+
+        ChartView.Metric metric = firstAvailableMetric(hasElevation, hasSpeed, hasHeartRate, hasCadence, hasPower);
+        if (metric == null) {
+            return;
+        }
+        int chipId = chipIdForMetric(metric);
+        if (viewBinding.chartMetricGroup.getCheckedChipId() != chipId) {
+            viewBinding.chartMetricGroup.check(chipId);
+        }
+        if (chartView.getMetric() != metric) {
+            chartView.setMetric(metric);
+        }
+    }
+
+    private ChartView.Metric firstAvailableMetric(boolean elevation, boolean speed, boolean heartRate, boolean cadence, boolean power) {
+        ChartView.Metric preferred = readPersistedMetric();
+        if (preferred != null && isMetricAvailable(preferred, elevation, speed, heartRate, cadence, power)) {
+            return preferred;
+        }
+        if (speed) return ChartView.Metric.SPEED;
+        if (elevation) return ChartView.Metric.ELEVATION;
+        if (heartRate) return ChartView.Metric.HEART_RATE;
+        if (cadence) return ChartView.Metric.CADENCE;
+        if (power) return ChartView.Metric.POWER;
+        return null;
+    }
+
+    private boolean isMetricAvailable(ChartView.Metric metric, boolean elevation, boolean speed, boolean heartRate, boolean cadence, boolean power) {
+        return switch (metric) {
+            case ELEVATION -> elevation;
+            case SPEED -> speed;
+            case HEART_RATE -> heartRate;
+            case CADENCE -> cadence;
+            case POWER -> power;
+        };
+    }
+
+    private ChartView.Metric readPersistedMetric() {
+        String value = PreferencesUtils.getString(R.string.chart_metric_key, "");
+        try {
+            return ChartView.Metric.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private ChartView.Metric metricForChip(int chipId) {
+        if (chipId == R.id.chart_metric_elevation) return ChartView.Metric.ELEVATION;
+        if (chipId == R.id.chart_metric_speed) return ChartView.Metric.SPEED;
+        if (chipId == R.id.chart_metric_heart_rate) return ChartView.Metric.HEART_RATE;
+        if (chipId == R.id.chart_metric_cadence) return ChartView.Metric.CADENCE;
+        if (chipId == R.id.chart_metric_power) return ChartView.Metric.POWER;
+        return null;
+    }
+
+    private int chipIdForMetric(ChartView.Metric metric) {
+        return switch (metric) {
+            case ELEVATION -> R.id.chart_metric_elevation;
+            case SPEED -> R.id.chart_metric_speed;
+            case HEART_RATE -> R.id.chart_metric_heart_rate;
+            case CADENCE -> R.id.chart_metric_cadence;
+            case POWER -> R.id.chart_metric_power;
+        };
     }
 
     /**
