@@ -38,7 +38,6 @@ import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.TrackRecordingBinding;
 import de.dennisguse.opentracks.fragments.ChooseActivityTypeDialogFragment;
 import de.dennisguse.opentracks.fragments.StatisticsRecordingFragment;
-import de.dennisguse.opentracks.publicapi.DataProvider;
 import de.dennisguse.opentracks.sensors.GpsStatusValue;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
@@ -49,6 +48,7 @@ import de.dennisguse.opentracks.ui.customRecordingLayout.RecordingLayout;
 import de.dennisguse.opentracks.ui.intervals.IntervalsFragment;
 import de.dennisguse.opentracks.ui.markers.MarkerEditActivity;
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
+import de.dennisguse.opentracks.ui.trackmap.TrackMapFragment;
 import de.dennisguse.opentracks.ui.util.ActivityUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 
@@ -61,10 +61,13 @@ import de.dennisguse.opentracks.util.IntentUtils;
 public class TrackRecordingActivity extends AbstractActivity implements ChooseActivityTypeDialogFragment.ChooseActivityTypeCaller, TrackDataHubInterface {
 
     public static final String EXTRA_TRACK_ID = "track_id";
+    public static final String EXTRA_OPEN_MAP_TAB = "open_map_tab";
 
     private static final String TAG = TrackRecordingActivity.class.getSimpleName();
 
     private static final String CURRENT_TAB_TAG_KEY = "current_tab_tag_key";
+
+    private static final int MAP_TAB_POSITION = 4;
 
     private Snackbar snackbar;
 
@@ -133,6 +136,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 (tab, position) -> tab.setText(pagerAdapter.getPageTitle(position))).attach();
         if (savedInstanceState != null) {
             viewBinding.trackDetailActivityViewPager.setCurrentItem(savedInstanceState.getInt(CURRENT_TAB_TAG_KEY));
+        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_MAP_TAB, false)) {
+            viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
         }
 
         viewBinding.trackRecordingFabAction.setImageResource(R.drawable.ic_baseline_stop_24);
@@ -267,7 +272,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.track_detail_menu_show_on_map) {
-            DataProvider.showTrackOnMap(this, true, trackId);
+            viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
             return true;
         }
 
@@ -349,6 +354,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 case 1 -> IntervalsFragment.newInstance(trackId, false);
                 case 2 -> ChartFragment.newInstance(false);
                 case 3 -> ChartFragment.newInstance(true);
+                case 4 -> TrackMapFragment.newInstance();
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };
@@ -356,7 +362,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         @Override
         public int getItemCount() {
-            return 4;
+            return 5;
         }
 
         public CharSequence getPageTitle(int position) {
@@ -365,6 +371,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 case 1 -> getString(R.string.track_detail_intervals_tab);
                 case 2 -> getString(R.string.settings_chart_by_time);
                 case 3 -> getString(R.string.settings_chart_by_distance);
+                case 4 -> getString(R.string.track_detail_map_tab);
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };
