@@ -167,15 +167,23 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.track_detail_share) {
-            Intent intent = Intent.createChooser(ShareUtils.newShareFileIntent(this, trackId), null);
-            startActivity(intent);
-            return true;
-        }
-
-        if (item.getItemId() == R.id.track_detail_share_image) {
-            Intent intent = IntentUtils.newIntent(this, ShareTrackImageActivity.class)
-                    .putExtra(ShareTrackImageActivity.EXTRA_TRACK_ID, trackId);
-            startActivity(intent);
+            String[] options = {
+                    getString(R.string.share_image_title),
+                    getString(R.string.share_file_title)
+            };
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.menu_share)
+                    .setItems(options, (dialog, which) -> {
+                        if (which == 0) {
+                            Intent imageIntent = IntentUtils.newIntent(this, ShareTrackImageActivity.class)
+                                    .putExtra(ShareTrackImageActivity.EXTRA_TRACK_ID, trackId);
+                            startActivity(imageIntent);
+                        } else {
+                            Intent fileIntent = Intent.createChooser(ShareUtils.newShareFileIntent(this, trackId), null);
+                            startActivity(fileIntent);
+                        }
+                    })
+                    .show();
             return true;
         }
 

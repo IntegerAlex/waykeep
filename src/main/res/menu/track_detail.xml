@@ -27,11 +27,6 @@ limitations under the License.
         app:showAsAction="ifRoom"
         android:title="@string/menu_share" />
     <item
-        android:id="@+id/track_detail_share_image"
-        android:icon="@drawable/ic_share_24dp"
-        android:orderInCategory="5"
-        android:title="@string/share_image_title" />
-    <item
         android:id="@+id/track_detail_markers"
         android:icon="@drawable/ic_marker_show_24dp"
         android:orderInCategory="5"

@@ -680,6 +680,7 @@ limitations under the License.
     <string name="share_image_body">I think you might be interested in this image.</string>
     <string name="share_image_body_track">I think you might be interested in this activity (%1$s).</string>
     <string name="share_image_title">Share image</string>
+    <string name="share_file_title">Share file (KMZ/GPX)</string>
     <string name="share_image_preview">Share image preview</string>
     <string name="share_image_aspect_feed">Feed (4:5)</string>
     <string name="share_image_aspect_story">Story (9:16)</string>
