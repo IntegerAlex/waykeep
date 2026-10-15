@@ -18,13 +18,12 @@ package com.waykeep.app.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -34,7 +33,6 @@ import android.view.ViewParent;
 import android.widget.Scroller;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import java.text.NumberFormat;
@@ -43,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import com.waykeep.app.R;
 import com.waykeep.app.settings.UnitSystem;
@@ -68,6 +67,7 @@ public class ChartView extends View {
 
     private static final NumberFormat X_NUMBER_FORMAT = NumberFormat.getIntegerInstance();
     private static final NumberFormat X_FRACTION_FORMAT = NumberFormat.getNumberInstance();
+    private static final NumberFormat VALUE_1_DECIMAL_FORMAT = NumberFormat.getNumberInstance();
     private static final int BORDER = 8;
     private static final int SPACER = 4;
     private static final int Y_AXIS_OFFSET = 16;
@@ -75,6 +75,8 @@ public class ChartView extends View {
     static {
         X_FRACTION_FORMAT.setMaximumFractionDigits(1);
         X_FRACTION_FORMAT.setMinimumFractionDigits(1);
+        VALUE_1_DECIMAL_FORMAT.setMaximumFractionDigits(1);
+        VALUE_1_DECIMAL_FORMAT.setMinimumFractionDigits(1);
     }
 
     private final List<ChartValueSeries> seriesList = new LinkedList<>();
@@ -89,10 +91,19 @@ public class ChartView extends View {
     private final Paint axisPaint;
     private final Paint xAxisMarkerPaint;
     private final Paint gridPaint;
-    private final Drawable pointer;
+    private final Paint crosshairPaint;
+    private final Paint tooltipBackgroundPaint;
+    private final Paint tooltipBorderPaint;
+    private final Paint tooltipHeaderPaint;
+    private final Paint tooltipTextPaint;
+    private final Paint seriesDotPaint;
+    private final Paint seriesDotRingPaint;
     private final Scroller scroller;
     private double maxX = 1.0;
     private int zoomLevel = 1;
+
+    private ChartPoint inspectionPoint;
+    private boolean scrubbing = false;
 
     private int leftBorder = BORDER;
     private int topBorder = BORDER;
@@ -160,6 +171,31 @@ public class ChartView extends View {
         }
     });
 
+    /**
+     * Tap selects the nearest data point for inspection; long-press then drag scrubs along the
+     * chart. A quick horizontal swipe is left to the parent pager (we don't disallow interception
+     * until scrubbing actually starts), so tab switching still works.
+     */
+    private final GestureDetectorCompat detectorInspect = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener() {
+
+        @Override
+        public boolean onDown(@NonNull MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(@NonNull MotionEvent e) {
+            scrubbing = true;
+            updateInspection(e.getX());
+        }
+
+        @Override
+        public boolean onSingleTapUp(@NonNull MotionEvent e) {
+            toggleInspection(e.getX());
+            return true;
+        }
+    });
+
     public ChartView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
@@ -206,6 +242,11 @@ public class ChartView extends View {
             }
 
             @Override
+            String formatValue(double value) {
+                return VALUE_1_DECIMAL_FORMAT.format(value);
+            }
+
+            @Override
             protected boolean drawIfChartPointHasNoData() {
                 return reportSpeed;
             }
@@ -226,6 +267,15 @@ public class ChartView extends View {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.pace();
+            }
+
+            @Override
+            String formatValue(double value) {
+                // value is minutes as a decimal (e.g. 5.5 -> 5:30)
+                long totalSeconds = Math.round(value * 60d);
+                long minutes = totalSeconds / 60;
+                long seconds = totalSeconds % 60;
+                return String.format(Locale.US, "%d:%02d", minutes, seconds);
             }
 
             @Override
@@ -307,6 +357,7 @@ public class ChartView extends View {
         });
 
         backgroundColor = ThemeUtils.getBackgroundColor(context);
+        float density = context.getResources().getDisplayMetrics().density;
 
         axisPaint = new Paint();
         axisPaint.setStyle(Style.FILL_AND_STROKE);
@@ -319,12 +370,44 @@ public class ChartView extends View {
 
         gridPaint = new Paint();
         gridPaint.setStyle(Style.STROKE);
-        gridPaint.setColor(ThemeUtils.getTextColorSecondary(context));
-        gridPaint.setAntiAlias(false);
-        gridPaint.setPathEffect(new DashPathEffect(new float[]{3, 2}, 0));
+        gridPaint.setColor(withAlpha(ThemeUtils.getTextColorPrimary(context), 0x1F));
+        gridPaint.setAntiAlias(true);
+        gridPaint.setStrokeWidth(Math.max(1f, density * 0.5f));
 
-        pointer = ContextCompat.getDrawable(context, R.drawable.ic_logo_color_24dp);
-        pointer.setBounds(0, 0, pointer.getIntrinsicWidth(), pointer.getIntrinsicHeight());
+        crosshairPaint = new Paint();
+        crosshairPaint.setStyle(Style.STROKE);
+        crosshairPaint.setColor(withAlpha(ThemeUtils.getTextColorPrimary(context), 0x99));
+        crosshairPaint.setAntiAlias(true);
+        crosshairPaint.setStrokeWidth(density);
+
+        tooltipBackgroundPaint = new Paint();
+        tooltipBackgroundPaint.setStyle(Style.FILL);
+        tooltipBackgroundPaint.setColor(withAlpha(backgroundColor, 0xF2));
+        tooltipBackgroundPaint.setAntiAlias(true);
+
+        tooltipBorderPaint = new Paint();
+        tooltipBorderPaint.setStyle(Style.STROKE);
+        tooltipBorderPaint.setColor(withAlpha(ThemeUtils.getTextColorPrimary(context), 0x33));
+        tooltipBorderPaint.setAntiAlias(true);
+        tooltipBorderPaint.setStrokeWidth(Math.max(1f, density * 0.5f));
+
+        tooltipHeaderPaint = new Paint(axisPaint);
+        tooltipHeaderPaint.setStyle(Style.FILL);
+        tooltipHeaderPaint.setTextSize(fontSizeMedium);
+        tooltipHeaderPaint.setFakeBoldText(true);
+
+        tooltipTextPaint = new Paint(axisPaint);
+        tooltipTextPaint.setStyle(Style.FILL);
+
+        seriesDotPaint = new Paint();
+        seriesDotPaint.setStyle(Style.FILL);
+        seriesDotPaint.setAntiAlias(true);
+
+        seriesDotRingPaint = new Paint();
+        seriesDotRingPaint.setStyle(Style.STROKE);
+        seriesDotRingPaint.setColor(backgroundColor);
+        seriesDotRingPaint.setAntiAlias(true);
+        seriesDotRingPaint.setStrokeWidth(2 * density);
 
         scroller = new Scroller(context);
         setFocusable(true);
@@ -436,6 +519,8 @@ public class ChartView extends View {
             chartPoints.clear();
             xExtremityMonitor.reset();
             zoomLevel = 1;
+            inspectionPoint = null;
+            scrubbing = false;
             updateDimensions();
         }
     }
@@ -541,6 +626,25 @@ public class ChartView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean isZoom = detectorZoom.onTouchEvent(event);
+
+        if (event.getPointerCount() == 1 && zoomLevel == MIN_ZOOM_LEVEL) {
+            // Single-pointer at full zoom: tap to inspect, long-press to scrub. We intentionally
+            // allow the parent pager to intercept until scrubbing starts, so left/right swipes
+            // still switch tabs.
+            detectorInspect.onTouchEvent(event);
+            if (event.getActionMasked() == MotionEvent.ACTION_MOVE && scrubbing) {
+                updateInspection(event.getX());
+            }
+            if ((event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) && scrubbing) {
+                scrubbing = false;
+                requestDisallowInterceptTouchEventInParent(false);
+            }
+            if (scrubbing) {
+                requestDisallowInterceptTouchEventInParent(true);
+            }
+            return true;
+        }
+
         boolean isScrollTab = detectorScrollFlingTab.onTouchEvent(event);
 
         // ChartView handles zoom gestures (more than one pointer) and all gestures when zoomed itself
@@ -567,6 +671,7 @@ public class ChartView extends View {
             clipToGraphArea(canvas);
             drawDataSeries(canvas);
             drawGrid(canvas);
+            drawInspectionMarkers(canvas);
 
             canvas.restore();
 
@@ -579,6 +684,8 @@ public class ChartView extends View {
             if (showPointer) {
                 drawPointer(canvas);
             }
+
+            drawInspectionTooltip(canvas);
         }
     }
 
@@ -601,7 +708,8 @@ public class ChartView extends View {
     private void drawDataSeries(Canvas canvas) {
         for (ChartValueSeries chartValueSeries : seriesList) {
             if (chartValueSeries.isEnabled() && chartValueSeries.hasData()) {
-                chartValueSeries.drawPath(canvas, titleDimensions.titlePositions.size() < 3 );
+                chartValueSeries.updateFillGradient(topBorder, topBorder + effectiveHeight);
+                chartValueSeries.drawPath(canvas, titleDimensions.titlePositions.size() < 3);
             }
         }
     }
@@ -849,13 +957,157 @@ public class ChartView extends View {
                 break;
             }
         }
-        if (firstChartValueSeries != null && !chartPoints.isEmpty()) {
-            int dx = getX(maxX) - pointer.getIntrinsicWidth() / 2;
-            double value = firstChartValueSeries.extractDataFromChartPoint(last);
-            int dy = getY(firstChartValueSeries, value) - pointer.getIntrinsicHeight();
-            canvas.translate(dx, dy);
-            pointer.draw(canvas);
+        if (firstChartValueSeries == null) {
+            return;
         }
+
+        float density = getResources().getDisplayMetrics().density;
+        float radius = 5 * density;
+        int cx = getX(maxX);
+        double value = firstChartValueSeries.extractDataFromChartPoint(last);
+        int cy = (int) clampGraphY(getY(firstChartValueSeries, value), topBorder + effectiveHeight);
+
+        seriesDotPaint.setColor(firstChartValueSeries.getStrokeColor());
+        canvas.drawCircle(cx, cy, radius, seriesDotRingPaint);
+        canvas.drawCircle(cx, cy, radius - seriesDotRingPaint.getStrokeWidth() / 2f, seriesDotPaint);
+    }
+
+    /**
+     * Moves the inspection crosshair to the data point nearest to the touch x.
+     */
+    private void updateInspection(float touchX) {
+        ChartPoint nearest = findNearestChartPoint(touchX);
+        if (nearest == null) {
+            return;
+        }
+        inspectionPoint = nearest;
+        invalidate();
+    }
+
+    /**
+     * Tap behaviour: select the nearest point, or clear the selection when tapping the same point.
+     */
+    private void toggleInspection(float touchX) {
+        ChartPoint nearest = findNearestChartPoint(touchX);
+        if (nearest == null) {
+            return;
+        }
+        inspectionPoint = nearest == inspectionPoint ? null : nearest;
+        invalidate();
+    }
+
+    private ChartPoint findNearestChartPoint(float touchX) {
+        double trackWidth = (double) effectiveWidth * zoomLevel;
+        if (trackWidth <= 0 || maxX <= 0) {
+            return null;
+        }
+        double contentX = touchX + getScrollX() - leftBorder;
+        double xValue = (contentX / trackWidth) * maxX;
+        xValue = Math.max(0, Math.min(maxX, xValue));
+
+        ChartPoint nearest = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (ChartPoint point : chartPoints) {
+            double distance = Math.abs(point.timeOrDistance() - xValue);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                nearest = point;
+            }
+        }
+        return nearest;
+    }
+
+    private String formatXValue(double value) {
+        if (chartByDistance) {
+            return X_FRACTION_FORMAT.format(value) + " " + getXAxisLabel();
+        }
+        return StringUtils.formatElapsedTime(Duration.ofMillis((long) value));
+    }
+
+    private void drawInspectionMarkers(Canvas canvas) {
+        if (inspectionPoint == null) {
+            return;
+        }
+        int x = getX(inspectionPoint.timeOrDistance());
+        if (x < getScrollX() + leftBorder || x > getScrollX() + leftBorder + effectiveWidth) {
+            return;
+        }
+        canvas.drawLine(x, topBorder, x, topBorder + effectiveHeight, crosshairPaint);
+
+        float density = getResources().getDisplayMetrics().density;
+        float radius = 4 * density;
+        for (ChartValueSeries series : seriesList) {
+            if (!series.isEnabled() || !series.hasData() || !series.isChartPointValid(inspectionPoint)) {
+                continue;
+            }
+            double value = series.extractDataFromChartPoint(inspectionPoint);
+            int y = (int) clampGraphY(getY(series, value), topBorder + effectiveHeight);
+            seriesDotPaint.setColor(series.getStrokeColor());
+            canvas.drawCircle(x, y, radius + seriesDotRingPaint.getStrokeWidth() / 2f, seriesDotRingPaint);
+            canvas.drawCircle(x, y, radius, seriesDotPaint);
+        }
+    }
+
+    private void drawInspectionTooltip(Canvas canvas) {
+        if (inspectionPoint == null) {
+            return;
+        }
+        int crosshairX = getX(inspectionPoint.timeOrDistance());
+        if (crosshairX < getScrollX() + leftBorder || crosshairX > getScrollX() + leftBorder + effectiveWidth) {
+            return;
+        }
+
+        List<String> lines = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
+        lines.add(formatXValue(inspectionPoint.timeOrDistance()));
+        colors.add(ThemeUtils.getTextColorPrimary(getContext()));
+        for (ChartValueSeries series : seriesList) {
+            if (!series.isEnabled() || !series.hasData() || !series.isChartPointValid(inspectionPoint)) {
+                continue;
+            }
+            double value = series.extractDataFromChartPoint(inspectionPoint);
+            lines.add(getContext().getString(series.getTitleId(unitSystem)) + "  " + series.formatValue(value));
+            colors.add(series.getStrokeColor());
+        }
+
+        float density = getResources().getDisplayMetrics().density;
+        float padding = 6 * density;
+        float lineGap = 3 * density;
+        float maxWidth = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            Paint paint = i == 0 ? tooltipHeaderPaint : tooltipTextPaint;
+            maxWidth = Math.max(maxWidth, paint.measureText(lines.get(i)));
+        }
+
+        float lineHeight = tooltipTextPaint.getFontSpacing() + lineGap;
+        float width = maxWidth + 2 * padding;
+        float height = tooltipHeaderPaint.getFontSpacing() + (lines.size() - 1) * lineHeight + 2 * padding;
+
+        float left = crosshairX + 12 * density;
+        float graphRight = getScrollX() + leftBorder + effectiveWidth;
+        if (left + width > graphRight) {
+            left = crosshairX - 12 * density - width;
+        }
+        left = Math.max(getScrollX() + leftBorder, left);
+        float top = topBorder + 4 * density;
+        RectF rect = new RectF(left, top, left + width, top + height);
+
+        float corner = 8 * density;
+        canvas.drawRoundRect(rect, corner, corner, tooltipBackgroundPaint);
+        canvas.drawRoundRect(rect, corner, corner, tooltipBorderPaint);
+
+        float textX = left + padding;
+        float baseline = top + padding - tooltipHeaderPaint.ascent();
+        canvas.drawText(lines.get(0), textX, baseline, tooltipHeaderPaint);
+        for (int i = 1; i < lines.size(); i++) {
+            baseline += lineHeight;
+            tooltipTextPaint.setColor(colors.get(i));
+            canvas.drawText(lines.get(i), textX, baseline, tooltipTextPaint);
+        }
+    }
+
+    private static int withAlpha(int color, int alpha) {
+        return (color & 0x00FFFFFF) | (alpha << 24);
     }
 
     /**
@@ -871,39 +1123,55 @@ public class ChartView extends View {
         final int yCorner = topBorder + effectiveHeight;
         final Path path = series.getPath();
 
-        boolean drawFirstPoint = false;
         path.rewind();
 
-        Integer finalX = null;
-
+        // Collect the visible points first so the smoothing can look at neighbours.
+        final List<float[]> points = new ArrayList<>();
         for (ChartPoint point : chartPoints) {
             if (!series.isChartPointValid(point)) {
                 continue;
             }
-
             double value = series.extractDataFromChartPoint(point);
-            int x = getX(point.timeOrDistance());
-            int y = getY(series, value);
+            float x = getX(point.timeOrDistance());
+            float y = clampGraphY(getY(series, value), yCorner);
+            points.add(new float[]{x, y});
+        }
+        if (points.isEmpty()) {
+            return;
+        }
 
-            // start from lower left corner
-            if (!drawFirstPoint) {
-                path.moveTo(x, yCorner);
-                drawFirstPoint = true;
-            }
+        final float firstX = points.get(0)[0];
+        // start from lower left corner
+        path.moveTo(firstX, yCorner);
+        path.lineTo(points.get(0)[0], points.get(0)[1]);
 
-            // draw graph
-            path.lineTo(x, y);
+        // Catmull-Rom style smoothing: the curve passes through every data point, so peaks are
+        // preserved, while control points (derived from neighbours) round the corners. Control
+        // points are clamped to the graph so the curve cannot overshoot outside the plot.
+        for (int i = 0; i < points.size() - 1; i++) {
+            float[] p0 = points.get(Math.max(i - 1, 0));
+            float[] p1 = points.get(i);
+            float[] p2 = points.get(i + 1);
+            float[] p3 = points.get(Math.min(i + 2, points.size() - 1));
 
-            finalX = x;
+            float c1x = p1[0] + (p2[0] - p0[0]) / 6f;
+            float c1y = clampGraphY(p1[1] + (p2[1] - p0[1]) / 6f, yCorner);
+            float c2x = p2[0] - (p3[0] - p1[0]) / 6f;
+            float c2y = clampGraphY(p2[1] - (p3[1] - p1[1]) / 6f, yCorner);
+
+            path.cubicTo(c1x, c1y, c2x, c2y, p2[0], p2[1]);
         }
 
         // last point: move to lower right
-        if (finalX != null) {
-            path.lineTo(finalX, yCorner);
-        }
+        final float lastX = points.get(points.size() - 1)[0];
+        path.lineTo(lastX, yCorner);
 
         // back to lower left corner
         path.close();
+    }
+
+    private float clampGraphY(float y, int yCorner) {
+        return Math.max(topBorder, Math.min(yCorner, y));
     }
 
     /// expected number of Y-axis markers on the first line if the Y-axis markers are split to two lines

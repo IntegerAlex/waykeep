@@ -18,10 +18,12 @@ package com.waykeep.app.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Shader;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -53,6 +55,9 @@ abstract class ChartValueSeries {
     private final ExtremityMonitor extremityMonitor = new ExtremityMonitor();
     private final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
     private final Path path = new Path();
+
+    private int gradientTop = Integer.MIN_VALUE;
+    private int gradientBottom = Integer.MIN_VALUE;
 
     private int interval = 1;
     private int minMarkerValue = 0;
@@ -90,6 +95,8 @@ abstract class ChartValueSeries {
 
         // Set stroke paint thickness
         strokePaint.setStrokeWidth(STROKE_WIDTH);
+        strokePaint.setStrokeJoin(Paint.Join.ROUND);
+        strokePaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     /**
@@ -141,6 +148,34 @@ abstract class ChartValueSeries {
             canvas.drawPath(path, fillPaint);
         }
         canvas.drawPath(path, strokePaint);
+    }
+
+    /**
+     * Rebuilds the area-fill gradient for the given graph bounds. The fill fades from a
+     * translucent version of the series color at the top to fully transparent at the baseline.
+     * Cached so it is only recreated when the graph height actually changes.
+     */
+    void updateFillGradient(int top, int bottom) {
+        if (top == gradientTop && bottom == gradientBottom && fillPaint.getShader() != null) {
+            return;
+        }
+        gradientTop = top;
+        gradientBottom = bottom;
+        int rgb = strokePaint.getColor() & 0x00FFFFFF;
+        fillPaint.setShader(new LinearGradient(0, top, 0, bottom,
+                (0x55 << 24) | rgb, rgb, Shader.TileMode.CLAMP));
+    }
+
+    int getStrokeColor() {
+        return strokePaint.getColor();
+    }
+
+    /**
+     * Formats a raw series value for display in the inspection readout.
+     * Overridden by series that need more than integer precision.
+     */
+    String formatValue(double value) {
+        return numberFormat.format(value);
     }
 
     /**
