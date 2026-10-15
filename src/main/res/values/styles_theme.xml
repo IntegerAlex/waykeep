@@ -49,7 +49,7 @@
         <item name="colorSurfaceContainer">@color/oled_friendly</item>
         <item name="colorSurfaceDim">@color/oled_friendly</item>
         <item name="backgroundColor">@color/oled_friendly</item>
-        <item name="android:windowBackground">@color/oled_friendly</item>
+        <item name="android:windowBackground">@drawable/waykeep_background</item>
 
         <!-- Material3-related: otherwise the actionbar does not overlay the SearchBar completely (with AppBarLayout) -->
         <item name="actionBarSize">88dp</item>
@@ -64,7 +64,7 @@
         <item name="elevation">0dp</item>
     </style>
     <style name="SplashTheme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/splashscreen_background</item>
+        <item name="windowSplashScreenBackground">@drawable/waykeep_background</item>
 
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_color_108dp</item>
         <item name="postSplashScreenTheme">@style/DayNightColorTheme</item>
