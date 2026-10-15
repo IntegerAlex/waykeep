@@ -278,13 +278,15 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         if (item.getItemId() == R.id.track_detail_insert_marker) {
             TrackPoint trackPoint = trackRecordingServiceConnection.getTrackRecordingService().getLastStoredTrackPointWithLocation();
-            if (trackPoint == null) {
+            android.location.Location location = trackPoint != null ? trackPoint.position().toLocation() : getLastKnownLocation();
+            if (location == null) {
+                Toast.makeText(this, R.string.marker_add_error, Toast.LENGTH_LONG).show();
                 return true;
             }
             Intent intent = IntentUtils
                     .newIntent(this, MarkerEditActivity.class)
                     .putExtra(MarkerEditActivity.EXTRA_TRACK_ID, trackId)
-                    .putExtra(MarkerEditActivity.EXTRA_LOCATION, trackPoint.position().toLocation());
+                    .putExtra(MarkerEditActivity.EXTRA_LOCATION, location);
             startActivity(intent);
             return true;
         }
@@ -376,8 +378,29 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         }
     }
 
-    private void onRecordingStatusChanged(RecordingStatus status) {
-        if (!status.isRecording()) {
+    /**
+     * Fallback when the recording service has no stored trackpoint with location yet
+     * (weak/indoor GPS): use the last known system location so markers still work.
+     */
+    private android.location.Location getLastKnownLocation() {
+        android.location.LocationManager locationManager = (android.location.LocationManager) getSystemService(android.content.Context.LOCATION_SERVICE);
+        if (locationManager == null) {
+            return null;
+        }
+        try {
+            for (String provider : locationManager.getProviders(true)) {
+                android.location.Location location = locationManager.getLastKnownLocation(provider);
+                if (location != null) {
+                    return location;
+                }
+            }
+        } catch (SecurityException e) {
+            // Permission not granted; caller handles null.
+        }
+        return null;
+    }
+
+    private void onRecordingStatusChanged(RecordingStatus status) {        if (!status.isRecording()) {
             finish();
         }
         recordingStatus = status;

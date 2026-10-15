@@ -16,7 +16,9 @@
 
 package com.waykeep.app.ui.markers;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -181,20 +184,47 @@ public class MarkerListActivity extends AbstractActivity implements DeleteMarker
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (trackId != null && item.getItemId() == R.id.marker_list_insert_marker) {
             // MarkerEditActivity requires a location: Markers are inserted at the current position.
+            // Fall back to the last known system location when the recording service has no
+            // stored trackpoint yet (weak/indoor GPS) — any fix is better than no marker.
             TrackRecordingService service = trackRecordingServiceConnection.getTrackRecordingService();
             TrackPoint trackPoint = service != null ? service.getLastStoredTrackPointWithLocation() : null;
-            if (trackPoint == null) {
+            android.location.Location location = trackPoint != null ? trackPoint.position().toLocation() : getLastKnownLocation();
+            if (location == null) {
                 Toast.makeText(this, R.string.marker_add_error, Toast.LENGTH_LONG).show();
                 return true;
             }
 
             Intent intent = IntentUtils.newIntent(this, MarkerEditActivity.class)
                     .putExtra(MarkerEditActivity.EXTRA_TRACK_ID, trackId)
-                    .putExtra(MarkerEditActivity.EXTRA_LOCATION, trackPoint.position().toLocation());
+                    .putExtra(MarkerEditActivity.EXTRA_LOCATION, location);
             startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Fallback for marker insertion when the recording service has no stored trackpoint
+     * with location yet (weak/indoor GPS): use the last known system location so the
+     * user can still drop a marker at their approximate position.
+     */
+    @Nullable
+    private android.location.Location getLastKnownLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager == null) {
+            return null;
+        }
+        try {
+            for (String provider : locationManager.getProviders(true)) {
+                android.location.Location location = locationManager.getLastKnownLocation(provider);
+                if (location != null) {
+                    return location;
+                }
+            }
+        } catch (SecurityException e) {
+            // Location permission not granted; caller handles null.
+        }
+        return null;
     }
 
     /**
