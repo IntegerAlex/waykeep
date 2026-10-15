@@ -312,16 +312,14 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
     }
 
     private void showEmptyState() {
-        viewBinding.chartAxisRow.setVisibility(View.GONE);
-        viewBinding.chartMetricScroll.setVisibility(View.GONE);
+        viewBinding.chartControlsScroll.setVisibility(View.GONE);
         viewBinding.chartView.setVisibility(View.GONE);
         viewBinding.chartEmptyState.setVisibility(View.VISIBLE);
     }
 
     private void showChart() {
         viewBinding.chartEmptyState.setVisibility(View.GONE);
-        viewBinding.chartAxisRow.setVisibility(View.VISIBLE);
-        viewBinding.chartMetricScroll.setVisibility(View.VISIBLE);
+        viewBinding.chartControlsScroll.setVisibility(View.VISIBLE);
         viewBinding.chartView.setVisibility(View.VISIBLE);
     }
 

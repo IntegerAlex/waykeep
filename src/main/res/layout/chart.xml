@@ -20,91 +20,97 @@ limitations under the License.
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/chart_axis_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="8dp">
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/chart_axis_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleSelection="true">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chart_axis_time"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chart_axis_time" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chart_axis_distance"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chart_axis_distance" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-    </LinearLayout>
-
     <HorizontalScrollView
-        android:id="@+id/chart_metric_scroll"
+        android:id="@+id/chart_controls_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="2dp"
         android:scrollbars="none">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chart_metric_group"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chart_metric_elevation"
-                style="@style/Widget.Material3.Chip.Filter"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/chart_axis_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/chart_metric_elevation" />
+                app:selectionRequired="true"
+                app:singleSelection="true">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chart_metric_speed"
-                style="@style/Widget.Material3.Chip.Filter"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chart_axis_time"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/chart_axis_time" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chart_axis_distance"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/chart_axis_distance" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chart_metric_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/chart_metric_speed" />
+                android:layout_marginStart="8dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chart_metric_heart_rate"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chart_metric_heart_rate" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chart_metric_elevation"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chart_metric_elevation" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chart_metric_cadence"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chart_metric_cadence" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chart_metric_speed"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chart_metric_speed" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chart_metric_power"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chart_metric_power" />
-        </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chart_metric_heart_rate"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chart_metric_heart_rate" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chart_metric_cadence"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chart_metric_cadence" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chart_metric_power"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chart_metric_power" />
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
     </HorizontalScrollView>
 
     <FrameLayout
