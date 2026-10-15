@@ -42,9 +42,13 @@ import com.google.android.material.button.MaterialButton;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import de.dennisguse.opentracks.data.ContentProviderUtils;
+import de.dennisguse.opentracks.data.TrackListIterator;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.TrackListBinding;
 import de.dennisguse.opentracks.publicapi.DataProvider;
@@ -78,6 +82,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     // The following are set in onCreate
     private TrackRecordingServiceConnection recordingStatusConnection;
     private TrackListAdapter adapter;
+    private final ExecutorService trackLoader = Executors.newSingleThreadExecutor();
 
     private TrackListBinding viewBinding;
 
@@ -247,6 +252,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        trackLoader.shutdownNow();
         viewBinding = null;
         recordingStatusConnection = null;
         adapter = null;
@@ -310,7 +316,23 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         viewBinding.trackListToolbar.setTitle(Objects.requireNonNullElseGet(searchQuery, () -> getString(R.string.app_name)));
 
-        adapter.swapData(new ContentProviderUtils(this).searchTracks(searchQuery));
+        // SQLite query plus cursor walk off the main thread; DiffUtil then animates only what changed.
+        final String query = searchQuery;
+        trackLoader.execute(() -> {
+            List<TrackListIterator.Item> items = new ArrayList<>();
+            try (TrackListIterator iterator = new ContentProviderUtils(this).searchTracks(query)) {
+                while (iterator.hasNext()) {
+                    items.add(iterator.next());
+                }
+            } catch (RuntimeException e) {
+                return;
+            }
+            runOnUiThread(() -> {
+                if (!isFinishing() && !isDestroyed() && adapter != null) {
+                    adapter.swapData(items);
+                }
+            });
+        });
     }
 
     @Override
@@ -367,7 +389,24 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         if (itemId == R.id.list_context_menu_show_on_map) {
-            DataProvider.showTrackOnMap(this, recordingStatus.isRecording(), trackIds);
+            if (trackIds.length == 1) {
+                // Single track: open the in-app map tab.
+                Track.Id trackId = trackIds[0];
+                Intent intent;
+                if (recordingStatus.isRecording() && trackId.equals(recordingStatus.trackId())) {
+                    intent = IntentUtils.newIntent(this, TrackRecordingActivity.class)
+                            .putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId)
+                            .putExtra(TrackRecordingActivity.EXTRA_OPEN_MAP_TAB, true);
+                } else {
+                    intent = IntentUtils.newIntent(this, TrackRecordedActivity.class)
+                            .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, trackId)
+                            .putExtra(TrackRecordedActivity.EXTRA_OPEN_MAP_TAB, true);
+                }
+                startActivity(intent);
+            } else {
+                // Multiple tracks: delegate to an external dashboard app.
+                DataProvider.showTrackOnMap(this, recordingStatus.isRecording(), trackIds);
+            }
             return true;
         }
 

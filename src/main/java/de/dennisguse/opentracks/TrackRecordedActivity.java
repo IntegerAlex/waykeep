@@ -37,15 +37,16 @@ import de.dennisguse.opentracks.data.TrackDataHub;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.databinding.TrackRecordedBinding;
 import de.dennisguse.opentracks.fragments.StatisticsRecordedFragment;
-import de.dennisguse.opentracks.publicapi.DataProvider;
 import de.dennisguse.opentracks.services.RecordingStatus;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.settings.SettingsActivity;
 import de.dennisguse.opentracks.share.ShareUtils;
+import de.dennisguse.opentracks.share.ShareTrackImageActivity;
 import de.dennisguse.opentracks.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import de.dennisguse.opentracks.ui.intervals.IntervalsFragment;
 import de.dennisguse.opentracks.ui.markers.MarkerListActivity;
+import de.dennisguse.opentracks.ui.trackmap.TrackMapFragment;
 import de.dennisguse.opentracks.util.IntentUtils;
 
 /**
@@ -60,8 +61,11 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     private static final String TAG = TrackRecordedActivity.class.getSimpleName();
 
     public static final String EXTRA_TRACK_ID = "track_id";
+    public static final String EXTRA_OPEN_MAP_TAB = "open_map_tab";
 
     private static final String CURRENT_TAB_TAG_KEY = "current_tab_tag_key";
+
+    private static final int MAP_TAB_POSITION = 4;
 
     private TrackDataHub trackDataHub;
 
@@ -89,6 +93,8 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 (tab, position) -> tab.setText(pagerAdapter.getPageTitle(position))).attach();
         if (savedInstanceState != null) {
             viewBinding.trackDetailActivityViewPager.setCurrentItem(savedInstanceState.getInt(CURRENT_TAB_TAG_KEY));
+        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_MAP_TAB, false)) {
+            viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
         }
 
         trackRecordingServiceConnection = new TrackRecordingServiceConnection(bindCallback);
@@ -166,8 +172,15 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
             return true;
         }
 
+        if (item.getItemId() == R.id.track_detail_share_image) {
+            Intent intent = IntentUtils.newIntent(this, ShareTrackImageActivity.class)
+                    .putExtra(ShareTrackImageActivity.EXTRA_TRACK_ID, trackId);
+            startActivity(intent);
+            return true;
+        }
+
         if (item.getItemId() == R.id.track_detail_menu_show_on_map) {
-            DataProvider.showTrackOnMap(this, false, trackId);
+            viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
             return true;
         }
 
@@ -257,6 +270,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 case 1 -> IntervalsFragment.newInstance(trackId, true);
                 case 2 -> ChartFragment.newInstance(false);
                 case 3 -> ChartFragment.newInstance(true);
+                case 4 -> TrackMapFragment.newInstance();
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };
@@ -264,7 +278,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
 
         @Override
         public int getItemCount() {
-            return 4;
+            return 5;
         }
 
         public CharSequence getPageTitle(int position) {
@@ -273,6 +287,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 case 1 -> getString(R.string.track_detail_intervals_tab);
                 case 2 -> getString(R.string.settings_chart_by_time);
                 case 3 -> getString(R.string.settings_chart_by_distance);
+                case 4 -> getString(R.string.track_detail_map_tab);
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };

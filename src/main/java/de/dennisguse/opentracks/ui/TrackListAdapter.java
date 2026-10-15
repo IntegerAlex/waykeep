@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -35,8 +37,20 @@ import de.dennisguse.opentracks.ui.util.ListItemUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 import de.dennisguse.opentracks.util.StringUtils;
 
-public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActionMode.Callback {
+public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, RecyclerView.ViewHolder> implements ActionMode.Callback {
 
+    private static final DiffUtil.ItemCallback<TrackListIterator.Item> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull TrackListIterator.Item oldItem, @NonNull TrackListIterator.Item newItem) {
+            return oldItem.id().equals(newItem.id());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull TrackListIterator.Item oldItem, @NonNull TrackListIterator.Item newItem) {
+            // Item is a record: equals covers every displayed field.
+            return oldItem.equals(newItem);
+        }
+    };
 
     private final AppCompatActivity context;
     private final RecyclerView recyclerView;
@@ -44,12 +58,12 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final TrackThumbnailLoader thumbnailLoader;
     private RecordingStatus recordingStatus;
     private UnitSystem unitSystem;
-    private TrackListIterator trackIterator;
     private boolean selectionMode = false;
     private ActivityUtils.ContextualActionModeCallback actionModeCallback;
     private ActionMode actionMode;
 
     public TrackListAdapter(AppCompatActivity context, RecyclerView recyclerView, RecordingStatus recordingStatus, UnitSystem unitSystem) {
+        super(DIFF_CALLBACK);
         this.context = context;
         this.recyclerView = recyclerView;
         this.recordingStatus = recordingStatus;
@@ -72,38 +86,26 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-
-        trackIterator.moveToPosition(position);
-        viewHolder.bind(trackIterator);
+        viewHolder.bind(getItem(position));
     }
 
     @Override
     public long getItemId(int position) {
-        trackIterator.moveToPosition(position);
-        return trackIterator.get().id().id();
+        return getItem(position).id().id();
     }
 
-    @Override
-    public int getItemCount() {
-        if (trackIterator == null) {
-            return 0;
-        }
-        return trackIterator.getCount();
-    }
-
-    public void swapData(TrackListIterator cursor) {
-        this.trackIterator = cursor;
-        this.notifyDataSetChanged();
+    public void swapData(@NonNull List<TrackListIterator.Item> items) {
+        submitList(items);
     }
 
     public void updateRecordingStatus(RecordingStatus recordingStatus) {
         this.recordingStatus = recordingStatus;
-        this.notifyDataSetChanged();
+        this.notifyItemRangeChanged(0, getItemCount());
     }
 
     public void updateUnitSystem(UnitSystem unitSystem) {
         this.unitSystem = unitSystem;
-        this.notifyDataSetChanged();
+        this.notifyItemRangeChanged(0, getItemCount());
     }
 
     @Override
@@ -139,10 +141,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setAllSelected(boolean isSelected) {
         if (isSelected) {
-            trackIterator.moveToFirst();
-            while (trackIterator.hasNext()) {
-                selection.put((int) trackIterator.get().id().id(), true);
-                trackIterator.next();
+            for (TrackListIterator.Item item : getCurrentList()) {
+                selection.put((int) item.id().id(), true);
             }
         } else {
             selection.clear();
@@ -182,8 +182,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
-        public void bind(TrackListIterator cursor) {
-            TrackListIterator.Item tracksListItem = cursor.get();
+        public void bind(TrackListIterator.Item tracksListItem) {
             trackId = tracksListItem.id();
 
             int iconId = tracksListItem.activityType().getIconDrawableId();
@@ -214,6 +213,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             if (tracksListItem.markerCount() > 0) {
                 viewBinding.trackListItemMarkerChip.setVisibility(View.VISIBLE);
+                //noinspection SetTextI18n
                 viewBinding.trackListItemMarkerCount.setText(Integer.toString(tracksListItem.markerCount()));
             } else {
                 viewBinding.trackListItemMarkerChip.setVisibility(View.GONE);
@@ -231,8 +231,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         /**
-         * Shows average speed or pace (per the user's speed/pace preference for this activity type).
-         */
+          * Shows average speed or pace (per the user's speed/pace preference for this activity type).
+          */
         private void bindPace(TrackListIterator.Item item) {
             boolean reportSpeed = PreferencesUtils.isReportSpeed(item.activityTypeLocalized());
             viewBinding.trackListItemPaceLabel.setText(reportSpeed ? R.string.stats_speed : R.string.stats_pace);
@@ -250,8 +250,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         /**
-         * Shows altitude gain; falls back to the unknown placeholder when the track has no elevation data.
-         */
+          * Shows altitude gain; falls back to the unknown placeholder when the track has no elevation data.
+          */
         private void bindElevation(TrackListIterator.Item item) {
             Float gain = item.altitudeGain_m();
             if (gain == null) {
@@ -264,9 +264,9 @@ public class TrackListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         /**
-         * Renders the route into the hero. The bitmap is delivered asynchronously; a stale result
-         * (this holder was recycled to another track) is discarded.
-         */
+          * Renders the route into the hero. The bitmap is delivered asynchronously; a stale result
+          * (this holder was recycled to another track) is discarded.
+          */
         private void renderThumbnail() {
             float density = context.getResources().getDisplayMetrics().density;
             int width = context.getResources().getDisplayMetrics().widthPixels - Math.round(24 * density);
