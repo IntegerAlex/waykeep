@@ -684,6 +684,7 @@ limitations under the License.
     <string name="share_image_preview">Share image preview</string>
     <string name="share_image_aspect_feed">Feed (4:5)</string>
     <string name="share_image_aspect_story">Story (9:16)</string>
+    <string name="share_image_aspect_square">Square (1:1)</string>
     <string name="share_image_style_stats">Stats card</string>
     <string name="share_image_style_route">Route only</string>
     <string name="share_image_stat_elevation_gain">Elev Gain</string>

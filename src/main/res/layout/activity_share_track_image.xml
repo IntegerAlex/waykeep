@@ -50,6 +50,15 @@
             android:layout_weight="1"
             android:text="@string/share_image_aspect_story" />
 
+        <Button
+            android:id="@+id/share_image_aspect_square"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/share_image_aspect_square" />
+
     </LinearLayout>
 
     <LinearLayout

@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.Pair;
@@ -160,20 +159,6 @@ public class TrackShareImageGenerator {
             paint.setShader(new LinearGradient(0, 0, 0, heightPx, top, bottom, Shader.TileMode.CLAMP));
         }
         canvas.drawRect(0, 0, widthPx, heightPx, paint);
-
-        if (background == Background.MAP_TINT) {
-            // Faint graticule: technical map feel with zero network or battery cost.
-            Paint grid = new Paint();
-            grid.setColor(0x14FFFFFF);
-            grid.setStrokeWidth(Math.max(1, density));
-            float step = 48 * density;
-            for (float x = step; x < widthPx; x += step) {
-                canvas.drawLine(x, 0, x, heightPx, grid);
-            }
-            for (float y = step; y < heightPx; y += step) {
-                canvas.drawLine(0, y, widthPx, y, grid);
-            }
-        }
     }
 
     private static Bitmap renderCard(@NonNull Context context, @NonNull String title,
@@ -212,15 +197,33 @@ public class TrackShareImageGenerator {
 
         if (!routePoints.isEmpty() || routeOnly) {
             float routeTop = y;
-            float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.62f;
-            drawRoute(canvas, routePoints, padding, routeTop, widthPx - padding, routeBottom,
-                    ContextCompat.getColor(context, R.color.opentracks), theme.placeholder(), density);
+            // Strava composition: map fills the top half, stats the bottom half.
+            float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.52f;
+            int mapW = Math.round(widthPx - 2 * padding);
+            int mapH = Math.round(routeBottom - routeTop);
+            MapTileFetcher.MapResult map = null;
+            if (background == Background.MAP_TINT && mapH > 0 && !routePoints.isEmpty()) {
+                try {
+                    map = MapTileFetcher.render(context, routePoints, mapW, mapH);
+                } catch (RuntimeException e) {
+                    map = null;
+                }
+            }
+            if (map != null) {
+                canvas.drawBitmap(map.bitmap, padding, routeTop, null);
+                drawRouteMercator(canvas, routePoints, map.fit, padding, routeTop,
+                        ContextCompat.getColor(context, R.color.opentracks), density);
+                map.bitmap.recycle();
+            } else {
+                drawRoute(canvas, routePoints, padding, routeTop, widthPx - padding, routeBottom,
+                        ContextCompat.getColor(context, R.color.opentracks), theme.placeholder(), density);
+            }
             y = routeBottom + 24 * density;
         }
 
         if (!cards.isEmpty()) {
             drawStatsGrid(canvas, cards, padding, y,
-                    widthPx - padding, heightPx - padding - 40 * scaledDensity, theme, scaledDensity, density);
+                    widthPx - padding, theme, scaledDensity, density);
         }
 
         Paint brandPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -304,17 +307,70 @@ public class TrackShareImageGenerator {
         canvas.drawCircle(startX, startY, 5 * density, dot);
     }
 
+    /**
+     * Draws the route in the same mercator projection as a fetched tile backdrop,
+     * with a light casing so it reads on top of real streets.
+     */
+    private static void drawRouteMercator(Canvas canvas, List<RouteSampler.LatLon> points,
+                                         MapTileFetcher.Fit fit, float left, float top,
+                                         int color, float density) {
+        Path path = new Path();
+        float startX = 0;
+        float startY = 0;
+        for (int i = 0; i < points.size(); i++) {
+            double[] m = MapTileFetcher.mercatorPx(points.get(i).longitude(), points.get(i).latitude(), fit.zoom);
+            float x = (float) (left + m[0] * fit.scale + fit.offX);
+            float y = (float) (top + m[1] * fit.scale + fit.offY);
+            if (i == 0) {
+                path.moveTo(x, y);
+                startX = x;
+                startY = y;
+            } else {
+                path.lineTo(x, y);
+            }
+        }
+
+        Paint casing = new Paint(Paint.ANTI_ALIAS_FLAG);
+        casing.setStyle(Paint.Style.STROKE);
+        casing.setStrokeCap(Paint.Cap.ROUND);
+        casing.setStrokeJoin(Paint.Join.ROUND);
+        casing.setColor(0xE6FFFFFF);
+        casing.setStrokeWidth(9 * density);
+        canvas.drawPath(path, casing);
+
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setColor(color);
+        paint.setStrokeWidth(5 * density);
+        canvas.drawPath(path, paint);
+
+        Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
+        dot.setStyle(Paint.Style.FILL);
+        dot.setColor(color);
+        canvas.drawCircle(startX, startY, 5 * density, dot);
+    }
+
     private static void drawStatsGrid(Canvas canvas, List<StatCard> cards,
-                                     float left, float top, float right, float bottom,
+                                     float left, float top, float right,
                                      CardTheme theme, float scaledDensity, float density) {
         if (cards.isEmpty()) {
             return;
         }
-        int columns = cards.size() <= 3 ? cards.size() : 3;
+        // Strava-like strata: value over label, hairline dividers, no boxes.
+        int columns;
+        if (cards.size() <= 3) {
+            columns = cards.size();
+        } else if (cards.size() == 4) {
+            columns = 2;
+        } else {
+            columns = 3;
+        }
         int rows = (int) Math.ceil(cards.size() / (double) columns);
         float gap = 12 * density;
         float cellWidth = (right - left - gap * (columns - 1)) / columns;
-        float cellHeight = Math.min((bottom - top - gap * (rows - 1)) / rows, 110 * density);
+        float cellHeight = 92 * density;
 
         Paint valuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         valuePaint.setColor(theme.textPrimary());
@@ -325,27 +381,35 @@ public class TrackShareImageGenerator {
         labelPaint.setColor(theme.textSecondary());
         labelPaint.setTextSize(13 * scaledDensity);
 
-        Paint cardPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cardPaint.setColor(theme.cardFill());
+        Paint dividerPaint = new Paint();
+        dividerPaint.setColor(theme.textSecondary());
+        dividerPaint.setAlpha(70);
+        dividerPaint.setStrokeWidth(Math.max(1, density / 2));
+
+        // Hairline above the block.
+        canvas.drawLine(left, top, right, top, dividerPaint);
+        float contentTop = top + 16 * density;
 
         for (int i = 0; i < cards.size(); i++) {
             int row = i / columns;
             int col = i % columns;
             float cellLeft = left + col * (cellWidth + gap);
-            float cellTop = top + row * (cellHeight + gap);
-            RectF rect = new RectF(cellLeft, cellTop, cellLeft + cellWidth, cellTop + cellHeight);
-            canvas.drawRoundRect(rect, 16 * density, 16 * density, cardPaint);
+            float cellTop = contentTop + row * cellHeight;
 
             StatCard card = cards.get(i);
             float centerX = cellLeft + cellWidth / 2f;
-            float valueY = cellTop + cellHeight / 2f - 4 * density;
-            float labelY = valueY + 24 * scaledDensity;
 
-            String value = ellipsize(card.value(), valuePaint, cellWidth - 24 * density);
+            String value = ellipsize(card.value(), valuePaint, cellWidth - 8 * density);
             float valueWidth = valuePaint.measureText(value);
-            canvas.drawText(value, centerX - valueWidth / 2f, valueY, valuePaint);
+            canvas.drawText(value, centerX - valueWidth / 2f, cellTop + 30 * scaledDensity, valuePaint);
             float labelWidth = labelPaint.measureText(card.label());
-            canvas.drawText(card.label(), centerX - labelWidth / 2f, labelY, labelPaint);
+            canvas.drawText(card.label(), centerX - labelWidth / 2f, cellTop + 30 * scaledDensity + 22 * scaledDensity, labelPaint);
+
+            // Thin vertical divider between columns.
+            if (col > 0) {
+                float dividerX = cellLeft - gap / 2f;
+                canvas.drawLine(dividerX, cellTop + 6 * density, dividerX, cellTop + cellHeight - 16 * density, dividerPaint);
+            }
         }
     }
 

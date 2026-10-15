@@ -30,7 +30,14 @@ public class ShareTrackImageActivity extends AppCompatActivity {
 
     private static final int IMAGE_WIDTH_PX = 1080;
     private static final int HEIGHT_4_5_PX = 1350;
+    private static final int HEIGHT_1_1_PX = 1080;
     private static final int HEIGHT_9_16_PX = 1920;
+
+    private enum Aspect {
+        FEED_4_5,
+        SQUARE_1_1,
+        STORY_9_16
+    }
 
     private ActivityShareTrackImageBinding viewBinding;
     private ExecutorService executor;
@@ -39,7 +46,7 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     private Track track;
     private RouteSampler.Route route;
     private Bitmap previewBitmap;
-    private boolean aspectStory;
+    private Aspect aspect = Aspect.FEED_4_5;
     private TrackShareImageGenerator.Style style = TrackShareImageGenerator.Style.STATS_CARD;
     private TrackShareImageGenerator.Background background = TrackShareImageGenerator.Background.DARK;
 
@@ -57,16 +64,9 @@ public class ShareTrackImageActivity extends AppCompatActivity {
             return;
         }
 
-        viewBinding.shareImageAspectFeed.setOnClickListener(v -> {
-            aspectStory = false;
-            updateToggleStates();
-            renderPreview();
-        });
-        viewBinding.shareImageAspectStory.setOnClickListener(v -> {
-            aspectStory = true;
-            updateToggleStates();
-            renderPreview();
-        });
+        viewBinding.shareImageAspectFeed.setOnClickListener(v -> setAspect(Aspect.FEED_4_5));
+        viewBinding.shareImageAspectSquare.setOnClickListener(v -> setAspect(Aspect.SQUARE_1_1));
+        viewBinding.shareImageAspectStory.setOnClickListener(v -> setAspect(Aspect.STORY_9_16));
         viewBinding.shareImageStyleStats.setOnClickListener(v -> {
             style = TrackShareImageGenerator.Style.STATS_CARD;
             updateToggleStates();
@@ -99,6 +99,20 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding = null;
     }
 
+    private void setAspect(Aspect selected) {
+        aspect = selected;
+        updateToggleStates();
+        renderPreview();
+    }
+
+    private static int heightFor(Aspect aspect) {
+        return switch (aspect) {
+            case SQUARE_1_1 -> HEIGHT_1_1_PX;
+            case STORY_9_16 -> HEIGHT_9_16_PX;
+            case FEED_4_5 -> HEIGHT_4_5_PX;
+        };
+    }
+
     private void setBackground(TrackShareImageGenerator.Background selected) {
         background = selected;
         TrackShareImageGenerator.saveBackground(this, selected);
@@ -107,8 +121,9 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     }
 
     private void updateToggleStates() {
-        viewBinding.shareImageAspectFeed.setSelected(!aspectStory);
-        viewBinding.shareImageAspectStory.setSelected(aspectStory);
+        viewBinding.shareImageAspectFeed.setSelected(aspect == Aspect.FEED_4_5);
+        viewBinding.shareImageAspectSquare.setSelected(aspect == Aspect.SQUARE_1_1);
+        viewBinding.shareImageAspectStory.setSelected(aspect == Aspect.STORY_9_16);
         viewBinding.shareImageStyleStats.setSelected(style == TrackShareImageGenerator.Style.STATS_CARD);
         viewBinding.shareImageStyleRoute.setSelected(style == TrackShareImageGenerator.Style.ROUTE_ONLY);
         viewBinding.shareImageBgDark.setSelected(background == TrackShareImageGenerator.Background.DARK);
@@ -148,13 +163,13 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         }
         viewBinding.shareImageProgress.setVisibility(View.VISIBLE);
         TrackShareImageGenerator.Style selectedStyle = style;
-        boolean selectedStory = aspectStory;
+        Aspect selectedAspect = aspect;
         TrackShareImageGenerator.Background selectedBackground = background;
         executor.execute(() -> {
             Bitmap rendered;
             try {
                 rendered = TrackShareImageGenerator.render(this, track, route, selectedStyle, selectedBackground,
-                        IMAGE_WIDTH_PX, selectedStory ? HEIGHT_9_16_PX : HEIGHT_4_5_PX);
+                        IMAGE_WIDTH_PX, heightFor(selectedAspect));
             } catch (RuntimeException e) {
                 runOnUiThread(() -> {
                     if (!isFinishing() && !isDestroyed()) {
@@ -185,13 +200,13 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         }
         viewBinding.shareImageProgress.setVisibility(View.VISIBLE);
         TrackShareImageGenerator.Style selectedStyle = style;
-        boolean selectedStory = aspectStory;
+        Aspect selectedAspect = aspect;
         TrackShareImageGenerator.Background selectedBackground = background;
         executor.execute(() -> {
             Bitmap bitmap;
             try {
                 bitmap = TrackShareImageGenerator.render(this, track, route, selectedStyle, selectedBackground,
-                        IMAGE_WIDTH_PX, selectedStory ? HEIGHT_9_16_PX : HEIGHT_4_5_PX);
+                        IMAGE_WIDTH_PX, heightFor(selectedAspect));
             } catch (RuntimeException e) {
                 reportShareError();
                 return;
