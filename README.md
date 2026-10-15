@@ -1,6 +1,7 @@
-# <img src="drawable-svg/LOGO.svg" alt="OpenTracks logo" height="40"></img> OpenTracks: a sport tracker
+# <img src="drawable-svg/LOGO.svg" alt="Waykeep logo" height="40"></img> Waykeep: a sport tracker
 
-_OpenTracks_ is a sport tracking application that completely respects your privacy.
+_Waykeep_ is a sport tracking application that completely respects your privacy.
+It is a fork of [_OpenTracks_](https://codeberg.org/OpenTracksApp/OpenTracks).
 
 [![Awesome Humane Tech](https://codeberg.org/teaserbot-labs/delightful-humane-design/raw/branch/main/humane-tech-badge.svg)](https://delightful.club/delightful-humane-design/#health)
 
@@ -203,3 +204,12 @@ Artwork, logos and user interface remained more or less unchanged.
 More information about _Google My Tracks_:
 * [Wikipedia page](https://en.wikipedia.org/wiki/MyTracks)
 * [Google code archive](https://code.google.com/archive/p/mytracks/)
+
+## License
+
+_Waykeep_ is free software, distributed under the
+[GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.html).
+It is a fork of _OpenTracks_ (Apache License 2.0); the upstream-derived parts
+remain available under Apache 2.0. See [LICENSE](LICENSE),
+[LICENSE-APACHE-2.0](LICENSE-APACHE-2.0), [NOTICE](NOTICE) and
+[RELICENSING.md](RELICENSING.md).

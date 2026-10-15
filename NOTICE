@@ -1,0 +1,27 @@
+Waykeep
+Copyright 2026 Akshat Kotpalliwar
+https://github.com/IntegerAlex/waykeep
+
+This product is a fork of OpenTracks
+(https://codeberg.org/OpenTracksApp/OpenTracks),
+Copyright the OpenTracks contributors, licensed under the
+Apache License, Version 2.0.
+
+This product includes osmdroid (https://github.com/osmdroid/osmdroid),
+licensed under the Apache License, Version 2.0.
+
+This product includes Inter (https://github.com/rsms/inter) and
+JetBrains Mono (https://github.com/JetBrains/JetBrainsMono),
+licensed under the SIL Open Font License, Version 1.1.
+
+More third-party components and their licenses are listed in the
+app's About screen and in RELICENSING.md.
+
+Waykeep is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version.
+
+Waykeep is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See LICENSE for the full text.

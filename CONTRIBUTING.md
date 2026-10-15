@@ -29,7 +29,19 @@ Advices:
   * tell us why those are required,
   * what alternatives are existing, and
   * why you choose this dependency.
-  And also verify that the license(s) are compatible with _Apache 2.0_ as well as open-source.
+  And also verify that the license(s) are compatible with _GPLv3_ as well as open-source. 
+
+## License
+
+Waykeep is free software, distributed under the
+[GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.html).
+It is a fork of _OpenTracks_, which is distributed under the
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+Unless you explicitly state otherwise, any contribution you intentionally
+submit for inclusion in Waykeep shall be licensed under the GPLv3, without
+any additional terms or conditions. See `RELICENSING.md` for the relicensing
+rationale and `NOTICE` for attribution.
  
 ## Coding conventions
 
