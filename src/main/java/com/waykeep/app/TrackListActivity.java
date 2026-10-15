@@ -23,6 +23,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -180,10 +181,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         adapter = new TrackListAdapter(this, viewBinding.trackList, recordingStatus, unitSystem);
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
-
-        // The toolbar shows the logo as its navigation icon; without an explicit listener the
-        // SearchBar treats it as Back, which finishes the root activity and exits the app.
-        viewBinding.trackListToolbar.setNavigationOnClickListener(view -> layoutManager.smoothScrollToPosition(viewBinding.trackList, null, 0));
+        viewBinding.trackListEmptyAction.setOnClickListener(view -> viewBinding.trackListFabAction.performClick());
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(new RecyclerViewSwipeDeleteCallback(this) {
             @Override
@@ -366,6 +364,13 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             runOnUiThread(() -> {
                 if (!isFinishing() && !isDestroyed() && adapter != null) {
                     adapter.swapData(items);
+                    boolean empty = items.isEmpty();
+                    viewBinding.trackListEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    if (empty) {
+                        boolean searching = !TextUtils.isEmpty(query);
+                        viewBinding.trackListEmptyMessage.setText(searching ? R.string.track_list_no_results : R.string.track_list_empty_message);
+                        viewBinding.trackListEmptyAction.setVisibility(searching ? View.GONE : View.VISIBLE);
+                    }
                 }
             });
         });

@@ -534,6 +534,7 @@ limitations under the License.
     <string name="track_edit_time_offset">Timezone Offset</string>
     <!-- Track List -->
     <string name="track_list_empty_message">Start recording your next adventure here</string>
+    <string name="track_list_no_results">No tracks match your search</string>
     <!-- Aggregated Statistics -->
     <string name="aggregated_stats_empty_message">Record your first track to see aggregated statistics</string>
     <string name="aggregated_stats_filter_no_results">There are not activities for the specified filter</string>
