@@ -3,48 +3,17 @@
 _Waykeep_ is a sport tracking application that completely respects your privacy.
 It is a fork of [_OpenTracks_](https://codeberg.org/OpenTracksApp/OpenTracks).
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Source: GitHub](https://img.shields.io/badge/source-IntegerAlex%2Fwaykeep-black.svg)](https://github.com/IntegerAlex/waykeep)
 [![Awesome Humane Tech](https://codeberg.org/teaserbot-labs/delightful-humane-design/raw/branch/main/humane-tech-badge.svg)](https://delightful.club/delightful-humane-design/#health)
 
-<table>
-    <tr>
-        <th>Free (F-Droid)</th>
-        <th>Free (Nightly for F-Droid)</th>
-        <th>Donations</th>
-    </tr>
-    <tr>
-        <td align="center">
-            <a href="https://f-droid.org/packages/com.waykeep.app.playstore">
-                <img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="60" align="middle">
-            </a>
-        </td>
-        <td align="center">
-            <a href="https://fdroid.storchp.de/fdroid/repo?fingerprint=99985A7E73DCB0B16C9BDDCE7A0B4996F88068AE7C771ED53E217E69CD1FF196">
-                <img alt="Nightly builds (for F-Droid client)" src="https://opentracksapp.com/static/img/fdroid.storchp.de.png" height="90" align="middle">
-            </a>
-        </td>
-        <td align="center">
-            <a href="https://liberapay.com/OpenTracks/donate">
-                <img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="45" align="middle">
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td align="center">
-            <img alt="OpenTracks version published on F-Droid" src="https://img.shields.io/f-droid/v/com.waykeep.app.playstore.svg" align="middle" >
-        </td>
-        <td></td>
-        <td align="center">
-            <a href="https://play.google.com/store/apps/details?id=com.waykeep.app.playstore">
-                <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60" align="middle">
-            </a>
-        </td>
-    </tr>
-</table>
+> **Status:** Waykeep is under active development and is not yet published to F-Droid or Google Play.
+> Build it from source with `./gradlew :assembleIrreproducibleDebug` (see the working agreement in
+> [`AGENTS.md`](AGENTS.md) for the flavor names).
 
-Translations are hosted on <a href="https://translate.codeberg.org/engage/opentracks/">translate.codeberg.org/projects/opentracks/</a>.
-<a href="https://translate.codeberg.org/engage/opentracks/">
-<img src="https://translate.codeberg.org/widget/opentracks/opentracks-src-main-res-values-strings-xml-main/horizontal-auto.svg" alt="Translation status" />
-</a>
+Waykeep is a fork of [OpenTracks](https://codeberg.org/OpenTracksApp/OpenTracks); bug reports and
+feature requests for the fork belong in the [Waykeep issue tracker](https://github.com/IntegerAlex/waykeep/issues).
+Upstream issues are tracked on [Codeberg](https://codeberg.org/OpenTracksApp/OpenTracks/issues).
 
 ## Screenshots
 
@@ -65,6 +34,10 @@ Translations are hosted on <a href="https://translate.codeberg.org/engage/opentr
 * __Tracking:__ track your sport and outdoor activities
 * __Voice announcements__
 * __Photos and Markers:__ mark interesting locations while tracking
+* __Offline-capable map:__ view the recorded route and its markers on an in-app map
+  (Esri Light/Dark Gray Canvas tiles via [osmdroid](https://github.com/osmdroid/osmdroid));
+  previously viewed tiles are cached and keep working without connectivity
+* __Activity feed:__ browse past activities with generated route thumbnails
 * __Export:__
     * export tracks either as [KMZ 2.3](https://docs.opengeospatial.org/is/12-007r2/12-007r2.html) (incl. photos), [KML 2.3](https://docs.opengeospatial.org/is/12-007r2/12-007r2.html), or [GPX 1.1](https://www.topografix.com/GPX/1/1/)
     * export automatically after each recording (e.g., to sync via [Nextcloud](https://nextcloud.com/))
@@ -84,27 +57,31 @@ Translations are hosted on <a href="https://translate.codeberg.org/engage/opentr
 
 ### Gadgetbridge integration
 
-OpenTracks can be used with [Gadgetbridge](https://www.gadgetbridge.org/):
+Waykeep can be used with [Gadgetbridge](https://www.gadgetbridge.org/):
 * shows statistics via notification on smart watches (requires Gadgetbridge 0.56.1 or later), and
 * Gadgetbridge's GPX exporter generates `opentracks:trackid` to avoid duplication (Gadgetbridge 0.53.0 or later).
 
 ### Privacy
-* __No Internet access:__ Internet is not used
+* __No accounts:__ nothing to sign up for
 * __No advertising__
 * __No in-app analytics__
 * __No use of Google Play Services__
+* __Internet only for map tiles:__ the app requests basemap tiles over the network for the in-app map.
+  Previously viewed tiles are cached locally; no personal data is uploaded.
 
-__Only required permissions:__
-* _ACCESS_FINE_LOCATION_: required to use the GPS.
-* _ACCESS_BACKGROUND_LOCATION_: required to start recording with GPS while phone is in standby. (e.g. when triggered by Public API from an external device)
+__Permissions:__
+* _ACCESS_FINE_LOCATION_ / _ACCESS_COARSE_LOCATION_: required to use the GPS.
+* _INTERNET_ / _ACCESS_NETWORK_STATE_: required to fetch map tiles.
+* _BLUETOOTH_ / _BLUETOOTH_CONNECT_: required for Bluetooth LE sensors (optional).
+* Foreground-service permissions: required to keep recording in the background.
 
 ### Public API
 
-OpenTracks includes an API for starting/stopping recording by another installed application (e.g., [Automate](https://llamalab.com/automate/), [Tasker](https://tasker.joaoapps.com), or [Easer](https://github.com/renyuneyun/Easer)). 
+Waykeep includes an API for starting/stopping recording by another installed application (e.g., [Automate](https://llamalab.com/automate/), [Tasker](https://tasker.joaoapps.com), or [Easer](https://github.com/renyuneyun/Easer)). 
 The API is disabled by default to protect the user's privacy, but it can easily be enabled in the settings. Once enabled, the API can be invoked by sending an explicit Intent to start an activity.
 
 `Package`  (depends on the variant installed):
-* F-Droid: `com.waykeep.app`
+* F-Droid / default: `com.waykeep.app`
 * GooglePlay: `com.waykeep.app.playStore`
 * Debug: `com.waykeep.app.debug`
 * Nightly: `com.waykeep.app.nightly`
@@ -112,7 +89,7 @@ The API is disabled by default to protect the user's privacy, but it can easily 
 `Classes`:
 * **Start a recording:**  `com.waykeep.app.publicapi.StartRecording`
     * Set track data: `TRACK_NAME`, `TRACK_DESCRIPTION`, `TRACK_CATEGORY`, and `TRACK_ICON` (
-      see `ActivityType.id` defined in [/src/main/java/de/dennisguse/opentracks/util/TrackIconUtils.java#L38](/src/main/java/de/dennisguse/opentracks/data/model/ActivityType.java)).
+      see `ActivityType.id` defined in [`ActivityType.java`](/src/main/java/com/waykeep/app/data/models/ActivityType.java)).
       NOTE: if `TRACK_ICON` is not present, `TRACK_CATEGORY` will be used to determine the icon (
       localized).
     * Send recorded data to another application via _Dashboard API_: `STATS_TARGET_PACKAGE` and
@@ -151,8 +128,8 @@ GPX exports only those points that have a GPS coordinate present (sensor data is
 
 ## Dashboard API (incl. map)
 
-As of v3.3.1, OpenTracks supports custom dashboards for displaying previously recorded and live
-tracks.
+Waykeep ships with a built-in map, so a separate dashboard is no longer required to view a track.
+The Dashboard API for external live dashboards is still supported (inherited from OpenTracks).
 
 The reference implementation is [OSMDashboard](https://codeberg.org/OpenTracksApp/OSMDashboard), which
 presents an OpenStreetMap map (showing the current track, incl. updates). The Dashboard API is also
@@ -167,7 +144,7 @@ The developer documentation is in [README_API.md](README_API.md).
 
 ## Backup
 
-OpenTracks stores the data in the app-internal space:
+Waykeep stores the data in the app-internal space:
 `/data/data/com.waykeep.app[|.playstore]`
 
 There is a SQLite database `database.db` that contains the tracks as well as the markers.
@@ -176,30 +153,22 @@ Pictures attached to markers are stored as separate files.
 For backup and recovery, the best approach is to export as one KMZ file.
 This will contain all the tracks, pictures and the data as similar as possible as stored internally.
 In difference to backing up the database directly, a KMZ allows to be imported into a different (
-e.g., newer) version of OpenTracks.
+e.g., newer) version of Waykeep.
 
 ## Project history
 
-_OpenTracks_ is based upon Google _My Tracks app_ ([code](https://code.google.com/archive/p/mytracks/)).
-_My Tracks_ was initially released by Google in 2010 as [open-source software](http://google-latlong.blogspot.fr/2010/05/code-for-my-tracks-is-now-yours.html).
-In 2016, [Google decided to discontinue](https://support.google.com/maps/answer/6333516) _My Tracks_ and stopped distributing it via the Google Play store in April 2016.
-Then [Plonk42](https://github.com/plonk42) conducted some maintenance work until 2016, so _My Tracks_ could still be used (based upon version _Google's MyTracks_ version 2.0.6).
-Plonk42's version is available [here](https://github.com/Plonk42/mytracks).
-In 2019, _OpenTracks_ was forked from Plonk42's _My Tracks_ and major rework was conducted.
+_Waykeep_ is a 2026 fork of [_OpenTracks_](https://codeberg.org/OpenTracksApp/OpenTracks), which is
+itself based on Google's _My Tracks_ app ([code](https://code.google.com/archive/p/mytracks/)).
+_Waykeep_ adds an in-app offline-capable map, a visual activity feed, and a distinct brand, while
+keeping OpenTracks' privacy posture and file-format interoperability.
 
-Rework of _OpenTracks_ included:
-* removing Google's analytics code,
-* removing integration into Google Drive,
-* removing Google Maps integration,
-* removing Google Earth integration,
-* removing use of Google Play service,
-* removing calorie estimation and activity estimation,
-* removing support for ANT+ and Classic Bluetooth,
-* adding support for Bluetooth LE heart rate sensors,
-* removing Protobuf (store sensor data in SQLite columns directly), and
-* removing Android Service API for other apps.
-
-Artwork, logos and user interface remained more or less unchanged.
+_OpenTracks_ history:
+* _My Tracks_ was initially released by Google in 2010 as [open-source software](http://google-latlong.blogspot.fr/2010/05/code-for-my-tracks-is-now-yours.html).
+* In 2016, [Google decided to discontinue](https://support.google.com/maps/answer/6333516) it.
+* [Plonk42](https://github.com/plonk42) maintained it until 2016.
+* In 2019, _OpenTracks_ was forked from Plonk42's _My Tracks_ and major rework was conducted (removing
+  Google analytics/Drive/Maps/Earth, Play services, ANT+/Classic Bluetooth; adding BLE sensors and
+  direct SQLite storage).
 
 More information about _Google My Tracks_:
 * [Wikipedia page](https://en.wikipedia.org/wiki/MyTracks)
