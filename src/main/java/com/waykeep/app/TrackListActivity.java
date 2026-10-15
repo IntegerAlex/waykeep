@@ -181,6 +181,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
 
+        // The toolbar shows the logo as its navigation icon; without an explicit listener the
+        // SearchBar treats it as Back, which finishes the root activity and exits the app.
+        viewBinding.trackListToolbar.setNavigationOnClickListener(view -> layoutManager.smoothScrollToPosition(viewBinding.trackList, null, 0));
+
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(new RecyclerViewSwipeDeleteCallback(this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
