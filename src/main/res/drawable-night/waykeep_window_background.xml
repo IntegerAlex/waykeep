@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Night variant of the app window background: the Waykeep image. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/waykeep_bg"
+    android:dither="true"
+    android:gravity="fill" />

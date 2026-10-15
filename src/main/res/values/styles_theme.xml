@@ -16,6 +16,7 @@
 
         <item name="android:statusBarColor">?attr/colorSurfaceBright</item>
         <item name="android:navigationBarColor">?attr/colorSurfaceContainer</item>
+        <item name="android:windowBackground">@drawable/waykeep_window_background</item>
         <!-- Material3-related: otherwise the actionbar does not overlay the SearchBar completely (with AppBarLayout) -->
         <item name="actionBarSize">88dp</item>
     </style>
@@ -23,6 +24,7 @@
     <style name="DayNightColorTheme" parent="DayNightDynamicTheme">
         <item name="colorPrimary">@color/opentracks</item>
         <item name="colorSecondary">@color/opentracks</item>
+        <item name="android:windowBackground">@drawable/waykeep_window_background</item>
     </style>
 
     <style name="NightOledDynamicTheme" parent="Theme.Material3.Dark.NoActionBar">
@@ -49,7 +51,6 @@
         <item name="colorSurfaceContainer">@color/oled_glass</item>
         <item name="colorSurfaceDim">@color/oled_glass</item>
         <item name="backgroundColor">@color/oled_glass</item>
-        <item name="android:windowBackground">@drawable/waykeep_background</item>
         <item name="android:windowBackground">@drawable/waykeep_background</item>
 
         <!-- Material3-related: otherwise the actionbar does not overlay the SearchBar completely (with AppBarLayout) -->
