@@ -17,6 +17,9 @@
 package com.waykeep.app.chart;
 
 import android.content.Context;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -65,6 +68,9 @@ public class ChartView extends View {
     private static final int MIN_ZOOM_LEVEL = 1;
     private static final int MAX_ZOOM_LEVEL = 10;
 
+    private static final long INSPECTION_HIDE_DELAY_MS = 2000;
+    private static final long INSPECTION_FADE_MS = 250;
+
     private static final NumberFormat X_NUMBER_FORMAT = NumberFormat.getIntegerInstance();
     private static final NumberFormat X_FRACTION_FORMAT = NumberFormat.getNumberInstance();
     private static final NumberFormat VALUE_1_DECIMAL_FORMAT = NumberFormat.getNumberInstance();
@@ -104,6 +110,9 @@ public class ChartView extends View {
 
     private ChartPoint inspectionPoint;
     private boolean scrubbing = false;
+    private float inspectionAlpha = 1f;
+    private ValueAnimator inspectionFade;
+    private final Runnable inspectionHideRunnable = this::startInspectionFade;
 
     private int leftBorder = BORDER;
     private int topBorder = BORDER;
@@ -519,7 +528,10 @@ public class ChartView extends View {
             chartPoints.clear();
             xExtremityMonitor.reset();
             zoomLevel = 1;
+            cancelInspectionHide();
+            cancelFade();
             inspectionPoint = null;
+            inspectionAlpha = 1f;
             scrubbing = false;
             updateDimensions();
         }
@@ -638,6 +650,7 @@ public class ChartView extends View {
             if ((event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) && scrubbing) {
                 scrubbing = false;
                 requestDisallowInterceptTouchEventInParent(false);
+                scheduleInspectionHide();
             }
             if (scrubbing) {
                 requestDisallowInterceptTouchEventInParent(true);
@@ -981,6 +994,9 @@ public class ChartView extends View {
             return;
         }
         inspectionPoint = nearest;
+        inspectionAlpha = 1f;
+        cancelFade();
+        cancelInspectionHide();
         invalidate();
     }
 
@@ -992,8 +1008,74 @@ public class ChartView extends View {
         if (nearest == null) {
             return;
         }
-        inspectionPoint = nearest == inspectionPoint ? null : nearest;
+        boolean clear = nearest == inspectionPoint;
+        inspectionPoint = clear ? null : nearest;
+        inspectionAlpha = 1f;
+        cancelFade();
+        if (clear) {
+            cancelInspectionHide();
+        } else {
+            scheduleInspectionHide();
+        }
         invalidate();
+    }
+
+    /**
+     * Clears the inspection crosshair immediately and cancels any pending fade.
+     */
+    private void clearInspection() {
+        cancelInspectionHide();
+        cancelFade();
+        inspectionPoint = null;
+        inspectionAlpha = 1f;
+        invalidate();
+    }
+
+    private void scheduleInspectionHide() {
+        cancelInspectionHide();
+        if (inspectionPoint != null) {
+            postDelayed(inspectionHideRunnable, INSPECTION_HIDE_DELAY_MS);
+        }
+    }
+
+    private void cancelInspectionHide() {
+        removeCallbacks(inspectionHideRunnable);
+    }
+
+    private void cancelFade() {
+        if (inspectionFade != null) {
+            inspectionFade.cancel();
+            inspectionFade = null;
+        }
+    }
+
+    private void startInspectionFade() {
+        if (inspectionPoint == null) {
+            return;
+        }
+        cancelFade();
+        inspectionFade = ValueAnimator.ofFloat(inspectionAlpha, 0f);
+        inspectionFade.setDuration(INSPECTION_FADE_MS);
+        inspectionFade.addUpdateListener(animation -> {
+            inspectionAlpha = (float) animation.getAnimatedValue();
+            invalidate();
+        });
+        inspectionFade.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                inspectionPoint = null;
+                inspectionAlpha = 1f;
+                invalidate();
+            }
+        });
+        inspectionFade.start();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        cancelInspectionHide();
+        cancelFade();
     }
 
     private ChartPoint findNearestChartPoint(float touchX) {
@@ -1032,6 +1114,7 @@ public class ChartView extends View {
         if (x < getScrollX() + leftBorder || x > getScrollX() + leftBorder + effectiveWidth) {
             return;
         }
+        int layer = canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), Math.round(255 * inspectionAlpha));
         canvas.drawLine(x, topBorder, x, topBorder + effectiveHeight, crosshairPaint);
 
         float density = getResources().getDisplayMetrics().density;
@@ -1046,6 +1129,7 @@ public class ChartView extends View {
             canvas.drawCircle(x, y, radius + seriesDotRingPaint.getStrokeWidth() / 2f, seriesDotRingPaint);
             canvas.drawCircle(x, y, radius, seriesDotPaint);
         }
+        canvas.restoreToCount(layer);
     }
 
     private void drawInspectionTooltip(Canvas canvas) {
@@ -1056,6 +1140,7 @@ public class ChartView extends View {
         if (crosshairX < getScrollX() + leftBorder || crosshairX > getScrollX() + leftBorder + effectiveWidth) {
             return;
         }
+        int layer = canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), Math.round(255 * inspectionAlpha));
 
         List<String> lines = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
@@ -1104,6 +1189,7 @@ public class ChartView extends View {
             tooltipTextPaint.setColor(colors.get(i));
             canvas.drawText(lines.get(i), textX, baseline, tooltipTextPaint);
         }
+        canvas.restoreToCount(layer);
     }
 
     private static int withAlpha(int color, int alpha) {
