@@ -6,10 +6,15 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -53,8 +58,8 @@ import de.dennisguse.opentracks.data.models.Statistics;
 import de.dennisguse.opentracks.data.models.Track;
 import de.dennisguse.opentracks.data.models.TrackPoint;
 import de.dennisguse.opentracks.databinding.FragmentTrackMapBinding;
-import de.dennisguse.opentracks.ui.markers.MarkerDetailActivity;
-import de.dennisguse.opentracks.util.IntentUtils;
+import de.dennisguse.opentracks.settings.PreferencesUtils;
+import de.dennisguse.opentracks.ui.markers.MarkerBottomSheetFragment;
 
 /**
  * A fragment that shows the track route on an offline-capable OSM map (osmdroid).
@@ -74,6 +79,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     private static final String STATE_CENTER_LON = "center_lon";
     private static final String STATE_ZOOM = "zoom";
     private static final String STATE_FOLLOW = "follow";
+    private static final String STATE_ORIENTATION = "orientation";
 
     private static final int MARKER_PHOTO_SIZE_PX = 96;
 
@@ -91,6 +97,9 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     private Polyline routeLine;
     private MyLocationNewOverlay locationOverlay;
     private final List<Marker> markerOverlays = new ArrayList<>();
+    private Marker startPin;
+    private Marker endPin;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
     private final List<GeoPoint> pendingPoints = new ArrayList<>();
     private GeoPoint lastRoutePoint;
@@ -124,7 +133,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         viewBinding.trackMapView.setTileSource(esriTileSource(isNightMode()));
         viewBinding.trackMapView.setTilesScaledToDpi(true);
         viewBinding.trackMapView.setMultiTouchControls(true);
-        viewBinding.trackMapView.setBuiltInZoomControls(true);
+        // Explicit 48dp controls below replace the fading built-ins (discoverability + touch target size).
+        viewBinding.trackMapView.setBuiltInZoomControls(false);
         // The MapView lives in a ViewPager2 page whose view is detached from the window on page
         // eviction. osmdroid would then detach all overlays itself (nulling their internals) while
         // TrackDataHub callbacks may still be in flight -> crash in Polyline.setPoints.
@@ -149,6 +159,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             followEnabled = savedInstanceState.getBoolean(STATE_FOLLOW, true);
             // The user was deliberately looking somewhere: don't yank the camera on reload.
             zoomedToRoute = true;
+            viewBinding.trackMapView.setMapOrientation(savedInstanceState.getFloat(STATE_ORIENTATION, 0f));
         } else {
             centerOnLastKnownLocation();
         }
@@ -159,12 +170,27 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         locationOverlay.setDrawAccuracyEnabled(true);
         viewBinding.trackMapView.getOverlays().add(locationOverlay);
 
-        viewBinding.trackMapFollowButton.setOnClickListener(v -> {
+        viewBinding.trackMapRecenterButton.setOnClickListener(v -> {
             followEnabled = true;
-            updateFollowButton();
+            updateRecenterVisibility();
             centerOnCurrentPosition();
         });
-        updateFollowButton();
+        viewBinding.trackMapZoomInButton.setOnClickListener(v -> viewBinding.trackMapView.getController().zoomIn());
+        viewBinding.trackMapZoomOutButton.setOnClickListener(v -> viewBinding.trackMapView.getController().zoomOut());
+        viewBinding.trackMapCompassButton.setOnClickListener(v -> {
+            suppressScrollCallback = true;
+            try {
+                viewBinding.trackMapView.setMapOrientation(0f);
+            } finally {
+                suppressScrollCallback = false;
+            }
+            viewBinding.trackMapView.invalidate();
+        });
+        viewBinding.trackMapRecenterButton.setTooltipText(getString(R.string.track_map_recenter));
+        viewBinding.trackMapZoomInButton.setTooltipText(getString(R.string.track_map_zoom_in));
+        viewBinding.trackMapZoomOutButton.setTooltipText(getString(R.string.track_map_zoom_out));
+        viewBinding.trackMapCompassButton.setTooltipText(getString(R.string.track_map_compass));
+        updateRecenterVisibility();
 
         viewBinding.trackMapView.addMapListener(new MapListener() {
             @Override
@@ -172,7 +198,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
                 // Programmatic moves (follow, fit-route) also raise this; only a real user pan breaks follow.
                 if (!suppressScrollCallback && followEnabled) {
                     followEnabled = false;
-                    updateFollowButton();
+                    updateRecenterVisibility();
                 }
                 return false;
             }
@@ -195,6 +221,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             outState.putDouble(STATE_CENTER_LON, center.getLongitude());
             outState.putDouble(STATE_ZOOM, viewBinding.trackMapView.getZoomLevelDouble());
             outState.putBoolean(STATE_FOLLOW, followEnabled);
+            outState.putFloat(STATE_ORIENTATION, viewBinding.trackMapView.getMapOrientation());
         }
     }
 
@@ -209,6 +236,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             if (locationOverlay != null && hasLocationPermission()) {
                 locationOverlay.enableMyLocation();
             }
+            updateOfflineBanner();
+            registerNetworkCallback();
         }
         if (markersTrackId != null) {
             loadMarkersAsync(markersTrackId);
@@ -221,6 +250,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         if (locationOverlay != null) {
             locationOverlay.disableMyLocation();
         }
+        unregisterNetworkCallback();
         if (viewBinding != null) {
             viewBinding.trackMapView.onPause();
         }
@@ -238,6 +268,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         routeLine = null;
         locationOverlay = null;
         markerOverlays.clear();
+        startPin = null;
+        endPin = null;
     }
 
     @Override
@@ -261,6 +293,14 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
                 // Never call setPoints() with an empty list: drop the overlay and build a fresh one.
                 if (isResumed() && viewBinding != null && routeLine != null) {
                     viewBinding.trackMapView.getOverlays().remove(routeLine);
+                    if (startPin != null) {
+                        viewBinding.trackMapView.getOverlays().remove(startPin);
+                        startPin = null;
+                    }
+                    if (endPin != null) {
+                        viewBinding.trackMapView.getOverlays().remove(endPin);
+                        endPin = null;
+                    }
                     routeLine = createRouteLine();
                     moveLocationOverlayToTop();
                     viewBinding.trackMapView.invalidate();
@@ -296,6 +336,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             allPoints.addAll(batch);
             routeLine.setPoints(allPoints);
             lastRoutePoint = allPoints.get(allPoints.size() - 1);
+            updateEndpointPins(allPoints);
 
             suppressScrollCallback = true;
             try {
@@ -377,12 +418,145 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         }
     }
 
-    private void updateFollowButton() {
+    /**
+     * The recenter control only exists after the user pans away (AllTrails pattern):
+     * while following, there is nothing to recenter to, so it stays hidden.
+     */
+    private void updateRecenterVisibility() {
         if (viewBinding != null) {
-            viewBinding.trackMapFollowButton.setImageResource(followEnabled
-                    ? R.drawable.ic_gps_fixed_24dp
-                    : R.drawable.ic_gps_not_fixed_24dp);
+            viewBinding.trackMapRecenterButton.setVisibility(followEnabled ? View.GONE : View.VISIBLE);
         }
+    }
+
+    /**
+     * Shows whether tiles come from network or cache, and honors the offline-mode setting.
+     */
+    private void updateOfflineBanner() {
+        if (viewBinding == null || !isAdded()) {
+            return;
+        }
+        boolean offlineOnly = PreferencesUtils.isMapOfflineOnly();
+        viewBinding.trackMapView.setUseDataConnection(!offlineOnly);
+        if (offlineOnly) {
+            viewBinding.trackMapOfflineBanner.setText(R.string.track_map_offline_mode);
+            viewBinding.trackMapOfflineBanner.setVisibility(View.VISIBLE);
+        } else if (!isConnected()) {
+            viewBinding.trackMapOfflineBanner.setText(R.string.track_map_offline_cached);
+            viewBinding.trackMapOfflineBanner.setVisibility(View.VISIBLE);
+        } else {
+            viewBinding.trackMapOfflineBanner.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isConnected() {
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager == null) {
+                return true;
+            }
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    private void registerNetworkCallback() {
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager == null) {
+                return;
+            }
+            networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(@NonNull Network network) {
+                    refreshOfflineBanner();
+                }
+
+                @Override
+                public void onLost(@NonNull Network network) {
+                    refreshOfflineBanner();
+                }
+
+                @Override
+                public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities capabilities) {
+                    refreshOfflineBanner();
+                }
+            };
+            connectivityManager.registerDefaultNetworkCallback(networkCallback);
+        } catch (Exception e) {
+            networkCallback = null;
+        }
+    }
+
+    private void unregisterNetworkCallback() {
+        if (networkCallback == null) {
+            return;
+        }
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager != null) {
+                connectivityManager.unregisterNetworkCallback(networkCallback);
+            }
+        } catch (Exception e) {
+            // Already unregistered or service gone; nothing to do.
+        }
+        networkCallback = null;
+    }
+
+    private void refreshOfflineBanner() {
+        Activity fragmentActivity = getActivity();
+        if (fragmentActivity != null) {
+            fragmentActivity.runOnUiThread(this::updateOfflineBanner);
+        }
+    }
+
+    /**
+     * Start (green) and end (red) dots for the route, kept below the location dot.
+     */
+    private void updateEndpointPins(@NonNull List<GeoPoint> allPoints) {
+        if (viewBinding == null || allPoints.size() < 2) {
+            return;
+        }
+        if (startPin == null) {
+            startPin = makeEndpointPin(0xFF4CAF50);
+            endPin = makeEndpointPin(0xFFF44336);
+            moveLocationOverlayToTop();
+        }
+        startPin.setPosition(allPoints.get(0));
+        endPin.setPosition(allPoints.get(allPoints.size() - 1));
+    }
+
+    private Marker makeEndpointPin(int color) {
+        Marker pin = new Marker(viewBinding.trackMapView);
+        pin.setIcon(makeDotDrawable(color));
+        pin.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        pin.setOnMarkerClickListener((tapped, mapView) -> true);
+        if (locationOverlay != null) {
+            viewBinding.trackMapView.getOverlays().remove(locationOverlay);
+        }
+        viewBinding.trackMapView.getOverlays().add(pin);
+        if (locationOverlay != null) {
+            viewBinding.trackMapView.getOverlays().add(locationOverlay);
+        }
+        return pin;
+    }
+
+    private Drawable makeDotDrawable(int color) {
+        float density = requireContext().getResources().getDisplayMetrics().density;
+        int size = Math.round(16 * density);
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        float center = size / 2f;
+        Paint outer = new Paint(Paint.ANTI_ALIAS_FLAG);
+        outer.setStyle(Paint.Style.FILL);
+        outer.setColor(0xFFFFFFFF);
+        canvas.drawCircle(center, center, center, outer);
+        Paint inner = new Paint(Paint.ANTI_ALIAS_FLAG);
+        inner.setStyle(Paint.Style.FILL);
+        inner.setColor(color);
+        canvas.drawCircle(center, center, center - 2 * density, inner);
+        return new BitmapDrawable(requireContext().getResources(), bitmap);
     }
 
     /**
@@ -448,8 +622,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
                     }
                     pin.setRelatedObject(data.markerId);
                     pin.setOnMarkerClickListener((tapped, mapView) -> {
-                        startActivity(IntentUtils.newIntent(requireContext(), MarkerDetailActivity.class)
-                                .putExtra(MarkerDetailActivity.EXTRA_MARKER_ID, (de.dennisguse.opentracks.data.models.Marker.Id) tapped.getRelatedObject()));
+                        MarkerBottomSheetFragment.newInstance((de.dennisguse.opentracks.data.models.Marker.Id) tapped.getRelatedObject())
+                                .show(getParentFragmentManager(), "marker_sheet");
                         return true;
                     });
                     viewBinding.trackMapView.getOverlays().add(pin);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/settings_map_title">
+
+    <SwitchPreferenceCompat
+        android:defaultValue="@bool/map_offline_only_default"
+        android:key="@string/map_offline_only_key"
+        android:summary="@string/map_offline_only_summary"
+        android:title="@string/map_offline_only_title" />
+
+    <Preference
+        android:key="@string/map_clear_cache_key"
+        android:summary="@string/map_clear_cache_summary"
+        android:title="@string/map_clear_cache_title" />
+
+</PreferenceScreen>

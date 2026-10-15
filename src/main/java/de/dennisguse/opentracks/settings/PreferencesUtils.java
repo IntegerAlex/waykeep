@@ -307,6 +307,11 @@ public class PreferencesUtils {
         return getBoolean(R.string.stats_keep_screen_on_while_recording_key, DEFAULT);
     }
 
+    public static boolean isMapOfflineOnly() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.map_offline_only_default);
+        return getBoolean(R.string.map_offline_only_key, DEFAULT);
+    }
+
     public static boolean shouldUseFullscreen() {
         final boolean DEFAULT = resources.getBoolean(R.bool.stats_fullscreen_while_recording_default);
         return getBoolean(R.string.stats_fullscreen_while_recording_key, DEFAULT);

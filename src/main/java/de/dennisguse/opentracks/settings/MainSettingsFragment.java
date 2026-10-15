@@ -35,6 +35,11 @@ public class MainSettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
+        findPreference(getString(R.string.settings_map_key)).setOnPreferenceClickListener(preference -> {
+            ((SettingsActivity) getActivity()).openScreen(getString(R.string.settings_map_key));
+            return true;
+        });
+
         findPreference(getString(R.string.settings_announcements_key)).setOnPreferenceClickListener(preference -> {
             ((SettingsActivity) getActivity()).openScreen(getString(R.string.settings_announcements_key));
             return true;

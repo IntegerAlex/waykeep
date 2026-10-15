@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,14 +10,81 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/track_map_follow_button"
+    <TextView
+        android:id="@+id/track_map_offline_banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_map_banner"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:visibility="gone"
+        tools:text="Offline — showing cached tiles"
+        tools:visibility="visible" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="@string/track_map_follow_location"
-        android:src="@drawable/ic_gps_fixed_24dp"
-        app:fabSize="mini" />
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/track_map_compass_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/track_map_compass"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/track_map_compass_label"
+            app:cornerRadius="24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/track_map_zoom_in_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/track_map_zoom_in"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/track_map_zoom_in_label"
+            android:textSize="20sp"
+            app:cornerRadius="24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/track_map_zoom_out_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/track_map_zoom_out"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/track_map_zoom_out_label"
+            android:textSize="20sp"
+            app:cornerRadius="24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/track_map_recenter_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/track_map_recenter"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:visibility="gone"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_gps_fixed_24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+    </LinearLayout>
 
 </FrameLayout>
