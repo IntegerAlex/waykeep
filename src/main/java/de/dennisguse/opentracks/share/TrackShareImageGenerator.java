@@ -223,7 +223,7 @@ public class TrackShareImageGenerator {
 
         if (!cards.isEmpty()) {
             drawStatsGrid(canvas, cards, padding, y,
-                    widthPx - padding, theme, scaledDensity, density);
+                    widthPx - padding, heightPx - padding - 40 * scaledDensity, theme, scaledDensity, density);
         }
 
         Paint brandPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -353,7 +353,7 @@ public class TrackShareImageGenerator {
     }
 
     private static void drawStatsGrid(Canvas canvas, List<StatCard> cards,
-                                     float left, float top, float right,
+                                     float left, float top, float right, float bottom,
                                      CardTheme theme, float scaledDensity, float density) {
         if (cards.isEmpty()) {
             return;
@@ -370,7 +370,10 @@ public class TrackShareImageGenerator {
         int rows = (int) Math.ceil(cards.size() / (double) columns);
         float gap = 12 * density;
         float cellWidth = (right - left - gap * (columns - 1)) / columns;
-        float cellHeight = 92 * density;
+        // Fill the remaining space instead of huddling at the top: rows share it.
+        float cellHeight = Math.min((bottom - top - gap * Math.max(rows - 1, 0)) / rows, 170 * density);
+        float blockHeight = rows * cellHeight + (rows - 1) * gap;
+        float contentTop = top + Math.max(0, (bottom - top - blockHeight) / 2f);
 
         Paint valuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         valuePaint.setColor(theme.textPrimary());
@@ -387,8 +390,7 @@ public class TrackShareImageGenerator {
         dividerPaint.setStrokeWidth(Math.max(1, density / 2));
 
         // Hairline above the block.
-        canvas.drawLine(left, top, right, top, dividerPaint);
-        float contentTop = top + 16 * density;
+        canvas.drawLine(left, contentTop, right, contentTop, dividerPaint);
 
         for (int i = 0; i < cards.size(); i++) {
             int row = i / columns;
@@ -401,9 +403,10 @@ public class TrackShareImageGenerator {
 
             String value = ellipsize(card.value(), valuePaint, cellWidth - 8 * density);
             float valueWidth = valuePaint.measureText(value);
-            canvas.drawText(value, centerX - valueWidth / 2f, cellTop + 30 * scaledDensity, valuePaint);
+            float valueBaseline = cellTop + cellHeight / 2f - 2 * density;
+            canvas.drawText(value, centerX - valueWidth / 2f, valueBaseline, valuePaint);
             float labelWidth = labelPaint.measureText(card.label());
-            canvas.drawText(card.label(), centerX - labelWidth / 2f, cellTop + 30 * scaledDensity + 22 * scaledDensity, labelPaint);
+            canvas.drawText(card.label(), centerX - labelWidth / 2f, valueBaseline + 22 * scaledDensity, labelPaint);
 
             // Thin vertical divider between columns.
             if (col > 0) {
