@@ -283,6 +283,8 @@ public class SuggestedRoutesActivity extends AbstractActivity {
                 Intent intent = IntentUtils.newIntent(this, TrackRecordingActivity.class);
                 intent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
                 intent.putParcelableArrayListExtra(TrackRecordingActivity.EXTRA_PLANNED_ROUTE, new ArrayList<>(selected.points()));
+                // Land straight on the Map tab: that is where the dashed loop lives.
+                intent.putExtra(TrackRecordingActivity.EXTRA_OPEN_MAP_TAB, true);
                 startActivity(intent);
             });
         } catch (MissingPermissionException e) {
