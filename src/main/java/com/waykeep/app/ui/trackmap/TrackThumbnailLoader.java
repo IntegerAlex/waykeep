@@ -57,7 +57,7 @@ public class TrackThumbnailLoader {
         this.strokeWidthPx = Math.max(2, Math.round(3 * density));
         this.paddingPx = Math.round(12 * density);
 
-        int maxSize = (int) (Runtime.getRuntime().maxMemory() / 8);
+        int maxSize = Math.min(4 * 1024 * 1024, (int) (Runtime.getRuntime().maxMemory() / 16));
         this.cache = new LruCache<>(maxSize) {
             @Override
             protected int sizeOf(@NonNull String key, @NonNull Bitmap value) {

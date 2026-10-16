@@ -286,17 +286,17 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     public void newGpsStatus(GpsStatusValue gpsStatusValue) {
         Log.i(TAG, "newGpsStatus: " + gpsStatusValue.message);
 
-        if (notificationManager == null) {
-
+        TrackRecordingServiceNotificationManager nm = notificationManager;
+        MutableLiveData<GpsStatusValue> obs = gpsStatusObservable;
+        if (nm == null || obs == null) {
             StringWriter writer = new StringWriter();
             Exception e = new RuntimeException("TrackRecording.newGpsStatus() called after onDestroy(); objectID: " + this + " with thread: " + Thread.currentThread());
             e.printStackTrace(new PrintWriter(writer));
-
             Log.e(TAG, e.getMessage() + " " + writer);
             return;
         }
-        notificationManager.updateGPSStatus(getString(gpsStatusValue.message));
-        gpsStatusObservable.postValue(gpsStatusValue);
+        nm.updateGPSStatus(getString(gpsStatusValue.message));
+        obs.postValue(gpsStatusValue);
     }
 
     @Deprecated

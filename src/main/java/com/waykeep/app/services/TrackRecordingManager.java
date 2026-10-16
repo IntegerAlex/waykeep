@@ -262,23 +262,30 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     private void insertTrackPointHelper(@NonNull TrackPoint trackPoint) {
-        try {
-            contentProviderUtils.insertTrackPoint(trackPoint, trackId);
-            trackStatisticsUpdater.addTrackPoint(trackPoint);
+        for (int attempt = 0; attempt < 2; attempt++) {
+            try {
+                contentProviderUtils.insertTrackPoint(trackPoint, trackId);
+                trackStatisticsUpdater.addTrackPoint(trackPoint);
 
-            contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics());
-            lastStoredTrackPoint = trackPoint;
-            if (trackPoint.position().hasLocation()) {
-                lastStoredTrackPointWithLocation = lastStoredTrackPoint;
+                contentProviderUtils.updateTrackStatistics(trackId, trackStatisticsUpdater.getTrackStatistics());
+                lastStoredTrackPoint = trackPoint;
+                if (trackPoint.position().hasLocation()) {
+                    lastStoredTrackPointWithLocation = lastStoredTrackPoint;
+                }
+                return;
+            } catch (SQLiteException e) {
+                Log.w(TAG, "SQLiteException while inserting trackpoint (attempt " + (attempt + 1) + ").", e);
+                if (attempt == 0) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             }
-        } catch (SQLiteException e) {
-            // TODO Remove; if this is a problem; use a synchronized method.
-            /*
-             * Insert failed, most likely because of SqlLite error code 5 (SQLite_BUSY).
-             * This is expected to happen extremely rarely (if our listener gets invoked twice at about the same time).
-             */
-            Log.w(TAG, "SQLiteException", e);
         }
+        Log.e(TAG, "Failed to insert trackpoint after retry; skipping point to avoid crashing recording.");
     }
 
     private void reset() {

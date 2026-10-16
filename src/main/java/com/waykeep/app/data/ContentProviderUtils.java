@@ -720,8 +720,20 @@ public class ContentProviderUtils {
         return idsPathSegment.toString();
     }
 
-    public static String[] parseTrackIdsFromUri(Uri url) {
-        return TextUtils.split(url.getLastPathSegment(), ID_SEPARATOR);
+    @NonNull
+    public static List<Long> parseTrackIdsFromUriAsLongs(@NonNull Uri url) {
+        List<Long> ids = new ArrayList<>();
+        for (String part : TextUtils.split(url.getLastPathSegment(), ID_SEPARATOR)) {
+            if (part == null || part.isEmpty()) {
+                continue;
+            }
+            try {
+                ids.add(Long.parseLong(part));
+            } catch (NumberFormatException ignored) {
+                // Ignore malformed path segments instead of letting them reach SQL.
+            }
+        }
+        return ids;
     }
 
     public SensorStatistics getSensorStats(@NonNull Track.Id trackId) {

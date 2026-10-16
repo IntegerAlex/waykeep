@@ -34,6 +34,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.waykeep.app.BuildConfig;
 import com.waykeep.app.data.models.TrackPoint;
@@ -60,6 +62,8 @@ public class CustomContentProvider extends ContentProvider {
     private static final String TAG = CustomContentProvider.class.getSimpleName();
 
     private static final String SQL_LIST_DELIMITER = ",";
+
+    private static final ExecutorService VACUUM_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private static final int TOTAL_DELETED_ROWS_VACUUM_THRESHOLD = 10000;
 
@@ -150,9 +154,16 @@ public class CustomContentProvider extends ContentProvider {
         PreferencesUtils.addTotalRowsDeleted(totalChanges);
         int totalRowsDeleted = PreferencesUtils.getTotalRowsDeleted();
         if (totalRowsDeleted > TOTAL_DELETED_ROWS_VACUUM_THRESHOLD) {
-            Log.i(TAG, "TotalRowsDeleted " + totalRowsDeleted + ", starting to vacuum the database.");
-            db.execSQL("VACUUM");
-            PreferencesUtils.resetTotalRowsDeleted();
+            Log.i(TAG, "TotalRowsDeleted " + totalRowsDeleted + ", scheduling database vacuum in background.");
+            VACUUM_EXECUTOR.execute(() -> {
+                try {
+                    db.execSQL("VACUUM");
+                    PreferencesUtils.resetTotalRowsDeleted();
+                    Log.i(TAG, "Database vacuum completed.");
+                } catch (Exception e) {
+                    Log.w(TAG, "Database vacuum failed.", e);
+                }
+            });
         }
 
         return deletedRowsFromTable;
@@ -232,11 +243,11 @@ public class CustomContentProvider extends ContentProvider {
             }
             case TRACKPOINTS_BY_TRACKID -> {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
-                queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
             }
             case DASHBOARD_TRACKPOINTS_BY_TRACKIDS -> {
                 queryBuilder.setTables(TrackPointsColumns.TABLE_NAME);
-                queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(TrackPointsColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
                 queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_TRACKPOINTS);
             }
             case TRACKS -> {
@@ -249,11 +260,11 @@ public class CustomContentProvider extends ContentProvider {
             }
             case TRACKS_BY_ID -> {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
-                queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
             }
             case DASHBOARD_TRACKS_BY_IDS -> {
                 queryBuilder.setTables(TracksColumns.TABLE_NAME);
-                queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(TracksColumns._ID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
                 queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_TRACKS);
             }
             case TRACKS_SENSOR_STATS -> {
@@ -284,11 +295,11 @@ public class CustomContentProvider extends ContentProvider {
             }
             case MARKERS_BY_TRACKID -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
-                queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
             }
             case DASHBOARD_MARKERS_BY_TRACKIDS -> {
                 queryBuilder.setTables(MarkerColumns.TABLE_NAME);
-                queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUri(url)) + ")");
+                queryBuilder.appendWhere(MarkerColumns.TRACKID + " IN (" + TextUtils.join(SQL_LIST_DELIMITER, ContentProviderUtils.parseTrackIdsFromUriAsLongs(url)) + ")");
                 queryBuilder.setProjectionMap(DataProvider.DATA_PROJECTIONMAP_MARKERS);
             }
             default -> throw new IllegalArgumentException("Unknown url " + url);

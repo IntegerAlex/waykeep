@@ -43,7 +43,12 @@ public class XMLImporter {
 
     public List<Track.Id> importFile(InputStream inputStream) throws ImportParserException, ImportAlreadyExistsException, IOException {
         try {
-            SAXParserFactory.newInstance().newSAXParser().parse(inputStream, parser.getHandler());
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setNamespaceAware(true);
+            factory.newSAXParser().parse(inputStream, parser.getHandler());
             return parser.getImportTrackIds();
         } catch (SAXException | ParserConfigurationException | ParsingException e) {
             Log.e(TAG, "Unable to import file", e);

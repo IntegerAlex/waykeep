@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-files-path
-        name="pictures"
-        path="/" />
+    <external-files-path name="track_photos" path="Pictures" />
+    <external-files-path name="share_pictures" path="pictures" />
+    <external-files-path name="ai_share" path="ai-share" />
 </paths>

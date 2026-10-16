@@ -80,7 +80,7 @@ limitations under the License.
 
     <application
         android:name=".Startup"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:fullBackupContent="@xml/backup_rules_30_lower"
         android:dataExtractionRules="@xml/backup_rules_31_higher"
         android:enableOnBackInvokedCallback="true"
