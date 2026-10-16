@@ -8,7 +8,11 @@ import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
@@ -16,7 +20,9 @@ import com.waykeep.app.data.ShareContentProvider;
 import com.waykeep.app.data.models.Marker;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.io.file.TrackFileFormat;
+import com.waykeep.app.io.file.exporter.TrackExporter;
 import com.waykeep.app.settings.PreferencesUtils;
+import com.waykeep.app.util.FileUtils;
 
 public class ShareUtils {
 
@@ -79,34 +85,74 @@ public class ShareUtils {
     }
 
     /**
-     * Creates an intent to share a track with an AI app for analysis.
-     * Content is always GPX (richest data), but shared as text/plain with a .txt
-     * filename: ChatGPT and Claude list only TXT/CSV/DOCX as supported uploads,
-     * so application/gpx+xml gets rejected at the input box. GPX is XML text, so
-     * the AI parses it fine once accepted. The analysis prompt travels in
-     * EXTRA_TEXT, and callers should also copy it to the clipboard since some
-     * apps drop text extras when a stream is present.
+     * Writes the track as GPX bytes into a real .txt file for AI analysis.
+     * A real file (not a pipe) is used because picky receivers like ChatGPT fail
+     * on the virtual pipe's unknown size / non-seekable stream. The .txt name and
+     * text/plain MIME are on the officially supported upload lists; the AI parses
+     * the XML content fine once accepted.
+     * <p>
+     * Must be called off the main thread (does database + file I/O).
+     *
+     * @return the file, or null on failure.
      */
-    public static Intent newShareAiIntent(Context context, Track.Id trackId) {
+    @Nullable
+    public static File writeAiShareFile(Context context, Track.Id trackId) {
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
         Track track = contentProviderUtils.getTrack(trackId);
         if (track == null) {
-            throw new RuntimeException("TrackId " + trackId.id() + " could not be resolved.");
+            Log.e(TAG, "TrackId " + trackId.id() + " could not be resolved.");
+            return null;
         }
 
-        TrackFileFormat format = TrackFileFormat.GPX;
-        String trackName = PreferencesUtils.getTrackFileformatGenerator().format(track, format);
-        // Swap the extension so receivers see a supported .txt file; the bytes stay GPX.
-        int dot = trackName.lastIndexOf('.');
-        String txtName = (dot == -1 ? trackName : trackName.substring(0, dot)) + ".txt";
-        Pair<Uri, String> uriAndMime = ShareContentProvider.createURI(trackId, txtName, format);
+        String gpxName = PreferencesUtils.getTrackFileformatGenerator().format(track, TrackFileFormat.GPX);
+        String base = gpxName.endsWith(".gpx") ? gpxName.substring(0, gpxName.length() - 4) : gpxName;
+        File dir = new File(context.getExternalFilesDir(null), "ai-share");
+        if (!dir.exists() && !dir.mkdirs()) {
+            return null;
+        }
+        File file = new File(dir, FileUtils.sanitizeFileName(base + ".txt"));
+        if (file.exists()) {
+            file = new File(dir, FileUtils.sanitizeFileName(base + "-" + System.currentTimeMillis() + ".txt"));
+        }
 
+        TrackExporter exporter = TrackFileFormat.GPX.createTrackExporter(context, contentProviderUtils);
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            if (!exporter.writeTrack(List.of(track), out)) {
+                Log.w(TAG, "GPX export for AI share reported failure.");
+                return null;
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Could not write AI share file: " + e);
+            return null;
+        }
+        purgeAiShareFiles(dir, file);
+        return file;
+    }
+
+    private static void purgeAiShareFiles(File dir, File keep) {
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".txt"));
+        if (files == null) {
+            return;
+        }
+        long cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L;
+        for (File file : files) {
+            if (file.lastModified() < cutoff && !file.equals(keep) && !file.delete()) {
+                file.deleteOnExit();
+            }
+        }
+    }
+
+    /**
+     * Creates an intent to share a materialized AI-analysis file.
+     * Carries only the stream: the analysis prompt travels via the clipboard
+     * (some receivers prefer a text extra over the attachment and would
+     * otherwise swallow the file).
+     */
+    public static Intent newShareAiIntent(Context context, android.net.Uri fileUri) {
         return new Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_STREAM, uriAndMime.first)
+                .putExtra(Intent.EXTRA_STREAM, fileUri)
                 .setType("text/plain")
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_track_subject))
-                .putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_ai_prompt));
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
     /**

@@ -759,6 +759,8 @@ limitations under the License.
     <string name="share_ai_title">Analyze with AI</string>
     <string name="share_ai_prompt">Analyze this GPX run: overall pace and splits, heart-rate zones if present, elevation impact, and 3 specific things to improve. Keep it short and actionable.</string>
     <string name="share_ai_prompt_copied">Analysis prompt copied — paste it with the file</string>
+    <string name="share_ai_preparing">Preparing file for AI analysis…</string>
+    <string name="share_ai_failed">Could not prepare the file. Please try again.</string>
     <string name="suggested_routes_title">Suggested routes</string>
     <string name="stop_recording_message">The current track will be saved.</string>
     <string name="suggested_routes_hint">Tap the map to place your start pin, pick a distance, then Generate.</string>

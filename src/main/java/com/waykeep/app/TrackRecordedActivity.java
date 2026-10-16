@@ -187,16 +187,30 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                             Intent fileIntent = Intent.createChooser(ShareUtils.newShareFileIntent(this, trackId), null);
                             startActivity(fileIntent);
                         } else {
-                            // Some apps drop EXTRA_TEXT when a stream is present, so the prompt
-                            // travels in the clipboard as well.
+                            // Prompt via clipboard (receivers that prefer a text extra over the
+                            // attachment would otherwise swallow the file); export runs off the
+                            // main thread since it does database + file I/O.
                             String prompt = getString(R.string.share_ai_prompt);
                             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                             if (clipboard != null) {
                                 clipboard.setPrimaryClip(ClipData.newPlainText("ai_prompt", prompt));
                             }
                             Toast.makeText(this, R.string.share_ai_prompt_copied, Toast.LENGTH_LONG).show();
-                            Intent aiIntent = Intent.createChooser(ShareUtils.newShareAiIntent(this, trackId), null);
-                            startActivity(aiIntent);
+                            Toast.makeText(this, R.string.share_ai_preparing, Toast.LENGTH_SHORT).show();
+                            new Thread(() -> {
+                                java.io.File aiFile = ShareUtils.writeAiShareFile(this, trackId);
+                                runOnUiThread(() -> {
+                                    if (isFinishing()) {
+                                        return;
+                                    }
+                                    if (aiFile == null) {
+                                        Toast.makeText(this, R.string.share_ai_failed, Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    android.net.Uri uri = com.waykeep.app.share.ShareImageStore.uri(this, aiFile);
+                                    startActivity(Intent.createChooser(ShareUtils.newShareAiIntent(this, uri), null));
+                                });
+                            }).start();
                         }
                     })
                     .show();
