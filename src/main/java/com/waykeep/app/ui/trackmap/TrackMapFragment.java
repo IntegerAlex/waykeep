@@ -402,10 +402,11 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
      */
     private Polyline createRouteLine() {
         float density = requireContext().getResources().getDisplayMetrics().density;
-        // ~1px of black on each side of the 6dp line.
+        // ~3px of black on each side of the 6dp line: CyclOSM is a busy basemap
+        // (colored cycle lanes, POIs), so the route needs a heavier halo to stay readable.
         Polyline casing = new Polyline(viewBinding.trackMapView);
         casing.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.map_polyline_stroke));
-        casing.getOutlinePaint().setStrokeWidth(6 * density + 2);
+        casing.getOutlinePaint().setStrokeWidth(6 * density + 6);
         viewBinding.trackMapView.getOverlays().add(casing);
         routeCasing = casing;
 
