@@ -178,6 +178,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         }
 
         routeLine = createRouteLine();
+        drawPlannedRoute();
 
         locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), viewBinding.trackMapView);
         locationOverlay.setDrawAccuracyEnabled(true);
@@ -430,7 +431,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         }
         float density = requireContext().getResources().getDisplayMetrics().density;
         Polyline plannedLine = new Polyline(viewBinding.trackMapView);
-        plannedLine.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.opentracks));
+        // Planned loop in red, live recorded route in brand cyan: never the same color.
+        plannedLine.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.red_dark));
         plannedLine.getOutlinePaint().setStrokeWidth(4 * density);
         plannedLine.getOutlinePaint().setPathEffect(new android.graphics.DashPathEffect(new float[]{12 * density, 8 * density}, 0));
         plannedLine.setPoints(planned);
