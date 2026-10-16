@@ -7,8 +7,8 @@ repeated here.
 
 - **Fork base:** OpenTracks `111ae968d` ("Bugfix: the currently recorded should
   not be deletable."), on Codeberg — kept as the `upstream` git remote.
-- **Downstream work:** 26 commits (`05acaac6f` … `a801b0281`).
-- **Scope:** 431 files changed, +8,126 / −2,532 lines.
+- **Downstream work:** 50 commits (this file first covered 26; §7 covers the rest).
+- **Scope:** 440 files changed, +9,365 / −2,544 lines.
 - **License:** fork is GPLv3; upstream-derived parts remain Apache-2.0 (see
   `RELICENSING.md`, `NOTICE`, `LICENSE-APACHE-2.0`).
 - **Source:** <https://github.com/IntegerAlex/waykeep>
@@ -230,3 +230,90 @@ Every commit was built with:
 
 The repo has no runnable unit-test source set; the custom-drawing chart and map
 were verified by build + manual device checks (documented in each commit body).
+
+---
+
+## 7. After the first snapshot (commits `161e5b624` … `4a76b7c42`)
+
+### 7.1 Background-image experiment — tried and fully reverted
+`waykeep-bg.png` was tried as the app background (window/splash theme, then
+home-screen only, then night/OLED-only with glassmorphic translucent surfaces).
+It never blended with Material surfaces, so it was removed completely: no image
+asset, no wrapper drawables, solid OLED surfaces restored. Lesson recorded here
+so it is not tried a third time.
+
+### 7.2 Logo tap no longer exits the app
+The SearchBar logo is the ActionBar home button, and AppCompat routes its taps
+to `onSupportNavigateUp` (an earlier `setNavigationOnClickListener` fix never
+fired once `setSupportActionBar` was in place — the dead listener was removed).
+The override scrolls the feed to top instead; exiting stays exclusively in the
+overflow **Exit** item.
+
+### 7.3 Feed usability batch
+- **Empty state**: first run shows the existing empty message plus a Record
+  button (via the FAB path); filtered-to-zero shows a no-results message.
+- **Live search**: keystroke filtering with a 300 ms debounce (SQLite is local,
+  so it stays instant); matched substrings render bold in names/descriptions;
+  the query survives rotation via `onSaveInstanceState`.
+- **Swipe-to-delete, final shape**: swipe now shows the standard delete
+  confirmation dialog (an optimistic-remove + Snackbar-undo variant was tried
+  first and replaced — the dialog + existing abort path won for a destructive,
+  permanent action). Swiping the currently-recorded track is refused with the
+  existing toast.
+- **Explicit stop**: tapping the FAB while recording asks Stop/Cancel in a
+  dialog instead of a hold-to-stop toast; long-press stays as a shortcut, both
+  sharing one stop helper.
+- **Touch targets**: 8 dp separation between the bottom-bar icon buttons.
+
+### 7.4 Suggested running loops (BRouter round trips)
+New bottom-bar entry (dedicated route glyph, not the map icon) opening
+`SuggestedRoutesActivity` (`ui/suggested/`):
+- The map centers on the last-known location (Delhi fallback, no GPS-fix wait);
+  a tap drops an **approximate** start pin — place it where you will go and run,
+  not where you stand. A My-location button only re-centers the map.
+- 3 / 5 / 10 km chips + Generate. `BrouterClient` requests three round trips
+  (`lonlats=lon,lat,r`, directions 30/150/270) from the public BRouter server
+  in parallel (prototype path; the offline engine with bundled segments is the
+  planned replacement), parses GeoJSON, and measures real distance/elevation
+  gain per option — shown because loop length is network-dominated, not dialed.
+- Options render as they arrive with loading/error states; selecting one draws
+  all loops (chosen in brand cyan) and frames it.
+- **Run this route** starts a normal recording (same service path as the home
+  FAB) and hands the loop to the recording map as a dashed **red** guidance
+  line under the solid cyan recorded route, landing directly on the Map tab.
+- The planned loop is reference-only: it is never saved, never counted, never
+  exported. The cyan recorded route stays the sole source of truth, and the
+  recording pipeline (`TrackRecordingService`, `TrackDataHub`) is untouched.
+- Verified live against the server (Bangalore coordinates → 9.3 km loop,
+  383 points with elevation).
+
+### 7.5 Basemap: Esri gray → CyclOSM + switcher
+- CyclOSM (OSM France) renders cycle tracks/lanes, touring routes and POIs —
+  built for exactly this app's use case. Both map surfaces moved over; the
+  day/night Esri variants went away (CyclOSM ships one style).
+- Route casing thickened (~1 px → ~3 px black per side) so the track stays
+  readable over the busier basemap.
+- A missing `.png` tile extension (blank tiles) was fixed, and a layers button
+  atop the map control stack opens a style picker (CyclOSM / Minimal Esri gray),
+  persisted in preferences and honored by both map surfaces. Tile caches are
+  keyed by source name so styles never mix.
+- Map control buttons switched from text labels (which never rendered) to
+  vector icons (compass, plus, minus), matching the existing GPS-icon button.
+
+### 7.6 Markers without a GPS fix
+Marker insertion fell back to the system's last known location when no live fix
+exists yet (right after starting, indoors) — any fix, even stale, drops a
+marker; the no-signal error only shows when there is truly no location at all.
+
+### 7.7 Release + security notes
+- **v1.0.0-alpha.1** pre-release published with a debug-signed APK (unsigned
+  release builds are not installable on devices, hence debug for alpha testing).
+- GitHub secret scanning flagged a Google API key — verified to live only in
+  2012-era upstream `MyTracks/` history (absent from the working tree and from
+  all 50 downstream commits); not our credential, nothing to rotate, alert
+  dismissed without a history rewrite.
+- `android.sync.suppressAgpWarnings=GENERIC` added to silence the AGP
+  SDK-location warning; release builds need `nightly_*`/`release_*` keystore
+  properties (bare `:assembleRelease` fails on nightly signing validation —
+  pre-existing upstream behavior, use `:assembleIrreproducibleRelease` for
+  unsigned local builds).
