@@ -80,9 +80,12 @@ public class ShareUtils {
 
     /**
      * Creates an intent to share a track with an AI app for analysis.
-     * Always exports GPX (most parseable format); the analysis prompt travels in EXTRA_TEXT,
-     * and callers should also copy it to the clipboard since some apps drop text extras
-     * when a stream is present.
+     * Content is always GPX (richest data), but shared as text/plain with a .txt
+     * filename: ChatGPT and Claude list only TXT/CSV/DOCX as supported uploads,
+     * so application/gpx+xml gets rejected at the input box. GPX is XML text, so
+     * the AI parses it fine once accepted. The analysis prompt travels in
+     * EXTRA_TEXT, and callers should also copy it to the clipboard since some
+     * apps drop text extras when a stream is present.
      */
     public static Intent newShareAiIntent(Context context, Track.Id trackId) {
         ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
@@ -93,11 +96,14 @@ public class ShareUtils {
 
         TrackFileFormat format = TrackFileFormat.GPX;
         String trackName = PreferencesUtils.getTrackFileformatGenerator().format(track, format);
-        Pair<Uri, String> uriAndMime = ShareContentProvider.createURI(trackId, trackName, format);
+        // Swap the extension so receivers see a supported .txt file; the bytes stay GPX.
+        int dot = trackName.lastIndexOf('.');
+        String txtName = (dot == -1 ? trackName : trackName.substring(0, dot)) + ".txt";
+        Pair<Uri, String> uriAndMime = ShareContentProvider.createURI(trackId, txtName, format);
 
         return new Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_STREAM, uriAndMime.first)
-                .setType(uriAndMime.second)
+                .setType("text/plain")
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 .putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_track_subject))
                 .putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_ai_prompt));
