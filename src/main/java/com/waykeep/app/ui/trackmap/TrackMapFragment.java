@@ -485,8 +485,17 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         viewBinding.trackMapView.getOverlays().add(plannedLine);
         moveLocationOverlayToTop();
 
-        int paddingPx = Math.round(48 * density);
-        viewBinding.trackMapView.zoomToBoundingBox(BoundingBox.fromGeoPoints(planned), false, paddingPx);
+        // The MapView has no size during onCreateView; zooming now divides by zero and hangs.
+        // Defer framing until after first layout.
+        viewBinding.trackMapView.post(() -> {
+            if (!isAdded() || viewBinding == null || viewBinding.trackMapView.getWidth() == 0) {
+                return;
+            }
+            float postDensity = requireContext().getResources().getDisplayMetrics().density;
+            int paddingPx = Math.round(48 * postDensity);
+            viewBinding.trackMapView.zoomToBoundingBox(BoundingBox.fromGeoPoints(planned), false, paddingPx);
+            viewBinding.trackMapView.invalidate();
+        });
         zoomedToRoute = true;
         viewBinding.trackMapView.invalidate();
     }
