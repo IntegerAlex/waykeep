@@ -51,6 +51,7 @@
 
     <string name="map_offline_only_key" translatable="false">mapOfflineOnly</string>
     <bool name="map_offline_only_default" translatable="false">false</bool>
+    <string name="map_style_key" translatable="false">mapStyle</string>
     <string name="map_clear_cache_key" translatable="false">mapClearCache</string>
     <string name="settings_map_key" translatable="false">settingsMap</string>
 

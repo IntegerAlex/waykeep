@@ -312,6 +312,19 @@ public class PreferencesUtils {
         return getBoolean(R.string.map_offline_only_key, DEFAULT);
     }
 
+    public static final String MAP_STYLE_CYCLOSM = "cyclosm";
+    public static final String MAP_STYLE_MINIMAL = "minimal";
+
+    public static String getMapStyle() {
+        return getString(R.string.map_style_key, MAP_STYLE_CYCLOSM);
+    }
+
+    public static void setMapStyle(String style) {
+        Editor editor = sharedPreferences.edit();
+        editor.putString(getKey(R.string.map_style_key), style);
+        editor.apply();
+    }
+
     public static boolean shouldUseFullscreen() {
         final boolean DEFAULT = resources.getBoolean(R.bool.stats_fullscreen_while_recording_default);
         return getBoolean(R.string.stats_fullscreen_while_recording_key, DEFAULT);

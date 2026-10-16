@@ -34,6 +34,20 @@
         android:orientation="vertical">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/track_map_layers_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/track_map_layers"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_map_24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/track_map_compass_button"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="48dp"

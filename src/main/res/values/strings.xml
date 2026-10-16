@@ -517,6 +517,12 @@ limitations under the License.
     <string name="track_map_zoom_out_label">−</string>
     <string name="track_map_compass">Reset north-up orientation</string>
     <string name="track_map_compass_label">N</string>
+    <string name="track_map_layers">Change map style</string>
+    <string name="map_style_title">Map style</string>
+    <string name="map_style_cyclosm">CyclOSM — %1$s</string>
+    <string name="map_style_cyclosm_description">Cycle lanes, touring routes, POIs</string>
+    <string name="map_style_minimal">Minimal — %1$s</string>
+    <string name="map_style_minimal_description">Light gray canvas, best route contrast</string>
     <string name="track_map_offline_cached">Offline — showing cached tiles</string>
     <string name="track_map_offline_mode">Offline mode — cached tiles only</string>
     <string name="settings_map_title">Map</string>

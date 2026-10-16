@@ -34,6 +34,7 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
@@ -143,7 +144,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         // Bicycle-oriented OSM raster style: cycle tracks/lanes, touring routes, POIs.
         // Keyless endpoints (verified HTTP 200 on a/b/c); fair-use policy per OSMF, infra by
         // OSM France. Attribution overlay is legally required and added in onCreateView.
-        viewBinding.trackMapView.setTileSource(cyclosmTileSource());
+        viewBinding.trackMapView.setTileSource(currentTileSource());
         viewBinding.trackMapView.setTilesScaledToDpi(true);
         viewBinding.trackMapView.setMultiTouchControls(true);
         // Explicit 48dp controls below replace the fading built-ins (discoverability + touch target size).
@@ -204,6 +205,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         viewBinding.trackMapZoomInButton.setTooltipText(getString(R.string.track_map_zoom_in));
         viewBinding.trackMapZoomOutButton.setTooltipText(getString(R.string.track_map_zoom_out));
         viewBinding.trackMapCompassButton.setTooltipText(getString(R.string.track_map_compass));
+        viewBinding.trackMapLayersButton.setTooltipText(getString(R.string.track_map_layers));
+        viewBinding.trackMapLayersButton.setOnClickListener(v -> showMapStyleDialog());
         updateRecenterVisibility();
 
         viewBinding.trackMapView.addMapListener(new MapListener() {
@@ -378,10 +381,46 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     }
 
     /**
+     * Tile source honoring the persisted map-style setting. Tile caches are keyed by
+     * source name, so switching styles never mixes tiles.
+     */
+    public static OnlineTileSourceBase currentTileSource(boolean night) {
+        return PreferencesUtils.MAP_STYLE_MINIMAL.equals(PreferencesUtils.getMapStyle())
+                ? esriTileSource(night)
+                : cyclosmTileSource();
+    }
+
+    private OnlineTileSourceBase currentTileSource() {
+        return currentTileSource(isNightMode());
+    }
+
+    /**
+     * Minimal Uber-like raster style: Esri Light Gray Canvas (day) / Dark Gray Canvas (night).
+     * Flat fills plus road outlines, no POI clutter. Keyless endpoints (verified); the
+     * attribution overlay is legally required and added in onCreateView.
+     * Esri orders tiles as z/y/x, hence the URL override.
+     */
+    public static OnlineTileSourceBase esriTileSource(boolean night) {
+        String style = night ? "World_Dark_Gray_Base" : "World_Light_Gray_Base";
+        String[] baseUrls = new String[]{
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/" + style + "/MapServer/tile/"
+        };
+        return new XYTileSource("Esri." + style, 0, 19, 256, "", baseUrls,
+                "Esri, HERE, Garmin, (c) OpenStreetMap contributors, and the GIS user community") {
+            @Override
+            public String getTileURLString(long pMapTileIndex) {
+                return getBaseUrl() + MapTileIndex.getZoom(pMapTileIndex) + "/"
+                        + MapTileIndex.getY(pMapTileIndex) + "/"
+                        + MapTileIndex.getX(pMapTileIndex);
+            }
+        };
+    }
+
+    /**
      * Bicycle-oriented OSM raster style (cycle tracks/lanes, touring routes, POIs) served
-     * keyless by OSM France under the OSMF fair-use tile policy. Standard z/x/y order, so a
-     * plain XYTileSource works. Single style for day/night; the route casing keeps contrast
-     * after dark. Max zoom 20.
+     * keyless by OSM France under the OSMF fair-use tile policy. Standard z/x/y order.
+     * The ".png" ending is load-bearing: extensionless URLs 404 (empty grids).
+     * Single style for day/night; the route casing keeps contrast after dark. Max zoom 20.
      */
     public static OnlineTileSourceBase cyclosmTileSource() {
         String[] baseUrls = new String[]{
@@ -389,8 +428,14 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
                 "https://b.tile-cyclosm.openstreetmap.fr/cyclosm/",
                 "https://c.tile-cyclosm.openstreetmap.fr/cyclosm/"
         };
-        return new XYTileSource("CyclOSM", 0, 20, 256, "", baseUrls,
+        return new XYTileSource("CyclOSM", 0, 20, 256, ".png", baseUrls,
                 "(c) OpenStreetMap contributors, CyclOSM, OSM France");
+    }
+
+    private boolean isNightMode() {
+        int nightMask = requireContext().getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        return nightMask == android.content.res.Configuration.UI_MODE_NIGHT_YES;
     }
 
     /**
@@ -474,6 +519,31 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         if (viewBinding != null) {
             viewBinding.trackMapRecenterButton.setVisibility(followEnabled ? View.GONE : View.VISIBLE);
         }
+    }
+
+    /**
+     * Basemap picker: CyclOSM (cycle lanes, POIs) or Minimal (Esri gray canvas).
+     * The choice persists and applies to both map surfaces.
+     */
+    private void showMapStyleDialog() {
+        String current = PreferencesUtils.getMapStyle();
+        String[] styles = {PreferencesUtils.MAP_STYLE_CYCLOSM, PreferencesUtils.MAP_STYLE_MINIMAL};
+        String[] labels = {
+                getString(R.string.map_style_cyclosm, getString(R.string.map_style_cyclosm_description)),
+                getString(R.string.map_style_minimal, getString(R.string.map_style_minimal_description))
+        };
+        int checked = PreferencesUtils.MAP_STYLE_MINIMAL.equals(current) ? 1 : 0;
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.map_style_title)
+                .setSingleChoiceItems(labels, checked, (dialog, which) -> {
+                    PreferencesUtils.setMapStyle(styles[which]);
+                    if (viewBinding != null) {
+                        viewBinding.trackMapView.setTileSource(currentTileSource());
+                        viewBinding.trackMapView.invalidate();
+                    }
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     /**
