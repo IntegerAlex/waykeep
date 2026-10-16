@@ -34,7 +34,6 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
@@ -141,9 +140,10 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewBinding = FragmentTrackMapBinding.inflate(inflater, container, false);
 
-        // Uber-like minimal style: Esri Light/Dark Gray Canvas. Flat fills plus road outlines,
-        // no POI clutter. Served keyless (verified HTTP 200); attribution is legally required.
-        viewBinding.trackMapView.setTileSource(esriTileSource(isNightMode()));
+        // Bicycle-oriented OSM raster style: cycle tracks/lanes, touring routes, POIs.
+        // Keyless endpoints (verified HTTP 200 on a/b/c); fair-use policy per OSMF, infra by
+        // OSM France. Attribution overlay is legally required and added in onCreateView.
+        viewBinding.trackMapView.setTileSource(cyclosmTileSource());
         viewBinding.trackMapView.setTilesScaledToDpi(true);
         viewBinding.trackMapView.setMultiTouchControls(true);
         // Explicit 48dp controls below replace the fading built-ins (discoverability + touch target size).
@@ -377,31 +377,19 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     }
 
     /**
-     * Minimal Uber-like raster style: Esri Light Gray Canvas (day) / Dark Gray Canvas (night).
-     * Flat fills plus road outlines, no POI clutter. Keyless endpoints (verified); the Esri
-     * attribution overlay is legally required and added in onCreateView.
-     * Esri orders tiles as z/y/x, hence the URL override.
+     * Bicycle-oriented OSM raster style (cycle tracks/lanes, touring routes, POIs) served
+     * keyless by OSM France under the OSMF fair-use tile policy. Standard z/x/y order, so a
+     * plain XYTileSource works. Single style for day/night; the route casing keeps contrast
+     * after dark. Max zoom 20.
      */
-    public static OnlineTileSourceBase esriTileSource(boolean night) {
-        String style = night ? "World_Dark_Gray_Base" : "World_Light_Gray_Base";
+    public static OnlineTileSourceBase cyclosmTileSource() {
         String[] baseUrls = new String[]{
-                "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/" + style + "/MapServer/tile/"
+                "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/",
+                "https://b.tile-cyclosm.openstreetmap.fr/cyclosm/",
+                "https://c.tile-cyclosm.openstreetmap.fr/cyclosm/"
         };
-        return new XYTileSource("Esri." + style, 0, 19, 256, "", baseUrls,
-                "Esri, HERE, Garmin, (c) OpenStreetMap contributors, and the GIS user community") {
-            @Override
-            public String getTileURLString(long pMapTileIndex) {
-                return getBaseUrl() + MapTileIndex.getZoom(pMapTileIndex) + "/"
-                        + MapTileIndex.getY(pMapTileIndex) + "/"
-                        + MapTileIndex.getX(pMapTileIndex);
-            }
-        };
-    }
-
-    private boolean isNightMode() {
-        int nightMask = requireContext().getResources().getConfiguration().uiMode
-                & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        return nightMask == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        return new XYTileSource("CyclOSM", 0, 20, 256, "", baseUrls,
+                "(c) OpenStreetMap contributors, CyclOSM, OSM France");
     }
 
     /**

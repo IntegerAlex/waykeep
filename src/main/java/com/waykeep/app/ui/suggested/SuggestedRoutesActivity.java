@@ -2,7 +2,6 @@ package com.waykeep.app.ui.suggested;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -59,7 +58,7 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         viewBinding = SuggestedRoutesBinding.inflate(getLayoutInflater());
 
         TrackMapFragment.ensureConfigured(getApplicationContext());
-        viewBinding.suggestedMap.setTileSource(TrackMapFragment.esriTileSource(isNightMode()));
+        viewBinding.suggestedMap.setTileSource(TrackMapFragment.cyclosmTileSource());
         viewBinding.suggestedMap.setTilesScaledToDpi(true);
         viewBinding.suggestedMap.setMultiTouchControls(true);
         viewBinding.suggestedMap.setBuiltInZoomControls(false);
@@ -115,11 +114,6 @@ public class SuggestedRoutesActivity extends AbstractActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-    }
-
-    private boolean isNightMode() {
-        int mask = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        return mask == Configuration.UI_MODE_NIGHT_YES;
     }
 
     private void setStartPoint(GeoPoint point) {
