@@ -44,7 +44,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -150,12 +149,6 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private String searchQuery;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
-
-    // Swipe-to-delete staging: rows are removed optimistically and only deleted for real
-    // once the undo window lapses.
-    private final List<Track.Id> pendingDeleteIds = new ArrayList<>();
-    private Snackbar pendingDeleteSnackbar;
-    private Snackbar.Callback pendingDeleteCallback;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -286,13 +279,6 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         super.onDestroy();
         trackLoader.shutdownNow();
         searchHandler.removeCallbacksAndMessages(null);
-        if (pendingDeleteSnackbar != null) {
-            // Never commit a staged delete from a dead activity; the track simply stays.
-            pendingDeleteSnackbar.removeCallback(pendingDeleteCallback);
-            pendingDeleteSnackbar.dismiss();
-            pendingDeleteSnackbar = null;
-        }
-        pendingDeleteIds.clear();
         viewBinding = null;
         recordingStatusConnection = null;
         adapter = null;
@@ -418,8 +404,8 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     }
 
     /**
-     * Swipe-to-delete with an undo window: the row vanishes immediately, the track is only
-     * deleted once the Snackbar lapses without Undo. A second swipe commits the first one.
+     * Swipe-to-delete asks first: the confirm dialog deletes on confirmation and
+     * restores the row on cancel (see onConfirmDeleteAbort).
      */
     private void onTrackSwiped(Track.Id trackId) {
         if (trackId.equals(recordingStatus.trackId())) {
@@ -427,35 +413,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             loadData();
             return;
         }
-        commitPendingDelete();
-
-        pendingDeleteIds.add(trackId);
-        adapter.removeTrack(trackId);
-        pendingDeleteCallback = new Snackbar.Callback() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                    commitPendingDelete();
-                }
-            }
-        };
-        pendingDeleteSnackbar = Snackbar.make(viewBinding.getRoot(), R.string.track_deleted, Snackbar.LENGTH_LONG)
-                .setAction(R.string.generic_undo, v -> {
-                    pendingDeleteIds.clear();
-                    loadData();
-                })
-                .addCallback(pendingDeleteCallback);
-        pendingDeleteSnackbar.show();
-    }
-
-    private void commitPendingDelete() {
-        if (pendingDeleteIds.isEmpty()) {
-            return;
-        }
-        Track.Id[] ids = pendingDeleteIds.toArray(new Track.Id[0]);
-        pendingDeleteIds.clear();
-        // Undo was the safety net, so this skips the confirm dialog on purpose.
-        onConfirmDeleteDone(ids);
+        ConfirmDeleteDialogFragment.showDialog(getSupportFragmentManager(), trackId);
     }
 
     private void loadData() {
