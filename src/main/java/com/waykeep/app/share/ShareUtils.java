@@ -6,19 +6,27 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
+import com.waykeep.app.data.TrackPointIterator;
 import com.waykeep.app.data.ShareContentProvider;
 import com.waykeep.app.data.models.Marker;
+import com.waykeep.app.data.models.Statistics;
+import com.waykeep.app.data.models.Position;
 import com.waykeep.app.data.models.Track;
+import com.waykeep.app.data.models.TrackPoint;
 import com.waykeep.app.io.file.TrackFileFormat;
 import com.waykeep.app.io.file.exporter.TrackExporter;
 import com.waykeep.app.settings.PreferencesUtils;
@@ -148,11 +156,80 @@ public class ShareUtils {
      * (some receivers prefer a text extra over the attachment and would
      * otherwise swallow the file).
      */
-    public static Intent newShareAiIntent(Context context, android.net.Uri fileUri) {
-        return new Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_STREAM, fileUri)
-                .setType("text/plain")
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    /**
+     * Builds a compact, text-only analysis payload for an AI app.
+     * No file/stream is needed: everything goes out as plain text so every
+     * chatbot that accepts text (ChatGPT, Claude, Gemini) can read it.
+     */
+    @NonNull
+    public static String buildAiAnalysisText(@NonNull Context context, @NonNull Track.Id trackId) {
+        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
+        Track track = contentProviderUtils.getTrack(trackId);
+        if (track == null) {
+            return context.getString(R.string.share_ai_prompt);
+        }
+
+        Statistics s = track.statistics();
+        Instant start = s.startTime();
+        Instant stop = s.stopTime();
+        StringBuilder out = new StringBuilder(1024);
+        out.append(context.getString(R.string.share_ai_prompt)).append("\n\n");
+
+        out.append("Run metadata:\n");
+        out.append("- name: ").append(track.name()).append('\n');
+        out.append("- activity: ").append(track.activityTypeLocalized()).append('\n');
+        out.append("- start: ").append(start.toString()).append('\n');
+        out.append("- stop: ").append(stop.toString()).append('\n');
+        out.append("- total duration (s): ").append(s.totalDuration().getSeconds()).append('\n');
+        out.append("- moving duration (s): ").append(s.movingDuration().getSeconds()).append('\n');
+        out.append("- distance (m): ").append(s.totalDistance().toM()).append('\n');
+        out.append("- avg speed (m/s): ").append(s.getAverageSpeed().toMPS()).append('\n');
+        out.append("- avg moving speed (m/s): ").append(s.getAverageMovingSpeed().toMPS()).append('\n');
+        out.append("- max speed (m/s): ").append(s.maxSpeed().toMPS()).append('\n');
+        if (s.altitudeGainLoss() != null) {
+            out.append("- elevation gain (m): ").append(s.altitudeGainLoss().gain_m()).append('\n');
+            out.append("- elevation loss (m): ").append(s.altitudeGainLoss().loss_m()).append('\n');
+        }
+        if (s.altitudeExtremities() != null) {
+            out.append("- min altitude (m): ").append(s.altitudeExtremities().min_m()).append('\n');
+            out.append("- max altitude (m): ").append(s.altitudeExtremities().max_m()).append('\n');
+        }
+        if (s.avgHeartRate() != null) {
+            out.append("- avg heart rate (bpm): ").append(s.avgHeartRate().getBPM()).append('\n');
+        }
+
+        // Downsampled track points for splits/zone analysis.
+        final int MAX_POINTS = 1500;
+        List<TrackPoint> all = new ArrayList<>();
+        try (TrackPointIterator it = contentProviderUtils.getTrackPointIterator(trackId, null)) {
+            while (it.hasNext()) {
+                all.add(it.next());
+            }
+        }
+        int total = all.size();
+        int stride = Math.max(1, (total + MAX_POINTS - 1) / MAX_POINTS);
+
+        out.append("\nTrack points (downsampled, ").append(total).append(" -> ")
+                .append((total + stride - 1) / stride).append("), columns: seq,t_sec,lat,lon,alt_m,hr\n");
+        Instant base = start;
+        int seq = 0;
+        for (int i = 0; i < total; i += stride) {
+            TrackPoint tp = all.get(i);
+            Position p = tp.position();
+            if (p == null || p.time() == null || !p.hasLocation()) {
+                continue;
+            }
+            long t = java.time.Duration.between(base, p.time()).getSeconds();
+            out.append(seq++).append(',').append(t).append(',');
+            out.append(String.format(java.util.Locale.US, "%.6f", p.latitude())).append(',');
+            out.append(String.format(java.util.Locale.US, "%.6f", p.longitude())).append(',');
+            out.append(p.hasAltitude() ? String.format(java.util.Locale.US, "%.1f", p.altitude().toM()) : "");
+            out.append(',');
+            out.append(tp.heartRate() != null ? String.valueOf((int) tp.heartRate().getBPM()) : "");
+            out.append('\n');
+        }
+
+        return out.toString();
     }
 
     /**

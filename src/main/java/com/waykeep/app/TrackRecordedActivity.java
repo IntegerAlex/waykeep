@@ -187,28 +187,27 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                             Intent fileIntent = Intent.createChooser(ShareUtils.newShareFileIntent(this, trackId), null);
                             startActivity(fileIntent);
                         } else {
-                            // Prompt via clipboard (receivers that prefer a text extra over the
-                            // attachment would otherwise swallow the file); export runs off the
-                            // main thread since it does database + file I/O.
                             String prompt = getString(R.string.share_ai_prompt);
                             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                             if (clipboard != null) {
                                 clipboard.setPrimaryClip(ClipData.newPlainText("ai_prompt", prompt));
                             }
-                            Toast.makeText(this, R.string.share_ai_prompt_copied, Toast.LENGTH_LONG).show();
                             Toast.makeText(this, R.string.share_ai_preparing, Toast.LENGTH_SHORT).show();
                             new Thread(() -> {
-                                java.io.File aiFile = ShareUtils.writeAiShareFile(this, trackId);
+                                String text = ShareUtils.buildAiAnalysisText(this, trackId);
                                 runOnUiThread(() -> {
                                     if (isFinishing()) {
                                         return;
                                     }
-                                    if (aiFile == null) {
-                                        Toast.makeText(this, R.string.share_ai_failed, Toast.LENGTH_LONG).show();
-                                        return;
+                                    ClipboardManager cb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    if (cb != null) {
+                                        cb.setPrimaryClip(ClipData.newPlainText("ai_prompt", text));
                                     }
-                                    android.net.Uri uri = com.waykeep.app.share.ShareImageStore.uri(this, aiFile);
-                                    startActivity(Intent.createChooser(ShareUtils.newShareAiIntent(this, uri), null));
+                                    Toast.makeText(this, R.string.share_ai_prompt_copied, Toast.LENGTH_LONG).show();
+                                    Intent send = new Intent(Intent.ACTION_SEND);
+                                    send.setType("text/plain");
+                                    send.putExtra(Intent.EXTRA_TEXT, text);
+                                    startActivity(Intent.createChooser(send, getString(R.string.share_ai_title)));
                                 });
                             }).start();
                         }
