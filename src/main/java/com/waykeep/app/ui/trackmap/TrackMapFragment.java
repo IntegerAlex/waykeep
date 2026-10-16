@@ -89,6 +89,18 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         return new TrackMapFragment();
     }
 
+    private static final String KEY_PLANNED_ROUTE = "plannedRoute";
+
+    public static TrackMapFragment newInstance(ArrayList<GeoPoint> plannedRoute) {
+        TrackMapFragment fragment = new TrackMapFragment();
+        if (plannedRoute != null && !plannedRoute.isEmpty()) {
+            Bundle args = new Bundle();
+            args.putParcelableArrayList(KEY_PLANNED_ROUTE, plannedRoute);
+            fragment.setArguments(args);
+        }
+        return fragment;
+    }
+
     private TrackDataHub trackDataHub;
     private ContentProviderUtils contentProviderUtils;
     private ExecutorService markerExecutor;
@@ -415,8 +427,35 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         return line;
     }
 
-    private void moveLocationOverlayToTop() {
-        if (locationOverlay != null) {
+    /**
+     * Draws a suggested loop (if one was handed over) as a dashed guidance line and frames it.
+     * The recorded route keeps its own solid line on top.
+     */
+    private void drawPlannedRoute() {
+        Bundle args = getArguments();
+        if (args == null) {
+            return;
+        }
+        ArrayList<GeoPoint> planned = args.getParcelableArrayList(KEY_PLANNED_ROUTE);
+        if (planned == null || planned.size() < 2) {
+            return;
+        }
+        float density = requireContext().getResources().getDisplayMetrics().density;
+        Polyline plannedLine = new Polyline(viewBinding.trackMapView);
+        plannedLine.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.opentracks));
+        plannedLine.getOutlinePaint().setStrokeWidth(4 * density);
+        plannedLine.getOutlinePaint().setPathEffect(new android.graphics.DashPathEffect(new float[]{12 * density, 8 * density}, 0));
+        plannedLine.setPoints(planned);
+        viewBinding.trackMapView.getOverlays().add(plannedLine);
+        moveLocationOverlayToTop();
+
+        int paddingPx = Math.round(48 * density);
+        viewBinding.trackMapView.zoomToBoundingBox(BoundingBox.fromGeoPoints(planned), false, paddingPx);
+        zoomedToRoute = true;
+        viewBinding.trackMapView.invalidate();
+    }
+
+    private void moveLocationOverlayToTop() {        if (locationOverlay != null) {
             viewBinding.trackMapView.getOverlays().remove(locationOverlay);
             viewBinding.trackMapView.getOverlays().add(locationOverlay);
         }

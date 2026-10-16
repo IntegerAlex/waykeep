@@ -25,7 +25,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.osmdroid.util.GeoPoint;
 
 import com.waykeep.app.chart.ChartFragment;
 import com.waykeep.app.chart.TrackDataHubInterface;
@@ -62,6 +65,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     public static final String EXTRA_TRACK_ID = "track_id";
     public static final String EXTRA_OPEN_MAP_TAB = "open_map_tab";
+    public static final String EXTRA_PLANNED_ROUTE = "planned_route";
 
     private static final String TAG = TrackRecordingActivity.class.getSimpleName();
 
@@ -79,6 +83,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     private TrackRecordingBinding viewBinding;
 
     private Track.Id trackId;
+    private ArrayList<GeoPoint> plannedRoute;
 
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
 
@@ -122,6 +127,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         if (trackId == null) {
             throw new RuntimeException("TrackId is mandatory");
         }
+        plannedRoute = getIntent().getParcelableArrayListExtra(EXTRA_PLANNED_ROUTE);
         if (contentProviderUtils.getTrack(trackId) == null) {
             Log.w(TAG, "TrackId does not exists.");
             finish();
@@ -355,7 +361,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 case 0 -> StatisticsRecordingFragment.newInstance();
                 case 1 -> IntervalsFragment.newInstance(trackId, false);
                 case 2 -> ChartFragment.newInstance();
-                case 3 -> TrackMapFragment.newInstance();
+                case 3 -> TrackMapFragment.newInstance(plannedRoute);
                 default ->
                         throw new RuntimeException("There isn't Fragment associated with the position: " + position);
             };

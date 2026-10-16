@@ -1,11 +1,13 @@
 package com.waykeep.app.ui.suggested;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -13,8 +15,13 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 import com.waykeep.app.AbstractActivity;
 import com.waykeep.app.R;
+import com.waykeep.app.TrackRecordingActivity;
+import com.waykeep.app.data.models.Track;
 import com.waykeep.app.databinding.SuggestedRoutesBinding;
+import com.waykeep.app.services.MissingPermissionException;
+import com.waykeep.app.services.TrackRecordingServiceConnection;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
+import com.waykeep.app.util.IntentUtils;
 
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.util.BoundingBox;
@@ -75,6 +82,7 @@ public class SuggestedRoutesActivity extends AbstractActivity {
 
         viewBinding.suggestedMyLocation.setOnClickListener(v -> centerOnLastKnownLocation());
         viewBinding.suggestedGenerate.setOnClickListener(v -> generateRoutes());
+        viewBinding.suggestedRun.setOnClickListener(v -> runSelectedRoute());
         viewBinding.suggestedResultsGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 selectSuggestion((Integer) group.findViewById(checkedId).getTag());
@@ -259,5 +267,26 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         }
         suggestionLines.clear();
         viewBinding.suggestedMap.invalidate();
+    }
+
+    /**
+     * Starts a normal recording and hands the chosen loop to the recording map as a dashed
+     * guidance overlay.
+     */
+    private void runSelectedRoute() {
+        if (selected == null) {
+            return;
+        }
+        try {
+            TrackRecordingServiceConnection.executeForeground(this, (service, connection) -> {
+                Track.Id trackId = service.startNewTrack();
+                Intent intent = IntentUtils.newIntent(this, TrackRecordingActivity.class);
+                intent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
+                intent.putParcelableArrayListExtra(TrackRecordingActivity.EXTRA_PLANNED_ROUTE, new ArrayList<>(selected.points()));
+                startActivity(intent);
+            });
+        } catch (MissingPermissionException e) {
+            Toast.makeText(this, R.string.permission_recording_failed, Toast.LENGTH_LONG).show();
+        }
     }
 }
