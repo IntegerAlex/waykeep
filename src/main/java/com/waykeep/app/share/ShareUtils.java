@@ -79,6 +79,31 @@ public class ShareUtils {
     }
 
     /**
+     * Creates an intent to share a track with an AI app for analysis.
+     * Always exports GPX (most parseable format); the analysis prompt travels in EXTRA_TEXT,
+     * and callers should also copy it to the clipboard since some apps drop text extras
+     * when a stream is present.
+     */
+    public static Intent newShareAiIntent(Context context, Track.Id trackId) {
+        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
+        Track track = contentProviderUtils.getTrack(trackId);
+        if (track == null) {
+            throw new RuntimeException("TrackId " + trackId.id() + " could not be resolved.");
+        }
+
+        TrackFileFormat format = TrackFileFormat.GPX;
+        String trackName = PreferencesUtils.getTrackFileformatGenerator().format(track, format);
+        Pair<Uri, String> uriAndMime = ShareContentProvider.createURI(trackId, trackName, format);
+
+        return new Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_STREAM, uriAndMime.first)
+                .setType(uriAndMime.second)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_track_subject))
+                .putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_ai_prompt));
+    }
+
+    /**
      * Creates an intent to share a track file with an app.
      *
      * @param context   the context

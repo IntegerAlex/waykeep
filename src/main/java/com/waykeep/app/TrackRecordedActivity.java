@@ -16,12 +16,16 @@
 
 package com.waykeep.app;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -169,7 +173,8 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
         if (item.getItemId() == R.id.track_detail_share) {
             String[] options = {
                     getString(R.string.share_image_title),
-                    getString(R.string.share_file_title)
+                    getString(R.string.share_file_title),
+                    getString(R.string.share_ai_title)
             };
             new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.menu_share)
@@ -178,9 +183,20 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                             Intent imageIntent = IntentUtils.newIntent(this, ShareTrackImageActivity.class)
                                     .putExtra(ShareTrackImageActivity.EXTRA_TRACK_ID, trackId);
                             startActivity(imageIntent);
-                        } else {
+                        } else if (which == 1) {
                             Intent fileIntent = Intent.createChooser(ShareUtils.newShareFileIntent(this, trackId), null);
                             startActivity(fileIntent);
+                        } else {
+                            // Some apps drop EXTRA_TEXT when a stream is present, so the prompt
+                            // travels in the clipboard as well.
+                            String prompt = getString(R.string.share_ai_prompt);
+                            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            if (clipboard != null) {
+                                clipboard.setPrimaryClip(ClipData.newPlainText("ai_prompt", prompt));
+                            }
+                            Toast.makeText(this, R.string.share_ai_prompt_copied, Toast.LENGTH_LONG).show();
+                            Intent aiIntent = Intent.createChooser(ShareUtils.newShareAiIntent(this, trackId), null);
+                            startActivity(aiIntent);
                         }
                     })
                     .show();
