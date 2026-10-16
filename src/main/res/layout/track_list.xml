@@ -110,6 +110,16 @@ limitations under the License.
             app:icon="@drawable/ic_gps_off_24dp"
             app:iconTint="?attr/colorOnBackground" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/suggested_routes_button"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/suggested_routes_title"
+            app:icon="@drawable/ic_map_24dp"
+            app:iconTint="?attr/colorOnBackground" />
+
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

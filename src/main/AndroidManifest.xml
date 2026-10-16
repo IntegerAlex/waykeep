@@ -385,6 +385,7 @@ limitations under the License.
 
         <activity android:name=".ui.personalBests.PersonalBestsActivity" />
         <activity android:name=".ui.monthlyRecap.MonthlyRecapActivity" />
+        <activity android:name=".ui.suggested.SuggestedRoutesActivity" />
 
         <activity android:name=".share.ShareTrackImageActivity" />
 

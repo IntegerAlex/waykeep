@@ -370,7 +370,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
      * attribution overlay is legally required and added in onCreateView.
      * Esri orders tiles as z/y/x, hence the URL override.
      */
-    private static OnlineTileSourceBase esriTileSource(boolean night) {
+    public static OnlineTileSourceBase esriTileSource(boolean night) {
         String style = night ? "World_Dark_Gray_Base" : "World_Light_Gray_Base";
         String[] baseUrls = new String[]{
                 "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/" + style + "/MapServer/tile/"
@@ -726,7 +726,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         }
     }
 
-    private static synchronized void ensureConfigured(Context appContext) {
+    public static synchronized void ensureConfigured(Context appContext) {
         if (osmdroidConfigured) {
             return;
         }

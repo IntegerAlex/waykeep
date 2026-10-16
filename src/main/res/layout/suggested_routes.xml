@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/suggested_map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/suggested_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/suggested_routes_hint"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/suggested_distance_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggested_dist_3"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/suggested_routes_3km" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggested_dist_5"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/suggested_routes_5km" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggested_dist_10"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/suggested_routes_10km" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggested_my_location"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/suggested_routes_my_location" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggested_generate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/suggested_routes_generate" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/suggested_results_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/suggested_run"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/suggested_routes_run"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
