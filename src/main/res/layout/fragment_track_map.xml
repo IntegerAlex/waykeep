@@ -42,8 +42,10 @@
             android:contentDescription="@string/track_map_compass"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:text="@string/track_map_compass_label"
-            app:cornerRadius="24dp" />
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_explore_24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/track_map_zoom_in_button"
@@ -54,9 +56,10 @@
             android:contentDescription="@string/track_map_zoom_in"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:text="@string/track_map_zoom_in_label"
-            android:textSize="20sp"
-            app:cornerRadius="24dp" />
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_baseline_add_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/track_map_zoom_out_button"
@@ -67,9 +70,10 @@
             android:contentDescription="@string/track_map_zoom_out"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:text="@string/track_map_zoom_out_label"
-            android:textSize="20sp"
-            app:cornerRadius="24dp" />
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_remove_24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/track_map_recenter_button"
