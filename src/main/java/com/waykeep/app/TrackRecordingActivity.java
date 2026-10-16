@@ -127,7 +127,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         if (trackId == null) {
             throw new RuntimeException("TrackId is mandatory");
         }
-        plannedRoute = getIntent().getParcelableArrayListExtra(EXTRA_PLANNED_ROUTE);
+        ArrayList<GeoPoint> raw = getIntent().getParcelableArrayListExtra(EXTRA_PLANNED_ROUTE);
+        if (raw != null && raw.size() > 20000) {
+            raw = new ArrayList<>(raw.subList(0, 20000));
+        }
+        plannedRoute = raw;
         if (contentProviderUtils.getTrack(trackId) == null) {
             Log.w(TAG, "TrackId does not exists.");
             finish();

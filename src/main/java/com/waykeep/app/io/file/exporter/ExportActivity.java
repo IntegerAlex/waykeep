@@ -166,8 +166,9 @@ public class ExportActivity extends AbstractActivity {
             setProgress();
             new Thread(() -> {
                 directoryFiles = ExportUtils.getAllFiles(ExportActivity.this, documentFile.getUri());
+                final boolean hasTracks = createExportTasks(allInOneFile);
                 runOnUiThread(() -> {
-                    if (createExportTasks(allInOneFile)) {
+                    if (hasTracks) {
                         nextExport(null);
                     } else {
                         onExportEnded();
