@@ -43,6 +43,7 @@ import com.waykeep.app.sensors.GpsStatusValue;
 import com.waykeep.app.services.announcement.VoiceAnnouncementManager;
 import com.waykeep.app.services.handlers.TrackPointCreator;
 import com.waykeep.app.settings.PreferencesUtils;
+import com.waykeep.app.ui.widget.TrackWidgetProvider;
 
 public class TrackRecordingService extends Service implements TrackPointCreator.Callback, SharedPreferences.OnSharedPreferenceChangeListener, TrackRecordingManager.IdleObserver {
 
@@ -214,6 +215,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         voiceAnnouncementManager.start(trackRecordingManager.getTrackStatistics());
 
         notificationManager.onRecordingStarted(this, recordingStatus.trackId());
+        TrackWidgetProvider.requestRefresh(this);
 
         // Update instance variables
         updateRecordingData.run();
@@ -256,6 +258,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         voiceAnnouncementManager.stop();
 
         stopSensors();
+
+        TrackWidgetProvider.requestRefresh(this);
     }
 
     void stopSensors() {

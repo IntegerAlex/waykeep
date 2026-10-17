@@ -312,6 +312,11 @@ limitations under the License.
     <!-- Permission -->
     <string name="permission_gps_failed">Waykeep requires permission to use GPS.</string>
     <string name="permission_recording_failed">Waykeep requires permission to access your location as well as nearby devices.</string>
+    <string name="widget_description">Start runs and jump back into recordings</string>
+    <string name="widget_ready">Ready to track</string>
+    <string name="widget_recording">● Recording</string>
+    <string name="widget_start">Start run</string>
+    <string name="widget_open">Open run</string>
     <string name="permission_background_title">Keep tracking in background?</string>
     <string name="permission_background_message">Allow location all the time so your run keeps recording when the app is swiped away or the screen is off.</string>
     <string name="battery_optimization_title">Keep runs alive in background?</string>

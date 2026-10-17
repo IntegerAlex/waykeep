@@ -436,6 +436,18 @@ limitations under the License.
             android:icon="@drawable/ic_logo_color_24dp"
             android:label="@string/recording_service" />
 
+        <receiver
+            android:name=".ui.widget.TrackWidgetProvider"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/track_widget_info" />
+        </receiver>
+
         <!--Necessary for SDK < 33 to (re-)store per app locale information-->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
