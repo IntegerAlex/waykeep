@@ -10,9 +10,8 @@ import com.waykeep.app.data.models.Track;
 
 /**
  * For handling restarts of TrackRecordingService: while recording, stores the {@link com.waykeep.app.data.models.Track.Id}.
- * Public so the home-screen widget can reflect recording state without binding the service.
  */
-public class TrackIdStorage {
+class TrackIdStorage {
 
     private final static String SHARED_PREFERENCE_NAME = "TrackRecordingService_pref";
 

@@ -5,41 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_widget"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/widget_title"
+        android:id="@+id/widget_week_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFFFF"
-        android:textSize="14sp"
+        android:text="@string/stats_widget_this_week"
+        android:textColor="#B3FFFFFF"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/widget_status"
+        android:id="@+id/widget_week_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_week_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text="@string/widget_ready"
         android:textColor="#B3FFFFFF"
         android:textSize="12sp" />
 
     <TextView
-        android:id="@+id/widget_action"
+        android:id="@+id/widget_month_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_widget_action"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="@string/widget_start"
-        android:textColor="#FF000000"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="6dp"
+        android:textColor="#B3FFFFFF"
+        android:textSize="12sp" />
 
 </LinearLayout>

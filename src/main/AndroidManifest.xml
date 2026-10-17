@@ -437,7 +437,7 @@ limitations under the License.
             android:label="@string/recording_service" />
 
         <receiver
-            android:name=".ui.widget.TrackWidgetProvider"
+            android:name=".ui.widget.StatsWidgetProvider"
             android:exported="false"
             android:label="@string/app_name">
             <intent-filter>
@@ -445,7 +445,7 @@ limitations under the License.
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/track_widget_info" />
+                android:resource="@xml/stats_widget_info" />
         </receiver>
 
         <!--Necessary for SDK < 33 to (re-)store per app locale information-->
