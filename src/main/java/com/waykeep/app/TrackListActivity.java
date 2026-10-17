@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
+import android.Manifest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -153,6 +156,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
 
+    // Pre-registered in onCreate: requesting background location from a dialog click
+    // must use an early-registered launcher; registering late throws.
+    private ActivityResultLauncher<String[]> backgroundPermissionLauncher;
+
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
                 .observe(TrackListActivity.this, this::onRecordingStatusChanged);
@@ -173,6 +180,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         requestRequiredPermissions();
+        backgroundPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            // Best-effort survival aid; recording proceeds regardless. Chain the battery prompt next.
+            showBatteryPrompt();
+        });
 
         recordingStatusConnection = new TrackRecordingServiceConnection(bindChangedCallback);
 
@@ -595,31 +606,45 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
      * After a run starts, ask for the two things that keep it alive when swiped away:
      * background location (Android 10+) and battery-optimization exemption (low-RAM /
      * aggressive OEM killers). Recording already proceeds; these only improve survival.
+     * Prompts chain one at a time instead of stacking.
      */
     private void ensureBackgroundResilience() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !PermissionRequester.BACKGROUND.hasPermission(this)) {
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.permission_background_title)
                     .setMessage(R.string.permission_background_message)
-                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> showBatteryPrompt())
                     .setPositiveButton(android.R.string.ok, (dialog, which) ->
-                            PermissionRequester.BACKGROUND.requestPermissionsIfNeeded(this, this, null, null))
+                            backgroundPermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}))
+                    .setOnCancelListener(dialog -> showBatteryPrompt())
                     .show();
+            return;
         }
+        showBatteryPrompt();
+    }
+
+    private void showBatteryPrompt() {
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (powerManager != null && !powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.battery_optimization_title)
-                    .setMessage(R.string.battery_optimization_message)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        try {
-                            startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName())));
-                        } catch (Exception e) {
-                            Log.w(TAG, "Battery exemption intent failed", e);
-                        }
-                    })
-                    .show();
+        if (powerManager == null || powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+            return;
         }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.battery_optimization_title)
+                .setMessage(R.string.battery_optimization_message)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName())));
+                    } catch (Exception e) {
+                        // Some OEM builds block the direct request; fall back to the list.
+                        Log.w(TAG, "Battery exemption request failed, opening settings list", e);
+                        try {
+                            startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                        } catch (Exception e2) {
+                            Log.w(TAG, "Battery settings fallback failed", e2);
+                        }
+                    }
+                })
+                .show();
     }
 }
