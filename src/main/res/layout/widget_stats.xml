@@ -6,40 +6,39 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_widget"
     android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/widget_week_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stats_widget_this_week"
-        android:textColor="#B3FFFFFF"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/widget_week_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
         android:textColor="#FFFFFFFF"
-        android:textSize="28sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/widget_week_detail"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="#B3FFFFFF"
-        android:textSize="12sp" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/widget_month_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:textColor="#B3FFFFFF"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/widget_week_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/widget_month_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
