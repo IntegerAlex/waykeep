@@ -60,12 +60,19 @@ public class PermissionRequester {
     private static final List<String> GPS_PERMISSION;
 
     static {
-        //TODO ACCESS_BACKGROUND_LOCATION is required for API, but the permission is not properly granted. See #1653.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            GPS_PERMISSION = List.of(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-//        } else {
-            GPS_PERMISSION = List.of(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
-//        }
+        GPS_PERMISSION = List.of(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
+    }
+
+    // Android 11+ forbids asking for background together with foreground; ask foreground
+    // first, then this separately with a rationale (upstream #1653).
+    private static final List<String> BACKGROUND_PERMISSION;
+
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            BACKGROUND_PERMISSION = List.of(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        } else {
+            BACKGROUND_PERMISSION = Collections.emptyList();
+        }
     }
 
     private static final List<String> BLUETOOTH_PERMISSIONS;
@@ -103,6 +110,7 @@ public class PermissionRequester {
     }
 
     public final static PermissionRequester GPS = new PermissionRequester(GPS_PERMISSION);
+    public final static PermissionRequester BACKGROUND = new PermissionRequester(BACKGROUND_PERMISSION);
     public final static PermissionRequester BLUETOOTH = new PermissionRequester(BLUETOOTH_PERMISSIONS);
     public final static PermissionRequester NOTIFICATION = new PermissionRequester(NOTIFICATION_PERMISSIONS);
 

@@ -312,6 +312,10 @@ limitations under the License.
     <!-- Permission -->
     <string name="permission_gps_failed">Waykeep requires permission to use GPS.</string>
     <string name="permission_recording_failed">Waykeep requires permission to access your location as well as nearby devices.</string>
+    <string name="permission_background_title">Keep tracking in background?</string>
+    <string name="permission_background_message">Allow location all the time so your run keeps recording when the app is swiped away or the screen is off.</string>
+    <string name="battery_optimization_title">Keep runs alive in background?</string>
+    <string name="battery_optimization_message">Your device may stop tracking to save battery. Exempt Waykeep so a run survives when the app is swiped away, especially on low-RAM phones.</string>
     <string name="permission_bluetooth_failed">Waykeep requires permission to use Bluetooth.</string>
     <string name="permission_bluetooth_failed_rejected">You manually need to grant Waykeep access to Nearby Devices in system settings.</string>
     <!-- Search -->

@@ -160,6 +160,24 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        // Swiping the app from recents must not end the run. With stopWithTask=false
+        // the service stays; re-assert foreground so low-RAM devices and aggressive
+        // OEM task killers keep the GPS notification (and location) alive.
+        // If the process still dies, START_STICKY + TrackIdStorage resume above.
+        // Ref upstream #2333 / #2334.
+        if (isRecording()) {
+            Log.i(TAG, "Task removed while recording; staying foreground.");
+            try {
+                tryStartSensors();
+            } catch (Exception e) {
+                Log.w(TAG, "Could not re-assert foreground after task removal.", e);
+            }
+        }
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
     public Binder onBind(Intent intent) {
         return binder;
     }

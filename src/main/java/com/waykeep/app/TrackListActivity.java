@@ -21,9 +21,12 @@ import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -222,6 +225,8 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             updateGpsMenuItem(false, true);
             startSensorsOrRecording((service, connection) -> {
                 Track.Id trackId = service.startNewTrack();
+
+                ensureBackgroundResilience();
 
                 Intent newIntent = IntentUtils.newIntent(TrackListActivity.this, TrackRecordingActivity.class);
                 newIntent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
@@ -583,6 +588,38 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             TrackRecordingServiceConnection.executeForeground(this, callback);
         } catch (MissingPermissionException e) {
             Toast.makeText(this, R.string.permission_recording_failed, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * After a run starts, ask for the two things that keep it alive when swiped away:
+     * background location (Android 10+) and battery-optimization exemption (low-RAM /
+     * aggressive OEM killers). Recording already proceeds; these only improve survival.
+     */
+    private void ensureBackgroundResilience() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !PermissionRequester.BACKGROUND.hasPermission(this)) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.permission_background_title)
+                    .setMessage(R.string.permission_background_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                            PermissionRequester.BACKGROUND.requestPermissionsIfNeeded(this, this, null, null))
+                    .show();
+        }
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null && !powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.battery_optimization_title)
+                    .setMessage(R.string.battery_optimization_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        try {
+                            startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName())));
+                        } catch (Exception e) {
+                            Log.w(TAG, "Battery exemption intent failed", e);
+                        }
+                    })
+                    .show();
         }
     }
 }
