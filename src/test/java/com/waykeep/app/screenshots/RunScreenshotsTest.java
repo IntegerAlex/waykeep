@@ -90,8 +90,44 @@ public class RunScreenshotsTest {
     }
 
     @Test
-    public void statsWidget() throws Exception {
+    public void stoppedScreen() throws Exception {
         paparazzi.unsafeUpdateConfig(DeviceConfig.PIXEL_5, "DayNightDynamicTheme", SessionParams.RenderingMode.NORMAL);
+        Context context = paparazzi.getContext();
+        KmzRun run = KmzRun.load();
+
+        Distance distance = Distance.of(run.distance_m());
+        Duration duration = run.duration();
+        Speed average = Speed.of(distance, duration);
+        if (average.isInvalid()) {
+            average = Speed.ZERO;
+        }
+
+        View screen = paparazzi.inflate(R.layout.track_stopped);
+
+        ((TextView) screen.findViewById(R.id.track_edit_name)).setText(run.name);
+        ((TextView) screen.findViewById(R.id.track_edit_activity_type)).setText(run.activityType);
+        ((ImageView) screen.findViewById(R.id.track_edit_activity_type_icon)).setImageResource(R.drawable.ic_activity_run_24dp);
+
+        ((TextView) screen.findViewById(R.id.time)).setText(StringUtils.formatElapsedTime(duration));
+
+        android.util.Pair<String, String> distParts = DistanceFormatter.Builder().setUnit(UNIT).build(context)
+                .getDistanceParts(distance);
+        ((TextView) screen.findViewById(R.id.distance)).setText(distParts.first);
+        ((TextView) screen.findViewById(R.id.distance_unit)).setText(distParts.second);
+
+        android.util.Pair<String, String> speedParts = SpeedFormatter.Builder()
+                .setUnit(UNIT)
+                .setReportSpeedOrPace(false)
+                .build(context)
+                .getSpeedParts(average);
+        ((TextView) screen.findViewById(R.id.speed)).setText(speedParts.first);
+        ((TextView) screen.findViewById(R.id.speed_unit)).setText(speedParts.second);
+
+        paparazzi.snapshot(screen);
+    }
+
+    @Test
+    public void statsWidget() throws Exception {        paparazzi.unsafeUpdateConfig(DeviceConfig.PIXEL_5, "DayNightDynamicTheme", SessionParams.RenderingMode.NORMAL);
         Context context = paparazzi.getContext();
         KmzRun run = KmzRun.load();
 
