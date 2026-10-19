@@ -354,8 +354,18 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 searchHandler.postDelayed(pendingSearch, 300);
             }
         });
+        // #2268: the floating record button overlaps the expanded search field.
+        viewBinding.trackListSearchView.getEditText().setOnFocusChangeListener((v, hasFocus) -> updateRecordButtonVisibility());
 
         return viewBinding.getRoot();
+    }
+
+    private void updateRecordButtonVisibility() {
+        if (viewBinding == null) {
+            return;
+        }
+        boolean searching = viewBinding.trackListSearchView.getEditText().hasFocus();
+        viewBinding.trackListFabAction.setVisibility(searching ? View.GONE : View.VISIBLE);
     }
 
     @Override
