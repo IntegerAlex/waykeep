@@ -10,6 +10,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -114,6 +118,30 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     private Marker endPin;
     private ConnectivityManager.NetworkCallback networkCallback;
 
+    // #2274: built-in magnetic/rotation-vector compass, rotates the compass button.
+    private SensorManager sensorManager;
+    private Sensor rotationSensor;
+    private final float[] compassRotationMatrix = new float[9];
+    private final float[] compassOrientation = new float[3];
+    private final SensorEventListener compassListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) {
+                return;
+            }
+            SensorManager.getRotationMatrixFromVector(compassRotationMatrix, event.values);
+            SensorManager.getOrientation(compassRotationMatrix, compassOrientation);
+            float azimuthDegrees = (float) Math.toDegrees(compassOrientation[0]);
+            if (viewBinding != null) {
+                viewBinding.trackMapCompassButton.setRotation(-azimuthDegrees);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
     private final List<GeoPoint> pendingPoints = new ArrayList<>();
     private GeoPoint lastRoutePoint;
     private Track.Id markersTrackId;
@@ -135,11 +163,19 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         super.onDestroy();
         markerExecutor.shutdownNow();
         contentProviderUtils = null;
+        sensorManager = null;
+        rotationSensor = null;
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewBinding = FragmentTrackMapBinding.inflate(inflater, container, false);
+
+        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
+        rotationSensor = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) : null;
+        if (rotationSensor == null) {
+            viewBinding.trackMapCompassButton.setVisibility(View.GONE);
+        }
 
         // Bicycle-oriented OSM raster style: cycle tracks/lanes, touring routes, POIs.
         // Keyless endpoints (verified HTTP 200 on a/b/c); fair-use policy per OSMF, infra by
@@ -259,10 +295,16 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         if (markersTrackId != null) {
             loadMarkersAsync(markersTrackId);
         }
+        if (sensorManager != null && rotationSensor != null) {
+            sensorManager.registerListener(compassListener, rotationSensor, SensorManager.SENSOR_DELAY_UI);
+        }
     }
 
     @Override
     public void onPause() {
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(compassListener);
+        }
         // Required by osmdroid: tile loading only runs between onResume/onPause.
         if (locationOverlay != null) {
             locationOverlay.disableMyLocation();
