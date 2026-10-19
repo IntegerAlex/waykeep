@@ -373,7 +373,7 @@ public class ExportActivity extends AbstractActivity {
             name = contentProviderUtils.getTrack(exportTask.getTrackIds().get(0)).name();
         }
         Log.e(TAG, "Error exporting " + name + ": " + errorMessage);
-        trackErrors.add(name);
+        trackErrors.add(name + ": " + errorMessage);
 
         nextExport(exportTask);
     }
