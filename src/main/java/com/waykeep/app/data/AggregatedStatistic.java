@@ -17,7 +17,8 @@ public record AggregatedStatistic(
         @NonNull
         Distance totalDistance,
         @NonNull
-        Speed maxSpeed
+        Speed maxSpeed,
+        float altitudeGain_m
 ) {
 
     public Speed getAverageMovingSpeed() {

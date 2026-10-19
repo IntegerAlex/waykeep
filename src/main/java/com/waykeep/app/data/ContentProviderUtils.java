@@ -771,7 +771,8 @@ public class ContentProviderUtils {
                         cursor.getInt(cursor.getColumnIndexOrThrow(TracksColumns.TRACK_COUNT)),
                         Duration.ofMillis(cursor.getLong(cursor.getColumnIndexOrThrow(TracksColumns.MOVINGTIME))),
                         Distance.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE))),
-                        Speed.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED)))
+                        Speed.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED))),
+                        cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN))
                 ));
             }
             return aggregatedStatistics;

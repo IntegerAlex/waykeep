@@ -132,6 +132,11 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
             viewBinding.aggregatedStatsDistanceUnit.setText(parts.second);
 
             viewBinding.aggregatedStatsTime.setText(StringUtils.formatElapsedTime(aggregatedStatistic.totalMovingTime()));
+
+            Pair<String, String> gainParts = StringUtils.getAltitudeParts(context, aggregatedStatistic.altitudeGain_m(), unitSystem);
+            viewBinding.aggregatedStatsElevation.setText(gainParts.first);
+            viewBinding.aggregatedStatsElevationUnit.setText(gainParts.second);
+            viewBinding.aggregatedStatsElevationLabel.setText(R.string.stats_gain);
         }
 
         private int getIcon(AggregatedStatistic aggregatedStatistic) {

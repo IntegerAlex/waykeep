@@ -279,7 +279,8 @@ public class CustomContentProvider extends ContentProvider {
                         TracksColumns.ACTIVITY_TYPE_LOCALIZED,
                         "SUM(" + TracksColumns.MOVINGTIME + ") AS " + TracksColumns.MOVINGTIME,
                         "SUM(" + TracksColumns.TOTALDISTANCE + ") AS " + TracksColumns.TOTALDISTANCE,
-                        "MAX(" + TracksColumns.MAXSPEED + ") AS " + TracksColumns.MAXSPEED
+                        "MAX(" + TracksColumns.MAXSPEED + ") AS " + TracksColumns.MAXSPEED,
+                        "SUM(COALESCE(" + TracksColumns.ALTITUDE_GAIN + ", 0)) AS " + TracksColumns.ALTITUDE_GAIN
                 };
 
                 sortOrder = TracksColumns.TRACK_COUNT + " DESC";

@@ -166,12 +166,41 @@
         app:layout_constraintTop_toBottomOf="@+id/aggregated_stats_max_rate"
         tools:text="@string/stats_max_speed" />
 
+    <!-- Elevation gain -->
+    <TextView
+        android:id="@+id/aggregated_stats_elevation"
+        style="@style/TextAppearance.OpenTracks.SecondaryValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/aggregated_stats_avg_rate_label"
+        tools:text="340" />
+
+    <TextView
+        android:id="@+id/aggregated_stats_elevation_unit"
+        style="@style/TextAppearance.OpenTracks.PrimaryUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/aggregated_stats_elevation"
+        app:layout_constraintStart_toEndOf="@+id/aggregated_stats_elevation"
+        tools:text="m" />
+
+    <TextView
+        android:id="@+id/aggregated_stats_elevation_label"
+        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/aggregated_stats_elevation"
+        tools:text="@string/stats_gain" />
+
     <View
         android:id="@+id/aggregated_stats_horizontal_line"
         style="@style/HorizontalLine"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@id/guideline1"
         app:layout_constraintEnd_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toBottomOf="@id/aggregated_stats_max_rate_label" />
+        app:layout_constraintTop_toBottomOf="@id/aggregated_stats_elevation_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
