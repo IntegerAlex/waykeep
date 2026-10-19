@@ -24,13 +24,13 @@
                 android:targetClass="com.waykeep.app.io.file.importer.DirectoryChooserActivity$ExportDirectoryChooserActivity"
                 android:targetPackage="@string/applicationId" />
         </Preference>
-<!-- Disabled as the used structure for KML/KMZ does not allow assigning markers correctly on import. -->
-<!--        <Preference-->
-<!--            android:title="@string/menu_export_all_one_file">-->
-<!--            <intent-->
-<!--                android:targetClass="com.waykeep.app.io.file.importer.DirectoryChooserActivity$ExportDirectoryChooserOneFileActivity"-->
-<!--                android:targetPackage="@string/applicationId" />-->
-<!--        </Preference>-->
+        <Preference
+            android:summary="@string/menu_export_all_one_file_summary"
+            android:title="@string/menu_export_all_one_file">
+            <intent
+                android:targetClass="com.waykeep.app.io.file.importer.DirectoryChooserActivity$ExportDirectoryChooserOneFileActivity"
+                android:targetPackage="@string/applicationId" />
+        </Preference>
         <Preference
             android:key="@string/settings_default_export_directory_key"
             android:title="@string/settings_default_export_uri_title">
