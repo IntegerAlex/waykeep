@@ -95,7 +95,7 @@ limitations under the License.
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/aggregated_stats_button"
-            style="@style/Widget.Material3.Button.IconButton"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_statistics_24dp"
@@ -103,7 +103,7 @@ limitations under the License.
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sensor_start_button"
-            style="@style/Widget.Material3.Button.IconButton"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -112,7 +112,7 @@ limitations under the License.
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/suggested_routes_button"
-            style="@style/Widget.Material3.Button.IconButton"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
