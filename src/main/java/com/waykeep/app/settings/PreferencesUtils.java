@@ -860,6 +860,7 @@ public class PreferencesUtils {
                 new DataField(resources.getString(R.string.stats_custom_layout_fastest_pace_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_coordinates_key), false, false, true),
                 new DataField(resources.getString(R.string.stats_custom_layout_heart_rate_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_heart_rate_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_cadence_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_power_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_clock_key), false, false, false),

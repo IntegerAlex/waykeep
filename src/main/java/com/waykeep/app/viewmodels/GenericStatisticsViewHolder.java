@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.models.DistanceFormatter;
+import com.waykeep.app.data.models.HeartRate;
 import com.waykeep.app.data.models.Speed;
 import com.waykeep.app.data.models.SpeedFormatter;
 import com.waykeep.app.data.models.TrackPoint;
@@ -132,7 +133,6 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
     }
 
     public static class AverageSpeed extends GenericStatisticsViewHolder {
-
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
             SpeedFormatter speedFormatterSpeed = SpeedFormatter.Builder()
@@ -145,6 +145,23 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
             getBinding().statsDescriptionMain.setText(getContext().getString(R.string.stats_average_speed));
+        }
+    }
+
+    public static class AverageHeartRate extends GenericStatisticsViewHolder {
+
+        @Override
+        public void onChanged(UnitSystem unitSystem, RecordingData data) {
+            HeartRate heartRate = data.trackStatistics().avgHeartRate();
+            if (heartRate != null) {
+                Pair<String, String> valueAndUnit = StringUtils.getHeartRateParts(getContext(), heartRate);
+                getBinding().statsValue.setText(valueAndUnit.first);
+                getBinding().statsUnit.setText(valueAndUnit.second);
+            } else {
+                getBinding().statsValue.setText(R.string.stats_empty_value_integer);
+                getBinding().statsUnit.setText("");
+            }
+            getBinding().statsDescriptionMain.setText(getContext().getString(R.string.average_heart_rate));
         }
     }
 
