@@ -35,6 +35,9 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
     private static final AltitudeCorrectionManager ALTITUDE_CORRECTION_MANAGER = new AltitudeCorrectionManager();
 
+    // #2338: a GPS outage longer than this starts a new segment instead of drawing a straight line across it.
+    private static final Duration GPS_LOSS_SEGMENT_BREAK = Duration.ofSeconds(60);
+
     private final Runnable ON_IDLE = this::onIdle;
 
     private final ContentProviderUtils contentProviderUtils;
@@ -212,6 +215,18 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         if (distanceToLastStoredTrackPoint.greaterThan(maxRecordingDistance)) {
+            trackPoint = trackPoint.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
+            insertTrackPoint(trackPoint, true);
+
+            scheduleNewIdleTimeout();
+            return true;
+        }
+
+        // #2338: breaking the segment after a GPS outage avoids a straight line across the gap.
+        if (trackPoint.position().hasLocation()
+                && lastStoredTrackPointWithLocation != null
+                && lastStoredTrackPointWithLocation.position().hasLocation()
+                && Duration.between(lastStoredTrackPointWithLocation.getTime(), trackPoint.getTime()).compareTo(GPS_LOSS_SEGMENT_BREAK) > 0) {
             trackPoint = trackPoint.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
             insertTrackPoint(trackPoint, true);
 
