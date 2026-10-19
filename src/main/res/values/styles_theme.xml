@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="DayNightDynamicTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="DayNightDynamicTheme" parent="Theme.Material3Expressive.DayNight.NoActionBar">
         <!-- Material3 https://github.com/material-components/material-components-android/issues/2828#issuecomment-1187563903 -->
         <item name="switchPreferenceCompatStyle">@style/MaterialSwitchPreferenceCompat</item>
 
@@ -25,7 +25,7 @@
         <item name="colorSecondary">@color/opentracks</item>
     </style>
 
-    <style name="NightOledDynamicTheme" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="NightOledDynamicTheme" parent="Theme.Material3Expressive.Dark.NoActionBar">
         <!-- Material3 https://github.com/material-components/material-components-android/issues/2828#issuecomment-1187563903 -->
         <item name="switchPreferenceCompatStyle">@style/MaterialSwitchPreferenceCompat</item>
 
