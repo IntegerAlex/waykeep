@@ -80,12 +80,12 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
         viewBinding.trackEditActivityTypeLocalized.setAdapter(adapter);
         viewBinding.trackEditActivityTypeLocalized.setOnItemClickListener((parent, view, position, id) -> {
             String localizedActivityType = (String) viewBinding.trackEditActivityTypeLocalized.getAdapter().getItem(position);
-            setActivityTypeIcon(ActivityType.findByLocalizedString(this, localizedActivityType));
+            setActivityTypeIconForName(localizedActivityType);
         });
         viewBinding.trackEditActivityTypeLocalized.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 String localizedActivityType = viewBinding.trackEditActivityTypeLocalized.getText().toString();
-                setActivityTypeIcon(ActivityType.findByLocalizedString(this, localizedActivityType));
+                setActivityTypeIconForName(localizedActivityType);
             }
         });
 
@@ -136,6 +136,18 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
     private void setActivityTypeIcon(ActivityType activityType) {
         this.activityType = activityType;
         viewBinding.trackEditActivityTypeIcon.setImageResource(activityType.getIconDrawableId());
+    }
+
+    /**
+     * Custom types carry their own chosen icon; built-ins resolve from the enum.
+     */
+    private void setActivityTypeIconForName(String localizedActivityType) {
+        ActivityType type = ActivityType.findByLocalizedString(this, localizedActivityType);
+        String customIcon = PreferencesUtils.getCustomActivityTypeIconName(localizedActivityType);
+        if (customIcon != null && !customIcon.isEmpty()) {
+            type = ActivityType.findBy(customIcon);
+        }
+        setActivityTypeIcon(type);
     }
 
     @Override

@@ -104,23 +104,97 @@ public class PreferencesUtils {
     }
 
     /**
-     * #1879: user-defined activity types, stored as a comma-separated preference.
+     * #1879: user-defined activity types, stored name\u0001iconEnumName per line.
+     * Migrates the earlier comma-separated preference on first read.
      */
     @NonNull
     public static List<String> getCustomActivityTypes() {
-        String raw = getString(R.string.custom_activity_types_key, "");
-        if (raw.isBlank()) {
-            return List.of();
-        }
-        return Arrays.stream(raw.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .distinct()
-                .toList();
+        return parseCustomActivityTypes().stream().map(e -> e[0]).toList();
     }
 
-    public static void setCustomActivityTypes(String commaSeparated) {
-        setString(R.string.custom_activity_types_key, commaSeparated);
+    @Nullable
+    public static String getCustomActivityTypeIconName(@NonNull String name) {
+        return parseCustomActivityTypes().stream()
+                .filter(e -> e[0].equals(name))
+                .map(e -> e[1])
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static void addCustomActivityType(@NonNull String name, @Nullable String iconActivityTypeName) {
+        List<String[]> entries = parseCustomActivityTypes();
+        entries.removeIf(e -> e[0].equalsIgnoreCase(name));
+        entries.add(new String[]{name, iconActivityTypeName == null ? "" : iconActivityTypeName});
+        storeCustomActivityTypes(entries);
+    }
+
+    public static void removeCustomActivityType(@NonNull String name) {
+        List<String[]> entries = parseCustomActivityTypes();
+        entries.removeIf(e -> e[0].equals(name));
+        storeCustomActivityTypes(entries);
+    }
+
+    /**
+     * Renames a custom type in the picker. Track records already saved keep the old name
+     * (activity types are stored as free text on each track).
+     */
+    public static void renameCustomActivityType(@NonNull String oldName, @NonNull String newName) {
+        List<String[]> entries = parseCustomActivityTypes();
+        for (String[] entry : entries) {
+            if (entry[0].equals(oldName)) {
+                entry[0] = newName;
+            }
+        }
+        storeCustomActivityTypes(entries);
+    }
+
+    public static void setCustomActivityTypeIcon(@NonNull String name, @Nullable String iconActivityTypeName) {
+        List<String[]> entries = parseCustomActivityTypes();
+        for (String[] entry : entries) {
+            if (entry[0].equals(name)) {
+                entry[1] = iconActivityTypeName == null ? "" : iconActivityTypeName;
+            }
+        }
+        storeCustomActivityTypes(entries);
+    }
+
+    @NonNull
+    private static List<String[]> parseCustomActivityTypes() {
+        List<String[]> entries = new ArrayList<>();
+        String raw = getString(R.string.custom_activity_types_v2_key, "");
+        if (raw.isBlank()) {
+            // One-time migration from the earlier comma-separated preference.
+            String legacy = getString(R.string.custom_activity_types_key, "");
+            if (!legacy.isBlank()) {
+                for (String name : legacy.split(",")) {
+                    String trimmed = name.trim();
+                    if (!trimmed.isEmpty()) {
+                        entries.add(new String[]{trimmed, ""});
+                    }
+                }
+                storeCustomActivityTypes(entries);
+            }
+            return entries;
+        }
+        for (String line : raw.split("\n")) {
+            if (line.isBlank()) {
+                continue;
+            }
+            String[] parts = line.split("\u0001", -1);
+            entries.add(new String[]{parts[0], parts.length > 1 ? parts[1] : ""});
+        }
+        return entries;
+    }
+
+    private static void storeCustomActivityTypes(@NonNull List<String[]> entries) {
+        StringBuilder builder = new StringBuilder();
+        for (String[] entry : entries) {
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(entry[0]).append('\u0001').append(entry[1]);
+        }
+        setString(R.string.custom_activity_types_v2_key, builder.toString());
     }
 
     /**

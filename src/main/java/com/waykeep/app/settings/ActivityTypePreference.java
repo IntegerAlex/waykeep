@@ -84,21 +84,27 @@ public class ActivityTypePreference extends DialogPreference {
             textView.setAdapter(adapter);
             textView.setOnItemClickListener((parent, v, position, id) -> {
                 String localizedActivityType = (String) textView.getAdapter().getItem(position);
-                ActivityType activityType = ActivityType.findByLocalizedString(context, localizedActivityType);
-                updateIcon(activityType);
+                updateIconForName(context, localizedActivityType);
             });
             textView.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus) {
-                    String localizedActivityType = textView.getText().toString();
-                    ActivityType activityType = ActivityType.findByLocalizedString(context, localizedActivityType);
-                    updateIcon(activityType);
+                    updateIconForName(context, textView.getText().toString());
                 }
             });
 
             iconView = view.findViewById(R.id.activity_type_preference_spinner);
             iconView.setOnClickListener((it) -> showIconSelectDialog());
 
-            updateIcon(ActivityType.findByLocalizedString(context, activityTypeLocalized));
+            updateIconForName(context, activityTypeLocalized);
+        }
+
+        private void updateIconForName(Context context, String localizedActivityType) {
+            ActivityType activityType = ActivityType.findByLocalizedString(context, localizedActivityType);
+            String customIcon = PreferencesUtils.getCustomActivityTypeIconName(localizedActivityType);
+            if (customIcon != null && !customIcon.isEmpty()) {
+                activityType = ActivityType.findBy(customIcon);
+            }
+            updateIcon(activityType);
         }
 
         private void showIconSelectDialog() {

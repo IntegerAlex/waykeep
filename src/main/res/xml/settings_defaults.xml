@@ -33,11 +33,14 @@
             android:key="@string/track_name_key"
             android:title="@string/settings_recording_track_name_title"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="@string/custom_activity_types_default"
-            android:key="@string/custom_activity_types_key"
+        <Preference
+            android:persistent="false"
             android:summary="@string/settings_custom_activity_types_summary"
-            android:title="@string/settings_custom_activity_types_title" />
+            android:title="@string/settings_custom_activity_types_title">
+            <intent
+                android:targetClass="com.waykeep.app.settings.CustomActivityTypesActivity"
+                android:targetPackage="@string/applicationId" />
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>
