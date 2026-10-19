@@ -20,6 +20,7 @@ import com.waykeep.app.data.models.Track;
 import com.waykeep.app.databinding.SuggestedRoutesBinding;
 import com.waykeep.app.services.MissingPermissionException;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
+import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
 import com.waykeep.app.util.IntentUtils;
 
@@ -189,7 +190,7 @@ public class SuggestedRoutesActivity extends AbstractActivity {
 
         pendingResponses = 3;
         double desired = checkedDistanceM();
-        brouterClient.suggest(startPoint.getLongitude(), startPoint.getLatitude(), desired, new BrouterClient.Callback() {
+        brouterClient.suggest(startPoint.getLongitude(), startPoint.getLatitude(), desired, PreferencesUtils.getSuggestedRoutesProfile(), new BrouterClient.Callback() {
             @Override
             public void onResult(RouteSuggestion suggestion) {
                 runOnUiThread(() -> addSuggestion(suggestion));

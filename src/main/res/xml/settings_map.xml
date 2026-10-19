@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/settings_map_title">
 
     <SwitchPreferenceCompat
@@ -8,6 +9,21 @@
         android:key="@string/map_offline_only_key"
         android:summary="@string/map_offline_only_summary"
         android:title="@string/map_offline_only_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="@bool/map_rotate_with_heading_default"
+        android:key="@string/map_rotate_with_heading_key"
+        android:summary="@string/map_rotate_with_heading_summary"
+        android:title="@string/map_rotate_with_heading_title" />
+
+    <ListPreference
+        android:defaultValue="@string/suggested_routes_profile_default"
+        android:entries="@array/suggested_routes_profile_entries"
+        android:entryValues="@array/suggested_routes_profile_values"
+        android:key="@string/suggested_routes_profile_key"
+        android:summary="@string/suggested_routes_profile_summary"
+        android:title="@string/suggested_routes_profile_title"
+        app:useSimpleSummaryProvider="true" />
 
     <Preference
         android:key="@string/map_clear_cache_key"

@@ -123,6 +123,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     private Sensor rotationSensor;
     private final float[] compassRotationMatrix = new float[9];
     private final float[] compassOrientation = new float[3];
+    private int lastAppliedHeading = Integer.MIN_VALUE;
     private final SensorEventListener compassListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -132,7 +133,27 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             SensorManager.getRotationMatrixFromVector(compassRotationMatrix, event.values);
             SensorManager.getOrientation(compassRotationMatrix, compassOrientation);
             float azimuthDegrees = (float) Math.toDegrees(compassOrientation[0]);
-            if (viewBinding != null) {
+
+            // Redraw only on meaningful heading changes; sensor streams at ~50 Hz.
+            int heading = Math.round(azimuthDegrees);
+            if (Math.abs(heading - lastAppliedHeading) < 3) {
+                return;
+            }
+            lastAppliedHeading = heading;
+
+            if (viewBinding == null) {
+                return;
+            }
+            if (PreferencesUtils.isMapRotateWithHeading()) {
+                // Rotate the map to the heading; the compass icon then stays north-up.
+                suppressScrollCallback = true;
+                try {
+                    viewBinding.trackMapView.setMapOrientation(-azimuthDegrees);
+                } finally {
+                    suppressScrollCallback = false;
+                }
+                viewBinding.trackMapCompassButton.setRotation(0f);
+            } else {
                 viewBinding.trackMapCompassButton.setRotation(-azimuthDegrees);
             }
         }

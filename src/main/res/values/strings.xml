@@ -546,6 +546,10 @@ limitations under the License.
     <string name="settings_map_summary">Offline tiles, cache, and map controls</string>
     <string name="map_offline_only_title">Offline mode</string>
     <string name="map_offline_only_summary">Never download map tiles; use cached tiles only. Saves data and battery on weak signal.</string>
+    <string name="map_rotate_with_heading_title">Rotate map with compass</string>
+    <string name="map_rotate_with_heading_summary">Turn the map to your heading while the compass is active</string>
+    <string name="suggested_routes_profile_title">Suggested-loop routing profile</string>
+    <string name="suggested_routes_profile_summary">BRouter profile used to generate running loops</string>
     <string name="map_clear_cache_title">Clear tile cache</string>
     <string name="map_clear_cache_summary">Delete downloaded map tiles</string>
     <string name="map_cache_size">%1$s used</string>

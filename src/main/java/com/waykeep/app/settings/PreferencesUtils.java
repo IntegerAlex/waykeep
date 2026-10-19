@@ -420,6 +420,15 @@ public class PreferencesUtils {
         return getBoolean(R.string.map_offline_only_key, DEFAULT);
     }
 
+    public static boolean isMapRotateWithHeading() {
+        final boolean DEFAULT = resources.getBoolean(R.bool.map_rotate_with_heading_default);
+        return getBoolean(R.string.map_rotate_with_heading_key, DEFAULT);
+    }
+
+    public static String getSuggestedRoutesProfile() {
+        return getString(R.string.suggested_routes_profile_key, resources.getString(R.string.suggested_routes_profile_default));
+    }
+
     public static final String MAP_STYLE_CYCLOSM = "cyclosm";
     public static final String MAP_STYLE_MINIMAL = "minimal";
 

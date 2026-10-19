@@ -51,6 +51,21 @@
 
     <string name="map_offline_only_key" translatable="false">mapOfflineOnly</string>
     <bool name="map_offline_only_default" translatable="false">false</bool>
+    <string name="map_rotate_with_heading_key" translatable="false">mapRotateWithHeading</string>
+    <bool name="map_rotate_with_heading_default" translatable="false">false</bool>
+    <string name="suggested_routes_profile_key" translatable="false">suggestedRoutesProfile</string>
+    <string name="suggested_routes_profile_default" translatable="false">trekking</string>
+
+    <string-array name="suggested_routes_profile_entries">
+        <item>Running / trekking (default)</item>
+        <item>Asia-Pacific bike (avoids highways)</item>
+        <item>Shortest path</item>
+    </string-array>
+    <string-array name="suggested_routes_profile_values">
+        <item>trekking</item>
+        <item>fastbike-asia-pacific</item>
+        <item>shortest</item>
+    </string-array>
     <string name="map_style_key" translatable="false">mapStyle</string>
     <string name="map_clear_cache_key" translatable="false">mapClearCache</string>
     <string name="settings_map_key" translatable="false">settingsMap</string>

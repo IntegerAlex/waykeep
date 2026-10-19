@@ -39,14 +39,14 @@ public class BrouterClient {
         executor.shutdownNow();
     }
 
-    public void suggest(double lon, double lat, double desiredLengthM, Callback callback) {
+    public void suggest(double lon, double lat, double desiredLengthM, String profile, Callback callback) {
         // Round-trip length is network-dominated; this only sizes the via-point circle.
         double roundtripDistance = Math.max(500, Math.min(5000, desiredLengthM / 4));
         int[] directions = {30, 150, 270};
         for (int direction : directions) {
             executor.execute(() -> {
                 try {
-                    callback.onResult(fetch(lon, lat, roundtripDistance, direction));
+                    callback.onResult(fetch(lon, lat, roundtripDistance, direction, profile));
                 } catch (Exception e) {
                     callback.onError(e);
                 }
@@ -54,9 +54,9 @@ public class BrouterClient {
         }
     }
 
-    private RouteSuggestion fetch(double lon, double lat, double roundtripDistance, int direction) throws Exception {
+    private RouteSuggestion fetch(double lon, double lat, double roundtripDistance, int direction, String profile) throws Exception {
         String url = ENDPOINT + "?lonlats=" + lon + "," + lat + ",r"
-                + "&profile=trekking&alternativeidx=0&format=geojson"
+                + "&profile=" + profile + "&alternativeidx=0&format=geojson"
                 + "&roundtripDistance=" + Math.round(roundtripDistance)
                 + "&direction=" + direction;
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
