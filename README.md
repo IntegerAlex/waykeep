@@ -35,7 +35,7 @@ Upstream issues are tracked on [Codeberg](https://codeberg.org/OpenTracksApp/Ope
 * __Voice announcements__
 * __Photos and Markers:__ mark interesting locations while tracking
 * __Offline-capable map:__ view the recorded route and its markers on an in-app map
-  (Esri Light/Dark Gray Canvas tiles via [osmdroid](https://github.com/osmdroid/osmdroid));
+  (CyclOSM tiles by default with a minimal gray canvas alternative, via [osmdroid](https://github.com/osmdroid/osmdroid));
   previously viewed tiles are cached and keep working without connectivity
 * __Activity feed:__ browse past activities with generated route thumbnails
 * __Export:__

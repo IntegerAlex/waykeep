@@ -33,7 +33,10 @@ limitations under the License.
 \n* show tracks on a map (see below)</string>
     <string name="help_track_map_title">How to show a track on a map?</string>
     <string name="help_track_map_content">
-        Use the small map icon.\n
+        Every track has a built-in Map tab: open a recording or a saved track and switch to it.
+        The layers button switches between the CyclOSM cycle map and a minimal gray canvas;
+        viewed tiles are cached and keep working offline.\n
+        Alternatives:
         a)
         (live updates) Install <a href="https://codeberg.org/OpenTracksApp/OSMDashboard">OSMDashboard</a>.
         It provides online or offline maps via <a href="https://www.openstreetmap.org">OpenStreetMap</a>.\n
