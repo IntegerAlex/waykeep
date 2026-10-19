@@ -160,6 +160,10 @@
                         style="@style/TextAppearance.OpenTracks.StatValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:autoSizeMaxTextSize="20sp"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:autoSizeTextType="uniform"
                         tools:text="50.00 km" />
 
                     <TextView
