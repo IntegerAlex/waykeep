@@ -124,6 +124,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     private final float[] compassRotationMatrix = new float[9];
     private final float[] compassOrientation = new float[3];
     private int lastAppliedHeading = Integer.MIN_VALUE;
+    private float lastAzimuthDegrees = 0f;
     private final SensorEventListener compassListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -133,6 +134,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             SensorManager.getRotationMatrixFromVector(compassRotationMatrix, event.values);
             SensorManager.getOrientation(compassRotationMatrix, compassOrientation);
             float azimuthDegrees = (float) Math.toDegrees(compassOrientation[0]);
+            lastAzimuthDegrees = azimuthDegrees;
 
             // Redraw only on meaningful heading changes; sensor streams at ~50 Hz.
             int heading = Math.round(azimuthDegrees);
@@ -252,7 +254,9 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         viewBinding.trackMapCompassButton.setOnClickListener(v -> {
             suppressScrollCallback = true;
             try {
-                viewBinding.trackMapView.setMapOrientation(0f);
+                // Toggle: north-up <-> facing the last known heading, so the tap does something visible.
+                boolean northUp = Math.abs(viewBinding.trackMapView.getMapOrientation()) < 1f;
+                viewBinding.trackMapView.setMapOrientation(northUp ? -lastAzimuthDegrees : 0f);
             } finally {
                 suppressScrollCallback = false;
             }

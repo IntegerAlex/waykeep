@@ -532,7 +532,7 @@ limitations under the License.
     <string name="track_map_zoom_in_label">+</string>
     <string name="track_map_zoom_out">Zoom out</string>
     <string name="track_map_zoom_out_label">−</string>
-    <string name="track_map_compass">Reset north-up orientation</string>
+    <string name="track_map_compass">Compass: toggle north-up / your heading</string>
     <string name="track_map_compass_label">N</string>
     <string name="track_map_layers">Change map style</string>
     <string name="map_style_title">Map style</string>
