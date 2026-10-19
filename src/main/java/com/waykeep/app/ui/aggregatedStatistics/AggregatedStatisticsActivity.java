@@ -9,8 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +115,39 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
             return true;
         }
 
+        int id = item.getItemId();
+        if (id == R.id.aggregated_statistics_period_day
+                || id == R.id.aggregated_statistics_period_week
+                || id == R.id.aggregated_statistics_period_month
+                || id == R.id.aggregated_statistics_period_year) {
+            applyPeriod(id);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * #1872: one-tap day/week/month/year instead of picking dates in the filter dialog.
+     */
+    private void applyPeriod(int menuItemId) {
+        LocalDate today = LocalDate.now();
+        LocalDate from;
+        if (menuItemId == R.id.aggregated_statistics_period_day) {
+            from = today;
+        } else if (menuItemId == R.id.aggregated_statistics_period_week) {
+            from = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        } else if (menuItemId == R.id.aggregated_statistics_period_month) {
+            from = today.withDayOfMonth(1);
+        } else {
+            from = today.withDayOfYear(1);
+        }
+
+        selection.addDateRange(
+                from.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                Instant.now());
+        setMenuVisibility(true);
+        viewModel.updateSelection(selection);
     }
 
     private void setMenuVisibility(boolean areFiltersApplied) {

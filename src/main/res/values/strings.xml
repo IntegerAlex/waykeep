@@ -554,6 +554,11 @@ limitations under the License.
     <!-- Aggregated Statistics -->
     <string name="aggregated_stats_empty_message">Record your first track to see aggregated statistics</string>
     <string name="aggregated_stats_filter_no_results">There are not activities for the specified filter</string>
+    <string name="aggregated_stats_period">Period</string>
+    <string name="aggregated_stats_period_day">Today</string>
+    <string name="aggregated_stats_period_week">This week</string>
+    <string name="aggregated_stats_period_month">This month</string>
+    <string name="aggregated_stats_period_year">This year</string>
     <!-- Interval List -->
     <string name="interval_list_empty_message">There are not any interval yet</string>
     <!-- Unit -->

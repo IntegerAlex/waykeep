@@ -12,4 +12,23 @@
         android:icon="@drawable/ic_baseline_filter_alt_24"
         app:showAsAction="always"
         android:title="@string/menu_filter" />
+    <item
+        android:id="@+id/aggregated_statistics_period"
+        app:showAsAction="never"
+        android:title="@string/aggregated_stats_period">
+        <menu>
+            <item
+                android:id="@+id/aggregated_statistics_period_day"
+                android:title="@string/aggregated_stats_period_day" />
+            <item
+                android:id="@+id/aggregated_statistics_period_week"
+                android:title="@string/aggregated_stats_period_week" />
+            <item
+                android:id="@+id/aggregated_statistics_period_month"
+                android:title="@string/aggregated_stats_period_month" />
+            <item
+                android:id="@+id/aggregated_statistics_period_year"
+                android:title="@string/aggregated_stats_period_year" />
+        </menu>
+    </item>
 </menu>
