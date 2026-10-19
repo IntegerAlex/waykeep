@@ -127,9 +127,13 @@ public enum ActivityType {
     }
 
     public static List<String> getLocalizedStrings(Context context) {
+        return getLocalizedStrings(context.getResources());
+    }
+
+    public static List<String> getLocalizedStrings(Resources resources) {
         return Arrays.stream(values())
                 .map(ActivityType::getLocalizedStringId)
-                .map(context::getString)
+                .map(resources::getString)
                 .toList();
     }
 

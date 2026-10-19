@@ -72,6 +72,8 @@
 
     <string name="default_activity_key" translatable="false">defaultActivity</string>
     <string name="default_activity_default" translatable="false">@string/activity_type_unknown</string>
+    <string name="custom_activity_types_key" translatable="false">customActivityTypes</string>
+    <string name="custom_activity_types_default" translatable="false"></string>
 
     <string name="recording_distance_interval_key" translatable="false">recordingDistanceInterval</string>
     <string name="recording_distance_interval_default" translatable="false">10</string>

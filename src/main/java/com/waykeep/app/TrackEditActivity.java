@@ -31,6 +31,7 @@ import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackBuilder;
 import com.waykeep.app.databinding.TrackEditBinding;
 import com.waykeep.app.fragments.ChooseActivityTypeDialogFragment;
+import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.ui.ZoneOffsetAdapter;
 
 /**
@@ -75,7 +76,7 @@ public class TrackEditActivity extends AbstractActivity implements ChooseActivit
         viewBinding.trackEditName.setText(track.name());
 
         viewBinding.trackEditActivityTypeLocalized.setText(track.activityTypeLocalized());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, ActivityType.getLocalizedStrings(this));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, PreferencesUtils.getActivityTypeChoices());
         viewBinding.trackEditActivityTypeLocalized.setAdapter(adapter);
         viewBinding.trackEditActivityTypeLocalized.setOnItemClickListener((parent, view, position, id) -> {
             String localizedActivityType = (String) viewBinding.trackEditActivityTypeLocalized.getAdapter().getItem(position);

@@ -104,6 +104,40 @@ public class PreferencesUtils {
     }
 
     /**
+     * #1879: user-defined activity types, stored as a comma-separated preference.
+     */
+    @NonNull
+    public static List<String> getCustomActivityTypes() {
+        String raw = getString(R.string.custom_activity_types_key, "");
+        if (raw.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(raw.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .toList();
+    }
+
+    public static void setCustomActivityTypes(String commaSeparated) {
+        setString(R.string.custom_activity_types_key, commaSeparated);
+    }
+
+    /**
+     * The built-in activity types followed by the user's custom ones (deduplicated).
+     */
+    @NonNull
+    public static List<String> getActivityTypeChoices() {
+        List<String> all = new ArrayList<>(ActivityType.getLocalizedStrings(resources));
+        for (String custom : getCustomActivityTypes()) {
+            if (!all.contains(custom)) {
+                all.add(custom);
+            }
+        }
+        return all;
+    }
+
+    /**
      * Gets a preference key
      *
      * @param keyId the key id

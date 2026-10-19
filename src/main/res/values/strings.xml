@@ -384,6 +384,8 @@ limitations under the License.
     <string name="settings_recording_show_gps_disabled_warning_title">GPS disabled warning</string>
     <string name="settings_recording_show_gps_disabled_warning_summary">While recording, show a warning if GPS is disabled.</string>
     <string name="settings_recording_default_activity_title">Default activity type</string>
+    <string name="settings_custom_activity_types_title">Custom activity types</string>
+    <string name="settings_custom_activity_types_summary">Comma-separated names shown alongside the built-in types</string>
     <string name="settings_recording_location_frequency_summary">%1$s between location checks</string>
     <string name="settings_recording_max_recording_distance_summary">A new segment is created if the distance between two locations is greater than %1$s</string>
     <string name="settings_recording_max_recording_distance_title">Max distance</string>

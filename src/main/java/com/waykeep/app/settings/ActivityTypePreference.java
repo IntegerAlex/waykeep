@@ -80,7 +80,7 @@ public class ActivityTypePreference extends DialogPreference {
             textView = view.findViewById(R.id.activity_type_preference_text_view);
             String activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
             textView.setText(activityTypeLocalized);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, ActivityType.getLocalizedStrings(context));
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, PreferencesUtils.getActivityTypeChoices());
             textView.setAdapter(adapter);
             textView.setOnItemClickListener((parent, v, position, id) -> {
                 String localizedActivityType = (String) textView.getAdapter().getItem(position);
