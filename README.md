@@ -10,6 +10,12 @@ _Waykeep_ is a privacy-respecting sport tracker for Android. It is a fork of [_O
 > (flavor names in [`AGENTS.md`](AGENTS.md)).
 > Bug reports and feature requests belong in the [Waykeep issue tracker](https://github.com/IntegerAlex/waykeep/issues).
 
+<p align="center">
+  <img src="screenshots-marketing/track-detail-map-cyclosm.png" width="250" alt="Track route on a CyclOSM map">
+  <img src="screenshots-marketing/aggregated-stats-month.png" width="250" alt="Aggregated statistics for the month">
+  <img src="screenshots-marketing/suggested-routes.png" width="250" alt="Suggested running loops">
+</p>
+
 ## Features
 
 * **Tracking** with voice announcements, markers, and photos
@@ -19,6 +25,31 @@ _Waykeep_ is a privacy-respecting sport tracker for Android. It is a fork of [_O
 * **Export** as KMZ 2.3 (incl. photos), KML 2.3, or GPX 1.1, manually or automatically after each recording
 * **Altitude** gain/loss via barometer or BLE; **Bluetooth LE sensors** (HR, speed, cadence, power) — [tested sensors](README_TESTED_SENSORS.md)
 * **Gadgetbridge** integration for live stats on wearables
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots-marketing/home-screen.png" width="220" alt="Activity feed"><br><sub><b>Activity feed</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/track-detail-stats.png" width="220" alt="Track statistics"><br><sub><b>Track statistics</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/track-detail-intervals.png" width="220" alt="Kilometre splits"><br><sub><b>Kilometre splits</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots-marketing/track-detail-chart-pace-distance.png" width="220" alt="Interactive pace chart"><br><sub><b>Interactive charts</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/track-detail-map-esri-dark.png" width="220" alt="Dark map style"><br><sub><b>Dark basemap</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/insert-marker-dialog.png" width="220" alt="Insert marker"><br><sub><b>Markers</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots-marketing/personal-bests.png" width="220" alt="Personal bests"><br><sub><b>Personal bests</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/recording-live-stats.png" width="220" alt="Live recording stats"><br><sub><b>Live recording</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/track-detail-share-sheet.png" width="220" alt="Share sheet"><br><sub><b>Export &amp; share</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots-marketing/share-editor-feed-dark.png" width="220" alt="Feed-format share card"><br><sub><b>Share cards</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/share-editor-story-clear.png" width="220" alt="Story-format share card"><br><sub><b>Story format</b></sub></td>
+    <td align="center"></td>
+  </tr>
+</table>
 
 ## Privacy
 
