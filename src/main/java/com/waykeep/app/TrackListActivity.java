@@ -643,16 +643,29 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 .setMessage(R.string.battery_optimization_message)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    // 1. Direct system request: shows the "Allow this app to ignore
+                    // battery optimizations?" dialog on stock Android.
                     try {
                         startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName())));
+                        return;
                     } catch (Exception e) {
-                        // Some OEM builds block the direct request; fall back to the list.
-                        Log.w(TAG, "Battery exemption request failed, opening settings list", e);
-                        try {
-                            startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
-                        } catch (Exception e2) {
-                            Log.w(TAG, "Battery settings fallback failed", e2);
-                        }
+                        Log.w(TAG, "Direct battery exemption request failed", e);
+                    }
+                    // 2. HyperOS/Xiaomi and other OEMs block the direct request. The app's
+                    // details page always opens and exposes "Battery" -> "Unrestricted".
+                    try {
+                        Intent details = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        details.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(details);
+                        return;
+                    } catch (Exception e) {
+                        Log.w(TAG, "App details settings failed", e);
+                    }
+                    // 3. Last resort: the optimization list.
+                    try {
+                        startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                    } catch (Exception e2) {
+                        Log.w(TAG, "Battery settings fallback failed", e2);
                     }
                 })
                 .show();
