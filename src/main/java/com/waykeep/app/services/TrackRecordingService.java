@@ -316,7 +316,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             Log.e(TAG, e.getMessage() + " " + writer);
             return;
         }
-        nm.updateGPSStatus(getString(gpsStatusValue.message));
+        // The accuracy belongs to the last accepted position: it is only meaningful while
+        // the signal is good. Otherwise it is stale and hides the real problem.
+        nm.updateGPSStatus(getString(gpsStatusValue.message), !gpsStatusValue.hasGoodSignal());
         obs.postValue(gpsStatusValue);
     }
 

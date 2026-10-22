@@ -42,6 +42,15 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
 
     private UnitSystem unitSystem = null;
 
+    // The GPS status ("waiting for signal", ...) and the accuracy are both relevant while
+    // recording. They are shown together: overwriting the status with the accuracy hid the
+    // very message that tells the user that the distance is not counting.
+    private String gpsStatusText = "";
+    private String accuracyText = "";
+    // While the signal is unusable the accuracy is stale (it belongs to the last accepted
+    // position), so it is hidden instead of showing a reassuring but wrong number.
+    private boolean hideAccuracy = false;
+
     TrackRecordingServiceNotificationManager(Context context) {
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
@@ -75,7 +84,7 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
                 .addNextIntent(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        updateGPSStatus(context.getString(R.string.gps_starting));
+        updateGPSStatus(context.getString(R.string.gps_starting), false);
 
         notificationBuilder.setContentIntent(pendingIntent);
         updateNotification();
@@ -83,8 +92,16 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         return getNotification();
     }
 
-    void updateGPSStatus(String content) {
-        notificationBuilder.setSubText(content);
+    void updateGPSStatus(String content, boolean signalUnusable) {
+        gpsStatusText = content;
+        hideAccuracy = signalUnusable;
+        updateSubText();
+    }
+
+    private void updateSubText() {
+        notificationBuilder.setSubText(accuracyText.isEmpty() || hideAccuracy
+                ? gpsStatusText
+                : gpsStatusText + " · " + accuracyText);
         updateNotification();
     }
 
@@ -121,8 +138,8 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         notificationBuilder.setContentTitle(context.getString(R.string.track_distance_notification, formatter.formatDistance(recordingData.trackStatistics().totalDistance())));
         String formattedSpeed = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(true).build(context).formatSpeed(recordingData.latestTrackPoint().position().speed());
         notificationBuilder.setContentText(context.getString(R.string.track_speed_notification, formattedSpeed));
-        notificationBuilder.setSubText(context.getString(R.string.track_recording_notification_accuracy, formattedAccuracy));
-        updateNotification();
+        accuracyText = context.getString(R.string.track_recording_notification_accuracy, formattedAccuracy);
+        updateSubText();
 
         notificationBuilder.setOnlyAlertOnce(true);
     }

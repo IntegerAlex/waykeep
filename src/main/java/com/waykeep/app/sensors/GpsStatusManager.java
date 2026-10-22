@@ -47,7 +47,7 @@ class GpsStatusManager {
         this.context = context;
         this.handler = handler;
 
-        onRecordingDistanceChanged(PreferencesUtils.getRecordingDistanceInterval());
+        onAccuracyThresholdChanged(PreferencesUtils.getThresholdHorizontalAccuracy());
         onMinSamplingIntervalChanged(PreferencesUtils.getMinSamplingInterval());
     }
 
@@ -64,11 +64,15 @@ class GpsStatusManager {
     }
 
     /**
-     * Method to change the bad threshold from outside.
+     * Method to change the accuracy threshold from outside.
+     * <p>
+     * This must be the same threshold the recorder uses to accept a position
+     * ({@code recording_gps_accuracy}): if the accuracy is worse than it, the position is
+     * dropped and the distance does not count, so the status has to say "bad signal".
      *
      * @param value New preference value to signalBadThreshold.
      */
-    public void onRecordingDistanceChanged(@NonNull Distance value) {
+    public void onAccuracyThresholdChanged(@NonNull Distance value) {
         horizontalAccuracyThreshold = value;
     }
 
@@ -110,6 +114,12 @@ class GpsStatusManager {
 
     void determineGpsStatusByTime(Instant now) {
         if (lastPosition == null) {
+            // The GPS is enabled but not a single position arrived: the signal is lost.
+            // Without this the status would stay "waiting for signal" forever and the
+            // recording would silently record nothing.
+            if (gpsStatus != GpsStatusValue.GPS_SIGNAL_LOST) {
+                setGpsStatus(GpsStatusValue.GPS_SIGNAL_LOST);
+            }
             return;
         }
         if (signalLostThreshold.minus(Duration.between(lastPosition.time(), now)).isNegative()) {

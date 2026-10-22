@@ -423,7 +423,9 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     private void onGpsStatusChanged(GpsStatusValue gpsStatusValue) {
         boolean snackbarShowing = snackbar != null && snackbar.isShown();
-        if (gpsStatusValue.isGpsStarted()) {
+        // A bad or lost signal means the distance is not counting: the user has to know,
+        // otherwise the recording silently ends up as a track with a frozen distance.
+        if (gpsStatusValue.isGpsStarted() && !gpsStatusValue.isSignalUnusable()) {
             if (snackbarShowing) {
                 snackbar.dismiss();
             }

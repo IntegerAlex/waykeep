@@ -24,4 +24,20 @@ public enum GpsStatusValue {
     public boolean isGpsStarted() {
         return this != GpsStatusValue.GPS_NONE && this != GpsStatusValue.GPS_DISABLED;
     }
+
+    /**
+     * @return true if the position data cannot be used for recording. The distance is not
+     * counting then: either the accuracy is too poor (the positions are dropped) or no
+     * position arrived at all.
+     */
+    public boolean isSignalUnusable() {
+        return this == GpsStatusValue.GPS_SIGNAL_BAD || this == GpsStatusValue.GPS_SIGNAL_LOST;
+    }
+
+    /**
+     * @return true if the received positions are good enough to be recorded.
+     */
+    public boolean hasGoodSignal() {
+        return this == GpsStatusValue.GPS_SIGNAL_FIX;
+    }
 }
