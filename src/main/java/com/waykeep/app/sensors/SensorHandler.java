@@ -121,7 +121,11 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
     @Override
     public void onDataReceived(AggregatorInput value) {
         if (aggregator == null) {
-            throw new RuntimeException("Received data while being disconnected.");
+            // A callback that was already queued when the sensor was disconnected arrives
+            // after the shutdown (e.g. the recording was just stopped). Drop the data
+            // instead of killing the app.
+            Log.w(TAG, "Received data while being disconnected. Ignoring it.");
+            return;
         }
         SensorHandler.this.aggregator.add(sensorManager.getNow(), value);
         sensorManager.onChange();
