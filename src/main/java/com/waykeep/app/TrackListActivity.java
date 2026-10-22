@@ -78,6 +78,7 @@ import com.waykeep.app.ui.aggregatedStatistics.AggregatedStatisticsActivity;
 import com.waykeep.app.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.monthlyRecap.MonthlyRecapActivity;
+import com.waykeep.app.ui.tour.TourOverlay;
 import com.waykeep.app.ui.personalBests.PersonalBestsActivity;
 import com.waykeep.app.ui.suggested.SuggestedRoutesActivity;
 import com.waykeep.app.ui.util.ActivityUtils;
@@ -280,6 +281,26 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         // Float button
         setFloatButton();
+
+        maybeShowTour();
+    }
+
+    /**
+     * First-run spotlight tour (Driver.js-style): points at the GPS button and the record
+     * button. Shown once, after the introduction slides.
+     */
+    private void maybeShowTour() {
+        if (!PreferencesUtils.shouldShowTour()) {
+            return;
+        }
+        PreferencesUtils.setShowTour(false);
+
+        List<TourOverlay.Step> steps = List.of(
+                new TourOverlay.Step(R.id.sensor_start_button, getString(R.string.tour_gps_title), getString(R.string.tour_gps_body)),
+                new TourOverlay.Step(R.id.track_list_fab_action, getString(R.string.tour_record_title), getString(R.string.tour_record_body))
+        );
+        // The targets need to be laid out before their position can be read.
+        viewBinding.getRoot().post(() -> new TourOverlay(this, steps, null).show());
     }
 
     @Override

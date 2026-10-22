@@ -342,6 +342,14 @@ public class PreferencesUtils {
         setBoolean(R.string.show_introduction_screen_key, introduction);
     }
 
+    public static boolean shouldShowTour() {
+        return getBoolean(R.string.show_tour_key, resources.getBoolean(R.bool.show_tour_default));
+    }
+
+    public static void setShowTour(boolean tour) {
+        setBoolean(R.string.show_tour_key, tour);
+    }
+
     public static UnitSystem getUnitSystem() {
         final String STATS_UNIT_DEFAULT = resources.getString(R.string.stats_units_default);
 

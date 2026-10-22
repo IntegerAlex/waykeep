@@ -826,6 +826,14 @@ limitations under the License.
     <string name="show_on_dashboard">Waykeep Dashboard API</string>
     <string name="show_on_dashboard_not_installed">No application supporting Waykeep Dashboard API installed.</string>
     <string name="introduction_osm_dashboard">Waykeep shows your recordings on a built-in offline map. For a live external dashboard, you can additionally install OSMDashboard.</string>
+
+    <!-- First-run spotlight tour -->
+    <string name="tour_next">Next</string>
+    <string name="tour_done">Got it</string>
+    <string name="tour_gps_title">The GPS button</string>
+    <string name="tour_gps_body">Tap here and choose “Allow all the time” so Waykeep keeps recording while the screen is off.</string>
+    <string name="tour_record_title">The red button starts a run</string>
+    <string name="tour_record_body">Tap it to start recording. Hold it to stop. Tap the map to add a marker.</string>
     <string name="settings_recording_min_sampling_interval_title">Sampling time interval</string>
     <string name="settings_recording_location_distance_summary">%1$s between recorded locations</string>
     <string name="settings_announcements_lap_power">Lap power</string>

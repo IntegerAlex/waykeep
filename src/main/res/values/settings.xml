@@ -310,6 +310,9 @@
     <string name="show_introduction_screen_key" translatable="false">showIntroduction</string>
     <bool name="show_introduction_screen_default">true</bool>
 
+    <string name="show_tour_key" translatable="false">showTour</string>
+    <bool name="show_tour_default" translatable="false">true</bool>
+
     <!-- User Interface Settings -->
 
     <string name="deleted20250703" translatable="false">uiDynamicColors</string> <!-- DELETED -->
