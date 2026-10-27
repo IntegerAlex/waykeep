@@ -115,7 +115,43 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         notificationBuilder.setContentIntent(pendingIntent);
+        setActions(context, false);
         updateNotification();
+    }
+
+    void onRecordingPaused(Context context, @NonNull Track.Id trackId) {
+        Intent intent = IntentUtils.newIntent(context, TrackRecordingActivity.class)
+                .putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
+
+        PendingIntent pendingIntent = TaskStackBuilder.create(context)
+                .addParentStack(TrackListActivity.class)
+                .addNextIntent(intent)
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationBuilder.setContentTitle(context.getString(R.string.track_paused_notification));
+        setActions(context, true);
+        updateNotification();
+    }
+
+    private void setActions(Context context, boolean paused) {
+        notificationBuilder.clearActions();
+        if (paused) {
+            notificationBuilder.addAction(0, context.getString(R.string.track_resume),
+                    serviceIntent(context, TrackRecordingService.ACTION_RESUME, 2));
+            notificationBuilder.addAction(0, context.getString(R.string.track_stop),
+                    serviceIntent(context, TrackRecordingService.ACTION_STOP, 3));
+        } else {
+            notificationBuilder.addAction(0, context.getString(R.string.track_pause),
+                    serviceIntent(context, TrackRecordingService.ACTION_PAUSE, 1));
+            notificationBuilder.addAction(0, context.getString(R.string.track_stop),
+                    serviceIntent(context, TrackRecordingService.ACTION_STOP, 3));
+        }
+    }
+
+    private PendingIntent serviceIntent(Context context, String action, int requestCode) {
+        Intent intent = new Intent(context, TrackRecordingService.class).setAction(action);
+        return PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     void updateTrackPoint(Context context, RecordingData recordingData, Distance thresholdHorizontalAccuracy) {

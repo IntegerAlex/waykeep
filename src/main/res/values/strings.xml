@@ -221,6 +221,12 @@ limitations under the License.
     <string name="generic_name_line">Name: %1$s</string>
     <string name="generic_open_track">Open Track</string>
     <string name="generic_recording">Recording…</string>
+    <string name="track_pause">Pause</string>
+    <string name="track_resume">Resume</string>
+    <string name="track_stop">Stop</string>
+    <string name="track_paused_notification">Paused — GPS stays on</string>
+    <string name="track_paused_hint">Paused — GPS stays on, tap to resume</string>
+    <string name="track_resumed">Resumed</string>
     <string name="generic_save">Save</string>
     <string name="generic_tracks">Tracks</string>
     <string name="generic_overwrite">Overwrite</string>

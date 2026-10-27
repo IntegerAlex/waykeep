@@ -221,6 +221,13 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         });
         itemTouchhelper.attachToRecyclerView(viewBinding.trackList);
         viewBinding.trackListFabAction.setOnClickListener((view) -> {
+            if (recordingStatus.isPaused()) {
+                // Paused -> jump back into the recording screen to resume.
+                Intent resumeIntent = IntentUtils.newIntent(TrackListActivity.this, TrackRecordingActivity.class);
+                resumeIntent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, recordingStatus.trackId());
+                startActivity(resumeIntent);
+                return;
+            }
             if (recordingStatus.isRecording()) {
                 // Explicit stop path; long-press remains as a shortcut.
                 new MaterialAlertDialogBuilder(this)
@@ -615,7 +622,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     }
 
     private void setFloatButton() {
-        viewBinding.trackListFabAction.setImageResource(recordingStatus.isRecording() ? R.drawable.ic_baseline_stop_24 : R.drawable.ic_baseline_record_24);
+        int icon = recordingStatus.isPaused() ? R.drawable.ic_baseline_play_arrow_24
+                : recordingStatus.isRecording() ? R.drawable.ic_baseline_stop_24 : R.drawable.ic_baseline_record_24;
+        viewBinding.trackListFabAction.setImageResource(icon);
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, recordingStatus.isRecording() ? R.color.opentracks : R.color.red_dark));
     }
 

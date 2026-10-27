@@ -55,6 +55,10 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     public static final RecordingStatus STATUS_DEFAULT = RecordingStatus.notRecording();
     public static final GpsStatusValue STATUS_GPS_DEFAULT = GpsStatusValue.GPS_NONE;
 
+    public static final String ACTION_PAUSE = "com.waykeep.app.services.TRACK_RECORDING_PAUSE";
+    public static final String ACTION_RESUME = "com.waykeep.app.services.TRACK_RECORDING_RESUME";
+    public static final String ACTION_STOP = "com.waykeep.app.services.TRACK_RECORDING_STOP";
+
     public TrackPoint getLastStoredTrackPointWithLocation() {
         return trackRecordingManager.getLastStoredTrackPointWithLocation();
     }
@@ -147,6 +151,15 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getAction() != null) {
+            switch (intent.getAction()) {
+                case ACTION_PAUSE -> pauseCurrentTrack();
+                case ACTION_RESUME -> resumeCurrentTrack();
+                case ACTION_STOP -> endCurrentTrack();
+                default -> Log.w(TAG, "Unknown action: " + intent.getAction());
+            }
+            return START_STICKY;
+        }
         if (intent == null) {
             Log.i(TAG, "Service got killed and is restarting");
 
@@ -206,6 +219,51 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         startRecording(trackId);
     }
 
+    /**
+     * Pauses the recording: the segment is closed so time/distance freeze, but the
+     * sensors keep running so resume is instant (no GPS re-acquire wait).
+     */
+    public void pauseCurrentTrack() {
+        if (!isRecordingAndNotPaused()) {
+            Log.w(TAG, "Ignore pauseCurrentTrack. Not recording or already paused.");
+            return;
+        }
+        Log.i(TAG, "pauseCurrentTrack");
+
+        trackRecordingManager.pauseCurrentTrack();
+
+        // Settle the UI on the pause point (the periodic update skips paused
+        // state, so post the frozen stats directly without announcing).
+        recordingDataObservable.postValue(trackRecordingManager.getDataForUI());
+        updateRecordingStatus(recordingStatus.pause());
+
+        stopUpdateRecordingData();
+
+        voiceAnnouncementManager.stop();
+
+        notificationManager.onRecordingPaused(this, recordingStatus.trackId());
+    }
+
+    /**
+     * Resumes a paused recording: a new segment is opened, stats continue from the
+     * pause point. Sensors were never stopped, so there is no re-acquire delay.
+     */
+    public void resumeCurrentTrack() {
+        if (!isPaused()) {
+            Log.w(TAG, "Ignore resumeCurrentTrack. Not paused.");
+            return;
+        }
+        Track.Id trackId = recordingStatus.trackId();
+        Log.i(TAG, "resumeCurrentTrack");
+
+        if (!trackRecordingManager.resumeExistingTrack(trackId)) {
+            Log.w(TAG, "Cannot resume a non-existing track.");
+            return;
+        }
+
+        startRecording(trackId);
+    }
+
     private void startRecording(Track.Id trackId) {
         updateRecordingStatus(RecordingStatus.record(trackId));
         TrackIdStorage.set(this, trackId);
@@ -246,10 +304,17 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             return;
         }
 
+        boolean wasPaused = recordingStatus.isPaused();
+
         // Set recording status
         updateRecordingStatus(STATUS_DEFAULT);
 
-        trackRecordingManager.endCurrentTrack();
+        if (wasPaused) {
+            // Segment end was already inserted on pause.
+            trackRecordingManager.endCurrentTrackAfterPause();
+        } else {
+            trackRecordingManager.endCurrentTrack();
+        }
         TrackIdStorage.unset(this);
 
         stopUpdateRecordingData();
@@ -292,8 +357,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public boolean newTrackPoint(TrackPoint trackPoint, Distance thresholdHorizontalAccuracy) {
-        if (!isRecording()) {
-            Log.w(TAG, "Ignore newTrackPoint. Not recording.");
+        if (!isRecordingAndNotPaused()) {
             return false;
         }
 
@@ -343,8 +407,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     }
 
     private void updateRecordingDataWhileRecording() {
-        if (!isRecording()) {
-            Log.w(TAG, "Currently not recording; cannot update data.");
+        if (!isRecordingAndNotPaused()) {
             return;
         }
 
@@ -378,6 +441,14 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     @Deprecated //TODO Should be @VisibleForTesting
     public boolean isRecording() {
         return recordingStatus.isRecording();
+    }
+
+    public boolean isPaused() {
+        return recordingStatus.isPaused();
+    }
+
+    public boolean isRecordingAndNotPaused() {
+        return recordingStatus.isRecordingAndNotPaused();
     }
 
 

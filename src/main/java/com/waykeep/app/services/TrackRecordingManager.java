@@ -133,6 +133,31 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         reset();
     }
 
+    /**
+     * Ends a track that was paused (segment end was already inserted on pause).
+     * Clears state without inserting a second segment end.
+     */
+    synchronized void endCurrentTrackAfterPause() {
+        handler.removeCallbacks(ON_IDLE);
+        trackId = null;
+        trackStatisticsUpdater = null;
+
+        reset();
+    }
+
+    /**
+     * Pauses the current track: the segment is closed with SEGMENT_END_MANUAL so
+     * statistics stop growing, but the sensors keep running (GPS stays hot for
+     * an instant resume).
+     */
+    synchronized void pauseCurrentTrack() {
+        handler.removeCallbacks(ON_IDLE);
+        TrackPoint segmentEnd = trackPointCreator.createSegmentEnd();
+        insertTrackPoint(segmentEnd, true);
+
+        reset();
+    }
+
     RecordingData getDataForUI() {
         if (trackId == null) {
             throw new RuntimeException("Requesting data if not recording should not be done.");

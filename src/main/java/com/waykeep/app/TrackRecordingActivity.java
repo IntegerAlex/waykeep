@@ -150,7 +150,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
             viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
         }
 
-        viewBinding.trackRecordingFabAction.setImageResource(R.drawable.ic_baseline_stop_24);
+        viewBinding.trackRecordingFabAction.setImageResource(R.drawable.ic_baseline_pause_24);
         viewBinding.trackRecordingFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.opentracks));
         viewBinding.trackRecordingFabAction.setBackgroundColor(ContextCompat.getColor(this, R.color.opentracks));
         viewBinding.trackRecordingFabAction.setOnLongClickListener((view) -> {
@@ -163,7 +163,19 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
             finish();
             return true;
         });
-        viewBinding.trackRecordingFabAction.setOnClickListener((view) -> Toast.makeText(TrackRecordingActivity.this, getString(R.string.hold_to_stop), Toast.LENGTH_LONG).show());
+        viewBinding.trackRecordingFabAction.setOnClickListener((view) -> {
+            var service = trackRecordingServiceConnection.getTrackRecordingService();
+            if (service == null) {
+                return;
+            }
+            if (service.isPaused()) {
+                service.resumeCurrentTrack();
+                Toast.makeText(TrackRecordingActivity.this, getString(R.string.track_resumed), Toast.LENGTH_SHORT).show();
+            } else {
+                service.pauseCurrentTrack();
+                Toast.makeText(TrackRecordingActivity.this, getString(R.string.track_paused_hint), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         setSupportActionBar(viewBinding.bottomAppBar);
     }
@@ -416,6 +428,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         recordingStatus = status;
 
         trackDataHub.setRecordingStatus(recordingStatus);
+
+        // Tap pauses, long-press stops: the icon shows the tap action.
+        viewBinding.trackRecordingFabAction.setImageResource(status.isPaused()
+                ? R.drawable.ic_baseline_play_arrow_24
+                : R.drawable.ic_baseline_pause_24);
 
         setLockscreenPolicy();
         setScreenOnPolicy();

@@ -204,6 +204,43 @@ public class TrackRecordingServiceStateMachineTest {
 
     @MediumTest
     @Test
+    public void recording_pauseResume_keepsSensorsHot() {
+        // given
+        Track.Id trackId = service.startNewTrack();
+        waitUntilRecordingStatusIs(new RecordingStatus(trackId));
+        waitUntilGpsStatusIs(GpsStatusValue.GPS_ENABLED);
+
+        // when
+        service.pauseCurrentTrack();
+        waitUntilRecordingStatusIs(RecordingStatus.paused(trackId));
+
+        // then: still recording (sensors keep running), but stats are frozen
+        assertTrue(service.isRecording());
+        assertTrue(service.isPaused());
+        assertFalse(service.isRecordingAndNotPaused());
+        assertEquals(GpsStatusValue.GPS_ENABLED, service.getGpsStatusObservable().getValue());
+
+        // when
+        service.resumeCurrentTrack();
+        waitUntilRecordingStatusIs(new RecordingStatus(trackId));
+
+        // then: recording again without a GPS re-acquire gap
+        assertTrue(service.isRecordingAndNotPaused());
+        assertEquals(GpsStatusValue.GPS_ENABLED, service.getGpsStatusObservable().getValue());
+
+        // when paused and stopped: no second segment end, clean shutdown
+        service.pauseCurrentTrack();
+        waitUntilRecordingStatusIs(RecordingStatus.paused(trackId));
+        service.endCurrentTrack();
+        waitUntilRecordingStatusIs(TrackRecordingService.STATUS_DEFAULT);
+
+        // then
+        assertFalse(service.isRecording());
+        assertEquals(GpsStatusValue.GPS_NONE, service.getGpsStatusObservable().getValue());
+    }
+
+    @MediumTest
+    @Test
     public void cannotResume_non_existing_track() {
         // given
         assertFalse(service.isRecording());
