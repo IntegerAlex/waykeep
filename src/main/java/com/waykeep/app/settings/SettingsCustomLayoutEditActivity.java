@@ -49,7 +49,7 @@ public class SettingsCustomLayoutEditActivity extends AbstractActivity implement
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (adapterFieldsVisible.isItemWide(position)) {
+                if (adapterFieldsVisible.isItemFullWidth(position)) {
                     return numColumns;
                 }
                 return 1;
@@ -131,6 +131,14 @@ public class SettingsCustomLayoutEditActivity extends AbstractActivity implement
                     .setItems(new String[]{getString(field.isPrimary() ? R.string.field_set_secondary : R.string.field_set_primary), getString(R.string.field_remove_from_layout)}, (dialog, which) -> {
                         if (which == 0) {
                             field.togglePrimary();
+                            if (field.isPrimary()) {
+                                // One hero per layout: the first primary field wins.
+                                for (DataField other : recordingLayoutFieldsVisible.getFields()) {
+                                    if (other.isPrimary() && !other.getKey().equals(field.getKey())) {
+                                        other.togglePrimary();
+                                    }
+                                }
+                            }
                         } else {
                             recordingLayoutFieldsVisible.removeField(field);
                             field.toggleVisibility();

@@ -132,8 +132,11 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
         }
     }
 
-    public boolean isItemWide(int position) {
-        return recordingLayout.getFields().get(position).isWide();
+    public boolean isItemFullWidth(int position) {
+        DataField dataField = recordingLayout.getFields().get(position);
+        // The plate gives the hero (first visible primary) a full-width row, so the editor
+        // has to preview it at the same width.
+        return dataField.isWide() || dataField.isPrimary();
     }
 
     public DataField getItem(int position) {

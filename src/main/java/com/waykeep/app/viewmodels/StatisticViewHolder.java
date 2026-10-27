@@ -1,8 +1,10 @@
 package com.waykeep.app.viewmodels;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.viewbinding.ViewBinding;
 
@@ -37,5 +39,15 @@ public abstract class StatisticViewHolder<T extends ViewBinding> {
 
     Context getContext() {
         return context;
+    }
+
+    /**
+     * The numeral must stay readable at large system font scales: shrink it to fit rather than
+     * ellipsizing the one number the screen exists for. The bounds keep the hero and register
+     * ranks apart at the default scale.
+     */
+    protected static void autosizeValue(TextView value, boolean primary) {
+        value.setAutoSizeTextTypeUniformWithConfiguration(
+                primary ? 28 : 12, primary ? 56 : 24, 1, TypedValue.COMPLEX_UNIT_SP);
     }
 }

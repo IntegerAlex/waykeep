@@ -225,6 +225,7 @@ limitations under the License.
     <string name="track_resume">Resume</string>
     <string name="track_stop">Stop</string>
     <string name="track_paused_notification">Paused — GPS stays on</string>
+    <string name="recording_status_recording">Recording</string>
     <string name="track_paused_hint">Paused — GPS stays on, tap to resume</string>
     <string name="track_resumed">Resumed</string>
     <string name="generic_save">Save</string>

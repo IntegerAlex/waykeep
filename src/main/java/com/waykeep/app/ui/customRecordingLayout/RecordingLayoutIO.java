@@ -42,6 +42,8 @@ public class RecordingLayoutIO {
             }
             recordingLayout.addField(fromCSV(fieldParts, resources));
         }
+        // Layouts stored before the plate existed can carry several primaries.
+        recordingLayout.normalizePrimary();
         return recordingLayout;
     }
 

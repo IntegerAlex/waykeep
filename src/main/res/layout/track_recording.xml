@@ -17,8 +17,49 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabGravity="fill"
+            app:tabIndicatorColor="@color/waykeep_cyan_dim"
             app:tabIndicatorFullWidth="false"
-            app:tabMode="fixed" />
+            app:tabIndicatorHeight="2dp"
+            app:tabMode="fixed"
+            app:tabTextAppearance="@style/TextAppearance.OpenTracks.TabText"
+            app:tabTextColor="@color/tab_text_color" />
+
+        <!--
+          Recording state, screen-wide so it is visible on the Stats, Map and Chart tabs.
+          Dot only while recording with a usable GPS signal; dot plus words for paused and
+          for GPS problems. Hidden when not recording.
+        -->
+        <LinearLayout
+            android:id="@+id/recording_status_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurfaceContainerLow"
+            android:gravity="center_vertical"
+            android:minHeight="24dp"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="3dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/recording_status_strip_dot"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_status_dot" />
+
+            <TextView
+                android:id="@+id/recording_status_strip_text"
+                style="@style/TextAppearance.OpenTracks.StatusStrip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/track_recording_coordinator_layout"
@@ -54,7 +95,8 @@
         android:contentDescription="@string/image_stop"
         android:src="@drawable/ic_baseline_record_24"
         app:elevation="6dp"
+        app:layout_anchor="@id/bottom_app_bar"
         app:maxImageSize="30dp"
-        app:layout_anchor="@id/bottom_app_bar" />
+        app:tint="@android:color/black" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

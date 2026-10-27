@@ -966,17 +966,19 @@ public class PreferencesUtils {
 
     public static RecordingLayout getDefaultLayout() {
         //TODO We could merge this with Mapping, right?
+        // Five registers are what a glance can use: distance (hero), moving time, current speed,
+        // average speed, gain. Everything else stays available in the custom layout editor.
         List<DataField> defaultFields = List.of(
                 new DataField(resources.getString(R.string.stats_custom_layout_distance_key), true, true, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_total_time_key), true, true, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_speed_key), true, true, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_moving_time_key), true, true, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_moving_time_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_speed_key), true, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_average_speed_key), true, false, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_max_speed_key), true, false, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_average_moving_speed_key), true, false, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_altitude_key), true, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_gain_key), true, false, false),
-                new DataField(resources.getString(R.string.stats_custom_layout_loss_key), true, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_total_time_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_max_speed_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_average_moving_speed_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_altitude_key), false, false, false),
+                new DataField(resources.getString(R.string.stats_custom_layout_loss_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_pace_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_average_moving_pace_key), false, false, false),
                 new DataField(resources.getString(R.string.stats_custom_layout_average_pace_key), false, false, false),

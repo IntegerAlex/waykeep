@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.gridlayout.widget.GridLayout;
 
+import com.google.android.material.color.MaterialColors;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +137,7 @@ public class StatisticsRecordingFragment extends Fragment {
             param.setGravity(Gravity.FILL_HORIZONTAL);
             param.width = 0;
 
-            if (dataField.isWide()) {
+            if (dataField.isWide() || dataField.isPrimary()) {
                 rowIndex++;
                 param.columnSpec = GridLayout.spec(0, recordingLayout.getColumnsPerRow(), 1);
                 param.rowSpec = GridLayout.spec(rowIndex, 1, 1);
@@ -162,7 +164,29 @@ public class StatisticsRecordingFragment extends Fragment {
             } catch (Exception e) {
                 throw new RuntimeException("Could not add " + dataField.getKey(), e);
             }
+
+            if (dataField.isPrimary()) {
+                // The plate's only rule, under the hero.
+                addRule(recordingLayout.getColumnsPerRow(), rowIndex);
+                rowIndex++;
+            }
         }
+    }
+
+    private void addRule(int columns, int row) {
+        float density = getResources().getDisplayMetrics().density;
+        View rule = new View(getContext());
+        rule.setBackgroundColor(MaterialColors.getColor(requireContext(),
+                com.google.android.material.R.attr.colorOutlineVariant, 0));
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = Math.max(1, (int) density);
+        params.columnSpec = GridLayout.spec(0, columns, 1);
+        params.rowSpec = GridLayout.spec(row, 1, 1);
+        params.setMargins(0, (int) (16 * density), 0, (int) (4 * density));
+
+        viewBinding.statsLayout.addView(rule, params);
     }
 
     private void onRecordingDataChanged(RecordingData recordingData) {

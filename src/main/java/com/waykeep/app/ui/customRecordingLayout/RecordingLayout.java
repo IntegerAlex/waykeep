@@ -81,6 +81,24 @@ public class RecordingLayout implements Parcelable {
         return result;
     }
 
+    /**
+     * Only the first visible primary field is rendered as the hero register; a second one would
+     * compete with it. Hidden fields never render, so their flag is left alone.
+     */
+    public void normalizePrimary() {
+        boolean primarySeen = false;
+        for (DataField dataField : dataFields) {
+            if (!dataField.isVisible() || !dataField.isPrimary()) {
+                continue;
+            }
+            if (primarySeen) {
+                dataField.togglePrimary();
+            } else {
+                primarySeen = true;
+            }
+        }
+    }
+
     public void moveField(int from, int to) {
         DataField dataFieldToMove = dataFields.remove(from);
         dataFields.add(to, dataFieldToMove);

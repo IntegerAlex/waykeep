@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Clock register: same anatomy as stats_generic_item, without a unit gutter. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp">
-
-    <TextClock
-        android:id="@+id/stats_clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextAppearance.OpenTracks.PrimaryValue"
-        android:value="@string/value_unknown"
-        android:format12Hour="hh:mm:ss a"
-        android:format24Hour="HH:mm:ss"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="00:00:00" />
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/stats_description_main"
-        android:layout_width="wrap_content"
+        style="@style/TextAppearance.OpenTracks.RegisterLabel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.OpenTracks.PrimaryHeader"
         android:text="@string/stats_clock"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stats_clock" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextClock
+        android:id="@+id/stats_clock"
+        style="@style/TextAppearance.OpenTracks.RegisterValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:format12Hour="hh:mm:ss a"
+        android:format24Hour="HH:mm:ss"
+        android:gravity="end"
+        android:value="@string/value_unknown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stats_description_main"
+        tools:text="00:00:00" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

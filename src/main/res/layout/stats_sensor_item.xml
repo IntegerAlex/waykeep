@@ -1,52 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sensor register of the recording plate. Same anatomy as stats_generic_item, plus the sensor
+  name as a detail line under the numeral.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
     <TextView
-        android:id="@+id/stats_value"
-        style="@style/TextAppearance.OpenTracks.PrimaryValue"
-        android:layout_width="wrap_content"
+        android:id="@+id/stats_description_main"
+        style="@style/TextAppearance.OpenTracks.RegisterLabel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:value="@string/value_unknown"
-        app:layout_constraintEnd_toStartOf="@id/stats_unit"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="90" />
+        tools:text="@string/stats_sensors_heart_rate" />
 
     <TextView
         android:id="@+id/stats_unit"
-        style="@style/TextAppearance.OpenTracks.PrimaryUnit"
+        style="@style/TextAppearance.OpenTracks.RegisterUnit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/stats_value"
+        android:gravity="start"
+        app:layout_constraintWidth_min="36dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/stats_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/stats_value"
         tools:text="@string/sensor_unit_beats_per_minute" />
 
     <TextView
-        android:id="@+id/stats_description_main"
-        style="@style/TextAppearance.OpenTracks.PrimaryHeader"
-        android:layout_width="wrap_content"
+        android:id="@+id/stats_value"
+        style="@style/TextAppearance.OpenTracks.RegisterValue"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="end"
+        android:value="@string/value_unknown"
+        app:layout_constraintEnd_toStartOf="@id/stats_unit"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stats_value"
-        tools:text="@string/sensor_state_heart_rate" />
+        app:layout_constraintTop_toBottomOf="@id/stats_description_main"
+        tools:text="142" />
 
     <TextView
         android:id="@+id/stats_description_secondary"
-        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
-        android:layout_width="wrap_content"
+        style="@style/TextAppearance.OpenTracks.RegisterDetail"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stats_description_main"
-        tools:text="90" />
+        app:layout_constraintTop_toBottomOf="@id/stats_value"
+        tools:text="Polar H10" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

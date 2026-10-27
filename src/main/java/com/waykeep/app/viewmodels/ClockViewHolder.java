@@ -18,7 +18,8 @@ public class ClockViewHolder extends StatisticViewHolder<StatsClockItemBinding> 
     @Override
     public void configureUI(DataField dataField) {
         //TODO Unify with GenericStatisticsViewHolder?
-        getBinding().statsClock.setTextAppearance(dataField.isPrimary() ? R.style.TextAppearance_OpenTracks_PrimaryValue : R.style.TextAppearance_OpenTracks_SecondaryValue);
+        getBinding().statsClock.setTextAppearance(dataField.isPrimary() ? R.style.TextAppearance_OpenTracks_HeroValue : R.style.TextAppearance_OpenTracks_RegisterValue);
+        autosizeValue(getBinding().statsClock, dataField.isPrimary());
     }
 
     @Override

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurfaceContainerLow"
     android:clipToPadding="false"
-    android:paddingHorizontal="16dp"
+    android:paddingHorizontal="20dp"
     android:paddingVertical="12dp">
 
     <androidx.gridlayout.widget.GridLayout

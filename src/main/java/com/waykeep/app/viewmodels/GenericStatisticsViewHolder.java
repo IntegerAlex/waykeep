@@ -25,8 +25,9 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
     @Override
     public void configureUI(DataField dataField) {
-        getBinding().statsValue.setTextAppearance(dataField.isPrimary() ? R.style.TextAppearance_OpenTracks_PrimaryValue : R.style.TextAppearance_OpenTracks_SecondaryValue);
-        getBinding().statsDescriptionMain.setTextAppearance(dataField.isPrimary() ? R.style.TextAppearance_OpenTracks_PrimaryHeader : R.style.TextAppearance_OpenTracks_SecondaryHeader);
+        // Labels are rank-independent; only the numeral grows into the hero register.
+        getBinding().statsValue.setTextAppearance(dataField.isPrimary() ? R.style.TextAppearance_OpenTracks_HeroValue : R.style.TextAppearance_OpenTracks_RegisterValue);
+        autosizeValue(getBinding().statsValue, dataField.isPrimary());
     }
 
     public static class Distance extends GenericStatisticsViewHolder {

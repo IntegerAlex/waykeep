@@ -1,15 +1,19 @@
 package com.waykeep.app;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +25,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.time.Duration;
@@ -73,7 +76,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     private static final int MAP_TAB_POSITION = 3;
 
-    private Snackbar snackbar;
+    private ValueAnimator statusDotPulse;
 
     // The following are setFrequency in onCreate
     private ContentProviderUtils contentProviderUtils;
@@ -86,6 +89,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     private ArrayList<GeoPoint> plannedRoute;
 
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
+    private GpsStatusValue gpsStatus;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -273,6 +277,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     @Override
     protected void onDestroy() {
+        stopStatusDotPulse();
         super.onDestroy();
         viewBinding = null;
         trackRecordingServiceConnection = null;
@@ -422,7 +427,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         return null;
     }
 
-    private void onRecordingStatusChanged(RecordingStatus status) {        if (!status.isRecording()) {
+    private void onRecordingStatusChanged(RecordingStatus status) {
+        if (!status.isRecording()) {
             finish();
         }
         recordingStatus = status;
@@ -434,35 +440,91 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 ? R.drawable.ic_baseline_play_arrow_24
                 : R.drawable.ic_baseline_pause_24);
 
+        updateStatusStrip();
+
         setLockscreenPolicy();
         setScreenOnPolicy();
     }
 
     private void onGpsStatusChanged(GpsStatusValue gpsStatusValue) {
-        boolean snackbarShowing = snackbar != null && snackbar.isShown();
-        // A bad or lost signal means the distance is not counting: the user has to know,
-        // otherwise the recording silently ends up as a track with a frozen distance.
-        if (gpsStatusValue.isGpsStarted() && !gpsStatusValue.isSignalUnusable()) {
-            if (snackbarShowing) {
-                snackbar.dismiss();
+        gpsStatus = gpsStatusValue;
+        updateStatusStrip();
+    }
+
+    /**
+     * The strip is the persistent home of recording state, visible on every tab. It stays silent
+     * while recording with a usable signal: a live dot alone answers "is it still recording?".
+     * Problems get words. A bad or lost signal means the distance is not counting, so the user
+     * has to know.
+     */
+    private void updateStatusStrip() {
+        if (!recordingStatus.isRecording()) {
+            viewBinding.recordingStatusStrip.setVisibility(View.GONE);
+            stopStatusDotPulse();
+            return;
+        }
+
+        String message = null;
+        if (recordingStatus.isPaused()) {
+            message = getString(R.string.track_paused_notification);
+        } else if (gpsStatus != null && gpsStatus.isSignalUnusable()) {
+            message = getString(gpsStatus.message);
+        } else if (gpsStatus == GpsStatusValue.GPS_DISABLED || gpsStatus == GpsStatusValue.GPS_NONE) {
+            if (!PreferencesUtils.shouldShowGpsDisabledWarning()) {
+                viewBinding.recordingStatusStrip.setVisibility(View.GONE);
+                stopStatusDotPulse();
+                return;
             }
-            return;
+            message = getString(gpsStatus.message);
+        } else if (gpsStatus == GpsStatusValue.GPS_ENABLED) {
+            message = getString(gpsStatus.message);
         }
 
-        if (snackbarShowing) {
+        boolean nominal = message == null;
+        viewBinding.recordingStatusStrip.setVisibility(View.VISIBLE);
+        viewBinding.recordingStatusStrip.setContentDescription(
+                nominal ? getString(R.string.recording_status_recording) : message);
+        viewBinding.recordingStatusStripText.setVisibility(nominal ? View.GONE : View.VISIBLE);
+        viewBinding.recordingStatusStripText.setText(message);
+        viewBinding.recordingStatusStripDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this,
+                nominal ? R.color.semantic_recording_red : R.color.semantic_offline_amber)));
+
+        if (nominal) {
+            startStatusDotPulse();
+        } else {
+            stopStatusDotPulse();
+        }
+    }
+
+    private void startStatusDotPulse() {
+        if (statusDotPulse != null) {
             return;
         }
-
-        if (!PreferencesUtils.shouldShowGpsDisabledWarning()) {
+        if (animationsDisabled()) {
+            viewBinding.recordingStatusStripDot.setAlpha(1f);
             return;
         }
+        statusDotPulse = ValueAnimator.ofFloat(0.35f, 1f);
+        statusDotPulse.setDuration(1200);
+        statusDotPulse.setRepeatCount(ValueAnimator.INFINITE);
+        statusDotPulse.setRepeatMode(ValueAnimator.REVERSE);
+        statusDotPulse.setInterpolator(new AccelerateDecelerateInterpolator());
+        statusDotPulse.addUpdateListener(animation ->
+                viewBinding.recordingStatusStripDot.setAlpha((float) animation.getAnimatedValue()));
+        statusDotPulse.start();
+    }
 
-        snackbar = Snackbar
-                .make(viewBinding.trackRecordingCoordinatorLayout,
-                        getString(R.string.gps_recording_status, getString(gpsStatusValue.message), getString(R.string.gps_recording_without_signal)),
-                        Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(R.string.generic_dismiss), v -> {
-                });
-        snackbar.show();
+    private void stopStatusDotPulse() {
+        if (statusDotPulse != null) {
+            statusDotPulse.cancel();
+            statusDotPulse = null;
+        }
+        if (viewBinding != null) {
+            viewBinding.recordingStatusStripDot.setAlpha(1f);
+        }
+    }
+
+    private boolean animationsDisabled() {
+        return Settings.Global.getFloat(getContentResolver(), Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f;
     }
 }
