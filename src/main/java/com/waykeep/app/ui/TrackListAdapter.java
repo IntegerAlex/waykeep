@@ -6,7 +6,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
-import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,18 +28,14 @@ import com.waykeep.app.R;
 import com.waykeep.app.TrackRecordedActivity;
 import com.waykeep.app.TrackRecordingActivity;
 import com.waykeep.app.data.TrackListIterator;
-import com.waykeep.app.data.models.Speed;
-import com.waykeep.app.data.models.SpeedFormatter;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.databinding.TrackListItemBinding;
 import com.waykeep.app.services.RecordingStatus;
-import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
 import com.waykeep.app.ui.util.ListItemUtils;
 import com.waykeep.app.util.IntentUtils;
-import com.waykeep.app.util.StringUtils;
 
 public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, RecyclerView.ViewHolder> implements ActionMode.Callback {
 
@@ -250,72 +245,36 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
             viewBinding.trackListItemDistance.setText(distanceText);
             viewBinding.trackListItemDuration.setText(timeText);
 
-            bindPace(tracksListItem);
-            bindElevation(tracksListItem);
+            String dateTime = ListItemUtils.getDateTimeText(context, tracksListItem.startTime(), tracksListItem.zoneOffset());
+            String markerSuffix = tracksListItem.markerCount() > 0
+                    ? context.getResources().getQuantityString(R.plurals.track_list_markers, tracksListItem.markerCount(), tracksListItem.markerCount())
+                    : null;
+            viewBinding.trackListItemDate.setText(ListItemUtils.buildContextLine(dateTime, tracksListItem.activityTypeLocalized(), markerSuffix));
 
-            if (tracksListItem.markerCount() > 0) {
-                viewBinding.trackListItemMarkerChip.setVisibility(View.VISIBLE);
-                //noinspection SetTextI18n
-                viewBinding.trackListItemMarkerCount.setText(Integer.toString(tracksListItem.markerCount()));
-            } else {
-                viewBinding.trackListItemMarkerChip.setVisibility(View.GONE);
+            // Recording mark: the dot carries the colour, the duration already reads "Recording".
+            boolean showDot = isRecordingThisTrackRecording;
+            viewBinding.trackListItemRowDot.setVisibility(showDot ? View.VISIBLE : View.GONE);
+            if (showDot) {
+                viewBinding.trackListItemRowDot.setImageTintList(android.content.res.ColorStateList.valueOf(
+                        androidx.core.content.ContextCompat.getColor(context, R.color.semantic_recording_red)));
             }
-
-            ListItemUtils.setDateAndTime(context, viewBinding.trackListItemDate, viewBinding.trackListItemTime, tracksListItem.startTime(), tracksListItem.zoneOffset());
-
-            viewBinding.trackListItemActivityTypeLocalized.setText(tracksListItem.activityTypeLocalized());
-            viewBinding.trackListItemActivityTypeLocalized.setVisibility(TextUtils.isEmpty(tracksListItem.activityTypeLocalized()) ? View.GONE : View.VISIBLE);
-
-            viewBinding.trackListItemDescription.setText(highlight(tracksListItem.description()));
-            viewBinding.trackListItemDescription.setVisibility(TextUtils.isEmpty(tracksListItem.description()) ? View.GONE : View.VISIBLE);
+            android.view.ViewGroup.MarginLayoutParams dateParams =
+                    (android.view.ViewGroup.MarginLayoutParams) viewBinding.trackListItemDate.getLayoutParams();
+            dateParams.setMarginStart(showDot ? (int) (6 * context.getResources().getDisplayMetrics().density) : 0);
 
             setSelected(selection.get((int) trackId.id()));
         }
 
         /**
-          * Shows average speed or pace (per the user's speed/pace preference for this activity type).
-          */
-        private void bindPace(TrackListIterator.Item item) {
-            boolean reportSpeed = PreferencesUtils.isReportSpeed(item.activityTypeLocalized());
-            viewBinding.trackListItemPaceLabel.setText(reportSpeed ? R.string.stats_speed : R.string.stats_pace);
-
-            Speed averageSpeed = Speed.of(item.totalDistance(), item.movingTime());
-            if (averageSpeed.isInvalid()) {
-                averageSpeed = Speed.ZERO;
-            }
-
-            SpeedFormatter formatter = SpeedFormatter.Builder()
-                    .setUnit(unitSystem)
-                    .setReportSpeedOrPace(reportSpeed)
-                    .build(context);
-            viewBinding.trackListItemPace.setText(formatter.formatSpeed(averageSpeed));
-        }
-
-        /**
-          * Shows altitude gain; falls back to the unknown placeholder when the track has no elevation data.
-          */
-        private void bindElevation(TrackListIterator.Item item) {
-            Float gain = item.altitudeGain_m();
-            if (gain == null) {
-                viewBinding.trackListItemElevation.setText(R.string.value_unknown);
-                return;
-            }
-
-            Pair<String, String> parts = StringUtils.getAltitudeParts(context, gain, unitSystem);
-            viewBinding.trackListItemElevation.setText(context.getString(R.string.altitude_with_unit, parts.first, parts.second));
-        }
-
-        /**
-          * Renders the route into the hero. The bitmap is delivered asynchronously; a stale result
-          * (this holder was recycled to another track) is discarded.
+          * Renders the route into the row's 64dp index. The bitmap is delivered asynchronously;
+          * a stale result (this holder was recycled to another track) is discarded.
           */
         private void renderThumbnail() {
             float density = context.getResources().getDisplayMetrics().density;
-            int width = context.getResources().getDisplayMetrics().widthPixels - Math.round(24 * density);
-            int height = TrackThumbnailLoader.heroHeightPx(context);
+            int size = Math.round(64 * density);
             Track.Id boundId = trackId;
 
-            thumbnailLoader.load(boundId, width, height, bitmap -> {
+            thumbnailLoader.load(boundId, size, size, bitmap -> {
                 if (bitmap != null && boundId.equals(trackId)) {
                     viewBinding.trackListItemThumbnail.setImageBitmap(bitmap);
                 }

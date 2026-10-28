@@ -258,6 +258,10 @@ limitations under the License.
     <string name="gps_recording_without_signal">Waykeep is recording without GPS data.</string>
     <!-- Image -->
     <string name="image_marker_count">Marker count</string>
+    <plurals name="track_list_markers">
+        <item quantity="one">%d marker</item>
+        <item quantity="other">%d markers</item>
+    </plurals>
     <string name="image_photo_marker">Photo marker</string>
     <string name="image_record">Record</string>
     <string name="image_stop">Stop</string>

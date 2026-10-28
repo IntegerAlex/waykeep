@@ -143,20 +143,24 @@
         <item name="android:ellipsize">end</item>
     </style>
 
-    <!-- Stat cell used by the activity feed cards -->
-    <style name="TextAppearance.OpenTracks.StatValue" parent="TextAppearance.Material3.TitleLarge">
+    <!-- Home log row: mono stats line, muted context line. -->
+    <style name="TextAppearance.OpenTracks.RowStats" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="TextAppearance.OpenTracks.StatLabel" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+    <style name="TextAppearance.OpenTracks.RowContext" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
         <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
     </style>
+
+    <!-- Aggregated-stats and share screens use the Primary/Secondary families above. -->
 </resources>

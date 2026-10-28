@@ -19,6 +19,8 @@ package com.waykeep.app.ui.util;
 import android.content.Context;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -74,5 +76,34 @@ public class ListItemUtils {
 
         dateView.setText(dateContent);
         timeView.setText(timeContent);
+    }
+
+    /**
+     * One-line "Today 07:13" for the home row's context line. Same fields as
+     * {@link #setDateAndTime}, joined for a single TextView.
+     */
+    public static String getDateTimeText(Context context, Instant time, ZoneOffset timeZone) {
+        OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(time, timeZone);
+        String pattern = "HH:mm";
+        if (!offsetDateTime.getOffset().equals(OffsetDateTime.now().getOffset())) {
+            pattern = "HH:mm x";
+        }
+        return StringUtils.formatDateTodayRelative(context, offsetDateTime)
+                + " " + offsetDateTime.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Folds the home row's context into one line: date first, then whatever else exists.
+     * Pure strings, no resources, so the separator contract is unit-testable.
+     */
+    public static String buildContextLine(@NonNull String dateTime, @androidx.annotation.Nullable String activity, @androidx.annotation.Nullable String markerSuffix) {
+        StringBuilder contextLine = new StringBuilder(dateTime);
+        if (activity != null && !activity.isEmpty()) {
+            contextLine.append(" · ").append(activity);
+        }
+        if (markerSuffix != null && !markerSuffix.isEmpty()) {
+            contextLine.append(" · ").append(markerSuffix);
+        }
+        return contextLine.toString();
     }
 }

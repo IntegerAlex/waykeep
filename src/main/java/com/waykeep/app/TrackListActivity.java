@@ -19,6 +19,8 @@ package com.waykeep.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.Manifest;
@@ -455,6 +457,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         recordingStatusConnection.stopRecording(TrackListActivity.this);
         viewBinding.trackListFabAction.setImageResource(R.drawable.ic_baseline_record_24);
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
+        viewBinding.trackListFabAction.setImageTintList(ColorStateList.valueOf(Color.WHITE));
     }
 
     /**
@@ -625,7 +628,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         int icon = recordingStatus.isPaused() ? R.drawable.ic_baseline_play_arrow_24
                 : recordingStatus.isRecording() ? R.drawable.ic_baseline_stop_24 : R.drawable.ic_baseline_record_24;
         viewBinding.trackListFabAction.setImageResource(icon);
-        viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, recordingStatus.isRecording() ? R.color.opentracks : R.color.red_dark));
+        boolean recording = recordingStatus.isRecording();
+        viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, recording ? R.color.opentracks : R.color.red_dark));
+        // White on dark red, black on cyan: both states stay above the 4.5:1 floor.
+        viewBinding.trackListFabAction.setImageTintList(ColorStateList.valueOf(recording ? Color.BLACK : Color.WHITE));
     }
 
     private void onRecordingStatusChanged(RecordingStatus status) {
