@@ -138,7 +138,9 @@ public class StatisticsRecordingFragment extends Fragment {
             param.width = 0;
 
             if (dataField.isWide() || dataField.isPrimary()) {
-                rowIndex++;
+                if (columnIndex != 0) {
+                    rowIndex++;
+                }
                 param.columnSpec = GridLayout.spec(0, recordingLayout.getColumnsPerRow(), 1);
                 param.rowSpec = GridLayout.spec(rowIndex, 1, 1);
                 columnIndex = 0;
@@ -154,15 +156,26 @@ public class StatisticsRecordingFragment extends Fragment {
                 columnIndex++;
             }
 
+            StatisticViewHolder<?> viewHolder;
             try {
-                StatisticViewHolder<?> viewHolder = m.get(dataField.getKey()).call();
+                viewHolder = m.get(dataField.getKey()).call();
+            } catch (Exception e) {
+                // One bad field (unknown key, stale custom layout) must not kill the screen.
+                android.util.Log.e(TAG, "Skipping " + dataField.getKey(), e);
+                continue;
+            }
+            if (viewHolder == null) {
+                android.util.Log.e(TAG, "Skipping unknown DataField key " + dataField.getKey());
+                continue;
+            }
+            try {
                 viewHolder.initialize(getContext(), getLayoutInflater());
                 viewHolder.configureUI(dataField);
                 viewHolders.add(viewHolder);
 
                 viewBinding.statsLayout.addView(viewHolder.getView(), param);
             } catch (Exception e) {
-                throw new RuntimeException("Could not add " + dataField.getKey(), e);
+                android.util.Log.e(TAG, "Skipping " + dataField.getKey(), e);
             }
 
             if (dataField.isPrimary()) {

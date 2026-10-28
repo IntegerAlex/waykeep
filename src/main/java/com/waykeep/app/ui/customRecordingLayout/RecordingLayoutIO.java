@@ -33,7 +33,7 @@ public class RecordingLayoutIO {
             return PreferencesUtils.getDefaultLayout();
         }
 
-        RecordingLayout recordingLayout = new RecordingLayout(csvParts.get(0), Integer.parseInt(csvParts.get(1)));
+        RecordingLayout recordingLayout = new RecordingLayout(csvParts.get(0), Math.max(1, Integer.parseInt(csvParts.get(1))));
         for (int i = 2; i < csvParts.size(); i++) {
             String[] fieldParts = CsvLayoutUtils.getCsvFieldParts(csvParts.get(i));
             if (fieldParts == null) {

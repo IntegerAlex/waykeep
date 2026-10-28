@@ -108,6 +108,10 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
         viewHolder.itemView.setTag(field.getKey());
         try {
             StatisticViewHolder<?> m = mapping.get(field.getKey()).call();
+            if (m == null) {
+                Log.e(TAG, "Skipping unknown DataField key " + field.getKey());
+                return;
+            }
             m.initialize(context, LayoutInflater.from(context));
             m.configureUI(field);
             m.onChanged(UnitSystem.METRIC, demoData);
@@ -115,8 +119,9 @@ public class SettingsCustomLayoutEditAdapter extends RecyclerView.Adapter<Recycl
             viewHolder.viewBinding.statsLayout.removeAllViews(); //TODO this is not really performant
             viewHolder.viewBinding.statsLayout.addView(m.getView());
         } catch (Exception e) {
-            Log.e(TAG, "Couldn't to instantiate UI for DataField with key " + field.getKey() + " " + e.getMessage());
-            throw new RuntimeException(e);
+            // One bad field must not kill the editor screen; the row stays listed.
+            Log.e(TAG, "Couldn't instantiate UI for DataField with key " + field.getKey() + " " + e.getMessage());
+            return;
         }
         viewHolder.viewBinding.statsIconShowStatus.setVisibility(field.isVisible() ? View.GONE : View.VISIBLE);
         viewHolder.viewBinding.statsIconShowStatus.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_visibility_off_24));
