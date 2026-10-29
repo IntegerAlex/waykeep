@@ -308,6 +308,7 @@ limitations under the License.
     <string name="menu_help">Help</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_import_all">Import all</string>
+    <string name="menu_import_file">Import file</string>
     <string name="menu_insert_marker">Insert marker</string>
     <string name="menu_insert_photo">Insert photo</string>
     <string name="menu_insert_gallery_img">Insert gallery image</string>

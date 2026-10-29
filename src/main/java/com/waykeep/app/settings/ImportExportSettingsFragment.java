@@ -1,8 +1,12 @@
 package com.waykeep.app.settings;
 
+import android.content.ClipData;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -14,15 +18,44 @@ import java.util.Map;
 import com.waykeep.app.R;
 import com.waykeep.app.io.file.TrackFileFormat;
 import com.waykeep.app.io.file.TrackFilenameGenerator;
+import com.waykeep.app.io.file.importer.ImportActivity;
 import com.waykeep.app.io.healthconnect.exporter.HealthConnectUtils;
 import com.waykeep.app.util.IntentUtils;
 
 
 public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
 
+    private final ActivityResultLauncher<String[]> importFileLauncher = registerForActivityResult(
+            new ActivityResultContracts.OpenMultipleDocuments(),
+            uris -> {
+                if (uris == null || uris.isEmpty()) {
+                    return;
+                }
+                Intent intent = IntentUtils.newIntent(requireContext(), ImportActivity.class);
+                if (uris.size() == 1) {
+                    intent.setData(uris.get(0));
+                } else {
+                    ClipData clipData = new ClipData("tracks", new String[]{"*/*"}, new ClipData.Item(uris.get(0)));
+                    for (int i = 1; i < uris.size(); i++) {
+                        clipData.addItem(new ClipData.Item(uris.get(i)));
+                    }
+                    intent.setClipData(clipData);
+                }
+                startActivity(intent);
+            });
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.settings_import_export);
+
+        findPreference(getString(R.string.import_file_key))
+                .setOnPreferenceClickListener(preference -> {
+                    importFileLauncher.launch(new String[]{
+                            TrackFileFormat.KMZ_WITH_TRACKDETAIL_AND_SENSORDATA_AND_PICTURES.getMimeType(),
+                            TrackFileFormat.KML_WITH_TRACKDETAIL_AND_SENSORDATA.getMimeType(),
+                            TrackFileFormat.GPX.getMimeType()});
+                    return true;
+                });
 
         setExportTrackFileFormatOptions();
         setExportDirectorySummary();

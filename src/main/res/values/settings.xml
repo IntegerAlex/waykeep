@@ -299,6 +299,7 @@
 
     <string name="import_prevent_reimport_key" translatable="false">preventReimportTrackKey</string>
     <bool name="import_prevent_reimport_default">true</bool>
+    <string name="import_file_key" translatable="false">importFile</string>
 
     <string name="settings_api_key" translatable="false">settingsAPI</string>
     <string name="publicapi_package_key" translatable="false">apiPackageKey</string>

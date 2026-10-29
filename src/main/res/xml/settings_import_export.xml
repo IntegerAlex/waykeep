@@ -6,6 +6,9 @@
 
     <PreferenceCategory android:title="@string/settings_import_section">
         <Preference
+            android:key="@string/import_file_key"
+            android:title="@string/menu_import_file" />
+        <Preference
             android:title="@string/menu_import_all">
             <intent
                 android:targetClass="com.waykeep.app.io.file.importer.DirectoryChooserActivity$ImportDirectoryChooserActivity"
