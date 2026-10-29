@@ -128,6 +128,23 @@ public class BrouterClient {
         return 2 * 6371000 * Math.asin(Math.sqrt(h));
     }
 
+    /**
+     * Index of the measured route closest to the requested length. Responses arrive in any
+     * order, so "first one back" is not a choice; this is.
+     */
+    static int bestMatchIndex(List<Double> distancesM, double desiredM) {
+        if (distancesM.isEmpty()) {
+            return -1;
+        }
+        int best = 0;
+        for (int i = 1; i < distancesM.size(); i++) {
+            if (Math.abs(distancesM.get(i) - desiredM) < Math.abs(distancesM.get(best) - desiredM)) {
+                best = i;
+            }
+        }
+        return best;
+    }
+
     public static String formatDistance(double distanceM) {
         if (distanceM >= 10000) {
             return String.format(Locale.getDefault(), "%.0f km", distanceM / 1000);

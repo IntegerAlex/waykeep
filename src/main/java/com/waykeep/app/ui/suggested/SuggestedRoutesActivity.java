@@ -53,6 +53,8 @@ public class SuggestedRoutesActivity extends AbstractActivity {
     private RouteSuggestion selected;
     private int pendingResponses;
     private boolean generating;
+    private double desiredLengthM;
+    private String desiredLabel;
 
     @NonNull
     @Override
@@ -174,6 +176,17 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         return 5000;
     }
 
+    private String checkedDistanceLabel() {
+        int checkedId = viewBinding.suggestedDistanceGroup.getCheckedButtonId();
+        if (checkedId == R.id.suggested_dist_3) {
+            return getString(R.string.suggested_routes_3km);
+        }
+        if (checkedId == R.id.suggested_dist_10) {
+            return getString(R.string.suggested_routes_10km);
+        }
+        return getString(R.string.suggested_routes_5km);
+    }
+
     private void generateRoutes() {
         if (generating || startPoint == null) {
             return;
@@ -190,15 +203,25 @@ public class SuggestedRoutesActivity extends AbstractActivity {
 
         pendingResponses = 3;
         double desired = checkedDistanceM();
+        desiredLengthM = desired;
+        desiredLabel = checkedDistanceLabel();
         brouterClient.suggest(startPoint.getLongitude(), startPoint.getLatitude(), desired, PreferencesUtils.getSuggestedRoutesProfile(), new BrouterClient.Callback() {
             @Override
             public void onResult(RouteSuggestion suggestion) {
-                runOnUiThread(() -> addSuggestion(suggestion));
+                runOnUiThread(() -> {
+                    if (viewBinding != null && !isFinishing()) {
+                        addSuggestion(suggestion);
+                    }
+                });
             }
 
             @Override
             public void onError(Exception e) {
-                runOnUiThread(SuggestedRoutesActivity.this::onSuggestFailed);
+                runOnUiThread(() -> {
+                    if (viewBinding != null && !isFinishing()) {
+                        onSuggestFailed();
+                    }
+                });
             }
         });
     }
@@ -212,9 +235,6 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         viewBinding.suggestedResultsGroup.addView(option);
         viewBinding.suggestedResultsGroup.setVisibility(View.VISIBLE);
         onSuggestSettled();
-        if (suggestions.size() == 1) {
-            option.setChecked(true);
-        }
     }
 
     private void onSuggestFailed() {
@@ -230,6 +250,37 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         viewBinding.suggestedGenerate.setEnabled(true);
         if (suggestions.isEmpty()) {
             viewBinding.suggestedStatus.setText(R.string.suggested_routes_error);
+            return;
+        }
+        // Responses arrive in any order: select the measured route closest to the request,
+        // not the first one back.
+        List<Double> distances = new ArrayList<>();
+        for (RouteSuggestion suggestion : suggestions) {
+            distances.add(suggestion.distanceM());
+        }
+        int best = BrouterClient.bestMatchIndex(distances, desiredLengthM);
+        for (int i = 0; i < viewBinding.suggestedResultsGroup.getChildCount(); i++) {
+            View child = viewBinding.suggestedResultsGroup.getChildAt(i);
+            if (child.getTag() instanceof Integer && (Integer) child.getTag() == best) {
+                viewBinding.suggestedResultsGroup.check(child.getId());
+                android.widget.HorizontalScrollView scroll = viewBinding.suggestedResultsScroll;
+                View target = child;
+                scroll.post(() -> {
+                    int left = scroll.getScrollX();
+                    int right = left + scroll.getWidth();
+                    if (target.getLeft() < left) {
+                        scroll.smoothScrollTo(target.getLeft(), 0);
+                    } else if (target.getRight() > right) {
+                        scroll.smoothScrollTo(target.getRight() - scroll.getWidth(), 0);
+                    }
+                });
+                break;
+            }
+        }
+        double miss = Math.abs(suggestions.get(best).distanceM() - desiredLengthM) / desiredLengthM;
+        if (miss > 0.2) {
+            viewBinding.suggestedStatus.setText(getString(R.string.suggested_routes_closest_match,
+                    BrouterClient.formatDistance(suggestions.get(best).distanceM()), desiredLabel));
         } else {
             viewBinding.suggestedStatus.setText(R.string.suggested_routes_found);
         }

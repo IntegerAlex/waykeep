@@ -83,14 +83,23 @@
                     android:text="@string/suggested_routes_generate" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/suggested_results_group"
+            <HorizontalScrollView
+                android:id="@+id/suggested_results_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:visibility="gone"
-                app:selectionRequired="true"
-                app:singleSelection="true" />
+                android:clipToPadding="false"
+                android:scrollbars="none">
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/suggested_results_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:selectionRequired="true"
+                    app:singleSelection="true" />
+
+            </HorizontalScrollView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/suggested_run"

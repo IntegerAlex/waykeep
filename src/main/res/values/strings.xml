@@ -813,6 +813,7 @@ limitations under the License.
     <string name="suggested_routes_searching">Finding routes… this can take up to a minute.</string>
     <string name="suggested_routes_error">Couldn\'t reach the route server. Check your connection and retry.</string>
     <string name="suggested_routes_found">Pick a route, then Run.</string>
+    <string name="suggested_routes_closest_match">Closest match %1$s — no %2$s loop from here.</string>
     <string name="suggested_routes_no_location">Location unavailable — tap the map to place the pin.</string>
     <string name="instant_export_enabled_summary">Export track to storage after recording is finished</string>
     <string name="instant_export_enabled_title">Instant post-workout export</string>
