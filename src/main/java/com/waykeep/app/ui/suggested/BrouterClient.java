@@ -26,6 +26,9 @@ import java.util.concurrent.Executors;
 public class BrouterClient {
 
     private static final String ENDPOINT = "https://brouter.de/brouter";
+    private static final double MIN_ROUNDTRIP_RADIUS_M = 100;
+    private static final double MAX_ROUNDTRIP_RADIUS_M = 5000;
+    private static final double MAX_DISTANCE_OFFSET_M = 500;
 
     public interface Callback {
         void onResult(RouteSuggestion suggestion);
@@ -41,7 +44,17 @@ public class BrouterClient {
 
     public void suggest(double lon, double lat, double desiredLengthM, String profile, Callback callback) {
         // Round-trip length is network-dominated; this only sizes the via-point circle.
-        double roundtripDistance = Math.max(500, Math.min(5000, desiredLengthM / 4));
+        double roundtripDistance = initialRoundtripRadius(desiredLengthM);
+        suggestWithRoundtripRadius(lon, lat, roundtripDistance, profile, callback);
+    }
+
+    static double initialRoundtripRadius(double desiredLengthM) {
+        return Math.max(MIN_ROUNDTRIP_RADIUS_M,
+                Math.min(MAX_ROUNDTRIP_RADIUS_M, desiredLengthM / 4));
+    }
+
+    void suggestWithRoundtripRadius(double lon, double lat, double roundtripDistance,
+                                    String profile, Callback callback) {
         int[] directions = {30, 150, 270};
         for (int direction : directions) {
             executor.execute(() -> {
@@ -55,11 +68,8 @@ public class BrouterClient {
     }
 
     private RouteSuggestion fetch(double lon, double lat, double roundtripDistance, int direction, String profile) throws Exception {
-        String url = ENDPOINT + "?lonlats=" + lon + "," + lat + ",r"
-                + "&profile=" + profile + "&alternativeidx=0&format=geojson"
-                + "&roundtripDistance=" + Math.round(roundtripDistance)
-                + "&direction=" + direction;
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(
+                buildRequestUrl(lon, lat, roundtripDistance, direction, profile)).openConnection();
         connection.setConnectTimeout(15000);
         connection.setReadTimeout(60000);
         try {
@@ -71,6 +81,13 @@ public class BrouterClient {
         } finally {
             connection.disconnect();
         }
+    }
+
+    static String buildRequestUrl(double lon, double lat, double roundtripDistance, int direction, String profile) {
+        return ENDPOINT + "?lonlats=" + lon + "," + lat + ",r"
+                + "&profile=" + profile + "&alternativeidx=0&format=geojson"
+                + "&roundTripDistance=" + Math.round(roundtripDistance)
+                + "&direction=" + direction;
     }
 
     private String readFully(InputStream in) throws IOException {
@@ -143,6 +160,18 @@ public class BrouterClient {
             }
         }
         return best;
+    }
+
+    static boolean isWithinDistanceTolerance(double actualM, double desiredM) {
+        return Math.abs(actualM - desiredM) <= MAX_DISTANCE_OFFSET_M;
+    }
+
+    static double adjustRoundtripRadius(double currentRadiusM, double desiredM, double actualM) {
+        if (desiredM <= 0 || actualM <= 0) {
+            return currentRadiusM;
+        }
+        return Math.max(MIN_ROUNDTRIP_RADIUS_M,
+                Math.min(MAX_ROUNDTRIP_RADIUS_M, currentRadiusM * desiredM / actualM));
     }
 
     public static String formatDistance(double distanceM) {

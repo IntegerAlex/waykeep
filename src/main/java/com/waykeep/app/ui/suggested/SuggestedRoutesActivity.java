@@ -42,6 +42,7 @@ public class SuggestedRoutesActivity extends AbstractActivity {
 
     private static final double FALLBACK_LAT = 28.6139;
     private static final double FALLBACK_LON = 77.2090;
+    private static final int MAX_RADIUS_ADJUSTMENTS = 2;
 
     private SuggestedRoutesBinding viewBinding;
     private final BrouterClient brouterClient = new BrouterClient();
@@ -55,6 +56,8 @@ public class SuggestedRoutesActivity extends AbstractActivity {
     private boolean generating;
     private double desiredLengthM;
     private String desiredLabel;
+    private double roundtripRadiusM;
+    private int radiusAdjustments;
 
     @NonNull
     @Override
@@ -202,10 +205,17 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         viewBinding.suggestedGenerate.setEnabled(false);
 
         pendingResponses = 3;
-        double desired = checkedDistanceM();
-        desiredLengthM = desired;
+        desiredLengthM = checkedDistanceM();
         desiredLabel = checkedDistanceLabel();
-        brouterClient.suggest(startPoint.getLongitude(), startPoint.getLatitude(), desired, PreferencesUtils.getSuggestedRoutesProfile(), new BrouterClient.Callback() {
+        roundtripRadiusM = BrouterClient.initialRoundtripRadius(desiredLengthM);
+        radiusAdjustments = 0;
+        requestSuggestions();
+    }
+
+    private void requestSuggestions() {
+        pendingResponses = 3;
+        brouterClient.suggestWithRoundtripRadius(startPoint.getLongitude(), startPoint.getLatitude(),
+                roundtripRadiusM, PreferencesUtils.getSuggestedRoutesProfile(), new BrouterClient.Callback() {
             @Override
             public void onResult(RouteSuggestion suggestion) {
                 runOnUiThread(() -> {
@@ -228,12 +238,6 @@ public class SuggestedRoutesActivity extends AbstractActivity {
 
     private void addSuggestion(RouteSuggestion suggestion) {
         suggestions.add(suggestion);
-        MaterialButton option = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        option.setId(View.generateViewId());
-        option.setTag(suggestions.size() - 1);
-        option.setText(BrouterClient.formatDistance(suggestion.distanceM()) + " · " + BrouterClient.formatGain(suggestion.gainM()));
-        viewBinding.suggestedResultsGroup.addView(option);
-        viewBinding.suggestedResultsGroup.setVisibility(View.VISIBLE);
         onSuggestSettled();
     }
 
@@ -246,9 +250,9 @@ public class SuggestedRoutesActivity extends AbstractActivity {
         if (pendingResponses > 0) {
             return;
         }
-        generating = false;
-        viewBinding.suggestedGenerate.setEnabled(true);
         if (suggestions.isEmpty()) {
+            generating = false;
+            viewBinding.suggestedGenerate.setEnabled(true);
             viewBinding.suggestedStatus.setText(R.string.suggested_routes_error);
             return;
         }
@@ -259,31 +263,59 @@ public class SuggestedRoutesActivity extends AbstractActivity {
             distances.add(suggestion.distanceM());
         }
         int best = BrouterClient.bestMatchIndex(distances, desiredLengthM);
-        for (int i = 0; i < viewBinding.suggestedResultsGroup.getChildCount(); i++) {
-            View child = viewBinding.suggestedResultsGroup.getChildAt(i);
-            if (child.getTag() instanceof Integer && (Integer) child.getTag() == best) {
-                viewBinding.suggestedResultsGroup.check(child.getId());
-                android.widget.HorizontalScrollView scroll = viewBinding.suggestedResultsScroll;
-                View target = child;
-                scroll.post(() -> {
-                    int left = scroll.getScrollX();
-                    int right = left + scroll.getWidth();
-                    if (target.getLeft() < left) {
-                        scroll.smoothScrollTo(target.getLeft(), 0);
-                    } else if (target.getRight() > right) {
-                        scroll.smoothScrollTo(target.getRight() - scroll.getWidth(), 0);
-                    }
-                });
-                break;
+        RouteSuggestion closest = suggestions.get(best);
+        if (!BrouterClient.isWithinDistanceTolerance(closest.distanceM(), desiredLengthM)) {
+            if (radiusAdjustments < MAX_RADIUS_ADJUSTMENTS) {
+                radiusAdjustments++;
+                roundtripRadiusM = BrouterClient.adjustRoundtripRadius(
+                        roundtripRadiusM, desiredLengthM, closest.distanceM());
+                suggestions.clear();
+                requestSuggestions();
+                return;
             }
+            generating = false;
+            viewBinding.suggestedGenerate.setEnabled(true);
+            viewBinding.suggestedResultsGroup.removeAllViews();
+            viewBinding.suggestedResultsGroup.setVisibility(View.GONE);
+            viewBinding.suggestedRun.setVisibility(View.GONE);
+            selected = null;
+            clearSuggestionLines();
+            viewBinding.suggestedStatus.setText(getString(R.string.suggested_routes_no_match,
+                    desiredLabel, BrouterClient.formatDistance(closest.distanceM())));
+            suggestions.clear();
+            return;
         }
-        double miss = Math.abs(suggestions.get(best).distanceM() - desiredLengthM) / desiredLengthM;
-        if (miss > 0.2) {
-            viewBinding.suggestedStatus.setText(getString(R.string.suggested_routes_closest_match,
-                    BrouterClient.formatDistance(suggestions.get(best).distanceM()), desiredLabel));
-        } else {
-            viewBinding.suggestedStatus.setText(R.string.suggested_routes_found);
+
+        generating = false;
+        viewBinding.suggestedGenerate.setEnabled(true);
+        int bestAccepted = 0;
+        double bestOffset = Double.MAX_VALUE;
+        List<RouteSuggestion> accepted = new ArrayList<>();
+        for (RouteSuggestion suggestion : suggestions) {
+            if (!BrouterClient.isWithinDistanceTolerance(suggestion.distanceM(), desiredLengthM)) {
+                continue;
+            }
+            double offset = Math.abs(suggestion.distanceM() - desiredLengthM);
+            if (offset < bestOffset) {
+                bestOffset = offset;
+                bestAccepted = accepted.size();
+            }
+            accepted.add(suggestion);
         }
+        suggestions.clear();
+        suggestions.addAll(accepted);
+        viewBinding.suggestedResultsGroup.removeAllViews();
+        for (int i = 0; i < suggestions.size(); i++) {
+            RouteSuggestion suggestion = suggestions.get(i);
+            MaterialButton option = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+            option.setId(View.generateViewId());
+            option.setTag(i);
+            option.setText(BrouterClient.formatDistance(suggestion.distanceM()) + " · " + BrouterClient.formatGain(suggestion.gainM()));
+            viewBinding.suggestedResultsGroup.addView(option);
+        }
+        viewBinding.suggestedResultsGroup.setVisibility(View.VISIBLE);
+        viewBinding.suggestedStatus.setText(R.string.suggested_routes_found);
+        viewBinding.suggestedResultsGroup.check(viewBinding.suggestedResultsGroup.getChildAt(bestAccepted).getId());
     }
 
     private void selectSuggestion(int index) {
