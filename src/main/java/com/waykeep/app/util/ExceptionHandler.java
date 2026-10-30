@@ -12,6 +12,7 @@ import java.io.Writer;
 
 import com.waykeep.app.BuildConfig;
 import com.waykeep.app.ShowErrorActivity;
+import com.waykeep.app.diagnostics.RecordingDiagnostics;
 
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -26,6 +27,9 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(@NonNull final Thread thread, @NonNull final Throwable exception) {
         try {
+            StackTraceElement[] frames = exception.getStackTrace();
+            String topFrame = frames.length == 0 ? "" : frames[0].toString();
+            RecordingDiagnostics.recordProcessExit(thread.getName(), exception.getClass().getName(), topFrame);
             String errorReport = generateErrorReport(formatException(thread, exception));
             Intent intent = new Intent(context, ShowErrorActivity.class);
             intent.putExtra(ShowErrorActivity.EXTRA_ERROR_TEXT, errorReport);

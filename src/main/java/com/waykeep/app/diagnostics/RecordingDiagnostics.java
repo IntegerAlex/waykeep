@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -24,6 +25,8 @@ import com.waykeep.app.data.models.Track;
 
 /** Serializes local-only diagnostic events for recording sessions. */
 public final class RecordingDiagnostics implements AutoCloseable {
+
+    private static volatile RecordingDiagnostics activeDiagnostics;
 
     private final DiagnosticsStore store;
     private SessionWriter current;
@@ -41,6 +44,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             throw new IllegalStateException("A diagnostics session is already active.");
         }
         current = SessionWriter.begin(store, metadata);
+        activeDiagnostics = this;
     }
 
     /** Resume the existing log after TrackRecordingService's sticky restart. */
@@ -49,6 +53,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             throw new IllegalStateException("A diagnostics session is already active.");
         }
         current = SessionWriter.resume(store, fallbackMetadata);
+        activeDiagnostics = this;
     }
 
     public void event(String type, Map<String, ?> fields) {
@@ -63,6 +68,57 @@ public final class RecordingDiagnostics implements AutoCloseable {
         if (current == null) return;
         current.finish(outcome);
         current = null;
+        if (activeDiagnostics == this) activeDiagnostics = null;
+    }
+
+    public static void recordProcessExit(String threadName, String exceptionClass, String topFrame) {
+        RecordingDiagnostics diagnostics = activeDiagnostics;
+        if (diagnostics != null) {
+            diagnostics.eventAndFlush("process_exit", Map.of(
+                    "thread", threadName,
+                    "exception_class", exceptionClass,
+                    "top_frame", topFrame));
+        }
+    }
+
+    public static void recordPreviousProcessExit(Context context, int reason, int importance, long timestampMillis) {
+        recordPreviousProcessExit(new DiagnosticsStore(context), reason, importance, timestampMillis);
+    }
+
+    static void recordPreviousProcessExit(DiagnosticsStore store, int reason, int importance, long timestampMillis) {
+        DiagnosticsStore.SessionFile session = store.latestUnfinishedSession();
+        if (session == null) return;
+        try {
+            store.truncatePartialTail(session.file());
+            long sequence = store.lastSequence(session.file()) + 1;
+            Map<String, Object> fields = new LinkedHashMap<>();
+            fields.put("schema_version", 1);
+            fields.put("session_id", session.sessionId().toString());
+            fields.put("recovery_id", session.recoveryId().toString());
+            if (session.trackId() != null) fields.put("track_id", session.trackId().id());
+            fields.put("sequence", sequence);
+            fields.put("event", "previous_process_exit");
+            fields.put("wall_time", Instant.now().toString());
+            fields.put("elapsed_realtime_nanos", System.nanoTime());
+            fields.put("data", Map.of(
+                    "reason", reason,
+                    "importance", importance,
+                    "timestamp_millis", timestampMillis));
+            try (FileOutputStream output = new FileOutputStream(session.file(), true)) {
+                output.write((toJson(fields) + "\n").getBytes(StandardCharsets.UTF_8));
+                output.getFD().sync();
+            }
+        } catch (IOException | RuntimeException e) {
+            Log.w("RecordingDiagnostics", "Could not record previous process exit reason.", e);
+        }
+    }
+
+    private void eventAndFlush(String type, Map<String, ?> fields) {
+        SessionWriter session;
+        synchronized (this) {
+            session = current;
+        }
+        if (session != null) session.eventAndFlush(type, fields);
     }
 
     /** Close without a clean-end event so a restart can detect an interrupted session. */
@@ -71,6 +127,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
         if (current == null) return;
         current.closeUncleanly();
         current = null;
+        if (activeDiagnostics == this) activeDiagnostics = null;
     }
 
     public record SessionMetadata(
@@ -165,6 +222,27 @@ public final class RecordingDiagnostics implements AutoCloseable {
             writer.shutdown();
         }
 
+        void eventAndFlush(String type, Map<String, ?> fields) {
+            Map<String, ?> snapshot = new LinkedHashMap<>(fields);
+            CountDownLatch flushed = new CountDownLatch(1);
+            try {
+                writer.execute(() -> {
+                    try {
+                        writeEvent(type, snapshot);
+                        flushOutput();
+                    } catch (IOException e) {
+                        disable(e);
+                    } finally {
+                        flushed.countDown();
+                    }
+                });
+                flushed.await(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (java.util.concurrent.RejectedExecutionException ignored) {
+            }
+        }
+
         private void startWriter() {
             ThreadFactory factory = runnable -> {
                 Thread thread = new Thread(runnable, "WaykeepDiagnostics");
@@ -214,6 +292,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
         private void findAndResume(SessionMetadata fallbackMetadata) {
             DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(trackId);
+            if (unfinished == null) unfinished = store.unfinishedSession(recoveryId);
             if (unfinished == null) {
                 openNewSession(fallbackMetadata);
                 return;

@@ -81,11 +81,16 @@ public class GpsHandler extends SensorHandler<Location, Position> {
         gpsStatusManager.onNewTrackPoint(position);
 
         //TODO We could move the following check into the AggregatorGPS
-        if (!position.hasValidLocation()) {
+        boolean validLocation = position.hasValidLocation();
+        boolean accurate = validLocation && position.fulfillsAccuracy(thresholdHorizontalAccuracy);
+        String decision = !validLocation ? "invalid_location" : accurate ? "accepted" : "poor_accuracy";
+        trackPointCreator.sendRawGpsFix(position, location.getProvider(), location.getTime(),
+                location.getElapsedRealtimeNanos(), thresholdHorizontalAccuracy, decision);
+        if (!validLocation) {
             Log.w(TAG, "Ignore newTrackPoint. Location is invalid.");
             return;
         }
-        if (!position.fulfillsAccuracy(thresholdHorizontalAccuracy)) {
+        if (!accurate) {
             Log.d(TAG, "Ignore newTrackPoint. Poor accuracy.");
             return;
         }

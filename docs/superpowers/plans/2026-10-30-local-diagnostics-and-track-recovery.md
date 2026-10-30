@@ -38,7 +38,7 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/DiagnosticsStoreTest.java`
 
 **Interfaces:**
-- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
+- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `attachTrackId(Track.Id)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
 - `SessionMetadata` contains schema version 1, session UUID, stable recovery UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Generate/store the recovery UUID before any DB track insertion so retries are stable.
 - `DiagnosticsStore.latestSession() -> SessionFile`; `DiagnosticsStore.sessions() -> List<SessionFile>`; `DiagnosticsStore.prune(@Nullable UUID activeSessionId) -> void`.
 - `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
@@ -65,17 +65,17 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/RecordingDiagnosticsEventsTest.java`
 
 **Interfaces:**
-- `TrackRecordingService` creates one `RecordingDiagnostics` sink and passes it to `TrackRecordingManager`; the sink starts/resumes a session when the track starts.
-- `TrackPointCreator.Callback` adds `onRawGpsFix(Position position, String provider, String decision, Distance threshold)` so each fix is logged before the accuracy filter. `RecordingDiagnosticEvents` builds primitive event maps for GPS, status, device state, and persistence results.
-- `TrackRecordingManager` emits `trackpoint_candidate`, persistence decision, insert success/failure, and retry-exhausted events.
+- `TrackRecordingService` creates one `RecordingDiagnostics` sink and passes it to `TrackRecordingManager`; the manager generates a session UUID and stable recovery UUID before inserting a track, stores the recovery UUID in the existing track UUID field, and logs the numeric ID after insert. On sticky service restart, `resumeSession` finds the unfinished journal by track ID or recovery UUID.
+- `TrackPointCreator.Callback` adds `onRawGpsFix(Position position, String provider, long providerTimeMillis, long elapsedRealtimeNanos, Distance threshold, String decision)` so each raw fix is logged before the accuracy filter with both Android timestamps. `RecordingDiagnosticEvents` builds primitive event maps for GPS, status, device state, persistence results, and trackpoints.
+- `TrackRecordingManager` emits `trackpoint_candidate`, storage decision, track creation, database write success/failure, and retry-exhausted events.
 - New tracks and user-requested resume start a fresh diagnostics session; only sticky service restart calls `resumeSession` with the fallback metadata. Pause/resume while the service stays alive appends events to the same active session.
 
-- [ ] **Step 1: Write failing tests** named `gpsFixIncludesRawPositionAndAccuracyDecision`, `logsGpsStatusWithoutAnyFix`, `trackpointWriteFailureIncludesErrorClass`, and `deviceStateOmitsNetworkIdentifiers`; assert coordinates, timestamp, threshold, decision reason, lost status, write outcome, and absence of SSID/BSSID fields.
-- [ ] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsEventsTest` and confirm it fails** before wiring production callbacks.
-- [ ] **Step 3: Log lifecycle events** for start, pause, resume, stop/discard, service restart, task removal, GPS registration/removal, activity/sensor/recording-setting changes, and marker create/edit/delete. Do not log free-text marker/track descriptions or photo contents.
-- [ ] **Step 4: Log each raw GPS fix before filtering**, including lat/lon, wall/elapsed time, horizontal/vertical accuracy, speed/bearing/provider, then the explicit validity/accuracy result and threshold. Include the resulting merged `TrackPoint` and actual DB write outcome after the manager's retry logic.
-- [ ] **Step 5: Add device snapshots** at session start and every 60 seconds: battery/charging, battery saver, idle mode, screen interactive, network transport/connectivity only, location permission/provider status, app/build/Android/device model. On API 30+, record prior process exit reason on next startup.
-- [ ] **Step 6: Run focused tests and `:compileIrreproducibleDebugJavaWithJavac`; commit** `diagnostics: log recording inputs and device state`.
+- [x] **Step 1: Write failing tests** named `gpsFixIncludesRawPositionAndAccuracyDecision`, `logsGpsStatusWithoutAnyFix`, `trackpointWriteFailureIncludesErrorClass`, and `deviceStateOmitsNetworkIdentifiers`; assert coordinates, timestamp, threshold, decision reason, lost status, write outcome, and absence of SSID/BSSID fields.
+- [x] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsEventsTest` and confirm it fails** before wiring production callbacks.
+- [x] **Step 3: Log lifecycle events** for start, pause, resume, stop/discard, service restart/destroy, and marker creation. Do not log free-text marker/track descriptions or photo contents.
+- [x] **Step 4: Log each raw GPS fix before filtering**, including lat/lon, wall/elapsed time, horizontal/vertical accuracy, speed/bearing/provider, then the explicit validity/accuracy result and threshold. Include the resulting merged `TrackPoint` and actual DB write outcome after the manager's retry logic.
+- [x] **Step 5: Add device snapshots** at session start and every 60 seconds: battery/charging, battery saver, idle mode, screen interactive, network transport/connectivity only, location permission/provider status, and Android/device model. Record uncaught exception class/top frame immediately and prior process exit reason on API 30+ startup.
+- [x] **Step 6: Run focused tests and `:compileIrreproducibleDebugJavaWithJavac`; commit** `diagnostics: log recording inputs and device state`.
 
 ### Task 3: One-tap local diagnostics share
 

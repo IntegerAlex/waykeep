@@ -1,6 +1,8 @@
 package com.waykeep.app.diagnostics;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
@@ -9,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
@@ -39,6 +42,48 @@ public class DiagnosticsStoreTest {
                 .mapToLong(File::length)
                 .sum();
         assertTrue(totalBytes <= DiagnosticsStore.MAX_TOTAL_BYTES);
+    }
+
+    @Test
+    public void findsUnfinishedSessionByTrackIdLinkedAfterHeader() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata metadata = new RecordingDiagnostics.SessionMetadata(
+                1,
+                UUID.fromString("5ca87f32-0e7d-4f03-9d7c-28e502192b82"),
+                UUID.fromString("7fa09361-201f-4a31-95c2-09a277067a11"),
+                null,
+                "street running",
+                Instant.parse("2026-10-30T01:00:00Z"),
+                1000L);
+        File file = store.fileFor(metadata);
+        assertTrue(file.getParentFile().mkdirs() || file.getParentFile().isDirectory());
+        Files.writeString(file.toPath(), ""
+                + "{\"sequence\":0,\"event\":\"session_start\"}\n"
+                + "{\"sequence\":1,\"event\":\"track_created\",\"data\":{\"track_id\":42}}\n");
+
+        DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(new Track.Id(42));
+
+        assertNotNull(unfinished);
+        assertEquals(new Track.Id(42), unfinished.trackId());
+    }
+
+    @Test
+    public void recordsPreviousProcessExitOnLatestUnfinishedSession() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata metadata = metadata(42, "2026-10-30T01:00:00Z");
+        File file = store.fileFor(metadata);
+        assertTrue(file.getParentFile().mkdirs() || file.getParentFile().isDirectory());
+        Files.writeString(file.toPath(), ""
+                + "{\"schema_version\":1,\"session_id\":\"" + metadata.sessionId() + "\",\"recovery_id\":\""
+                + metadata.recoveryId() + "\",\"track_id\":42,\"sequence\":0,\"event\":\"session_start\"}\n");
+
+        RecordingDiagnostics.recordPreviousProcessExit(store, 5, 100, 1793324679000L);
+
+        var lines = Files.readAllLines(file.toPath());
+        assertEquals(2, lines.size());
+        assertTrue(lines.get(1).contains("\"sequence\":1"));
+        assertTrue(lines.get(1).contains("\"event\":\"previous_process_exit\""));
+        assertTrue(lines.get(1).contains("\"reason\":5"));
     }
 
     private File createFile(File file, long size, long modifiedTime) throws Exception {

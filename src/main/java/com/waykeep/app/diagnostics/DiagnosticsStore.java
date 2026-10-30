@@ -27,6 +27,7 @@ public final class DiagnosticsStore {
     static final long END_MARKER_RESERVE_BYTES = 1024;
 
     private static final Pattern SEQUENCE = Pattern.compile("\"sequence\":(\\d+)");
+    private static final Pattern TRACK_ID = Pattern.compile("\"track_id\":(\\d+)");
 
     private final File directory;
 
@@ -69,6 +70,22 @@ public final class DiagnosticsStore {
         if (trackId == null) return null;
         return sessions().stream()
                 .filter(session -> !session.cleanEnd() && trackId.equals(session.trackId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    public SessionFile unfinishedSession(UUID recoveryId) {
+        return sessions().stream()
+                .filter(session -> !session.cleanEnd() && recoveryId.equals(session.recoveryId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    SessionFile latestUnfinishedSession() {
+        return sessions().stream()
+                .filter(session -> !session.cleanEnd())
                 .findFirst()
                 .orElse(null);
     }
@@ -139,11 +156,25 @@ public final class DiagnosticsStore {
             UUID sessionId = UUID.fromString(parts[0]);
             UUID recoveryId = UUID.fromString(parts[1]);
             String trackIdString = parts[2].substring(0, parts[2].length() - ".jsonl".length());
-            Track.Id trackId = trackIdString.equals("none") ? null : new Track.Id(Long.parseLong(trackIdString));
+            Track.Id trackId = trackIdString.equals("none") ? trackIdFromEvents(file)
+                    : new Track.Id(Long.parseLong(trackIdString));
             return new SessionFile(sessionId, recoveryId, trackId, file, isCleanEndInternal(file));
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    @Nullable
+    private static Track.Id trackIdFromEvents(File file) {
+        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = TRACK_ID.matcher(line);
+                if (matcher.find()) return new Track.Id(Long.parseLong(matcher.group(1)));
+            }
+        } catch (IOException | IllegalArgumentException ignored) {
+        }
+        return null;
     }
 
     private static boolean isCleanEndInternal(File file) {

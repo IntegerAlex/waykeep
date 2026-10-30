@@ -121,6 +121,21 @@ public class RecordingDiagnosticsTest {
         assertTrue(secondLines.get(2).contains("\"sequence\":2"));
     }
 
+    @Test
+    public void processExitEventIsFlushedBeforeCrashHandlerReturns() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
+        RecordingDiagnostics.SessionMetadata metadata = metadata();
+        diagnostics.beginSession(metadata);
+
+        RecordingDiagnostics.recordProcessExit("main", "IllegalStateException", "Example.java:12");
+        diagnostics.finish("crashed");
+
+        List<String> lines = awaitLineCount(store.fileFor(metadata), 3);
+        assertTrue(lines.get(1).contains("\"event\":\"process_exit\""));
+        assertTrue(lines.get(1).contains("IllegalStateException"));
+    }
+
     private RecordingDiagnostics.SessionMetadata metadata() {
         return metadata(42,
                 "5ca87f32-0e7d-4f03-9d7c-28e502192b82",

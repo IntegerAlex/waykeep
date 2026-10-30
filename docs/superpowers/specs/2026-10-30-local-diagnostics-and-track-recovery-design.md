@@ -28,7 +28,7 @@ This is local diagnostics, not analytics. Nothing is uploaded automatically.
 
 ## Log contents and format
 
-Write versioned UTF-8 JSON Lines in an app-private directory, grouped by recording session and associated with the track ID when available. Create both a session UUID and a stable recovery UUID in the session header before recording begins. Use a monotonically increasing event sequence plus wall-clock and elapsed-realtime timestamps so events remain ordered across wall-clock changes.
+Write versioned UTF-8 JSON Lines in an app-private directory, grouped by recording session and associated with the track ID when available. Create both a session UUID and a stable recovery UUID in the session header before recording begins. For a newly created track, use the session UUID as its existing track UUID; this allows recovery to find the database row even if the later numeric track-ID link was not flushed before a process kill. This reuses the existing UUID field and requires no schema migration. Use a monotonically increasing event sequence plus wall-clock and elapsed-realtime timestamps so events remain ordered across wall-clock changes.
 
 Record these event classes:
 

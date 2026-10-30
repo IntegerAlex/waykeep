@@ -17,11 +17,20 @@
 package com.waykeep.app.services;
 
 import android.app.Service;
+import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.BatteryManager;
+import android.os.Build;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -33,12 +42,17 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
+import java.util.Map;
 
+import com.waykeep.app.BuildConfig;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.Marker;
+import com.waykeep.app.data.models.Position;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackPoint;
+import com.waykeep.app.diagnostics.RecordingDiagnosticEvents;
+import com.waykeep.app.diagnostics.RecordingDiagnostics;
 import com.waykeep.app.sensors.GpsStatusValue;
 import com.waykeep.app.services.announcement.VoiceAnnouncementManager;
 import com.waykeep.app.services.handlers.TrackPointCreator;
@@ -95,6 +109,17 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     private TrackPointCreator trackPointCreator;
     private TrackRecordingManager trackRecordingManager;
+    private RecordingDiagnostics diagnostics;
+    private boolean hasReceivedGpsFix;
+
+    private final Runnable deviceStateSnapshot = new Runnable() {
+        @Override
+        public void run() {
+            if (!isRecording()) return;
+            recordDeviceState();
+            handler.postDelayed(this, Duration.ofMinutes(1).toMillis());
+        }
+    };
 
     private VoiceAnnouncementManager voiceAnnouncementManager;
     private TrackRecordingServiceNotificationManager notificationManager;
@@ -112,7 +137,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         recordingDataObservable = new MutableLiveData<>(RecordingData.NOT_RECORDING);
 
         trackPointCreator = new TrackPointCreator(this);
-        trackRecordingManager = new TrackRecordingManager(this, trackPointCreator, this, handler);
+        diagnostics = new RecordingDiagnostics(this);
+        trackRecordingManager = new TrackRecordingManager(this, trackPointCreator, this, handler, diagnostics);
 
         voiceAnnouncementManager = new VoiceAnnouncementManager(this);
         notificationManager = new TrackRecordingServiceNotificationManager(this);
@@ -123,6 +149,10 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     @Override
     public void onDestroy() {
         Log.d(TAG, "Destroying");
+        if (diagnostics != null && isRecording()) {
+            diagnostics.event("service_destroyed", Map.of("track_id", recordingStatus.trackId().id()));
+        }
+        if (diagnostics != null) diagnostics.close();
         if (trackPointCreator != null && trackPointCreator.isStarted()) {
             stopSensors();
         }
@@ -167,7 +197,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             Track.Id trackId = TrackIdStorage.get(this);
             if (trackId != null) {
                 Log.i(TAG, "After restart: resuming recording for " + trackId);
-                resumeTrack(trackId);
+                resumeTrack(trackId, true);
             }
         }
         return START_STICKY;
@@ -202,21 +232,27 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             return null;
         }
         Log.i(TAG, "startNewTrack");
+        hasReceivedGpsFix = false;
 
         // Set recording status
         Track.Id trackId = trackRecordingManager.startNewTrack();
-        startRecording(trackId);
+        startRecording(trackId, false);
         return trackId;
     }
 
     public void resumeTrack(Track.Id trackId) {
-        if (!trackRecordingManager.resumeExistingTrack(trackId)) {
+        resumeTrack(trackId, false);
+    }
+
+    private void resumeTrack(Track.Id trackId, boolean serviceRestart) {
+        hasReceivedGpsFix = false;
+        if (!trackRecordingManager.resumeExistingTrack(trackId, serviceRestart, false)) {
             Log.w(TAG, "Cannot resume a non-existing track.");
             return;
         }
         Log.i(TAG, "resumeTrack");
 
-        startRecording(trackId);
+        startRecording(trackId, serviceRestart);
     }
 
     /**
@@ -229,6 +265,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
             return;
         }
         Log.i(TAG, "pauseCurrentTrack");
+        diagnostics.event("recording_paused", Map.of("track_id", recordingStatus.trackId().id()));
 
         trackRecordingManager.pauseCurrentTrack();
 
@@ -256,17 +293,24 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         Track.Id trackId = recordingStatus.trackId();
         Log.i(TAG, "resumeCurrentTrack");
 
-        if (!trackRecordingManager.resumeExistingTrack(trackId)) {
+        if (!trackRecordingManager.resumeExistingTrack(trackId, false, true)) {
             Log.w(TAG, "Cannot resume a non-existing track.");
             return;
         }
 
-        startRecording(trackId);
+        startRecording(trackId, false);
     }
 
-    private void startRecording(Track.Id trackId) {
+    private void startRecording(Track.Id trackId, boolean serviceRestart) {
         updateRecordingStatus(RecordingStatus.record(trackId));
         TrackIdStorage.set(this, trackId);
+
+        diagnostics.event("recording_started", Map.of(
+                "track_id", trackId.id(),
+                "service_restart", serviceRestart));
+        recordDeviceState();
+        handler.removeCallbacks(deviceStateSnapshot);
+        handler.postDelayed(deviceStateSnapshot, Duration.ofMinutes(1).toMillis());
 
         startSensors();
 
@@ -305,6 +349,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
 
         boolean wasPaused = recordingStatus.isPaused();
+        Track.Id stoppedTrackId = recordingStatus.trackId();
 
         // Set recording status
         updateRecordingStatus(STATUS_DEFAULT);
@@ -315,9 +360,12 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         } else {
             trackRecordingManager.endCurrentTrack();
         }
+        diagnostics.event("recording_stopped", Map.of("track_id", stoppedTrackId.id()));
+        diagnostics.finish(wasPaused ? "stopped_after_pause" : "stopped");
         TrackIdStorage.unset(this);
 
         stopUpdateRecordingData();
+        handler.removeCallbacks(deviceStateSnapshot);
 
         voiceAnnouncementManager.stop();
 
@@ -352,7 +400,16 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
                 trackPoint.position(),
                 null
         );
-        return new ContentProviderUtils(this).insertMarker(marker);
+        try {
+            Marker.Id markerId = new ContentProviderUtils(this).insertMarker(marker);
+            diagnostics.event("marker_created", Map.of("marker_id", markerId.id(), "track_id", recordingStatus.trackId().id()));
+            return markerId;
+        } catch (RuntimeException e) {
+            diagnostics.event("marker_write_failed", Map.of(
+                    "track_id", recordingStatus.trackId().id(),
+                    "error_class", e.getClass().getSimpleName()));
+            throw e;
+        }
     }
 
     @Override
@@ -370,6 +427,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     @Override
     public void newGpsStatus(GpsStatusValue gpsStatusValue) {
         Log.i(TAG, "newGpsStatus: " + gpsStatusValue.message);
+        diagnostics.event("gps_status", RecordingDiagnosticEvents.gpsStatus(
+                gpsStatusValue.name(), hasReceivedGpsFix));
 
         TrackRecordingServiceNotificationManager nm = notificationManager;
         MutableLiveData<GpsStatusValue> obs = gpsStatusObservable;
@@ -384,6 +443,61 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         // the signal is good. Otherwise it is stale and hides the real problem.
         nm.updateGPSStatus(getString(gpsStatusValue.message), !gpsStatusValue.hasGoodSignal());
         obs.postValue(gpsStatusValue);
+    }
+
+    @Override
+    public void onRawGpsFix(Position position, String provider, long providerTimeMillis,
+                            long elapsedRealtimeNanos, Distance threshold, String decision) {
+        hasReceivedGpsFix = true;
+        diagnostics.event("gps_fix", RecordingDiagnosticEvents.gpsFix(
+                position, providerTimeMillis, provider, elapsedRealtimeNanos, threshold, decision));
+    }
+
+    private void recordDeviceState() {
+        Intent battery = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        int batteryPercent = level < 0 || scale <= 0 ? -1 : Math.round(level * 100f / scale);
+        int plugged = battery == null ? 0 : battery.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+        int batteryStatus = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean charging = plugged != 0 || batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING
+                || batteryStatus == BatteryManager.BATTERY_STATUS_FULL;
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        boolean powerSave = powerManager != null && powerManager.isPowerSaveMode();
+        boolean idle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && powerManager != null && powerManager.isDeviceIdleMode();
+        boolean interactive = powerManager != null && powerManager.isInteractive();
+
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = connectivity == null ? null
+                : connectivity.getNetworkCapabilities(connectivity.getActiveNetwork());
+        boolean connected = capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        String transport = capabilities == null ? "none"
+                : capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ? "wifi"
+                : capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ? "cellular"
+                : capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) ? "ethernet"
+                : capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) ? "bluetooth" : "other";
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean fineLocation = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        boolean gpsEnabled = false;
+        if (fineLocation && locationManager != null) {
+            try {
+                gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (SecurityException ignored) {
+            }
+        }
+        boolean backgroundLocation = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                || checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        Map<String, Object> state = RecordingDiagnosticEvents.deviceState(
+                batteryPercent, charging, powerSave, idle, interactive, transport, connected,
+                fineLocation, backgroundLocation, gpsEnabled, Build.MANUFACTURER, Build.MODEL, Build.VERSION.SDK_INT);
+        state.put("app_version", BuildConfig.VERSION_NAME);
+        state.put("build_type", BuildConfig.BUILD_TYPE);
+        state.put("version_code", BuildConfig.VERSION_CODE);
+        diagnostics.event("device_state", state);
     }
 
     @Deprecated

@@ -165,6 +165,11 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
         service.newGpsStatus(gpsStatusValue);
     }
 
+    public void sendRawGpsFix(Position position, String provider, long providerTimeMillis,
+                              long elapsedRealtimeNanos, Distance threshold, String decision) {
+        service.onRawGpsFix(position, provider, providerTimeMillis, elapsedRealtimeNanos, threshold, decision);
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
         sensorManager.onSharedPreferenceChanged(sharedPreferences, key);
@@ -175,6 +180,9 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
          * @return Was TrackPoint stored (not discarded)?
          */
         boolean newTrackPoint(TrackPoint trackPoint, Distance thresholdHorizontalAccuracy);
+
+        void onRawGpsFix(Position position, String provider, long providerTimeMillis,
+                         long elapsedRealtimeNanos, Distance threshold, String decision);
 
         void newGpsStatus(GpsStatusValue gpsStatusValue);
     }

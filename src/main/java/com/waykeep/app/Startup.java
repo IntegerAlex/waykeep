@@ -2,13 +2,17 @@ package com.waykeep.app;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.ActivityManager;
+import android.app.ApplicationExitInfo;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
+import com.waykeep.app.diagnostics.RecordingDiagnostics;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.util.ExceptionHandler;
 
@@ -39,6 +43,17 @@ public class Startup extends Application {
         PreferencesUtils.resetPreferences(this, false);
         PreferencesUtils.applyDefaultUnit();
         PreferencesUtils.applyNightModeAndDynamicColors(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            List<ApplicationExitInfo> exits = activityManager == null ? List.of()
+                    : activityManager.getHistoricalProcessExitReasons(getPackageName(), 0, 1);
+            if (!exits.isEmpty()) {
+                ApplicationExitInfo exit = exits.get(0);
+                RecordingDiagnostics.recordPreviousProcessExit(
+                        this, exit.getReason(), exit.getImportance(), exit.getTimestamp());
+            }
+        }
     }
 
     @Override
