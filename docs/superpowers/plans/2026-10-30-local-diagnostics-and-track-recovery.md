@@ -38,15 +38,15 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/DiagnosticsStoreTest.java`
 
 **Interfaces:**
-- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionFile)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
+- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
 - `SessionMetadata` contains schema version 1, session UUID, stable recovery UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Generate/store the recovery UUID before any DB track insertion so retries are stable.
 - `DiagnosticsStore.latestSession() -> SessionFile`; `DiagnosticsStore.sessions() -> List<SessionFile>`; `DiagnosticsStore.prune(@Nullable UUID activeSessionId) -> void`.
 - `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
 - `SessionFile` contains parsed `SessionMetadata`, file path, and clean-end state parsed from the JSONL header/events.
 
-- [x] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, and `continuesUnfinishedSessionSequence`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, and reuse of the session/recovery UUID after service restart.
+- [x] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, `continuesUnfinishedSessionSequence`, and `backToBackSessionsKeepTheirOwnIdsAndSequences`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, reuse of the session/recovery UUID on service restart, and isolation between immediately repeated sessions.
 - [x] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsTest.writesVersionedJsonlWithIncreasingSequence`**; confirm it fails before the writer exists.
-- [x] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. `beginSession` creates a new log; `resumeSession` truncates any incomplete trailing line and continues an unfinished log with the same session/recovery UUID and next sequence. Use a single writer queue, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
+- [x] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. `beginSession` always creates a fresh log; `resumeSession(fallbackMetadata)` finds an unfinished log for the same track ID on its writer thread, truncates any incomplete trailing line, and continues with the existing session/recovery UUID and next sequence, or creates a fresh fallback log if none exists. Keep mutable writer state isolated per session so rapid stop/start cannot cross-contaminate logs. Use one writer queue per session, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
 - [x] **Step 4: Write `DiagnosticsStoreTest.pruneRemovesExpiredInactiveSessionsButKeepsActiveSession`** with expired, over-cap, and active-session fixtures.
 - [x] **Step 5: Run that test and confirm it fails** because pruning is not implemented.
 - [x] **Step 6: Implement `DiagnosticsStore.prune()`** to remove oldest inactive sessions only; if the active file reaches its cap, append an overflow event when possible and stop logging that session.
@@ -61,14 +61,16 @@
 - Modify: `src/main/java/com/waykeep/app/services/handlers/TrackPointCreator.java`
 - Modify: `src/main/java/com/waykeep/app/sensors/GpsHandler.java`
 - Modify: `src/main/java/com/waykeep/app/Startup.java`
+- Create: `src/main/java/com/waykeep/app/diagnostics/RecordingDiagnosticEvents.java`
 - Test: `src/test/java/com/waykeep/app/diagnostics/RecordingDiagnosticsEventsTest.java`
 
 **Interfaces:**
 - `TrackRecordingService` creates one `RecordingDiagnostics` sink and passes it to `TrackRecordingManager`; the sink starts/resumes a session when the track starts.
-- `TrackPointCreator.Callback` adds `onRawGpsFix(Location location, String decision, Distance threshold)` so each fix is logged before the accuracy filter.
+- `TrackPointCreator.Callback` adds `onRawGpsFix(Position position, String provider, String decision, Distance threshold)` so each fix is logged before the accuracy filter. `RecordingDiagnosticEvents` builds primitive event maps for GPS, status, device state, and persistence results.
 - `TrackRecordingManager` emits `trackpoint_candidate`, persistence decision, insert success/failure, and retry-exhausted events.
+- New tracks and user-requested resume start a fresh diagnostics session; only sticky service restart calls `resumeSession` with the fallback metadata. Pause/resume while the service stays alive appends events to the same active session.
 
-- [ ] **Step 1: Write failing tests** named `logsRawFixBeforeAccuracyDecision`, `logsGpsStatusWithoutAnyFix`, `logsTrackpointWriteFailure`, and `doesNotLogNetworkIdentifiers`; assert coordinates, timestamp, accuracy threshold, decision reason, no-fix status, failed insert outcome, and absence of SSID/BSSID fields.
+- [ ] **Step 1: Write failing tests** named `gpsFixIncludesRawPositionAndAccuracyDecision`, `logsGpsStatusWithoutAnyFix`, `trackpointWriteFailureIncludesErrorClass`, and `deviceStateOmitsNetworkIdentifiers`; assert coordinates, timestamp, threshold, decision reason, lost status, write outcome, and absence of SSID/BSSID fields.
 - [ ] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsEventsTest` and confirm it fails** before wiring production callbacks.
 - [ ] **Step 3: Log lifecycle events** for start, pause, resume, stop/discard, service restart, task removal, GPS registration/removal, activity/sensor/recording-setting changes, and marker create/edit/delete. Do not log free-text marker/track descriptions or photo contents.
 - [ ] **Step 4: Log each raw GPS fix before filtering**, including lat/lon, wall/elapsed time, horizontal/vertical accuracy, speed/bearing/provider, then the explicit validity/accuracy result and threshold. Include the resulting merged `TrackPoint` and actual DB write outcome after the manager's retry logic.

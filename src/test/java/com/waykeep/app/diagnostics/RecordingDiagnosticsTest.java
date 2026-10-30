@@ -80,8 +80,11 @@ public class RecordingDiagnosticsTest {
 
         DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(metadata.trackId());
         assertNotNull(unfinished);
+        RecordingDiagnostics.SessionMetadata fallback = metadata(42,
+                "2f180602-9098-454e-9bd3-53170351c815",
+                "b2fb0030-615c-48aa-b136-10673a4f632c");
         RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
-        diagnostics.resumeSession(unfinished);
+        diagnostics.resumeSession(fallback);
         diagnostics.event("gps_fix", Map.of("latitude", 18.6));
         diagnostics.finish("stopped");
 
@@ -89,6 +92,7 @@ public class RecordingDiagnosticsTest {
         assertTrue(lines.get(2).contains("\"sequence\":2"));
         assertTrue(!String.join("\n", lines).contains("partial"));
         assertTrue(lines.get(3).contains("\"sequence\":3"));
+        assertTrue(lines.get(3).contains(metadata.sessionId().toString()));
         assertEquals("session_end", eventName(lines.get(4)));
     }
 

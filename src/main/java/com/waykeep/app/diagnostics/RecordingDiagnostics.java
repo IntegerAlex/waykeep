@@ -40,14 +40,15 @@ public final class RecordingDiagnostics implements AutoCloseable {
         if (current != null && current.isActive()) {
             throw new IllegalStateException("A diagnostics session is already active.");
         }
-        current = SessionWriter.createNew(store, metadata);
+        current = SessionWriter.begin(store, metadata);
     }
 
-    public synchronized void resumeSession(DiagnosticsStore.SessionFile sessionFile) {
+    /** Resume the existing log after TrackRecordingService's sticky restart. */
+    public synchronized void resumeSession(SessionMetadata fallbackMetadata) {
         if (current != null && current.isActive()) {
             throw new IllegalStateException("A diagnostics session is already active.");
         }
-        current = SessionWriter.resume(store, sessionFile);
+        current = SessionWriter.resume(store, fallbackMetadata);
     }
 
     public void event(String type, Map<String, ?> fields) {
@@ -89,10 +90,10 @@ public final class RecordingDiagnostics implements AutoCloseable {
         private static final long MAX_SESSION_BYTES = DiagnosticsStore.MAX_TOTAL_BYTES;
 
         private final DiagnosticsStore store;
-        private final File file;
-        private final UUID sessionId;
-        private final UUID recoveryId;
-        private final Track.Id trackId;
+        private File file;
+        private UUID sessionId;
+        private UUID recoveryId;
+        private Track.Id trackId;
         private final int schemaVersion;
         private final long elapsedRealtimeOriginNanos;
 
@@ -118,7 +119,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             startWriter();
         }
 
-        static SessionWriter createNew(DiagnosticsStore store, SessionMetadata metadata) {
+        static SessionWriter begin(DiagnosticsStore store, SessionMetadata metadata) {
             SessionWriter session = new SessionWriter(store, store.fileFor(metadata), metadata.sessionId(),
                     metadata.recoveryId(), metadata.trackId(), metadata.schemaVersion(), metadata.elapsedRealtimeOriginNanos());
             session.writer.execute(() -> session.openNewSession(metadata));
@@ -126,10 +127,11 @@ public final class RecordingDiagnostics implements AutoCloseable {
             return session;
         }
 
-        static SessionWriter resume(DiagnosticsStore store, DiagnosticsStore.SessionFile existing) {
-            SessionWriter session = new SessionWriter(store, existing.file(), existing.sessionId(),
-                    existing.recoveryId(), existing.trackId(), 1, System.nanoTime());
-            session.writer.execute(session::openUnfinishedSession);
+        static SessionWriter resume(DiagnosticsStore store, SessionMetadata fallbackMetadata) {
+            SessionWriter session = new SessionWriter(store, store.fileFor(fallbackMetadata),
+                    fallbackMetadata.sessionId(), fallbackMetadata.recoveryId(), fallbackMetadata.trackId(),
+                    fallbackMetadata.schemaVersion(), fallbackMetadata.elapsedRealtimeOriginNanos());
+            session.writer.execute(() -> session.findAndResume(fallbackMetadata));
             session.scheduleFlush();
             return session;
         }
@@ -210,7 +212,20 @@ public final class RecordingDiagnostics implements AutoCloseable {
             }
         }
 
-        private void openUnfinishedSession() {
+        private void findAndResume(SessionMetadata fallbackMetadata) {
+            DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(trackId);
+            if (unfinished == null) {
+                openNewSession(fallbackMetadata);
+                return;
+            }
+            sessionId = unfinished.sessionId();
+            recoveryId = unfinished.recoveryId();
+            trackId = unfinished.trackId();
+            file = unfinished.file();
+            resumeUnfinishedSession();
+        }
+
+        private void resumeUnfinishedSession() {
             try {
                 store.truncatePartialTail(file);
                 if (!file.exists()) throw new IOException("Diagnostics session file is missing.");
