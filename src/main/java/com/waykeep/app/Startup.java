@@ -44,15 +44,28 @@ public class Startup extends Application {
         PreferencesUtils.applyDefaultUnit();
         PreferencesUtils.applyNightModeAndDynamicColors(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-            List<ApplicationExitInfo> exits = activityManager == null ? List.of()
-                    : activityManager.getHistoricalProcessExitReasons(getPackageName(), 0, 1);
-            if (!exits.isEmpty()) {
-                ApplicationExitInfo exit = exits.get(0);
-                RecordingDiagnostics.recordPreviousProcessExit(
-                        this, exit.getReason(), exit.getImportance(), exit.getTimestamp());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !isCrashReportingProcess()) {
+            // The journal scan + fsync must not delay the first frame, and the :crash process
+            // must not append to a file the main process is still writing.
+            Thread exitRecorder = new Thread(this::recordPreviousProcessExit, "WaykeepExitDiagnostics");
+            exitRecorder.setDaemon(true);
+            exitRecorder.start();
+        }
+    }
+
+    private void recordPreviousProcessExit() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ApplicationExitInfo> exits = activityManager == null ? List.of()
+                : activityManager.getHistoricalProcessExitReasons(getPackageName(), 0, 10);
+        for (ApplicationExitInfo exit : exits) {
+            // Older platforms cannot report the process name; accept the first (most recent) exit.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && !getPackageName().equals(exit.getProcessName())) {
+                continue;
             }
+            RecordingDiagnostics.recordPreviousProcessExit(
+                    this, exit.getReason(), exit.getImportance(), exit.getTimestamp());
+            return;
         }
     }
 

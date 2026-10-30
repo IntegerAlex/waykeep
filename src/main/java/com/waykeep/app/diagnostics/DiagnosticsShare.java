@@ -46,6 +46,11 @@ public final class DiagnosticsShare {
 
         File snapshot = new File(directory, "session-" + latest.sessionId() + ".jsonl");
         File archive = new File(directory, "diagnostics-" + latest.sessionId() + "-" + System.currentTimeMillis() + ".zip");
+        // Old archives hold exact coordinates; do not let them accumulate in the cache.
+        File[] stale = directory.listFiles((dir, name) -> name.endsWith(".zip"));
+        if (stale != null) {
+            for (File file : stale) Files.deleteIfExists(file.toPath());
+        }
         try {
             RecordingDiagnostics.copySessionSnapshot(latest.file(), snapshot);
             try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(archive))) {

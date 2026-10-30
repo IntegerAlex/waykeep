@@ -53,9 +53,13 @@ public class DiagnosticsRecoveryWorker extends Worker {
             ContentProviderUtils tracks = new ContentProviderUtils(context);
             Track existingCopy = tracks.getTrack(recoveryId);
             if (existingCopy != null) {
-                return Result.success(new Data.Builder()
-                        .putLong(RESULT_TRACK_ID, existingCopy.id().id())
-                        .build());
+                if (hasTrackPoints(tracks, existingCopy.id())) {
+                    return Result.success(new Data.Builder()
+                            .putLong(RESULT_TRACK_ID, existingCopy.id().id())
+                            .build());
+                }
+                // A previous attempt died between inserting the copy and its points; rebuild it.
+                tracks.deleteTracks(context, List.of(existingCopy.id()));
             }
             Track original = tracks.getTrack(originalTrackId);
             if (original != null && sourceTrackUuid != null && !sourceTrackUuid.equals(original.uuid())) original = null;
@@ -91,8 +95,17 @@ public class DiagnosticsRecoveryWorker extends Worker {
             return existing == null ? Result.retry() : Result.success(new Data.Builder()
                     .putLong(RESULT_TRACK_ID, existing.id().id())
                     .build());
+        } catch (ImportParserException | IllegalArgumentException | SecurityException e) {
+            // Malformed journal or unusable input: retrying cannot succeed.
+            return Result.failure();
         } catch (Exception e) {
             return Result.retry();
+        }
+    }
+
+    private static boolean hasTrackPoints(ContentProviderUtils tracks, Track.Id trackId) {
+        try (var iterator = tracks.getTrackPointIterator(trackId, null)) {
+            return iterator.hasNext();
         }
     }
 }

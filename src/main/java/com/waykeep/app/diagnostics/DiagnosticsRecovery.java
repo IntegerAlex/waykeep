@@ -25,6 +25,7 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +50,9 @@ public final class DiagnosticsRecovery {
     // ponytail: Parse the journal's flat primitive fields only; switch to a streaming JSON parser if the event schema gains free text, arrays, or nested payloads.
     private static final Pattern JSON_FIELD = Pattern.compile(
             "\"([^\"]+)\"\\s*:\\s*(?:\"((?:\\\\.|[^\"\\\\])*)\"|(-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)|(true|false|null))");
+    // ponytail: sensor samples are matched to the nearest fix within 3 s and consumed once;
+    // stationary fixes share coordinates, so a sample can attach to a neighbouring fix. Upgrade
+    // to (coordinate, time) keys if per-point sensor fidelity in recovery proves insufficient.
     private static final Duration SENSOR_MATCH_WINDOW = Duration.ofSeconds(3);
 
     private DiagnosticsRecovery() {
@@ -66,15 +70,17 @@ public final class DiagnosticsRecovery {
             if (original != null && sourceUuid != null && !sourceUuid.equals(original.uuid())) original = null;
             if (original == null && sourceUuid != null) original = tracks.getTrack(sourceUuid);
             return original == null ? null : original.id();
-        }, recoveryId -> tracks.getTrack(recoveryId) != null);
+        }, recoveryId -> tracks.getTrack(recoveryId) != null,
+                (originalId, loggedFixCount) -> loggedFixCount > storedTrackPointCount(tracks, originalId));
     }
 
     static Optional<RecoveryCandidate> findPending(DiagnosticsStore store, TrackResolver resolveTrack) {
-        return findPending(store, resolveTrack, unused -> false);
+        return findPending(store, resolveTrack, unused -> false, (originalId, loggedFixCount) -> true);
     }
 
-    private static Optional<RecoveryCandidate> findPending(DiagnosticsStore store, TrackResolver resolveTrack,
-                                                           Predicate<UUID> copyAlreadyExists) {
+    static Optional<RecoveryCandidate> findPending(DiagnosticsStore store, TrackResolver resolveTrack,
+                                                   Predicate<UUID> copyAlreadyExists,
+                                                   BiPredicate<Track.Id, Integer> worthRecovering) {
         for (DiagnosticsStore.SessionFile session : store.sessions()) {
             if (session.cleanEnd() && !hasFailedWrite(session.file())) continue;
             if (copyAlreadyExists.test(session.recoveryId())) continue;
@@ -83,11 +89,24 @@ public final class DiagnosticsRecovery {
             RecoveryCandidate candidate = new RecoveryCandidate(
                     session.sessionId(), originalId, session.recoveryId(), session.sourceTrackUuid(), session.file());
             try {
-                if (!readRawFixes(candidate).isEmpty()) return Optional.of(candidate);
+                int loggedFixes = readRawFixes(candidate).size();
+                if (loggedFixes > 0 && worthRecovering.test(originalId, loggedFixes)) return Optional.of(candidate);
             } catch (IOException ignored) {
             }
         }
         return Optional.empty();
+    }
+
+    /** Counts stored points so an almost-complete track is not offered as a duplicate copy. */
+    private static int storedTrackPointCount(ContentProviderUtils tracks, Track.Id trackId) {
+        int count = 0;
+        try (var iterator = tracks.getTrackPointIterator(trackId, null)) {
+            while (iterator.hasNext()) {
+                iterator.next();
+                count++;
+            }
+        }
+        return count;
     }
 
     public static List<TrackPoint> readRawFixes(RecoveryCandidate candidate) throws IOException {
@@ -96,6 +115,8 @@ public final class DiagnosticsRecovery {
         try (BufferedReader reader = Files.newBufferedReader(candidate.sourceFile().toPath(), StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
+                // A killed writer can leave a torn final line; only complete JSON objects are events.
+                if (!line.startsWith("{") || !line.endsWith("}")) continue;
                 Map<String, String> fields = fields(line);
                 String event = fields.get("event");
                 if ("trackpoint_candidate".equals(event)) {

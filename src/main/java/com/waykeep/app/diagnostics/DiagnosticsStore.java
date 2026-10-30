@@ -211,14 +211,21 @@ public final class DiagnosticsStore {
     }
 
     private static boolean isCleanEndInternal(File file) {
-        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            String line;
-            String last = null;
-            while ((line = reader.readLine()) != null) last = line;
-            return last != null && last.contains("\"event\":\"session_end\"");
+        // Read only the tail: sessions() scans every journal, and a 20 MiB full read per file
+        // would make candidate scans and startup checks needlessly expensive.
+        long length = file.length();
+        if (length == 0) return false;
+        int tailLength = (int) Math.min(length, 4096);
+        byte[] tail = new byte[tailLength];
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            raf.seek(length - tailLength);
+            raf.readFully(tail);
         } catch (IOException e) {
             return false;
         }
+        String text = new String(tail, StandardCharsets.UTF_8);
+        int lastLineStart = text.lastIndexOf('\n', text.length() - 2) + 1;
+        return text.substring(lastLineStart).contains("\"event\":\"session_end\"");
     }
 
     private static boolean belongsTo(File file, @Nullable UUID sessionId) {

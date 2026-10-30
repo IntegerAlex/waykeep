@@ -120,6 +120,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private UUID recoveryWorkSessionId;
     private boolean recordingStatusReady;
     private boolean recoveryScanInFlight;
+    private boolean recoveryScanCompleted;
 
     // Preferences
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
@@ -694,17 +695,24 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     }
 
     private void onRecordingStatusChanged(RecordingStatus status) {
+        boolean wasRecording = recordingStatus.isRecording();
         recordingStatus = status;
         recordingStatusReady = true;
         setFloatButton();
         adapter.updateRecordingStatus(recordingStatus);
-        if (status.isRecording()) hideRecoveryPrompt();
-        else maybePromptRecovery();
+        if (status.isRecording()) {
+            hideRecoveryPrompt();
+        } else {
+            // A run just ended, so a new recoverable session may exist; rescan once.
+            if (wasRecording) recoveryScanCompleted = false;
+            maybePromptRecovery();
+        }
     }
 
     private void maybePromptRecovery() {
         if (viewBinding == null || !recordingStatusReady || recordingStatus.isRecording()
-                || recoveryScanInFlight || recoveryPromptCandidate != null || recoveryWorkSessionId != null) return;
+                || recoveryScanInFlight || recoveryScanCompleted
+                || recoveryPromptCandidate != null || recoveryWorkSessionId != null) return;
         recoveryScanInFlight = true;
         Context appContext = getApplicationContext();
         trackLoader.execute(() -> {
@@ -717,6 +725,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             Optional<RecoveryCandidate> pending = candidate;
             runOnUiThread(() -> {
                 recoveryScanInFlight = false;
+                recoveryScanCompleted = true;
                 if (viewBinding == null || isFinishing()
                         || !DiagnosticsRecovery.shouldOffer(recordingStatus.isRecording(), pending)) return;
                 RecoveryCandidate recovery = pending.get();

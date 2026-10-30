@@ -159,4 +159,45 @@ public class DiagnosticsRecoveryTest {
                 Instant.parse("2026-10-30T01:44:00Z"),
                 trackId == null ? 0 : trackId.id() * 1000L);
     }
+
+    @Test
+    public void existingCopyIsNotOfferedAgain() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata metadata = metadata(42);
+        RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
+        diagnostics.beginSession(metadata);
+        diagnostics.event("gps_fix", gpsFix(18.5, 73.8, 8, "accepted"));
+        diagnostics.close();
+        assertTrue(RecordingDiagnostics.flushActive());
+
+        Optional<DiagnosticsRecovery.RecoveryCandidate> fresh = DiagnosticsRecovery.findPending(
+                store, (trackId, sourceUuid) -> trackId, recoveryId -> false, (trackId, count) -> true);
+        Optional<DiagnosticsRecovery.RecoveryCandidate> afterCopy = DiagnosticsRecovery.findPending(
+                store, (trackId, sourceUuid) -> trackId,
+                recoveryId -> recoveryId.equals(metadata.recoveryId()), (trackId, count) -> true);
+
+        assertTrue(fresh.isPresent());
+        assertFalse(afterCopy.isPresent());
+    }
+
+    @Test
+    public void tornFinalLineDoesNotBecomeARecoveredFix() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata metadata = metadata(42);
+        RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
+        diagnostics.beginSession(metadata);
+        diagnostics.close();
+        assertTrue(RecordingDiagnostics.flushActive());
+        java.nio.file.Files.writeString(store.fileFor(metadata).toPath(),
+                "{\"sequence\":1,\"event\":\"gps_fix\",\"data\":{\"fix_time\":\"2026-10-30T01:44:00Z\",\"latitude\":18.5,\"longitude\":73.8}}\n"
+                        + "{\"sequence\":2,\"event\":\"gps_fix\",\"data\":{\"latitude\":19.5",
+                java.nio.file.StandardOpenOption.APPEND);
+
+        DiagnosticsRecovery.RecoveryCandidate candidate = DiagnosticsRecovery.findPending(
+                store, (trackId, sourceUuid) -> trackId).orElseThrow();
+        var fixes = DiagnosticsRecovery.readRawFixes(candidate);
+
+        assertEquals(1, fixes.size());
+        assertEquals(18.5, fixes.get(0).position().latitude(), 0.000001);
+    }
 }

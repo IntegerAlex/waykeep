@@ -195,7 +195,8 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
         private static final String TAG = "RecordingDiagnostics";
         private static final long FLUSH_INTERVAL_SECONDS = 5;
-        private static final long MAX_SESSION_BYTES = DiagnosticsStore.MAX_TOTAL_BYTES;
+        // A long recording must not consume the whole retention budget and evict every older session.
+        private static final long MAX_SESSION_BYTES = 4L * 1024 * 1024;
 
         private final DiagnosticsStore store;
         private File file;
@@ -416,7 +417,10 @@ public final class RecordingDiagnostics implements AutoCloseable {
         private void findAndResume(SessionMetadata fallbackMetadata) {
             DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(trackId, sourceTrackUuid);
             if (unfinished == null) unfinished = store.unfinishedSessionBySourceTrackUuid(sourceTrackUuid);
-            if (unfinished == null) {
+            DiagnosticsStore.SessionFile newest = store.latestUnfinishedSession();
+            // Only continue the newest journal: appending a fresh recording to a stale one would
+            // blend two runs and make the recovered copy wrong.
+            if (unfinished == null || newest == null || !newest.file().equals(unfinished.file())) {
                 openNewSession(fallbackMetadata);
                 return;
             }
