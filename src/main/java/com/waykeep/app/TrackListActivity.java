@@ -46,9 +46,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -60,12 +64,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackListIterator;
 import com.waykeep.app.data.models.Track;
+import com.waykeep.app.diagnostics.DiagnosticsRecovery;
+import com.waykeep.app.diagnostics.DiagnosticsRecovery.RecoveryCandidate;
 import com.waykeep.app.diagnostics.DiagnosticsShare;
 import com.waykeep.app.databinding.TrackListBinding;
 import com.waykeep.app.publicapi.DataProvider;
@@ -99,6 +107,7 @@ import com.waykeep.app.util.PermissionRequester;
 public class TrackListActivity extends AbstractTrackDeleteActivity implements ConfirmDeleteDialogFragment.ConfirmDeleteCaller {
 
     private static final String TAG = TrackListActivity.class.getSimpleName();
+    private static final String KEY_DEFERRED_RECOVERY_SESSION = "deferredRecoverySession";
 
     // The following are set in onCreate
     private TrackRecordingServiceConnection recordingStatusConnection;
@@ -106,6 +115,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private final ExecutorService trackLoader = Executors.newSingleThreadExecutor();
 
     private TrackListBinding viewBinding;
+    private RecoveryCandidate recoveryPromptCandidate;
+    private UUID deferredRecoverySessionId;
+    private UUID recoveryWorkSessionId;
+    private boolean recordingStatusReady;
+    private boolean recoveryScanInFlight;
 
     // Preferences
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
@@ -183,6 +197,12 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         if (savedInstanceState != null) {
             searchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY);
+            String deferredId = savedInstanceState.getString(KEY_DEFERRED_RECOVERY_SESSION);
+            try {
+                deferredRecoverySessionId = deferredId == null ? null : UUID.fromString(deferredId);
+            } catch (IllegalArgumentException ignored) {
+                deferredRecoverySessionId = null;
+            }
         }
 
         requestRequiredPermissions();
@@ -217,6 +237,8 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
         viewBinding.trackListEmptyAction.setOnClickListener(view -> viewBinding.trackListFabAction.performClick());
+        viewBinding.diagnosticsRecoveryNotNow.setOnClickListener(view -> deferRecoveryPrompt());
+        viewBinding.diagnosticsRecoveryCopy.setOnClickListener(view -> recoverTrackCopy());
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(new RecyclerViewSwipeDeleteCallback(this) {
             @Override
@@ -280,6 +302,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         super.onStart();
 
         PreferencesUtils.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+        recordingStatusReady = false;
         recordingStatusConnection.bind(this);
     }
 
@@ -295,6 +318,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         setFloatButton();
 
         maybeShowTour();
+        maybePromptRecovery();
     }
 
     /**
@@ -321,6 +345,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         PreferencesUtils.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
         recordingStatusConnection.unbind(this);
+        deferredRecoverySessionId = null;
     }
 
     @Override
@@ -337,6 +362,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_SEARCH_QUERY, searchQuery);
+        if (deferredRecoverySessionId != null) {
+            outState.putString(KEY_DEFERRED_RECOVERY_SESSION, deferredRecoverySessionId.toString());
+        }
     }
 
     @Override
@@ -667,8 +695,89 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
     private void onRecordingStatusChanged(RecordingStatus status) {
         recordingStatus = status;
+        recordingStatusReady = true;
         setFloatButton();
         adapter.updateRecordingStatus(recordingStatus);
+        if (status.isRecording()) hideRecoveryPrompt();
+        else maybePromptRecovery();
+    }
+
+    private void maybePromptRecovery() {
+        if (viewBinding == null || !recordingStatusReady || recordingStatus.isRecording()
+                || recoveryScanInFlight || recoveryPromptCandidate != null || recoveryWorkSessionId != null) return;
+        recoveryScanInFlight = true;
+        Context appContext = getApplicationContext();
+        trackLoader.execute(() -> {
+            Optional<RecoveryCandidate> candidate = Optional.empty();
+            try {
+                candidate = DiagnosticsRecovery.findPending(appContext);
+            } catch (RuntimeException e) {
+                Log.w(TAG, "Could not check for a recoverable recording.", e);
+            }
+            Optional<RecoveryCandidate> pending = candidate;
+            runOnUiThread(() -> {
+                recoveryScanInFlight = false;
+                if (viewBinding == null || isFinishing()
+                        || !DiagnosticsRecovery.shouldOffer(recordingStatus.isRecording(), pending)) return;
+                RecoveryCandidate recovery = pending.get();
+                if (recovery.sessionId().equals(deferredRecoverySessionId)
+                        || recovery.sessionId().equals(recoveryWorkSessionId)) return;
+                recoveryPromptCandidate = recovery;
+                viewBinding.diagnosticsRecoveryPrompt.setVisibility(View.VISIBLE);
+            });
+        });
+    }
+
+    private void hideRecoveryPrompt() {
+        recoveryPromptCandidate = null;
+        if (viewBinding != null) viewBinding.diagnosticsRecoveryPrompt.setVisibility(View.GONE);
+    }
+
+    private void deferRecoveryPrompt() {
+        if (recoveryPromptCandidate != null) {
+            deferredRecoverySessionId = recoveryPromptCandidate.sessionId();
+        }
+        hideRecoveryPrompt();
+    }
+
+    private void recoverTrackCopy() {
+        RecoveryCandidate candidate = recoveryPromptCandidate;
+        if (candidate == null) return;
+        recoveryWorkSessionId = candidate.sessionId();
+        hideRecoveryPrompt();
+        try {
+            DiagnosticsRecovery.recover(this, candidate);
+            Toast.makeText(this, R.string.diagnostics_recovery_started, Toast.LENGTH_SHORT).show();
+            observeRecoveryWork(candidate);
+        } catch (RuntimeException e) {
+            recoveryWorkSessionId = null;
+            Log.w(TAG, "Could not enqueue recovered-track copy.", e);
+            Toast.makeText(this, R.string.diagnostics_recovery_failed, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void observeRecoveryWork(RecoveryCandidate candidate) {
+        LiveData<List<WorkInfo>> work = WorkManager.getInstance(this)
+                .getWorkInfosForUniqueWorkLiveData(DiagnosticsRecovery.uniqueWorkName(candidate));
+        Observer<List<WorkInfo>> observer = new Observer<>() {
+            @Override
+            public void onChanged(List<WorkInfo> infos) {
+                if (infos == null || infos.isEmpty()
+                        || infos.stream().anyMatch(info -> !info.getState().isFinished())) return;
+                work.removeObserver(this);
+                recoveryWorkSessionId = null;
+                if (infos.stream().anyMatch(info -> info.getState() == WorkInfo.State.SUCCEEDED)) {
+                    Toast.makeText(TrackListActivity.this,
+                            R.string.diagnostics_recovery_done, Toast.LENGTH_SHORT).show();
+                    loadData();
+                } else {
+                    Toast.makeText(TrackListActivity.this,
+                            R.string.diagnostics_recovery_failed, Toast.LENGTH_LONG).show();
+                    maybePromptRecovery();
+                }
+            }
+        };
+        work.observe(this, observer);
     }
 
     private void startSensorsOrRecording(TrackRecordingServiceConnection.Callback callback) {

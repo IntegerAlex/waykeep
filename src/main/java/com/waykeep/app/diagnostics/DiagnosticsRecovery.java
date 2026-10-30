@@ -25,6 +25,7 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,12 +66,18 @@ public final class DiagnosticsRecovery {
             if (original != null && sourceUuid != null && !sourceUuid.equals(original.uuid())) original = null;
             if (original == null && sourceUuid != null) original = tracks.getTrack(sourceUuid);
             return original == null ? null : original.id();
-        });
+        }, recoveryId -> tracks.getTrack(recoveryId) != null);
     }
 
     static Optional<RecoveryCandidate> findPending(DiagnosticsStore store, TrackResolver resolveTrack) {
+        return findPending(store, resolveTrack, unused -> false);
+    }
+
+    private static Optional<RecoveryCandidate> findPending(DiagnosticsStore store, TrackResolver resolveTrack,
+                                                           Predicate<UUID> copyAlreadyExists) {
         for (DiagnosticsStore.SessionFile session : store.sessions()) {
             if (session.cleanEnd() && !hasFailedWrite(session.file())) continue;
+            if (copyAlreadyExists.test(session.recoveryId())) continue;
             Track.Id originalId = resolveTrack.resolve(session.trackId(), session.sourceTrackUuid());
             if (originalId == null) continue;
             RecoveryCandidate candidate = new RecoveryCandidate(
@@ -133,8 +140,12 @@ public final class DiagnosticsRecovery {
                 .setInputData(input.build())
                 .build();
         WorkManager.getInstance(context).enqueueUniqueWork(
-                "diagnostics-recovery-" + candidate.recoveryId(), ExistingWorkPolicy.KEEP, request);
+                uniqueWorkName(candidate), ExistingWorkPolicy.KEEP, request);
         return request;
+    }
+
+    public static String uniqueWorkName(RecoveryCandidate candidate) {
+        return "diagnostics-recovery-" + candidate.recoveryId();
     }
 
     public static boolean shouldOffer(boolean recordingActive, Optional<RecoveryCandidate> candidate) {

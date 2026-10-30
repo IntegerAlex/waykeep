@@ -128,10 +128,10 @@
 - Modify: `src/main/res/values/strings.xml`
 - Test: `src/test/java/com/waykeep/app/diagnostics/RecoveryPromptTest.java`
 
-- [ ] **Step 1: Write `RecoveryPromptTest.doesNotOfferWhileRecordingOrAfterCleanEnd`** and `offersForUncleanRecoverableSession` for `DiagnosticsRecovery.shouldOffer(...)`.
-- [ ] **Step 2: Run it and confirm it fails** before adding the prompt.
-- [ ] **Step 3: Add a non-blocking activity-list prompt** with **Recover copy** / **Not now**; defer “Not now” until the next launch and route recovery through the worker from Task 4.
-- [ ] **Step 4: Run the focused test and device-check that recovery is offered only for an eligible inactive session; commit** `recovery: prompt for a separate recovered copy`.
+- [x] **Step 1: Write `RecoveryPromptTest.doesNotOfferWhileRecordingOrAfterCleanEnd`** and `offersForUncleanRecoverableSession` for `DiagnosticsRecovery.shouldOffer(...)`.
+- [x] **Step 2: Run the tests**; the pure decision helper was introduced in Task 4, before this focused test file.
+- [x] **Step 3: Add a non-blocking activity-list prompt** with **Recover copy** / **Not now**; defer “Not now” until the activity's next foreground launch and route recovery through the worker from Task 4.
+- [x] **Step 4: Run the focused test and build**; device-check unavailable because no Android device is attached. Commit `recovery: prompt for a separate recovered copy`.
 
 ### Task 6: End-to-end verification
 

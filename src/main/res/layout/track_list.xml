@@ -30,6 +30,55 @@ limitations under the License.
             app:layout_behavior="@string/searchbar_scrolling_view_behavior"
             app:menu="@menu/track_list"
             app:navigationIcon="@drawable/ic_logo_color_24dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/diagnostics_recovery_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="4dp">
+
+                <TextView
+                    android:id="@+id/diagnostics_recovery_prompt_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/diagnostics_recovery_prompt"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/diagnostics_recovery_not_now"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/diagnostics_recovery_not_now" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/diagnostics_recovery_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/diagnostics_recovery_copy" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView

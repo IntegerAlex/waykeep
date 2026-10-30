@@ -324,6 +324,12 @@ limitations under the License.
     <string name="diagnostics_share_no_session">No recording diagnostics are available yet.</string>
     <string name="diagnostics_share_failed">Could not prepare diagnostics to share.</string>
     <string name="diagnostics_recovered_track_name">Recovered — %1$s</string>
+    <string name="diagnostics_recovery_prompt">GPS fixes may be missing from an interrupted recording. Recover them as a separate copy; the original will remain unchanged.</string>
+    <string name="diagnostics_recovery_copy">Recover copy</string>
+    <string name="diagnostics_recovery_not_now">Not now</string>
+    <string name="diagnostics_recovery_started">Recovery started. The copy will appear in your track list.</string>
+    <string name="diagnostics_recovery_done">Recovered copy added to your track list.</string>
+    <string name="diagnostics_recovery_failed">Could not create a recovered track copy.</string>
     <string name="menu_select_layout">Select Layout</string>
     <string name="menu_show_on_map">Show on map</string>
     <string name="menu_voice_rate">Voice speed</string>
