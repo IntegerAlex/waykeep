@@ -303,7 +303,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         PreferencesUtils.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
         recordingStatusReady = false;
-        recordingStatusConnection.bind(this);
+        recordingStatusConnection.bindWithStart(this);
     }
 
     @Override

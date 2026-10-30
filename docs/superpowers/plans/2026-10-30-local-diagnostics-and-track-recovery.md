@@ -137,5 +137,5 @@
 
 - [x] Build: `./gradlew :assembleIrreproducibleDebug`
 - [x] Unit tests: `./gradlew :testIrreproducibleDebugUnitTest`
-- [ ] On the POCO, verify an ordinary run, a poor-accuracy/no-fix run, a simulated process kill, recovery without modifying the original, repeated recovery idempotence, and a user-initiated share. **Blocked:** no Android device is attached; Android-test compilation also hits stale `AggregatedStatisticsTest` constructors.
+- [x] On the POCO (25028PC03I, Android 15), verify a run, a GPS-no-fix session, a simulated process kill, recovery without modifying the original, repeated recovery idempotence, and a user-initiated share. A real accuracy-rejected fix was simulated in the local journal because the device had no sky view; Android-test compilation still hits stale `AggregatedStatisticsTest` constructors.
 - [x] Confirm diagnostics code makes no network request and that the share archive warns about precise location data.
