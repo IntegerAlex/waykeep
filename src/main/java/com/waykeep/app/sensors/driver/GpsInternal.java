@@ -12,6 +12,8 @@ import androidx.core.location.LocationListenerCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.core.location.LocationRequestCompat;
 
+import java.util.function.Consumer;
+
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.util.PermissionRequester;
 
@@ -61,6 +63,7 @@ public class GpsInternal implements Driver {
             try {
                 Log.i(TAG, "Register for location updates");
                 driverObserver.onConnected(null, null);
+                injectAssistanceData(locationManager);
                 LocationManagerCompat.requestLocationUpdates(locationManager, LOCATION_PROVIDER, createLocationRequest(), handler::post, locationListenerCompat);
                 return;
             } catch (SecurityException e) {
@@ -103,4 +106,27 @@ public class GpsInternal implements Driver {
                 .setMaxUpdateDelayMillis(0)
                 .build();
     }
+
+    // #2410: warm the GNSS provider on cold starts; command names are
+    // provider-specific, so each attempt remains best-effort.
+    static void sendAssistanceCommands(Consumer<String> send) {
+        send.accept("force_xtra_injection");
+        send.accept("force_time_injection");
+    }
+
+    private void injectAssistanceData(LocationManager manager) {
+        Thread thread = new Thread(() -> sendAssistanceCommands(command -> {
+            try {
+                Log.i(TAG, "Requesting GNSS assistance: " + command);
+                if (!manager.sendExtraCommand(LOCATION_PROVIDER, command, null)) {
+                    Log.w(TAG, "GPS provider did not accept " + command);
+                }
+            } catch (RuntimeException e) {
+                Log.w(TAG, "GPS provider does not support " + command, e);
+            }
+        }), "GpsAssistanceData");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
 }
