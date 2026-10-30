@@ -44,14 +44,14 @@
 - `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
 - `SessionFile` contains parsed `SessionMetadata`, file path, and clean-end state parsed from the JSONL header/events.
 
-- [ ] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, and `continuesUnfinishedSessionSequence`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, and reuse of the session/recovery UUID after service restart.
-- [ ] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsTest.writesVersionedJsonlWithIncreasingSequence`**; confirm it fails before the writer exists.
-- [ ] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. `beginSession` creates a new log; `resumeSession` truncates any incomplete trailing line and continues an unfinished log with the same session/recovery UUID and next sequence. Use a single writer queue, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
-- [ ] **Step 4: Write `DiagnosticsStoreTest.pruneRemovesExpiredInactiveSessionsButKeepsActiveSession`** with expired, over-cap, and active-session fixtures.
-- [ ] **Step 5: Run that test and confirm it fails** because pruning is not implemented.
-- [ ] **Step 6: Implement `DiagnosticsStore.prune()`** to remove oldest inactive sessions only; if the active file reaches its cap, append an overflow event when possible and stop logging that session.
-- [ ] **Step 7: Run both focused tests and confirm they pass.**
-- [ ] **Step 8: Commit** `diagnostics: add bounded local recording journal`.
+- [x] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, and `continuesUnfinishedSessionSequence`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, and reuse of the session/recovery UUID after service restart.
+- [x] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsTest.writesVersionedJsonlWithIncreasingSequence`**; confirm it fails before the writer exists.
+- [x] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. `beginSession` creates a new log; `resumeSession` truncates any incomplete trailing line and continues an unfinished log with the same session/recovery UUID and next sequence. Use a single writer queue, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
+- [x] **Step 4: Write `DiagnosticsStoreTest.pruneRemovesExpiredInactiveSessionsButKeepsActiveSession`** with expired, over-cap, and active-session fixtures.
+- [x] **Step 5: Run that test and confirm it fails** because pruning is not implemented.
+- [x] **Step 6: Implement `DiagnosticsStore.prune()`** to remove oldest inactive sessions only; if the active file reaches its cap, append an overflow event when possible and stop logging that session.
+- [x] **Step 7: Run both focused tests and confirm they pass.**
+- [x] **Step 8: Commit** `diagnostics: add bounded local recording journal`.
 
 ### Task 2: Instrument GPS, recording, persistence, and device state
 
