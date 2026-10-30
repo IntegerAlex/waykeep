@@ -1,0 +1,6 @@
+v1.0.0-beta.2: Waykeep
+
+Changes:
+- Local recording diagnostics: GPS fixes, filtering decisions, writes and device state stay on-device.
+- Share diagnostics: one-tap ZIP of the latest session for debugging (exact coordinates included).
+- Recovery: rebuild a separate track copy from an interrupted recording without touching the original.

@@ -7,7 +7,8 @@ repeated here.
 
 - **Fork base:** OpenTracks `111ae968d` ("Bugfix: the currently recorded should
   not be deletable."), on Codeberg — kept as the `upstream` git remote.
-- **Downstream work:** 50 commits (this file first covered 26; §7 covers the rest).
+- **Downstream work:** 50 commits at the first snapshot (§7 covers the rest);
+  §8 covers local diagnostics and recovery added for `v1.0.0-beta.2`.
 - **Scope:** 440 files changed, +9,365 / −2,544 lines.
 - **License:** fork is GPLv3; upstream-derived parts remain Apache-2.0 (see
   `RELICENSING.md`, `NOTICE`, `LICENSE-APACHE-2.0`).
@@ -28,6 +29,9 @@ repeated here.
 6. **Feed & performance** — Material 3 feed, route thumbnails, `ListAdapter`
    + `DiffUtil`, background cursor loads.
 7. **Relicensed to GPLv3** (Apache-2.0 §4(b) + GPLv3 compatibility).
+8. **Local diagnostics & recovery** — a private per-recording event journal,
+   one-tap share of the latest session, and a separate recovered track copy when
+   Android kills the recorder.
 
 ---
 
@@ -317,3 +321,48 @@ marker; the no-signal error only shows when there is truly no location at all.
   properties (bare `:assembleRelease` fails on nightly signing validation —
   pre-existing upstream behavior, use `:assembleIrreproducibleRelease` for
   unsigned local builds).
+
+## 8. Local diagnostics and track recovery (v1.0.0-beta.2)
+
+A run could keep only a handful of GPS points while Android reported GPS as
+enabled, and the app kept no local evidence of whether fixes never arrived, the
+accuracy filter rejected them, or a database write failed. This release adds a
+private journal, an explicit share action, and a separate recovered copy.
+
+### 8.1 Recording journal
+- Versioned JSON Lines in app-private `files/diagnostics/`, one file per
+  session, with session, source-track and recovery-copy UUIDs, a monotonic
+  sequence, wall-clock and elapsed-realtime timestamps.
+- Events: raw GPS fix + validity/accuracy decision before filtering, merged
+  trackpoint candidates and storage decisions, database write attempts and
+  results, recording start/pause/resume/stop, service restart/destroy, markers,
+  device state (battery, power saver, idle, screen, network transport, location
+  permissions/provider), uncaught exception, and the previous process-exit
+  reason on Android 11+.
+- One serialized writer thread per session, flush + `fsync` every 5 s and on
+  lifecycle transitions, partial-tail truncation on resume, 4 MiB per-session
+  cap, and 30 days / 20 MiB total retention that never prunes the active file.
+- No upload, no system-wide logcat, no SSID/BSSID, identifiers, or free text.
+
+### 8.2 Share diagnostics
+- Track-list overflow action snapshots the latest session on the writer thread
+  and shares `manifest.json` + `session.jsonl` as a ZIP through `FileProvider`
+  and the Android Sharesheet. The manifest and share text state that exact GPS
+  coordinates and possibly fitness data are included. Old share ZIPs are purged.
+
+### 8.3 Recovered track copy
+- An interrupted session (or a clean one with a failed write) is offered as a
+  separate `Recovered — <date>` track when logged fixes exceed stored points.
+  Valid fixes rejected by the accuracy threshold are kept with their accuracy;
+  invalid coordinates are dropped; matching trackpoint sensor fields are merged.
+- The copy uses its own stable recovery UUID, so retries cannot duplicate it,
+  and the original track and rows are never modified. Recovery runs in a
+  WorkManager worker through the existing `TrackImporter` segmentation.
+
+### 8.4 Verification
+- 27 JVM tests cover writer ordering/isolation/durability, retention, archive
+  contents and active-session snapshots, payload privacy, recovery parsing and
+  idempotence, torn lines, and prompt gating.
+- Device-verified on a POCO 25028PC03I (Android 15): journal events, share
+  archive, previous-exit event, prompt, separate recovered copy, and no
+  duplicate re-offer on relaunch.
