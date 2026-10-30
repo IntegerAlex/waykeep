@@ -28,14 +28,14 @@ This is local diagnostics, not analytics. Nothing is uploaded automatically.
 
 ## Log contents and format
 
-Write versioned UTF-8 JSON Lines in an app-private directory, grouped by recording session and associated with the track ID when available. Use a monotonically increasing event sequence plus wall-clock and elapsed-realtime timestamps so events remain ordered across wall-clock changes.
+Write versioned UTF-8 JSON Lines in an app-private directory, grouped by recording session and associated with the track ID when available. Create both a session UUID and a stable recovery UUID in the session header before recording begins. Use a monotonically increasing event sequence plus wall-clock and elapsed-realtime timestamps so events remain ordered across wall-clock changes.
 
 Record these event classes:
 
 1. **Session and lifecycle:** recording start, pause/resume, clean stop/discard, marker add/edit/delete, activity/sensor/recording-setting changes, GPS listener registration/removal, service restart, task removal, and permission/provider changes. General screen navigation and user-entered notes are not logged.
 2. **Raw GPS fixes:** timestamp, latitude/longitude, horizontal/vertical accuracy, speed, bearing, provider, and available satellite count. Include fixes before accuracy/validity rejection.
 3. **Processing decisions:** accepted/rejected reason and configured accuracy threshold; resulting `TrackPoint`; distance-sampling decision; database insert attempt/result/error.
-4. **Device snapshots:** at recording start, state changes, and at most once per minute: battery percent/charging, battery saver, device idle state, screen interactive state, network transport/connectivity only, granted location permissions, and GPS provider enabled state.
+4. **Device snapshots:** at recording start and once per minute: battery percent/charging, battery saver, device idle state, screen interactive state, network transport/connectivity only, granted location permissions, and GPS provider enabled state. Explicit recording/service lifecycle changes are separate events.
 5. **Unexpected exits:** on next app start, record `ApplicationExitInfo` when supported and correlate it with any session lacking a clean-end marker.
 
 The log records health-sensor values only when they are part of the same `TrackPoint` data needed to diagnose/recover that recording. The share UI clearly warns that the archive contains precise location and may contain fitness data.
