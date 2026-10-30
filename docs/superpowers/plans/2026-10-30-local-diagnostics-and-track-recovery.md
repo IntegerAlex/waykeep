@@ -92,10 +92,10 @@
 - `DiagnosticsShare.newShareIntent(Context, File) -> Intent`
 - Archive creation flushes the active session writer before copying it.
 
-- [ ] **Step 1: Write `DiagnosticsShareTest.archiveContainsLatestSessionAndManifestOnly`**; assert the latest session is present, an older session is absent, and the manifest warns that exact location data is included.
-- [ ] **Step 2: Run it and confirm it fails** before adding archive code.
-- [ ] **Step 3: Implement a ZIP archive** with `ZipOutputStream`, and add **Share diagnostics** to the activity-list overflow menu. Share through the existing FileProvider and Android Sharesheet; state clearly that the archive contains exact GPS coordinates and possibly fitness data. No app network call or automatic upload.
-- [ ] **Step 4: Run the archive unit test and device smoke test** (sharesheet opens and recipient receives a readable archive); commit `diagnostics: add one-tap local share`.
+- [x] **Step 1: Write `DiagnosticsShareTest.archiveContainsLatestSessionAndManifestOnly`**; assert the latest session is present, an older session is absent, and the manifest warns that exact location data is included. Also test an active-session snapshot.
+- [x] **Step 2: Run it and confirm it fails** before adding archive code.
+- [x] **Step 3: Implement a ZIP archive** with `ZipOutputStream`, and add **Share diagnostics** to the activity-list overflow menu. Share through the existing FileProvider and Android Sharesheet; state clearly that the archive contains exact GPS coordinates and possibly fitness data. No app network call or automatic upload.
+- [x] **Step 4: Run archive unit tests and `:assembleIrreproducibleDebug`**; no Android device was attached for the sharesheet smoke test. Commit `diagnostics: add one-tap local share`.
 
 ### Task 4: Recovery parser and worker
 

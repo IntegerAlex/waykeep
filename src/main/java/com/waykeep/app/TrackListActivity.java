@@ -54,6 +54,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.Duration;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +66,7 @@ import java.util.concurrent.Executors;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackListIterator;
 import com.waykeep.app.data.models.Track;
+import com.waykeep.app.diagnostics.DiagnosticsShare;
 import com.waykeep.app.databinding.TrackListBinding;
 import com.waykeep.app.publicapi.DataProvider;
 import com.waykeep.app.sensors.GpsStatusValue;
@@ -428,6 +431,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             return true;
         }
 
+        if (item.getItemId() == R.id.track_list_share_diagnostics) {
+            shareLatestDiagnostics();
+            return true;
+        }
+
         if (item.getItemId() == R.id.track_list_settings) {
             startActivity(IntentUtils.newIntent(this, SettingsActivity.class));
             return true;
@@ -449,6 +457,29 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareLatestDiagnostics() {
+        trackLoader.execute(() -> {
+            Intent shareIntent;
+            try {
+                File archive = DiagnosticsShare.createLatestArchive(this);
+                if (archive == null) {
+                    runOnUiThread(() -> Toast.makeText(this,
+                            R.string.diagnostics_share_no_session, Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                shareIntent = DiagnosticsShare.newShareIntent(this, archive);
+            } catch (IOException | RuntimeException e) {
+                Log.w(TAG, "Could not prepare diagnostics archive.", e);
+                runOnUiThread(() -> Toast.makeText(this,
+                        R.string.diagnostics_share_failed, Toast.LENGTH_LONG).show());
+                return;
+            }
+            runOnUiThread(() -> {
+                if (!isFinishing() && !isDestroyed()) startActivity(shareIntent);
+            });
+        });
     }
 
     private void stopRecordingFromFeed() {

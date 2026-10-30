@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +29,7 @@ public final class DiagnosticsStore {
 
     private static final Pattern SEQUENCE = Pattern.compile("\"sequence\":(\\d+)");
     private static final Pattern TRACK_ID = Pattern.compile("\"track_id\":(\\d+)");
+    private static final Pattern WALL_TIME = Pattern.compile("\"wall_time\":\"([^\"]+)\"");
 
     private final File directory;
 
@@ -50,7 +52,7 @@ public final class DiagnosticsStore {
         return Arrays.stream(files)
                 .map(DiagnosticsStore::toSessionFile)
                 .filter(java.util.Objects::nonNull)
-                .sorted(Comparator.comparingLong((SessionFile session) -> session.file().lastModified()).reversed())
+                .sorted(Comparator.comparing(SessionFile::startedAt).reversed())
                 .toList();
     }
 
@@ -158,10 +160,22 @@ public final class DiagnosticsStore {
             String trackIdString = parts[2].substring(0, parts[2].length() - ".jsonl".length());
             Track.Id trackId = trackIdString.equals("none") ? trackIdFromEvents(file)
                     : new Track.Id(Long.parseLong(trackIdString));
-            return new SessionFile(sessionId, recoveryId, trackId, file, isCleanEndInternal(file));
+            return new SessionFile(sessionId, recoveryId, trackId, file, fileStartTime(file), isCleanEndInternal(file));
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private static Instant fileStartTime(File file) {
+        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            String firstLine = reader.readLine();
+            if (firstLine != null) {
+                Matcher matcher = WALL_TIME.matcher(firstLine);
+                if (matcher.find()) return Instant.parse(matcher.group(1));
+            }
+        } catch (IOException | RuntimeException ignored) {
+        }
+        return Instant.ofEpochMilli(file.lastModified());
     }
 
     @Nullable
@@ -192,6 +206,7 @@ public final class DiagnosticsStore {
         return sessionId != null && file.getName().startsWith(sessionId + "_");
     }
 
-    public record SessionFile(UUID sessionId, UUID recoveryId, @Nullable Track.Id trackId, File file, boolean cleanEnd) {
+    public record SessionFile(UUID sessionId, UUID recoveryId, @Nullable Track.Id trackId, File file,
+                              Instant startedAt, boolean cleanEnd) {
     }
 }

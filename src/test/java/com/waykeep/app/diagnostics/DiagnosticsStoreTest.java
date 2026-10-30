@@ -86,6 +86,22 @@ public class DiagnosticsStoreTest {
         assertTrue(lines.get(1).contains("\"reason\":5"));
     }
 
+    @Test
+    public void latestSessionUsesSessionStartNotLastWrite() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata earlier = metadata(42, "2026-10-30T01:00:00Z");
+        RecordingDiagnostics.SessionMetadata later = metadata(43, "2026-10-30T02:00:00Z");
+        File earlierFile = store.fileFor(earlier);
+        File laterFile = store.fileFor(later);
+        assertTrue(earlierFile.getParentFile().mkdirs() || earlierFile.getParentFile().isDirectory());
+        Files.writeString(earlierFile.toPath(), "{\"sequence\":0,\"event\":\"session_start\",\"wall_time\":\"2026-10-30T01:00:00Z\"}\n");
+        Files.writeString(laterFile.toPath(), "{\"sequence\":0,\"event\":\"session_start\",\"wall_time\":\"2026-10-30T02:00:00Z\"}\n");
+        assertTrue(laterFile.setLastModified(System.currentTimeMillis() - 60_000));
+        assertTrue(earlierFile.setLastModified(System.currentTimeMillis()));
+
+        assertEquals(later.sessionId(), store.latestSession().sessionId());
+    }
+
     private File createFile(File file, long size, long modifiedTime) throws Exception {
         assertTrue(file.getParentFile().mkdirs() || file.getParentFile().isDirectory());
         try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {

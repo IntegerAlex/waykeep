@@ -317,6 +317,12 @@ limitations under the License.
     <string name="menu_select_all">Select all</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share</string>
+    <string name="menu_share_diagnostics">Share diagnostics</string>
+    <string name="diagnostics_share_title">Share diagnostics</string>
+    <string name="diagnostics_share_subject">Waykeep recording diagnostics</string>
+    <string name="diagnostics_share_privacy_warning">This archive contains exact GPS coordinates and may include fitness data. Share it only with a trusted recipient.</string>
+    <string name="diagnostics_share_no_session">No recording diagnostics are available yet.</string>
+    <string name="diagnostics_share_failed">Could not prepare diagnostics to share.</string>
     <string name="menu_select_layout">Select Layout</string>
     <string name="menu_show_on_map">Show on map</string>
     <string name="menu_voice_rate">Voice speed</string>

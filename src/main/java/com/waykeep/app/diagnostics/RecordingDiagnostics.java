@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -20,6 +22,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.waykeep.app.data.models.Track;
 
@@ -30,6 +34,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
     private final DiagnosticsStore store;
     private SessionWriter current;
+    private SessionWriter finishing;
 
     public RecordingDiagnostics(Context context) {
         this(new DiagnosticsStore(context));
@@ -66,9 +71,10 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
     public synchronized void finish(String outcome) {
         if (current == null) return;
-        current.finish(outcome);
+        SessionWriter session = current;
         current = null;
-        if (activeDiagnostics == this) activeDiagnostics = null;
+        finishing = session;
+        session.finish(outcome, () -> onSessionFinished(session));
     }
 
     public static void recordProcessExit(String threadName, String exceptionClass, String topFrame) {
@@ -78,6 +84,43 @@ public final class RecordingDiagnostics implements AutoCloseable {
                     "thread", threadName,
                     "exception_class", exceptionClass,
                     "top_frame", topFrame));
+        }
+    }
+
+    public static boolean flushActive() {
+        RecordingDiagnostics diagnostics = activeDiagnostics;
+        if (diagnostics == null) return true;
+        SessionWriter session;
+        boolean isFinishing;
+        synchronized (diagnostics) {
+            isFinishing = diagnostics.current == null && diagnostics.finishing != null;
+            session = isFinishing ? diagnostics.finishing : diagnostics.current;
+        }
+        if (session == null) return true;
+        return isFinishing ? session.awaitFinished() : session.flushAndWait();
+    }
+
+    public static void copySessionSnapshot(File source, File target) throws IOException {
+        RecordingDiagnostics diagnostics = activeDiagnostics;
+        SessionWriter session = null;
+        boolean isFinishing = false;
+        if (diagnostics != null) {
+            synchronized (diagnostics) {
+                if (diagnostics.current != null && diagnostics.current.file.equals(source)) {
+                    session = diagnostics.current;
+                } else if (diagnostics.finishing != null && diagnostics.finishing.file.equals(source)) {
+                    session = diagnostics.finishing;
+                    isFinishing = true;
+                }
+            }
+        }
+        if (session == null) {
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else if (isFinishing) {
+            if (!session.awaitFinished()) throw new IOException("Timed out while waiting for diagnostics to finish.");
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            session.copySnapshot(target);
         }
     }
 
@@ -125,9 +168,15 @@ public final class RecordingDiagnostics implements AutoCloseable {
     @Override
     public synchronized void close() {
         if (current == null) return;
-        current.closeUncleanly();
+        SessionWriter session = current;
         current = null;
-        if (activeDiagnostics == this) activeDiagnostics = null;
+        finishing = session;
+        session.closeUncleanly(() -> onSessionFinished(session));
+    }
+
+    private synchronized void onSessionFinished(SessionWriter session) {
+        if (finishing == session) finishing = null;
+        if (current == null && finishing == null && activeDiagnostics == this) activeDiagnostics = null;
     }
 
     public record SessionMetadata(
@@ -203,22 +252,34 @@ public final class RecordingDiagnostics implements AutoCloseable {
             writer.execute(() -> writeEvent(type, snapshot));
         }
 
-        synchronized void finish(String outcome) {
+        synchronized void finish(String outcome, Runnable onFinished) {
             if (!active) return;
             active = false;
             cancelFlush();
             writer.execute(() -> {
-                writeEvent("session_end", Map.of("outcome", outcome));
-                closeOutput(true);
+                try {
+                    writeEvent("session_end", Map.of("outcome", outcome));
+                    closeOutput(true);
+                } finally {
+                    finished.countDown();
+                    onFinished.run();
+                }
             });
             writer.shutdown();
         }
 
-        synchronized void closeUncleanly() {
+        synchronized void closeUncleanly(Runnable onFinished) {
             if (!active) return;
             active = false;
             cancelFlush();
-            writer.execute(() -> closeOutput(true));
+            writer.execute(() -> {
+                try {
+                    closeOutput(true);
+                } finally {
+                    finished.countDown();
+                    onFinished.run();
+                }
+            });
             writer.shutdown();
         }
 
@@ -241,6 +302,64 @@ public final class RecordingDiagnostics implements AutoCloseable {
                 Thread.currentThread().interrupt();
             } catch (java.util.concurrent.RejectedExecutionException ignored) {
             }
+        }
+
+        boolean flushAndWait() {
+            CountDownLatch flushed = new CountDownLatch(1);
+            AtomicBoolean success = new AtomicBoolean();
+            try {
+                writer.execute(() -> {
+                    try {
+                        flushOutput();
+                        success.set(true);
+                    } catch (IOException e) {
+                        disable(e);
+                    } finally {
+                        flushed.countDown();
+                    }
+                });
+                return flushed.await(5, TimeUnit.SECONDS) && success.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            } catch (java.util.concurrent.RejectedExecutionException e) {
+                return false;
+            }
+        }
+
+        private final CountDownLatch finished = new CountDownLatch(1);
+
+        boolean awaitFinished() {
+            try {
+                return finished.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+
+        void copySnapshot(File target) throws IOException {
+            CountDownLatch copied = new CountDownLatch(1);
+            AtomicReference<IOException> error = new AtomicReference<>();
+            try {
+                writer.execute(() -> {
+                    try {
+                        flushOutput();
+                        Files.copy(file.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        error.set(e);
+                    } finally {
+                        copied.countDown();
+                    }
+                });
+                if (!copied.await(5, TimeUnit.SECONDS)) throw new IOException("Timed out while snapshotting diagnostics.");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted while snapshotting diagnostics.", e);
+            } catch (java.util.concurrent.RejectedExecutionException e) {
+                throw new IOException("Diagnostics writer is no longer available.", e);
+            }
+            if (error.get() != null) throw error.get();
         }
 
         private void startWriter() {
