@@ -41,7 +41,7 @@
 - `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
 - `SessionMetadata` contains schema version 1, session UUID, source track UUID, stable recovered-copy UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Persist the source UUID and recovery UUID separately; generate both before DB insertion so recovery can find the original and retries reuse the same copy UUID.
 - `DiagnosticsStore.latestSession() -> SessionFile`; `DiagnosticsStore.sessions() -> List<SessionFile>`; `DiagnosticsStore.prune(@Nullable UUID activeSessionId) -> void`.
-- `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
+- `DiagnosticsStore.unfinishedSession(Track.Id, UUID sourceTrackUuid) -> SessionFile?` finds the journal to continue after a sticky service restart.
 - `SessionFile` contains session/recovery/source-track UUIDs, optional track ID, file path, start time, and clean-end state parsed from JSONL.
 
 - [x] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, `continuesUnfinishedSessionSequence`, and `backToBackSessionsKeepTheirOwnIdsAndSequences`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, reuse of the session/recovery UUID on service restart, and isolation between immediately repeated sessions.
@@ -65,7 +65,7 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/RecordingDiagnosticsEventsTest.java`
 
 **Interfaces:**
-- `TrackRecordingService` creates one `RecordingDiagnostics` sink and passes it to `TrackRecordingManager`; the manager generates a session UUID and stable recovery UUID before inserting a track, stores the recovery UUID in the existing track UUID field, and logs the numeric ID after insert. On sticky service restart, `resumeSession` finds the unfinished journal by track ID or recovery UUID.
+- `TrackRecordingService` creates one `RecordingDiagnostics` sink and passes it to `TrackRecordingManager`; the manager generates session, source-track, and recovered-copy UUIDs before insertion, uses the session UUID as the original track UUID, persists the source UUID in the JSONL header, and logs the numeric ID after insert. On sticky service restart, `resumeSession` finds the unfinished journal by track ID plus source UUID.
 - `TrackPointCreator.Callback` adds `onRawGpsFix(Position position, String provider, long providerTimeMillis, long elapsedRealtimeNanos, Distance threshold, String decision)` so each raw fix is logged before the accuracy filter with both Android timestamps. `RecordingDiagnosticEvents` builds primitive event maps for GPS, status, device state, persistence results, and trackpoints.
 - `TrackRecordingManager` emits `trackpoint_candidate`, storage decision, track creation, database write success/failure, and retry-exhausted events.
 - New tracks and user-requested resume start a fresh diagnostics session; only sticky service restart calls `resumeSession` with the fallback metadata. Pause/resume while the service stays alive appends events to the same active session.
@@ -135,7 +135,7 @@
 
 ### Task 6: End-to-end verification
 
-- [ ] Build: `./gradlew :assembleIrreproducibleDebug`
-- [ ] Unit tests: `./gradlew :testIrreproducibleDebugUnitTest`
-- [ ] On the POCO, verify an ordinary run, a poor-accuracy/no-fix run, a simulated process kill, recovery without modifying the original, repeated recovery idempotence, and a user-initiated share.
-- [ ] Confirm no network request is made for diagnostics and that the share archive warns about precise location data.
+- [x] Build: `./gradlew :assembleIrreproducibleDebug`
+- [x] Unit tests: `./gradlew :testIrreproducibleDebugUnitTest`
+- [ ] On the POCO, verify an ordinary run, a poor-accuracy/no-fix run, a simulated process kill, recovery without modifying the original, repeated recovery idempotence, and a user-initiated share. **Blocked:** no Android device is attached; Android-test compilation also hits stale `AggregatedStatisticsTest` constructors.
+- [x] Confirm diagnostics code makes no network request and that the share archive warns about precise location data.
