@@ -38,14 +38,15 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/DiagnosticsStoreTest.java`
 
 **Interfaces:**
-- `RecordingDiagnostics(Context)`; `startSession(SessionMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
+- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionFile)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
 - `SessionMetadata` contains schema version 1, session UUID, stable recovery UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Generate/store the recovery UUID before any DB track insertion so retries are stable.
 - `DiagnosticsStore.latestSession() -> SessionFile`; `DiagnosticsStore.sessions() -> List<SessionFile>`; `DiagnosticsStore.prune(@Nullable UUID activeSessionId) -> void`.
-- `SessionFile` contains session UUID, recovery UUID, optional track ID, file path, and clean-end state parsed from the JSONL header/events.
+- `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
+- `SessionFile` contains parsed `SessionMetadata`, file path, and clean-end state parsed from the JSONL header/events.
 
-- [ ] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, and `recordsCleanEndMarker`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, and end outcome.
+- [ ] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, and `continuesUnfinishedSessionSequence`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, and reuse of the session/recovery UUID after service restart.
 - [ ] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsTest.writesVersionedJsonlWithIncreasingSequence`**; confirm it fails before the writer exists.
-- [ ] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. Use a single writer queue, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
+- [ ] **Step 3: Implement the serialized background writer** with an append-only JSONL file under `files/diagnostics/`. `beginSession` creates a new log; `resumeSession` truncates any incomplete trailing line and continues an unfinished log with the same session/recovery UUID and next sequence. Use a single writer queue, monotonic sequence numbers, and flush/sync at most every five seconds plus lifecycle transitions. On I/O failure, disable diagnostics and log a warning; never throw into GPS/recording code.
 - [ ] **Step 4: Write `DiagnosticsStoreTest.pruneRemovesExpiredInactiveSessionsButKeepsActiveSession`** with expired, over-cap, and active-session fixtures.
 - [ ] **Step 5: Run that test and confirm it fails** because pruning is not implemented.
 - [ ] **Step 6: Implement `DiagnosticsStore.prune()`** to remove oldest inactive sessions only; if the active file reaches its cap, append an overflow event when possible and stop logging that session.
