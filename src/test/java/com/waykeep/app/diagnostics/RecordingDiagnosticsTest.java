@@ -74,7 +74,7 @@ public class RecordingDiagnosticsTest {
         File file = store.fileFor(metadata);
         assertTrue(file.getParentFile().mkdirs() || file.getParentFile().isDirectory());
         Files.writeString(file.toPath(), ""
-                + "{\"schema_version\":1,\"session_id\":\"5ca87f32-0e7d-4f03-9d7c-28e502192b82\",\"recovery_id\":\"7fa09361-201f-4a31-95c2-09a277067a11\",\"track_id\":42,\"sequence\":0,\"event\":\"session_start\"}\n"
+                + "{\"schema_version\":1,\"session_id\":\"5ca87f32-0e7d-4f03-9d7c-28e502192b82\",\"recovery_id\":\"7fa09361-201f-4a31-95c2-09a277067a11\",\"source_track_uuid\":\"a4289d0d-a360-4efb-8b96-2dcaa671e2ba\",\"track_id\":42,\"sequence\":0,\"event\":\"session_start\"}\n"
                 + "{\"sequence\":1,\"event\":\"gps_fix\",\"latitude\":18.5}\n"
                 + "{\"sequence\":2,\"event\":\"partial");
 
@@ -147,6 +147,7 @@ public class RecordingDiagnosticsTest {
                 1,
                 UUID.fromString(sessionId),
                 UUID.fromString(recoveryId),
+                UUID.fromString("a4289d0d-a360-4efb-8b96-2dcaa671e2ba"),
                 new Track.Id(trackId),
                 "street running",
                 Instant.parse("2026-10-30T01:44:00Z"),

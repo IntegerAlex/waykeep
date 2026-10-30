@@ -38,11 +38,11 @@
 - Test: `src/test/java/com/waykeep/app/diagnostics/DiagnosticsStoreTest.java`
 
 **Interfaces:**
-- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `attachTrackId(Track.Id)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
-- `SessionMetadata` contains schema version 1, session UUID, stable recovery UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Generate/store the recovery UUID before any DB track insertion so retries are stable.
+- `RecordingDiagnostics(Context)`; `beginSession(SessionMetadata)`, `resumeSession(SessionMetadata fallbackMetadata)`, `event(String type, Map<String, ?> fields)`, and `finish(String outcome)`.
+- `SessionMetadata` contains schema version 1, session UUID, source track UUID, stable recovered-copy UUID, optional `Track.Id`, activity type, start wall time, and elapsed-realtime origin. Persist the source UUID and recovery UUID separately; generate both before DB insertion so recovery can find the original and retries reuse the same copy UUID.
 - `DiagnosticsStore.latestSession() -> SessionFile`; `DiagnosticsStore.sessions() -> List<SessionFile>`; `DiagnosticsStore.prune(@Nullable UUID activeSessionId) -> void`.
 - `DiagnosticsStore.unfinishedSession(Track.Id) -> SessionFile?` finds the journal to continue after a sticky service restart.
-- `SessionFile` contains parsed `SessionMetadata`, file path, and clean-end state parsed from the JSONL header/events.
+- `SessionFile` contains session/recovery/source-track UUIDs, optional track ID, file path, start time, and clean-end state parsed from JSONL.
 
 - [x] **Step 1: Write failing tests** named `writesVersionedJsonlWithIncreasingSequence`, `flushesQueuedEventsOnFinish`, `recordsCleanEndMarker`, `continuesUnfinishedSessionSequence`, and `backToBackSessionsKeepTheirOwnIdsAndSequences`; assert header/version, monotonic sequence, queued events durable on finish, exact numeric GPS fields, end outcome, reuse of the session/recovery UUID on service restart, and isolation between immediately repeated sessions.
 - [x] **Step 2: Run `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.diagnostics.RecordingDiagnosticsTest.writesVersionedJsonlWithIncreasingSequence`**; confirm it fails before the writer exists.
@@ -110,16 +110,16 @@
 - `DiagnosticsRecovery.readRawFixes(RecoveryCandidate) -> List<TrackPoint>`
 - `DiagnosticsRecovery.recover(Context, RecoveryCandidate) -> WorkRequest`
 - `DiagnosticsRecovery.shouldOffer(boolean recordingActive, Optional<RecoveryCandidate>) -> boolean`
-- `RecoveryCandidate` carries session UUID, original track ID, stable recovery UUID, and source log file.
-- Stable recovery UUID is read from the session header; do not generate a new UUID on each attempt.
+- `RecoveryCandidate` carries session UUID, original track ID, source track UUID, stable recovered-copy UUID, and source log file.
+- The source track UUID identifies the original DB row if the numeric ID link was not flushed. The distinct stable recovery UUID is used as the copy's existing track UUID and is read from the session header; do not generate it again on retry.
 
-- [ ] **Step 1: Write failing tests** named `findsUncleanSessionWithTrackId`, `noFixSessionIsNotRecoverable`, `recoveryKeepsValidAccuracyRejectedFixesButDropsInvalidCoordinates`, and `retryAfterRecoveryInsertDoesNotDuplicateCopy`; assert the original track ID and rows are unchanged and a retry finds the same recovery UUID.
-- [ ] **Step 2: Run focused tests and confirm failure** before implementing the parser/recovery path.
-- [ ] **Step 3: Implement `findPending(Context)`** for sessions without a clean end or with a DB-write failure and an existing track ID. If no original track row exists, leave the log shareable but return no recovery candidate.
-- [ ] **Step 4: Implement `readRawFixes(RecoveryCandidate)`** to retain valid coordinates, timestamps, accuracy, speed, and available trackpoint/sensor fields; reject invalid coordinates but include valid fixes rejected by the normal accuracy threshold.
-- [ ] **Step 5: Implement `DiagnosticsRecoveryWorker`** to create a separate `Recovered — <date>` track with the candidate's stable UUID, preserving the original and using the existing max-distance segmentation. Check for that UUID before inserting so retries cannot duplicate the copy.
-- [ ] **Step 6: Run the parser/idempotence unit tests and device-check recovered database rows.** The current connected-test task is blocked by unrelated stale `AggregatedStatisticsTest` constructor calls; do not modify those tests in this feature.
-- [ ] **Step 7: Commit** `recovery: create a separate track from local GPS journal`.
+- [x] **Step 1: Write failing tests** named `findsUncleanSessionWithTrackId`, `noFixSessionIsNotRecoverable`, `recoveryKeepsValidAccuracyRejectedFixesButDropsInvalidCoordinates`, and `retryAfterRecoveryInsertDoesNotDuplicateCopy`; assert the original track ID and rows are unchanged and a retry finds the same recovery UUID. Also cover UUID-only original lookup and clean-session write failure.
+- [x] **Step 2: Run focused tests and confirm failure** before implementing the parser/recovery path.
+- [x] **Step 3: Implement `findPending(Context)`** for sessions without a clean end or with a DB-write failure and an existing original track row. Resolve by logged track ID, then verify/use the source UUID; if no row exists, leave the log shareable but return no recovery candidate.
+- [x] **Step 4: Implement `readRawFixes(RecoveryCandidate)`** to retain valid coordinates, timestamps, accuracy, speed, and matching trackpoint/sensor fields; reject invalid coordinates but include valid fixes rejected by the normal accuracy threshold.
+- [x] **Step 5: Implement `DiagnosticsRecoveryWorker`** to create a separate `Recovered — <date>` track with the candidate's stable copy UUID, preserving the original and using the existing max-distance segmentation. Check for that UUID before inserting so retries cannot duplicate the copy.
+- [x] **Step 6: Run parser/idempotence unit tests.** Android-test compilation is blocked by unrelated stale `AggregatedStatisticsTest` constructor calls; no device is attached for database-row smoke testing. Do not modify those tests in this feature.
+- [x] **Step 7: Commit** `recovery: create a separate track from local GPS journal`.
 
 ### Task 5: Recovery prompt
 

@@ -104,6 +104,7 @@ public class DiagnosticsShareTest {
                 1,
                 UUID.fromString(sessionId),
                 UUID.fromString(recoveryId),
+                UUID.fromString("a4289d0d-a360-4efb-8b96-2dcaa671e2ba"),
                 new Track.Id(trackId),
                 "street running",
                 Instant.parse("2026-10-30T01:44:00Z"),

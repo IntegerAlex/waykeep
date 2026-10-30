@@ -30,6 +30,7 @@ public final class DiagnosticsStore {
     private static final Pattern SEQUENCE = Pattern.compile("\"sequence\":(\\d+)");
     private static final Pattern TRACK_ID = Pattern.compile("\"track_id\":(\\d+)");
     private static final Pattern WALL_TIME = Pattern.compile("\"wall_time\":\"([^\"]+)\"");
+    private static final Pattern SOURCE_TRACK_UUID = Pattern.compile("\"source_track_uuid\":\"([0-9a-fA-F-]{36})\"");
 
     private final File directory;
 
@@ -56,11 +57,6 @@ public final class DiagnosticsStore {
                 .toList();
     }
 
-    long totalBytes() {
-        File[] files = directory.listFiles((dir, name) -> name.endsWith(".jsonl"));
-        return files == null ? 0 : Arrays.stream(files).mapToLong(File::length).sum();
-    }
-
     @Nullable
     public SessionFile latestSession() {
         List<SessionFile> sessions = sessions();
@@ -77,9 +73,20 @@ public final class DiagnosticsStore {
     }
 
     @Nullable
-    public SessionFile unfinishedSession(UUID recoveryId) {
+    public SessionFile unfinishedSession(@Nullable Track.Id trackId, UUID sourceTrackUuid) {
+        if (trackId == null) return null;
         return sessions().stream()
-                .filter(session -> !session.cleanEnd() && recoveryId.equals(session.recoveryId()))
+                .filter(session -> !session.cleanEnd()
+                        && trackId.equals(session.trackId())
+                        && sourceTrackUuid.equals(session.sourceTrackUuid()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    public SessionFile unfinishedSessionBySourceTrackUuid(UUID sourceTrackUuid) {
+        return sessions().stream()
+                .filter(session -> !session.cleanEnd() && sourceTrackUuid.equals(session.sourceTrackUuid()))
                 .findFirst()
                 .orElse(null);
     }
@@ -112,7 +119,6 @@ public final class DiagnosticsStore {
             if (!expired && inactiveBytes <= allowedInactiveBytes) continue;
             long size = file.length();
             if (file.delete()) {
-                totalBytes -= size;
                 inactiveBytes -= size;
             }
         }
@@ -160,8 +166,21 @@ public final class DiagnosticsStore {
             String trackIdString = parts[2].substring(0, parts[2].length() - ".jsonl".length());
             Track.Id trackId = trackIdString.equals("none") ? trackIdFromEvents(file)
                     : new Track.Id(Long.parseLong(trackIdString));
-            return new SessionFile(sessionId, recoveryId, trackId, file, fileStartTime(file), isCleanEndInternal(file));
+            UUID sourceTrackUuid = sourceTrackUuid(file);
+            return new SessionFile(sessionId, recoveryId, sourceTrackUuid, trackId, file, fileStartTime(file), isCleanEndInternal(file));
         } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static UUID sourceTrackUuid(File file) {
+        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            String firstLine = reader.readLine();
+            if (firstLine == null) return null;
+            Matcher matcher = SOURCE_TRACK_UUID.matcher(firstLine);
+            return matcher.find() ? UUID.fromString(matcher.group(1)) : null;
+        } catch (IOException | IllegalArgumentException ignored) {
             return null;
         }
     }
@@ -206,7 +225,7 @@ public final class DiagnosticsStore {
         return sessionId != null && file.getName().startsWith(sessionId + "_");
     }
 
-    public record SessionFile(UUID sessionId, UUID recoveryId, @Nullable Track.Id trackId, File file,
-                              Instant startedAt, boolean cleanEnd) {
+    public record SessionFile(UUID sessionId, UUID recoveryId, @Nullable UUID sourceTrackUuid,
+                              @Nullable Track.Id trackId, File file, Instant startedAt, boolean cleanEnd) {
     }
 }

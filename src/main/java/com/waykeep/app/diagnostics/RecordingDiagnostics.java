@@ -138,6 +138,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             fields.put("schema_version", 1);
             fields.put("session_id", session.sessionId().toString());
             fields.put("recovery_id", session.recoveryId().toString());
+            if (session.sourceTrackUuid() != null) fields.put("source_track_uuid", session.sourceTrackUuid().toString());
             if (session.trackId() != null) fields.put("track_id", session.trackId().id());
             fields.put("sequence", sequence);
             fields.put("event", "previous_process_exit");
@@ -183,6 +184,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             int schemaVersion,
             UUID sessionId,
             UUID recoveryId,
+            UUID sourceTrackUuid,
             @Nullable Track.Id trackId,
             String activityType,
             Instant startTime,
@@ -199,6 +201,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
         private File file;
         private UUID sessionId;
         private UUID recoveryId;
+        private final UUID sourceTrackUuid;
         private Track.Id trackId;
         private final int schemaVersion;
         private final long elapsedRealtimeOriginNanos;
@@ -213,12 +216,13 @@ public final class RecordingDiagnostics implements AutoCloseable {
         private boolean disabled;
         private boolean capped;
 
-        private SessionWriter(DiagnosticsStore store, File file, UUID sessionId, UUID recoveryId,
+        private SessionWriter(DiagnosticsStore store, File file, UUID sessionId, UUID recoveryId, UUID sourceTrackUuid,
                               @Nullable Track.Id trackId, int schemaVersion, long elapsedRealtimeOriginNanos) {
             this.store = store;
             this.file = file;
             this.sessionId = sessionId;
             this.recoveryId = recoveryId;
+            this.sourceTrackUuid = sourceTrackUuid;
             this.trackId = trackId;
             this.schemaVersion = schemaVersion;
             this.elapsedRealtimeOriginNanos = elapsedRealtimeOriginNanos;
@@ -227,7 +231,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
         static SessionWriter begin(DiagnosticsStore store, SessionMetadata metadata) {
             SessionWriter session = new SessionWriter(store, store.fileFor(metadata), metadata.sessionId(),
-                    metadata.recoveryId(), metadata.trackId(), metadata.schemaVersion(), metadata.elapsedRealtimeOriginNanos());
+                    metadata.recoveryId(), metadata.sourceTrackUuid(), metadata.trackId(), metadata.schemaVersion(), metadata.elapsedRealtimeOriginNanos());
             session.writer.execute(() -> session.openNewSession(metadata));
             session.scheduleFlush();
             return session;
@@ -235,7 +239,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
         static SessionWriter resume(DiagnosticsStore store, SessionMetadata fallbackMetadata) {
             SessionWriter session = new SessionWriter(store, store.fileFor(fallbackMetadata),
-                    fallbackMetadata.sessionId(), fallbackMetadata.recoveryId(), fallbackMetadata.trackId(),
+                    fallbackMetadata.sessionId(), fallbackMetadata.recoveryId(), fallbackMetadata.sourceTrackUuid(), fallbackMetadata.trackId(),
                     fallbackMetadata.schemaVersion(), fallbackMetadata.elapsedRealtimeOriginNanos());
             session.writer.execute(() -> session.findAndResume(fallbackMetadata));
             session.scheduleFlush();
@@ -410,8 +414,8 @@ public final class RecordingDiagnostics implements AutoCloseable {
         }
 
         private void findAndResume(SessionMetadata fallbackMetadata) {
-            DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(trackId);
-            if (unfinished == null) unfinished = store.unfinishedSession(recoveryId);
+            DiagnosticsStore.SessionFile unfinished = store.unfinishedSession(trackId, sourceTrackUuid);
+            if (unfinished == null) unfinished = store.unfinishedSessionBySourceTrackUuid(sourceTrackUuid);
             if (unfinished == null) {
                 openNewSession(fallbackMetadata);
                 return;
@@ -468,6 +472,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
             data.put("schema_version", schemaVersion);
             data.put("session_id", sessionId.toString());
             data.put("recovery_id", recoveryId.toString());
+            data.put("source_track_uuid", sourceTrackUuid.toString());
             if (trackId != null) data.put("track_id", trackId.id());
             data.put("sequence", nextSequence);
             data.put("event", type);

@@ -90,8 +90,9 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         activityTypeLocalized = PreferencesUtils.getDefaultActivityTypeLocalized();
         UUID sessionId = UUID.randomUUID();
         trackUuid = sessionId;
+        UUID recoveryUuid = UUID.randomUUID();
         diagnostics.beginSession(new RecordingDiagnostics.SessionMetadata(
-                1, sessionId, trackUuid, null, activityTypeLocalized,
+                1, sessionId, recoveryUuid, trackUuid, null, activityTypeLocalized,
                 initialStatistics.startTime(), SystemClock.elapsedRealtimeNanos()));
 
         try {
@@ -144,7 +145,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         activityTypeLocalized = track.activityTypeLocalized();
         if (!continueSession) {
             RecordingDiagnostics.SessionMetadata metadata = new RecordingDiagnostics.SessionMetadata(
-                    1, UUID.randomUUID(), trackUuid, trackId, activityTypeLocalized,
+                    1, UUID.randomUUID(), UUID.randomUUID(), trackUuid, trackId, activityTypeLocalized,
                     track.statistics().startTime(), SystemClock.elapsedRealtimeNanos());
             if (serviceRestart) diagnostics.resumeSession(metadata);
             else diagnostics.beginSession(metadata);

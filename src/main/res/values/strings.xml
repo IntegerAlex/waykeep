@@ -323,6 +323,7 @@ limitations under the License.
     <string name="diagnostics_share_privacy_warning">This archive contains exact GPS coordinates and may include fitness data. Share it only with a trusted recipient.</string>
     <string name="diagnostics_share_no_session">No recording diagnostics are available yet.</string>
     <string name="diagnostics_share_failed">Could not prepare diagnostics to share.</string>
+    <string name="diagnostics_recovered_track_name">Recovered — %1$s</string>
     <string name="menu_select_layout">Select Layout</string>
     <string name="menu_show_on_map">Show on map</string>
     <string name="menu_voice_rate">Voice speed</string>
