@@ -171,7 +171,13 @@ public class GpsHandler extends SensorHandler<Location, Position> {
 
         gnssStatusCallback = new GnssStatusCompat.Callback() {
             @Override
+            public void onStarted() {
+                Log.i(TAG, "GNSS status: started");
+            }
+
+            @Override
             public void onFirstFix(int ttffMillis) {
+                Log.i(TAG, "GNSS status: first fix in " + ttffMillis + " ms");
                 trackPointCreator.sendGnssFirstFix(ttffMillis);
             }
 
@@ -208,7 +214,9 @@ public class GpsHandler extends SensorHandler<Location, Position> {
         };
 
         Handler handler = sensorManager.getHandler();
-        if (!LocationManagerCompat.registerGnssStatusCallback(locationManager, handler::post, gnssStatusCallback)) {
+        boolean registered = LocationManagerCompat.registerGnssStatusCallback(locationManager, handler::post, gnssStatusCallback);
+        Log.i(TAG, "GNSS status registered=" + registered);
+        if (!registered) {
             Log.w(TAG, "GNSS status is not available on this device");
             gnssStatusCallback = null;
             gnssStatusLocationManager = null;

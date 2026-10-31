@@ -366,11 +366,24 @@ private journal, an explicit share action, and a separate recovered copy.
   and the original track and rows are never modified. Recovery runs in a
   WorkManager worker through the existing `TrackImporter` segmentation.
 
-### 8.4 Verification
-- 35 JVM tests cover writer ordering/isolation/durability, retention, archive
+### 8.4 Stationary drift and the approximate start
+- A stationary receiver keeps reporting positions whose speed is below the chip's own speed
+  uncertainty (measured here: 0.49 m/s with ±3.18 m/s). Those are noise, not movement: the speed
+  is clamped to zero and the positions are not stored, so sitting still reads 0 m instead of
+  accumulating a few metres per minute of GPS drift. Walking fixes (above 0.8 m/s) are unaffected.
+- At recording start a fresh `NETWORK_PROVIDER` fix (≤150 m accuracy) is stored as the first
+  point when no GPS fix has arrived yet, so the track begins where the walk began instead of a
+  few hundred metres later. The first GPS fix connects to it when it is within 1 km; beyond that
+  the segment breaks rather than drawing a long straight line.
+- While only that network point exists, the notification and status strip say
+  "Approximate location (±N m)"; once satellites are visible but unusable they say
+  "Searching for satellites (used/visible)".
+
+### 8.5 Verification
+- 45 JVM tests cover writer ordering/isolation/durability, retention, archive
   contents and active-session snapshots, payload privacy, recovery parsing and
-  idempotence, torn lines, prompt gating, GNSS event payloads and the satellite
-  logging throttle.
+  idempotence, torn lines, prompt gating, GNSS event payloads, the satellite
+  logging throttle, the provisional-start cap and the standing-still speed gate.
 - Device-verified on a POCO 25028PC03I (Android 15): journal events, share
   archive, previous-exit event, prompt, separate recovered copy, and no
   duplicate re-offer on relaunch.

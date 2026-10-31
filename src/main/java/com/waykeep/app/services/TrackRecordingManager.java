@@ -3,13 +3,18 @@ package com.waykeep.app.services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteException;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.location.LocationManagerCompat;
 
 import java.time.Duration;
 import java.time.ZoneOffset;
@@ -21,6 +26,7 @@ import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.models.ActivityType;
 import com.waykeep.app.data.models.Distance;
+import com.waykeep.app.data.models.Position;
 import com.waykeep.app.data.models.Statistics;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackBuilder;
@@ -42,6 +48,15 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
     // #2338: a GPS outage longer than this starts a new segment instead of drawing a straight line across it.
     private static final Duration GPS_LOSS_SEGMENT_BREAK = Duration.ofSeconds(60);
+
+    // The GPS chip can take minutes to fix indoors while the network provider already knows where
+    // the phone is. A fresh network fix starts the track at the right place; this is how far the
+    // first GPS fix may be from it before the gap is treated as an outage instead of the walk.
+    private static final Duration PROVISIONAL_START_TIMEOUT = Duration.ofSeconds(8);
+    private static final Distance PROVISIONAL_START_MAX_CONNECT = Distance.of(1000);
+    // Network fixes are coarser than GPS (cell-based ones are ~100 m), so they cannot use the
+    // 50 m recording threshold; beyond this they are too vague to be a start point.
+    private static final Distance PROVISIONAL_START_MAX_ACCURACY = Distance.of(150);
 
     private final Runnable ON_IDLE = this::onIdle;
 
@@ -69,6 +84,10 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
     private TrackPoint lastStoredTrackPoint;
     private TrackPoint lastStoredTrackPointWithLocation;
+
+    @Nullable
+    private CancellationSignal provisionalStartSignal;
+    private boolean lastStoredIsProvisionalStart;
 
     TrackRecordingManager(Context context, TrackPointCreator trackPointCreator, IdleObserver idleObserver,
                           Handler handler, RecordingDiagnostics diagnostics) {
@@ -125,8 +144,94 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         onNewTrackPoint(segmentStartTrackPoint);
+        requestProvisionalStartPoint();
 
         return trackId;
+    }
+
+    /**
+     * The network provider knows where the phone is within a second, indoors included, while the
+     * GPS chip may need minutes for its first fix. A fresh, accurate network fix is stored as the
+     * first point, so the track starts where the walk started instead of a few hundred metres
+     * later. Best effort: no provider, no permission or poor accuracy leaves the track GPS-only.
+     */
+    private void requestProvisionalStartPoint() {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager == null || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            return;
+        }
+
+        CancellationSignal signal = new CancellationSignal();
+        provisionalStartSignal = signal;
+        handler.postDelayed(signal::cancel, PROVISIONAL_START_TIMEOUT.toMillis());
+        try {
+            LocationManagerCompat.getCurrentLocation(locationManager, LocationManager.NETWORK_PROVIDER,
+                    signal, handler::post, this::onProvisionalStartLocation);
+        } catch (SecurityException e) {
+            Log.w(TAG, "No permission for a network location", e);
+        }
+    }
+
+    private synchronized void onProvisionalStartLocation(@Nullable Location location) {
+        provisionalStartSignal = null;
+        if (trackId == null || lastStoredTrackPointWithLocation != null) {
+            return;
+        }
+
+        Distance accuracy = location != null && location.hasAccuracy() ? Distance.of(location.getAccuracy()) : null;
+        if (accuracy == null || accuracy.greaterThan(PROVISIONAL_START_MAX_ACCURACY)) {
+            diagnostics.event("provisional_start", Map.of(
+                    "accepted", false,
+                    "accuracy_m", accuracy == null ? -1.0 : accuracy.toM(),
+                    "reason", accuracy == null ? "no_accuracy" : "poor_accuracy"));
+            return;
+        }
+
+        TrackPoint point = new TrackPoint(TrackPoint.Type.TRACKPOINT, Position.of(location, trackPointCreator.getNow()));
+        boolean stored = onNewTrackPoint(point);
+        if (stored) {
+            lastStoredIsProvisionalStart = true;
+        }
+        diagnostics.event("provisional_start", Map.of(
+                "accepted", stored,
+                "accuracy_m", accuracy.toM(),
+                "reason", stored ? "stored" : "not_stored"));
+    }
+
+    /**
+     * A provisional start may be connected to the first GPS fix even when the gap would normally
+     * break the segment: the walk really did happen, and the network fix locates its beginning.
+     * Beyond the cap it is safer to break than to draw a kilometre-long straight line.
+     */
+    @VisibleForTesting
+    static boolean connectsProvisionalStart(boolean lastStoredIsProvisional, @NonNull Distance distance) {
+        return lastStoredIsProvisional && !distance.greaterThan(PROVISIONAL_START_MAX_CONNECT);
+    }
+
+    /**
+     * A stationary receiver still reports positions, but their speed is below the chip's own
+     * uncertainty (see {@link Position#of(Location, Instant)}), so the position steps are noise.
+     * Storing them turns drift into distance. IDLE and segment points are excluded: they carry
+     * sensor data and boundaries, not movement.
+     */
+    @VisibleForTesting
+    static boolean isStationary(@NonNull TrackPoint trackPoint) {
+        return trackPoint.type() == TrackPoint.Type.TRACKPOINT
+                && trackPoint.position().hasLocation()
+                && trackPoint.position().hasSpeed()
+                && trackPoint.position().speed().isZero();
+    }
+
+    /**
+     * Accuracy of the provisional network start while it is still the only location: the app has
+     * coordinates, they are just coarse. Null once a GPS fix has been stored.
+     */
+    @Nullable
+    Distance provisionalStartAccuracy() {
+        if (!lastStoredIsProvisionalStart || lastStoredTrackPointWithLocation == null) {
+            return null;
+        }
+        return lastStoredTrackPointWithLocation.position().horizontalAccuracy();
     }
 
     /**
@@ -262,6 +367,11 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return true;
         }
 
+        if (isStationary(trackPoint)) {
+            logTrackpoint("trackpoint_decision", trackPoint, "stationary_skip");
+            return false;
+        }
+
         if (!trackPoint.position().hasLocation() && trackPoint.sensorDistance() == null) {
             Duration minStorageInterval = Duration.ofSeconds(10); // TODO Should be configurable.
             boolean shouldStore = lastStoredTrackPoint.getTime().plus(minStorageInterval)
@@ -284,7 +394,8 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             distanceToLastStoredTrackPoint = trackPoint.distanceToPrevious(lastStoredTrackPoint);
         }
 
-        if (distanceToLastStoredTrackPoint.greaterThan(maxRecordingDistance)) {
+        boolean connectsProvisional = connectsProvisionalStart(lastStoredIsProvisionalStart, distanceToLastStoredTrackPoint);
+        if (!connectsProvisional && distanceToLastStoredTrackPoint.greaterThan(maxRecordingDistance)) {
             trackPoint = trackPoint.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
             logTrackpoint("trackpoint_decision", trackPoint, "maximum_gap_segment_start");
             insertTrackPoint(trackPoint, true);
@@ -294,7 +405,8 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         }
 
         // #2338: breaking the segment after a GPS outage avoids a straight line across the gap.
-        if (trackPoint.position().hasLocation()
+        if (!connectsProvisional
+                && trackPoint.position().hasLocation()
                 && lastStoredTrackPointWithLocation != null
                 && lastStoredTrackPointWithLocation.position().hasLocation()
                 && Duration.between(lastStoredTrackPointWithLocation.getTime(), trackPoint.getTime()).compareTo(GPS_LOSS_SEGMENT_BREAK) > 0) {
@@ -364,6 +476,8 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
                 lastStoredTrackPoint = trackPoint;
                 if (trackPoint.position().hasLocation()) {
                     lastStoredTrackPointWithLocation = lastStoredTrackPoint;
+                    // Keep the flag across IDLE points: the first *location* is what hands over.
+                    lastStoredIsProvisionalStart = false;
                 }
                 diagnostics.event("database_write", RecordingDiagnosticEvents.persistenceResult(true, attempt + 1, null));
                 return;
@@ -398,6 +512,11 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
         lastStoredTrackPoint = null;
         lastStoredTrackPointWithLocation = null;
+        lastStoredIsProvisionalStart = false;
+        if (provisionalStartSignal != null) {
+            provisionalStartSignal.cancel();
+            provisionalStartSignal = null;
+        }
     }
 
     @Override

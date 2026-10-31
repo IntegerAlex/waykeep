@@ -114,6 +114,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private RecordingDiagnostics diagnostics;
     private boolean hasReceivedGpsFix;
     private GpsStatusValue lastGpsStatus = STATUS_GPS_DEFAULT;
+    private String lastGpsStatusText;
     private int satellitesVisible = -1;
     private int satellitesUsedInFix = -1;
 
@@ -448,9 +449,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         // The accuracy belongs to the last accepted position: it is only meaningful while
         // the signal is good. Otherwise it is stale and hides the real problem.
         lastGpsStatus = gpsStatusValue;
-        nm.updateGPSStatus(gpsStatusText(gpsStatusValue), !gpsStatusValue.hasGoodSignal());
         obs.postValue(gpsStatusValue);
-        gpsStatusTextObservable.postValue(gpsStatusText(gpsStatusValue));
+        refreshGpsStatusText();
     }
 
     @Override
@@ -460,11 +460,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
         this.satellitesVisible = satellitesVisible;
         this.satellitesUsedInFix = satellitesUsedInFix;
-        TrackRecordingServiceNotificationManager nm = notificationManager;
-        if (nm != null && lastGpsStatus.isGpsStarted()) {
-            String text = gpsStatusText(lastGpsStatus);
-            nm.updateGPSStatus(text, !lastGpsStatus.hasGoodSignal());
-            gpsStatusTextObservable.postValue(text);
+        if (lastGpsStatus.isGpsStarted()) {
+            refreshGpsStatusText();
         }
     }
 
@@ -478,13 +475,36 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         diagnostics.event("gnss_assistance", RecordingDiagnosticEvents.gnssAssistance(command, accepted, errorClass));
     }
 
+    private void refreshGpsStatusText() {
+        String text = gpsStatusText(lastGpsStatus);
+        if (text.equals(lastGpsStatusText)) {
+            return;
+        }
+        lastGpsStatusText = text;
+
+        TrackRecordingServiceNotificationManager nm = notificationManager;
+        if (nm != null) {
+            nm.updateGPSStatus(text, !lastGpsStatus.hasGoodSignal());
+        }
+        if (gpsStatusTextObservable != null) {
+            gpsStatusTextObservable.postValue(text);
+        }
+    }
+
     /**
-     * While no fix has arrived yet, say how many satellites the receiver actually sees: "waiting
-     * for GPS" alone cannot tell a blind receiver from a slow one.
+     * Say what is actually true while the GPS has no fix: whether the app already has coordinates
+     * (a coarse network position) or how many satellites the receiver sees. "Waiting for GPS"
+     * alone cannot tell a blind receiver from a slow one.
      */
     private String gpsStatusText(GpsStatusValue value) {
-        if (!hasReceivedGpsFix && satellitesVisible >= 0 && value.isGpsStarted() && !value.hasGoodSignal()) {
-            return getString(R.string.gps_searching_satellites, satellitesUsedInFix, satellitesVisible);
+        if (!hasReceivedGpsFix && value.isGpsStarted() && !value.hasGoodSignal()) {
+            Distance provisionalAccuracy = trackRecordingManager == null ? null : trackRecordingManager.provisionalStartAccuracy();
+            if (provisionalAccuracy != null) {
+                return getString(R.string.gps_approximate_location, Math.round(provisionalAccuracy.toM()));
+            }
+            if (satellitesVisible >= 0) {
+                return getString(R.string.gps_searching_satellites, satellitesUsedInFix, satellitesVisible);
+            }
         }
         return getString(value.message);
     }
@@ -572,6 +592,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         if (!isRecordingAndNotPaused()) {
             return;
         }
+
+        // The provisional network start arrives asynchronously; pick it up for the status text.
+        refreshGpsStatusText();
 
         // Compute temporary track statistics using sensorData and update time.
         RecordingData data = trackRecordingManager.getDataForUI();

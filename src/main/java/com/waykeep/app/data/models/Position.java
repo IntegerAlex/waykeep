@@ -4,6 +4,7 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
@@ -17,6 +18,9 @@ public record Position(
         @Nullable Float bearing,
         @Nullable Speed speed
 ) {
+
+    /** Slower than this, and below the chip's speed uncertainty, is standing still. */
+    private static final double STANDING_STILL_MAX_SPEED = 0.8;
 
     public static Position of(@NonNull Instant time) {
         return new Position(
@@ -40,8 +44,31 @@ public record Position(
                 location.hasAltitude() ? Altitude.WGS84.of(location.getAltitude()) : null,
                 location.hasVerticalAccuracy() ? Distance.of(location.getVerticalAccuracyMeters()) : null,
                 location.hasBearing() ? location.getBearing() : null,
-                location.hasSpeed() ? Speed.of(location.getSpeed()) : null
+                speedOf(location)
         );
+    }
+
+    /**
+     * A speed below its own uncertainty is indistinguishable from standing still. Reporting it as
+     * movement makes a stationary receiver accumulate GPS drift as distance.
+     */
+    @Nullable
+    private static Speed speedOf(@NonNull Location location) {
+        if (!location.hasSpeed()) {
+            return null;
+        }
+        return speedOf(location.getSpeed(), location.hasSpeedAccuracy(), location.getSpeedAccuracyMetersPerSecond());
+    }
+
+    @VisibleForTesting
+    @NonNull
+    static Speed speedOf(double metersPerSecond, boolean hasSpeedAccuracy, double speedAccuracyMetersPerSecond) {
+        // Below the chip's own uncertainty and below a slow stroll: standing still. The absolute
+        // floor keeps a walking fix with a poor speed estimate from being zeroed.
+        if (hasSpeedAccuracy && metersPerSecond < STANDING_STILL_MAX_SPEED && metersPerSecond < speedAccuracyMetersPerSecond) {
+            return Speed.of(0);
+        }
+        return Speed.of(metersPerSecond);
     }
 
     public boolean hasLocation() {
