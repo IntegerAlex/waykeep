@@ -1,0 +1,6 @@
+v1.0.0-beta.3: Waykeep
+
+Changes:
+- GPS acquisition is visible: satellites visible/used, time to first fix, and whether the ROM accepted A-GPS assistance.
+- A network location starts the track while GPS is still acquiring, so the first few hundred metres are no longer missing.
+- Standing still no longer accumulates GPS drift as distance.
