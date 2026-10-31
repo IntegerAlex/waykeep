@@ -2,10 +2,16 @@ package com.waykeep.app.sensors;
 
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.location.GnssStatusCompat;
+import androidx.core.location.LocationManagerCompat;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.models.Distance;
@@ -27,6 +33,20 @@ public class GpsHandler extends SensorHandler<Location, Position> {
 
     private GpsStatusManager gpsStatusManager;
     private Distance thresholdHorizontalAccuracy;
+
+    /** Satellite callbacks arrive at ~1 Hz; only changes are logged, and not more often than this. */
+    @VisibleForTesting
+    public static final long GNSS_STATUS_MIN_INTERVAL_MS = 5_000;
+
+    @Nullable
+    private GnssStatusCompat.Callback gnssStatusCallback;
+    @Nullable
+    private LocationManager gnssStatusLocationManager;
+    private long gnssConnectElapsedMs = -1;
+    private long lastGnssLogElapsedMs = -1;
+    private int lastSatellitesVisible = -1;
+    private int lastSatellitesUsedInFix = -1;
+    private boolean hasFix;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> {
         if (PreferencesUtils.isKey(R.string.recording_gps_accuracy_key, key)) {
@@ -60,12 +80,19 @@ public class GpsHandler extends SensorHandler<Location, Position> {
         super.onConnected(sensorAddress, sensorName);
         gpsStatusManager.onGpsEnabled();
         gpsStatusManager.start();
+        registerGnssStatus();
     }
 
     @Override
     public void onDisconnected() {
         super.onDisconnected();
         gpsStatusManager.stop();
+        unregisterGnssStatus();
+    }
+
+    @Override
+    public void onAssistanceResult(String command, boolean accepted, @Nullable String errorClass) {
+        trackPointCreator.sendGnssAssistance(command, accepted, errorClass);
     }
 
     @Override
@@ -76,6 +103,7 @@ public class GpsHandler extends SensorHandler<Location, Position> {
 
     @Override
     public void onDataReceived(Location location) {
+        hasFix = true;
         // Send each update to the status; please note that this TrackPoint is not stored.
         Position position = Position.of(location, trackPointCreator.getNow());
         gpsStatusManager.onNewTrackPoint(position);
@@ -118,5 +146,94 @@ public class GpsHandler extends SensorHandler<Location, Position> {
     @Override
     protected String getSensorPreferenceDefaultValue() {
         return SensorType.INTERNAL.getPreferenceValue();
+    }
+
+    /**
+     * Satellite visibility is the missing fact behind "waiting for GPS": it separates a chip that
+     * sees nothing (indoors) from one that sees satellites but has no fix yet (cold start).
+     * Best effort; an unsupported device simply keeps the generic status.
+     */
+    private void registerGnssStatus() {
+        if (gnssStatusCallback != null) {
+            return;
+        }
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(android.content.Context.LOCATION_SERVICE);
+        if (locationManager == null) {
+            return;
+        }
+
+        gnssStatusLocationManager = locationManager;
+        gnssConnectElapsedMs = SystemClock.elapsedRealtime();
+        lastGnssLogElapsedMs = gnssConnectElapsedMs;
+        lastSatellitesVisible = -1;
+        lastSatellitesUsedInFix = -1;
+        hasFix = false;
+
+        gnssStatusCallback = new GnssStatusCompat.Callback() {
+            @Override
+            public void onFirstFix(int ttffMillis) {
+                trackPointCreator.sendGnssFirstFix(ttffMillis);
+            }
+
+            @Override
+            public void onSatelliteStatusChanged(@NonNull GnssStatusCompat status) {
+                // Only the acquisition window matters: once fixes arrive, the 1 Hz gps_fix
+                // events carry the accuracy and the journal has a 4 MiB cap.
+                if (hasFix) {
+                    return;
+                }
+                int visible = status.getSatelliteCount();
+                int usedInFix = 0;
+                double maxSnr = Double.NaN;
+                for (int i = 0; i < visible; i++) {
+                    if (status.usedInFix(i)) {
+                        usedInFix++;
+                    }
+                    double cn0 = status.getCn0DbHz(i);
+                    if (!Double.isNaN(cn0) && (Double.isNaN(maxSnr) || cn0 > maxSnr)) {
+                        maxSnr = cn0;
+                    }
+                }
+
+                long now = SystemClock.elapsedRealtime();
+                if (!shouldLogGnssStatus(lastSatellitesVisible, lastSatellitesUsedInFix, visible, usedInFix, now - lastGnssLogElapsedMs)) {
+                    return;
+                }
+                lastSatellitesVisible = visible;
+                lastSatellitesUsedInFix = usedInFix;
+                lastGnssLogElapsedMs = now;
+                trackPointCreator.sendGnssStatus(visible, usedInFix,
+                        Double.isNaN(maxSnr) ? null : maxSnr, now - gnssConnectElapsedMs);
+            }
+        };
+
+        Handler handler = sensorManager.getHandler();
+        if (!LocationManagerCompat.registerGnssStatusCallback(locationManager, handler::post, gnssStatusCallback)) {
+            Log.w(TAG, "GNSS status is not available on this device");
+            gnssStatusCallback = null;
+            gnssStatusLocationManager = null;
+        }
+    }
+
+    private void unregisterGnssStatus() {
+        if (gnssStatusCallback == null) {
+            return;
+        }
+        LocationManagerCompat.unregisterGnssStatusCallback(gnssStatusLocationManager, gnssStatusCallback);
+        gnssStatusCallback = null;
+        gnssStatusLocationManager = null;
+        lastSatellitesVisible = -1;
+        lastSatellitesUsedInFix = -1;
+    }
+
+    @VisibleForTesting
+    static boolean shouldLogGnssStatus(int lastVisible, int lastUsedInFix, int visible, int usedInFix, long sinceLastLogMs) {
+        if (lastVisible < 0) {
+            return true;
+        }
+        if (visible == lastVisible && usedInFix == lastUsedInFix) {
+            return false;
+        }
+        return sinceLastLogMs >= GNSS_STATUS_MIN_INTERVAL_MS;
     }
 }

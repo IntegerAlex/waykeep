@@ -75,6 +75,36 @@ public class RecordingDiagnosticsEventsTest {
     }
 
     @Test
+    public void gnssStatusIncludesSatelliteCounts() {
+        Map<String, Object> fields = RecordingDiagnosticEvents.gnssStatus(14, 6, 41.5, 12345L);
+
+        assertEquals(14, fields.get("satellites_visible"));
+        assertEquals(6, fields.get("satellites_used_in_fix"));
+        assertEquals(41.5, fields.get("max_snr_db"));
+        assertEquals(12345L, fields.get("since_connect_ms"));
+    }
+
+    @Test
+    public void gnssFirstFixIncludesTtff() {
+        Map<String, Object> fields = RecordingDiagnosticEvents.gnssFirstFix(201_611);
+
+        assertEquals(201_611, fields.get("ttff_ms"));
+    }
+
+    @Test
+    public void gnssAssistanceRecordsRejectionAndError() {
+        Map<String, Object> accepted = RecordingDiagnosticEvents.gnssAssistance("force_xtra_injection", true, null);
+        Map<String, Object> rejected = RecordingDiagnosticEvents.gnssAssistance("force_time_injection", false, "SecurityException");
+
+        assertEquals("force_xtra_injection", accepted.get("command"));
+        assertEquals(true, accepted.get("accepted"));
+        assertEquals(null, accepted.get("error_class"));
+        assertEquals("force_time_injection", rejected.get("command"));
+        assertEquals(false, rejected.get("accepted"));
+        assertEquals("SecurityException", rejected.get("error_class"));
+    }
+
+    @Test
     public void deviceStateOmitsNetworkIdentifiers() {
         Map<String, Object> fields = RecordingDiagnosticEvents.deviceState(
                 41, true, true, false, true,

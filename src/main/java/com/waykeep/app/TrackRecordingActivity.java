@@ -90,6 +90,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
     private GpsStatusValue gpsStatus;
+    private String gpsStatusText;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -97,6 +98,12 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         service.getGpsStatusObservable()
                 .observe(TrackRecordingActivity.this, this::onGpsStatusChanged);
+
+        service.getGpsStatusTextObservable()
+                .observe(TrackRecordingActivity.this, text -> {
+                    gpsStatusText = text;
+                    updateStatusStrip();
+                });
 
         if (!service.isRecording()) {
             finish();
@@ -468,16 +475,16 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         if (recordingStatus.isPaused()) {
             message = getString(R.string.track_paused_notification);
         } else if (gpsStatus != null && gpsStatus.isSignalUnusable()) {
-            message = getString(gpsStatus.message);
+            message = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_DISABLED || gpsStatus == GpsStatusValue.GPS_NONE) {
             if (!PreferencesUtils.shouldShowGpsDisabledWarning()) {
                 viewBinding.recordingStatusStrip.setVisibility(View.GONE);
                 stopStatusDotPulse();
                 return;
             }
-            message = getString(gpsStatus.message);
+            message = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_ENABLED) {
-            message = getString(gpsStatus.message);
+            message = gpsStatusMessage();
         }
 
         boolean nominal = message == null;
@@ -494,6 +501,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         } else {
             stopStatusDotPulse();
         }
+    }
+
+    /** Falls back to the enum text when no satellite count has arrived (old devices, no fix yet). */
+    private String gpsStatusMessage() {
+        return gpsStatusText != null ? gpsStatusText : getString(gpsStatus.message);
     }
 
     private void startStatusDotPulse() {

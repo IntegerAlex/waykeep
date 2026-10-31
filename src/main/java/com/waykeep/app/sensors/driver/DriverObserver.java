@@ -28,4 +28,9 @@ public interface DriverObserver<T> {
      * For example, the user deactivated the internal GPS.
      */
     default void onSensorDeactivated() {}
+
+    /**
+     * The Driver requested GNSS assistance data (#2410) and reports whether the provider took it.
+     */
+    default void onAssistanceResult(String command, boolean accepted, String errorClass) {}
 }

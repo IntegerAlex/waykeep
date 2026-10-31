@@ -45,6 +45,7 @@ import java.time.Duration;
 import java.util.Map;
 
 import com.waykeep.app.BuildConfig;
+import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.Marker;
@@ -103,6 +104,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private RecordingStatus recordingStatus;
     private MutableLiveData<RecordingStatus> recordingStatusObservable;
     private MutableLiveData<GpsStatusValue> gpsStatusObservable;
+    private MutableLiveData<String> gpsStatusTextObservable;
     private MutableLiveData<RecordingData> recordingDataObservable;
 
     private Handler handler;
@@ -111,6 +113,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private TrackRecordingManager trackRecordingManager;
     private RecordingDiagnostics diagnostics;
     private boolean hasReceivedGpsFix;
+    private GpsStatusValue lastGpsStatus = STATUS_GPS_DEFAULT;
+    private int satellitesVisible = -1;
+    private int satellitesUsedInFix = -1;
 
     private final Runnable deviceStateSnapshot = new Runnable() {
         @Override
@@ -134,6 +139,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         recordingStatusObservable = new MutableLiveData<>();
         updateRecordingStatus(STATUS_DEFAULT);
         gpsStatusObservable = new MutableLiveData<>(STATUS_GPS_DEFAULT);
+        gpsStatusTextObservable = new MutableLiveData<>(getString(STATUS_GPS_DEFAULT.message));
         recordingDataObservable = new MutableLiveData<>(RecordingData.NOT_RECORDING);
 
         trackPointCreator = new TrackPointCreator(this);
@@ -441,8 +447,46 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
         // The accuracy belongs to the last accepted position: it is only meaningful while
         // the signal is good. Otherwise it is stale and hides the real problem.
-        nm.updateGPSStatus(getString(gpsStatusValue.message), !gpsStatusValue.hasGoodSignal());
+        lastGpsStatus = gpsStatusValue;
+        nm.updateGPSStatus(gpsStatusText(gpsStatusValue), !gpsStatusValue.hasGoodSignal());
         obs.postValue(gpsStatusValue);
+        gpsStatusTextObservable.postValue(gpsStatusText(gpsStatusValue));
+    }
+
+    @Override
+    public void onGnssStatus(int satellitesVisible, int satellitesUsedInFix, Double maxSnrDb, long sinceConnectMs) {
+        diagnostics.event("gnss_status", RecordingDiagnosticEvents.gnssStatus(
+                satellitesVisible, satellitesUsedInFix, maxSnrDb, sinceConnectMs));
+
+        this.satellitesVisible = satellitesVisible;
+        this.satellitesUsedInFix = satellitesUsedInFix;
+        TrackRecordingServiceNotificationManager nm = notificationManager;
+        if (nm != null && lastGpsStatus.isGpsStarted()) {
+            String text = gpsStatusText(lastGpsStatus);
+            nm.updateGPSStatus(text, !lastGpsStatus.hasGoodSignal());
+            gpsStatusTextObservable.postValue(text);
+        }
+    }
+
+    @Override
+    public void onGnssFirstFix(int ttffMs) {
+        diagnostics.event("gnss_first_fix", RecordingDiagnosticEvents.gnssFirstFix(ttffMs));
+    }
+
+    @Override
+    public void onGnssAssistance(String command, boolean accepted, String errorClass) {
+        diagnostics.event("gnss_assistance", RecordingDiagnosticEvents.gnssAssistance(command, accepted, errorClass));
+    }
+
+    /**
+     * While no fix has arrived yet, say how many satellites the receiver actually sees: "waiting
+     * for GPS" alone cannot tell a blind receiver from a slow one.
+     */
+    private String gpsStatusText(GpsStatusValue value) {
+        if (!hasReceivedGpsFix && satellitesVisible >= 0 && value.isGpsStarted() && !value.hasGoodSignal()) {
+            return getString(R.string.gps_searching_satellites, satellitesUsedInFix, satellitesVisible);
+        }
+        return getString(value.message);
     }
 
     @Override
@@ -514,6 +558,10 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     public LiveData<GpsStatusValue> getGpsStatusObservable() {
         return gpsStatusObservable;
+    }
+
+    public LiveData<String> getGpsStatusTextObservable() {
+        return gpsStatusTextObservable;
     }
 
     public LiveData<RecordingData> getRecordingDataObservable() {

@@ -339,6 +339,13 @@ private journal, an explicit share action, and a separate recovered copy.
   device state (battery, power saver, idle, screen, network transport, location
   permissions/provider), uncaught exception, and the previous process-exit
   reason on Android 11+.
+- GNSS acquisition events: `gnss_status` (satellites visible / used in fix, max
+  SNR, throttled to changes every 5 s and only until the first fix),
+  `gnss_first_fix` (engine-reported TTFF) and `gnss_assistance` (whether the ROM
+  accepted each A-GPS command, #2410). These separate "receiver sees no
+  satellites" from "receiver sees them but has no fix yet"; the same counts
+  replace "Waiting for GPS signal" in the notification and recording status
+  strip while no fix has arrived.
 - One serialized writer thread per session, flush + `fsync` every 5 s and on
   lifecycle transitions, partial-tail truncation on resume, 4 MiB per-session
   cap, and 30 days / 20 MiB total retention that never prunes the active file.
@@ -360,9 +367,10 @@ private journal, an explicit share action, and a separate recovered copy.
   WorkManager worker through the existing `TrackImporter` segmentation.
 
 ### 8.4 Verification
-- 27 JVM tests cover writer ordering/isolation/durability, retention, archive
+- 35 JVM tests cover writer ordering/isolation/durability, retention, archive
   contents and active-session snapshots, payload privacy, recovery parsing and
-  idempotence, torn lines, and prompt gating.
+  idempotence, torn lines, prompt gating, GNSS event payloads and the satellite
+  logging throttle.
 - Device-verified on a POCO 25028PC03I (Android 15): journal events, share
   archive, previous-exit event, prompt, separate recovered copy, and no
   duplicate re-offer on relaunch.

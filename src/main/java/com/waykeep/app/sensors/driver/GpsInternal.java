@@ -116,14 +116,19 @@ public class GpsInternal implements Driver {
 
     private void injectAssistanceData(LocationManager manager) {
         Thread thread = new Thread(() -> sendAssistanceCommands(command -> {
+            boolean accepted = false;
+            String errorClass = null;
             try {
                 Log.i(TAG, "Requesting GNSS assistance: " + command);
-                if (!manager.sendExtraCommand(LOCATION_PROVIDER, command, null)) {
+                accepted = manager.sendExtraCommand(LOCATION_PROVIDER, command, null);
+                if (!accepted) {
                     Log.w(TAG, "GPS provider did not accept " + command);
                 }
             } catch (RuntimeException e) {
+                errorClass = e.getClass().getSimpleName();
                 Log.w(TAG, "GPS provider does not support " + command, e);
             }
+            driverObserver.onAssistanceResult(command, accepted, errorClass);
         }), "GpsAssistanceData");
         thread.setDaemon(true);
         thread.start();

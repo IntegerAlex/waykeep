@@ -170,6 +170,19 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
         service.onRawGpsFix(position, provider, providerTimeMillis, elapsedRealtimeNanos, threshold, decision);
     }
 
+    public void sendGnssStatus(int satellitesVisible, int satellitesUsedInFix,
+                               @Nullable Double maxSnrDb, long sinceConnectMs) {
+        service.onGnssStatus(satellitesVisible, satellitesUsedInFix, maxSnrDb, sinceConnectMs);
+    }
+
+    public void sendGnssFirstFix(int ttffMs) {
+        service.onGnssFirstFix(ttffMs);
+    }
+
+    public void sendGnssAssistance(String command, boolean accepted, @Nullable String errorClass) {
+        service.onGnssAssistance(command, accepted, errorClass);
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
         sensorManager.onSharedPreferenceChanged(sharedPreferences, key);
@@ -183,6 +196,12 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
 
         void onRawGpsFix(Position position, String provider, long providerTimeMillis,
                          long elapsedRealtimeNanos, Distance threshold, String decision);
+
+        void onGnssStatus(int satellitesVisible, int satellitesUsedInFix, Double maxSnrDb, long sinceConnectMs);
+
+        void onGnssFirstFix(int ttffMs);
+
+        void onGnssAssistance(String command, boolean accepted, String errorClass);
 
         void newGpsStatus(GpsStatusValue gpsStatusValue);
     }

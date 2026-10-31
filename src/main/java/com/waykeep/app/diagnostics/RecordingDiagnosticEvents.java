@@ -41,6 +41,33 @@ public final class RecordingDiagnosticEvents {
         return fields;
     }
 
+    /** Satellite visibility while acquiring: distinguishes "chip sees nothing" from "chip is working". */
+    public static Map<String, Object> gnssStatus(int satellitesVisible, int satellitesUsedInFix,
+                                                 @Nullable Double maxSnrDb, long sinceConnectMs) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("satellites_visible", satellitesVisible);
+        fields.put("satellites_used_in_fix", satellitesUsedInFix);
+        fields.put("max_snr_db", maxSnrDb);
+        fields.put("since_connect_ms", sinceConnectMs);
+        return fields;
+    }
+
+    /** Time to first fix reported by the GNSS engine itself. */
+    public static Map<String, Object> gnssFirstFix(int ttffMs) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ttff_ms", ttffMs);
+        return fields;
+    }
+
+    /** Whether the ROM accepted an A-GPS injection command (#2410). */
+    public static Map<String, Object> gnssAssistance(String command, boolean accepted, @Nullable String errorClass) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("command", command);
+        fields.put("accepted", accepted);
+        fields.put("error_class", errorClass);
+        return fields;
+    }
+
     public static Map<String, Object> persistenceResult(boolean success, int attempts, @Nullable String errorClass) {
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("success", success);
