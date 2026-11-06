@@ -3,6 +3,12 @@ package com.waykeep.app.util;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import androidx.annotation.NonNull;
 
@@ -31,6 +37,9 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             String topFrame = frames.length == 0 ? "" : frames[0].toString();
             RecordingDiagnostics.recordProcessExit(thread.getName(), exception.getClass().getName(), topFrame);
             String errorReport = generateErrorReport(formatException(thread, exception));
+            // recordProcessExit only writes while a recording session is open, so a crash after
+            // saving left no trace at all. Keep the last one on disk regardless.
+            writeCrashFile(errorReport);
             Intent intent = new Intent(context, ShowErrorActivity.class);
             intent.putExtra(ShowErrorActivity.EXTRA_ERROR_TEXT, errorReport);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -79,6 +88,15 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             "```java\n" +
             stackTrace +
             "```\n";
+    }
+
+    private void writeCrashFile(String errorReport) {
+        File file = new File(context.getFilesDir(), "last-crash.txt");
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            out.write(errorReport.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            Log.e("ExceptionHandler", "Could not write " + file, e);
+        }
     }
 
 }

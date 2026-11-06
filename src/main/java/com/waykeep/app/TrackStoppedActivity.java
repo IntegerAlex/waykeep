@@ -95,6 +95,11 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             storeTrackMetaData(contentProviderUtils, track);
             ExportUtils.postWorkoutExport(this, trackId);
             HealthConnectUtils.postExportTrack(this, trackId);
+            // If the recording screen was the task root (e.g. opened from the notification after
+            // the task was gone), finishing here leaves an empty task and the app closes.
+            if (isTaskRoot()) {
+                startActivity(IntentUtils.newIntent(this, TrackListActivity.class));
+            }
             finish();
         });
 

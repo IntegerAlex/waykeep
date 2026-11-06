@@ -382,7 +382,19 @@ a stationary receiver no longer turns drift into distance.
   "Approximate location (±N m)"; once satellites are visible but unusable they say
   "Searching for satellites (used/visible)".
 
-### 8.5 Verification
+### 8.5 Finishing a recording
+- Pressing Finish on the stop screen closed the whole app when the recording screen was the
+  task root, which happens whenever the recording is reopened from the notification after the
+  task is gone. `TaskStackBuilder.addParentStack()` did nothing because no activity declares
+  `parentActivityName`, so the notification built a task containing only the recording screen;
+  finishing it emptied the task and the launcher appeared. The notification now builds
+  `[TrackListActivity, TrackRecordingActivity]` explicitly, and Finish falls back to opening
+  the track list if it would otherwise leave an empty task. The track was already saved in
+  both cases.
+- Uncaught exceptions are also written to `files/last-crash.txt`: the journal only records a
+  crash while a recording session is open, so anything that failed after saving was invisible.
+
+### 8.6 Verification
 - 45 JVM tests cover writer ordering/isolation/durability, retention, archive
   contents and active-session snapshots, payload privacy, recovery parsing and
   idempotence, torn lines, prompt gating, GNSS event payloads, the satellite
@@ -390,3 +402,6 @@ a stationary receiver no longer turns drift into distance.
 - Device-verified on a POCO 25028PC03I (Android 15): journal events, share
   archive, previous-exit event, prompt, separate recovered copy, and no
   duplicate re-offer on relaunch.
+- Device-verified task stack: after removing the app from recents during a recording, tapping
+  the notification now produces a two-activity task rooted at the track list, and Finish
+  returns to it instead of the launcher.

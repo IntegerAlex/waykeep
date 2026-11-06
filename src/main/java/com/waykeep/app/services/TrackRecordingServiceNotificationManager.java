@@ -80,7 +80,6 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
 
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
-                .addParentStack(TrackListActivity.class)
                 .addNextIntent(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -109,8 +108,11 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         Intent intent = IntentUtils.newIntent(context, TrackRecordingActivity.class)
                 .putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
 
+        // No activity declares parentActivityName, so addParentStack() added nothing and the
+        // notification opened TrackRecordingActivity as its own task root. Stopping and pressing
+        // Finish then finished the last activity of the task and the app closed to the launcher.
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
-                .addParentStack(TrackListActivity.class)
+                .addNextIntent(new Intent(context, TrackListActivity.class))
                 .addNextIntent(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -123,8 +125,11 @@ class TrackRecordingServiceNotificationManager implements SharedPreferences.OnSh
         Intent intent = IntentUtils.newIntent(context, TrackRecordingActivity.class)
                 .putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
 
+        // No activity declares parentActivityName, so addParentStack() added nothing and the
+        // notification opened TrackRecordingActivity as its own task root. Stopping and pressing
+        // Finish then finished the last activity of the task and the app closed to the launcher.
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
-                .addParentStack(TrackListActivity.class)
+                .addNextIntent(new Intent(context, TrackListActivity.class))
                 .addNextIntent(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
