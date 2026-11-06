@@ -1,0 +1,6 @@
+v1.0.0-beta.4: Waykeep
+
+Changes:
+- Finishing a recording returns to the track list instead of closing the app.
+- Standing still stays at 0 m: the hop from the network start point to the first GPS fix is only counted when it is longer than the network fix's own accuracy.
+- A crash that happens after saving is now written to files/last-crash.txt instead of leaving no trace.

@@ -322,7 +322,7 @@ marker; the no-signal error only shows when there is truly no location at all.
   pre-existing upstream behavior, use `:assembleIrreproducibleRelease` for
   unsigned local builds).
 
-## 8. Local diagnostics, GPS acquisition and distance fixes (v1.0.0-beta.2 → beta.3)
+## 8. Local diagnostics, GPS acquisition and distance fixes (v1.0.0-beta.2 → beta.4)
 
 A run could keep only a handful of GPS points while Android reported GPS as
 enabled, and the app kept no local evidence of whether fixes never arrived, the
@@ -330,7 +330,10 @@ accuracy filter rejected them, or a database write failed. `beta.2` added a
 private journal, an explicit share action, and a separate recovered copy.
 `beta.3` closes the loop: satellite visibility and time-to-first-fix are now
 recorded, a network fix starts the track while the chip is still acquiring, and
-a stationary receiver no longer turns drift into distance.
+a stationary receiver no longer turns drift into distance. `beta.4` fixes what
+that turned up in daily use: finishing a recording closed the app, the network
+start could add its own error as distance, and a crash after saving left no
+trace.
 
 ### 8.1 Recording journal
 - Versioned JSON Lines in app-private `files/diagnostics/`, one file per
