@@ -30,6 +30,21 @@ public class TrackRecordingManagerTest {
     }
 
     @Test
+    public void hopWithinTheNetworkFixAccuracyIsNoise() {
+        assertTrue(TrackRecordingManager.provisionalStartHopIsNoise(true, Distance.of(100), Distance.of(21.9)));
+    }
+
+    @Test
+    public void hopBeyondTheNetworkFixAccuracyIsMovement() {
+        assertFalse(TrackRecordingManager.provisionalStartHopIsNoise(true, Distance.of(100), Distance.of(296)));
+    }
+
+    @Test
+    public void hopWithoutProvisionalStartIsNeverNoise() {
+        assertFalse(TrackRecordingManager.provisionalStartHopIsNoise(false, Distance.of(100), Distance.of(5)));
+    }
+
+    @Test
     public void stationaryTrackPointIsSkipped() {
         assertTrue(TrackRecordingManager.isStationary(trackPoint(TrackPoint.Type.TRACKPOINT, Speed.of(0))));
     }

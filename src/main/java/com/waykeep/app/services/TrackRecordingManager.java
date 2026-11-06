@@ -209,6 +209,17 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     /**
+     * A hop from the provisional network start to the first GPS fix that is shorter than the
+     * network fix's own accuracy cannot be told apart from noise. Counting it adds up to a
+     * hundred metres of distance while standing still, so the segment is broken instead and the
+     * coarse start point stays on the map without becoming movement.
+     */
+    @VisibleForTesting
+    static boolean provisionalStartHopIsNoise(boolean lastStoredIsProvisional, @Nullable Distance provisionalAccuracy, @NonNull Distance distance) {
+        return lastStoredIsProvisional && provisionalAccuracy != null && distance.lessThan(provisionalAccuracy);
+    }
+
+    /**
      * A stationary receiver still reports positions, but their speed is below the chip's own
      * uncertainty (see {@link Position#of(Location, Instant)}), so the position steps are noise.
      * Storing them turns drift into distance. IDLE and segment points are excluded: they carry
@@ -392,6 +403,15 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             distanceToLastStoredTrackPoint = trackPoint.distanceToPreviousFromLocation(lastStoredTrackPointWithLocation);
         } else {
             distanceToLastStoredTrackPoint = trackPoint.distanceToPrevious(lastStoredTrackPoint);
+        }
+
+        if (provisionalStartHopIsNoise(lastStoredIsProvisionalStart, provisionalStartAccuracy(), distanceToLastStoredTrackPoint)) {
+            trackPoint = trackPoint.with(TrackPoint.Type.SEGMENT_START_AUTOMATIC);
+            logTrackpoint("trackpoint_decision", trackPoint, "provisional_start_noise");
+            insertTrackPoint(trackPoint, true);
+
+            scheduleNewIdleTimeout();
+            return true;
         }
 
         boolean connectsProvisional = connectsProvisionalStart(lastStoredIsProvisionalStart, distanceToLastStoredTrackPoint);

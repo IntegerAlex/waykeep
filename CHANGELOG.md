@@ -378,6 +378,10 @@ a stationary receiver no longer turns drift into distance.
   point when no GPS fix has arrived yet, so the track begins where the walk began instead of a
   few hundred metres later. The first GPS fix connects to it when it is within 1 km; beyond that
   the segment breaks rather than drawing a long straight line.
+- That connection only counts as distance when the hop is longer than the network fix's own
+  accuracy. A 20 m hop against a ±100 m network fix is indistinguishable from noise, so the
+  segment is broken instead: the coarse start stays on the map and a stationary recording stays
+  at 0 m instead of jumping by the network error.
 - While only that network point exists, the notification and status strip say
   "Approximate location (±N m)"; once satellites are visible but unusable they say
   "Searching for satellites (used/visible)".
