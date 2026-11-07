@@ -44,6 +44,7 @@ import com.waykeep.app.databinding.StatisticsRecordedBinding;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.data.statistics.SensorStatistics;
+import com.waykeep.app.util.AltitudeGainLossSourceLabels;
 import com.waykeep.app.util.StringUtils;
 
 /**
@@ -246,6 +247,10 @@ public class StatisticsRecordedFragment extends Fragment {
 
             boolean show = altitudeGain_m != null && altitudeLoss_m != null;
             viewBinding.statsAltitudeGroup.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (show) {
+                viewBinding.statsAltitudeSource.setText(
+                        AltitudeGainLossSourceLabels.resource(trackStatistics.altitudeGainLoss().source()));
+            }
         }
     }
 

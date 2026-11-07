@@ -12,6 +12,8 @@ import androidx.annotation.VisibleForTesting;
 
 import java.time.Instant;
 
+import com.waykeep.app.R;
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Cadence;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.Position;
@@ -148,6 +150,10 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             altitudeChangeHandler.connect();
         }
 
+        if (PreferencesUtils.isKey(R.string.gps_altitude_fallback_key, key)) {
+            gpsHandler.resetAltitudeGainLossFallback();
+        }
+
         if (PreferencesUtils.isKey(heartRateHandler.getSensorPreferenceKey(), key)) {
             heartRateHandler.connect();
         }
@@ -247,6 +253,17 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
             gpsSensorData = new SensorData<>(Position.of(now), "");
         }
 
+        SensorData<AltitudeGainLoss> barometerAltitudeGainLoss = altitudeChangeHandler.getSensorData(now);
+        AltitudeGainLoss altitudeGainLoss = GpsAltitudeGainLossFallback.select(
+                barometerAltitudeGainLoss != null ? barometerAltitudeGainLoss.data() : null,
+                gpsHandler.getAltitudeGainLoss(),
+                PreferencesUtils.isGpsAltitudeFallbackEnabled(),
+                altitudeChangeHandler.isConnected());
+        SensorData<AltitudeGainLoss> altitudeGainLossData = altitudeGainLoss == null ? null
+                : barometerAltitudeGainLoss != null && altitudeGainLoss == barometerAltitudeGainLoss.data()
+                ? barometerAltitudeGainLoss
+                : new SensorData<>(altitudeGainLoss, "GPS");
+
         return new SensorDataSet(
                 gpsSensorData,
                 getSpeed(now),
@@ -255,7 +272,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
                 temperatureHandler.getSensorData(now),
                 getCadence(now),
                 cyclingPowerHandler.getSensorData(now),
-                altitudeChangeHandler.getSensorData(now)
+                altitudeGainLossData
         );
     }
 

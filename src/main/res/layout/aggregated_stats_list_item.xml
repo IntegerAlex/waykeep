@@ -195,12 +195,21 @@
         app:layout_constraintTop_toBottomOf="@+id/aggregated_stats_elevation"
         tools:text="@string/stats_gain" />
 
+    <TextView
+        android:id="@+id/aggregated_stats_elevation_source"
+        style="@style/TextAppearance.OpenTracks.RegisterDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/aggregated_stats_elevation_label"
+        tools:text="GPS estimate" />
+
     <View
         android:id="@+id/aggregated_stats_horizontal_line"
         style="@style/HorizontalLine"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@id/guideline1"
         app:layout_constraintEnd_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toBottomOf="@id/aggregated_stats_elevation_label" />
+        app:layout_constraintTop_toBottomOf="@id/aggregated_stats_elevation_source" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

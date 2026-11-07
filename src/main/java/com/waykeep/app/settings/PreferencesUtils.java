@@ -106,6 +106,10 @@ public class PreferencesUtils {
         setString(R.string.default_activity_key, newDefaultActivity);
     }
 
+    public static boolean isGpsAltitudeFallbackEnabled() {
+        return getBoolean(R.string.gps_altitude_fallback_key, false);
+    }
+
     /**
      * #1879: user-defined activity types, stored name\u0001iconEnumName per line.
      * Migrates the earlier comma-separated preference on first read.

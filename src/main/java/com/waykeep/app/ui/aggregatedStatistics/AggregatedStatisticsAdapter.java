@@ -18,6 +18,7 @@ import com.waykeep.app.data.models.SpeedFormatter;
 import com.waykeep.app.databinding.AggregatedStatsListItemBinding;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.settings.UnitSystem;
+import com.waykeep.app.util.AltitudeGainLossSourceLabels;
 import com.waykeep.app.util.StringUtils;
 
 public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -137,6 +138,8 @@ public class AggregatedStatisticsAdapter extends RecyclerView.Adapter<RecyclerVi
             viewBinding.aggregatedStatsElevation.setText(gainParts.first);
             viewBinding.aggregatedStatsElevationUnit.setText(gainParts.second);
             viewBinding.aggregatedStatsElevationLabel.setText(R.string.stats_gain);
+            viewBinding.aggregatedStatsElevationSource.setText(AltitudeGainLossSourceLabels.text(
+                    context, aggregatedStatistic.altitudeGainLossSource()));
         }
 
         private int getIcon(AggregatedStatistic aggregatedStatistic) {
