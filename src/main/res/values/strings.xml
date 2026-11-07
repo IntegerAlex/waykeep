@@ -405,6 +405,8 @@ limitations under the License.
     <string name="settings_chart_display_heart_rate_title">Display heart rate</string>
     <!-- Settings Recording -->
     <string name="settings_recording_title">Recording</string>
+    <string name="settings_weekly_goal_title">Weekly goal</string>
+    <string name="settings_weekly_goal_summary">Distance in meters (minimum 1000 m, 0 turns the goal off).</string>
     <string name="settings_theme_switch_restart">Theme changes may require a manual restart.</string>
     <string name="settings_ui_dynamic_colors_title">Dynamic Colors</string>
     <string name="settings_ui_dynamic_colors_summary">Use user-defined Dynamic Colors (Android 12+ only; requires a manual restart)</string>

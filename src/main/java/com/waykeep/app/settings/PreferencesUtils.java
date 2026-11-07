@@ -66,6 +66,7 @@ public class PreferencesUtils {
 
     private final static String TAG = PreferencesUtils.class.getSimpleName();
     private static final double MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE = 0.1;
+    private static final long MIN_WEEKLY_GOAL_METERS = 1000;
 
     private static final int PREFERENCES_VERSION = 2;
 
@@ -705,6 +706,29 @@ public class PreferencesUtils {
 
     public static Distance getRecordingDistanceInterval() {
         return Distance.of(getInt(R.string.recording_distance_interval_key, getRecordingDistanceIntervalDefaultInternal()));
+    }
+
+    /**
+     * Weekly distance goal in metres. Zero means the goal is off.
+     */
+    public static Distance getWeeklyGoalDistance() {
+        long defaultMeters = Long.parseLong(resources.getString(R.string.settings_weekly_goal_default));
+        return Distance.of(getLong(R.string.settings_weekly_goal_key, defaultMeters));
+    }
+
+    /**
+     * A weekly goal is either off (0) or at least 1 km.
+     */
+    static boolean isValidWeeklyGoalMeters(@Nullable String value) {
+        if (value == null) {
+            return false;
+        }
+        try {
+            long meters = Long.parseLong(value.trim());
+            return meters == 0 || meters >= MIN_WEEKLY_GOAL_METERS;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public static Distance getRecordingDistanceIntervalDefault() {

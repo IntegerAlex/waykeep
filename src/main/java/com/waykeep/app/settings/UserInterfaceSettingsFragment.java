@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -33,6 +34,10 @@ public class UserInterfaceSettingsFragment extends PreferenceFragmentCompat {
             startActivity(intent);
             return true;
         });
+
+        EditTextPreference weeklyGoalPreference = findPreference(getString(R.string.settings_weekly_goal_key));
+        weeklyGoalPreference.setOnPreferenceChangeListener((preference, newValue) ->
+                newValue instanceof String value && PreferencesUtils.isValidWeeklyGoalMeters(value));
     }
 
     @Override
