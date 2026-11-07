@@ -58,12 +58,16 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.WeekFields;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,6 +79,9 @@ import org.xml.sax.SAXException;
 
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackListIterator;
+import com.waykeep.app.data.insights.InsightSummary;
+import com.waykeep.app.data.models.Distance;
+import com.waykeep.app.data.models.DistanceFormatter;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.diagnostics.DiagnosticsRecovery;
 import com.waykeep.app.diagnostics.DiagnosticsRecovery.RecoveryCandidate;
@@ -127,6 +134,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private boolean recordingStatusReady;
     private boolean recoveryScanInFlight;
     private boolean recoveryScanCompleted;
+    private boolean insightReady;
 
     // Preferences
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
@@ -423,6 +431,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                     searchHandler.removeCallbacks(pendingSearch);
                 }
                 final String text = s.toString();
+                updateInsightHeroVisibility();
                 pendingSearch = () -> {
                     searchQuery = text;
                     loadData();
@@ -431,7 +440,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             }
         });
         // #2268: the floating record button overlaps the expanded search field.
-        viewBinding.trackListSearchView.getEditText().setOnFocusChangeListener((v, hasFocus) -> updateRecordButtonVisibility());
+        viewBinding.trackListSearchView.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            updateRecordButtonVisibility();
+            updateInsightHeroVisibility();
+        });
 
         return viewBinding.getRoot();
     }
@@ -442,6 +454,20 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         }
         boolean searching = viewBinding.trackListSearchView.getEditText().hasFocus();
         viewBinding.trackListFabAction.setVisibility(searching ? View.GONE : View.VISIBLE);
+    }
+
+    /**
+     * The insight hero is a scanning aid, not a result: hide it while the feed is filtered or the
+     * search field is active, and restore it once the query clears.
+     */
+    private void updateInsightHeroVisibility() {
+        if (viewBinding == null) {
+            return;
+        }
+        boolean searching = !TextUtils.isEmpty(searchQuery)
+                || !TextUtils.isEmpty(viewBinding.trackListSearchView.getEditText().getText())
+                || viewBinding.trackListSearchView.getEditText().hasFocus();
+        viewBinding.insightHero.setVisibility(insightReady && !searching ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -568,6 +594,12 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             } catch (RuntimeException e) {
                 return;
             }
+            // Insight covers the whole history, so skip it while the feed is filtered.
+            final InsightSummary insight = TextUtils.isEmpty(query)
+                    ? InsightSummary.compute(items, Instant.now(), ZoneId.systemDefault(),
+                    WeekFields.of(Locale.getDefault()).getFirstDayOfWeek(),
+                    PreferencesUtils.getWeeklyGoalDistance())
+                    : null;
             runOnUiThread(() -> {
                 if (!isFinishing() && !isDestroyed() && adapter != null) {
                     adapter.setHighlightQuery(query);
@@ -579,9 +611,47 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                         viewBinding.trackListEmptyMessage.setText(searching ? R.string.track_list_no_results : R.string.track_list_empty_message);
                         viewBinding.trackListEmptyAction.setVisibility(searching ? View.GONE : View.VISIBLE);
                     }
+                    renderInsight(insight);
                 }
             });
         });
+    }
+
+    private void renderInsight(@Nullable InsightSummary summary) {
+        if (viewBinding == null || summary == null) {
+            return;
+        }
+
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(1)
+                .build(this);
+        viewBinding.insightWeekDistance.setText(formatter.formatDistance(summary.sevenDayDistance()));
+        viewBinding.insightWeekAverage.setText(formatter.formatDistance(summary.fourWeekWeeklyAverage()));
+        viewBinding.insightTrend.setText(summary.trendLineRes());
+
+        if (summary.hasGoal()) {
+            Distance weekDistance = summary.streak().currentWeekDistance();
+            viewBinding.insightGoalSection.setVisibility(View.VISIBLE);
+            viewBinding.insightSetGoalHint.setVisibility(View.GONE);
+            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_progress,
+                    formatter.formatDistance(weekDistance),
+                    formatter.formatDistance(summary.weeklyGoal())));
+
+            int goalMeters = (int) Math.round(summary.weeklyGoal().toM());
+            viewBinding.insightGoalBar.setMax(goalMeters);
+            viewBinding.insightGoalBar.setProgressCompat(
+                    (int) Math.min(Math.round(weekDistance.toM()), goalMeters), false);
+            viewBinding.insightStreakText.setText(summary.streak().completedWeeks() > 0
+                    ? getString(R.string.insight_streak_weeks, summary.streak().completedWeeks())
+                    : getString(summary.streakLineRes()));
+        } else {
+            viewBinding.insightGoalSection.setVisibility(View.GONE);
+            viewBinding.insightSetGoalHint.setVisibility(View.VISIBLE);
+        }
+
+        insightReady = true;
+        updateInsightHeroVisibility();
     }
 
     @Override
