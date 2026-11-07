@@ -782,7 +782,9 @@ public class ContentProviderUtils {
                         Duration.ofMillis(cursor.getLong(cursor.getColumnIndexOrThrow(TracksColumns.MOVINGTIME))),
                         Distance.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE))),
                         Speed.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED))),
-                        cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN))
+                        cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN)),
+                        AltitudeGainLoss.Source.mergeDatabaseValues(cursor.getString(
+                                cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE)))
                 ));
             }
             return aggregatedStatistics;

@@ -280,7 +280,11 @@ public class CustomContentProvider extends ContentProvider {
                         "SUM(" + TracksColumns.MOVINGTIME + ") AS " + TracksColumns.MOVINGTIME,
                         "SUM(" + TracksColumns.TOTALDISTANCE + ") AS " + TracksColumns.TOTALDISTANCE,
                         "MAX(" + TracksColumns.MAXSPEED + ") AS " + TracksColumns.MAXSPEED,
-                        "SUM(COALESCE(" + TracksColumns.ALTITUDE_GAIN + ", 0)) AS " + TracksColumns.ALTITUDE_GAIN
+                        "SUM(COALESCE(" + TracksColumns.ALTITUDE_GAIN + ", 0)) AS " + TracksColumns.ALTITUDE_GAIN,
+                        "GROUP_CONCAT(DISTINCT CASE WHEN " + TracksColumns.ALTITUDE_GAIN + " IS NOT NULL AND "
+                                + TracksColumns.ALTITUDE_LOSS + " IS NOT NULL THEN "
+                                + TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE + " END) AS "
+                                + TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE
                 };
 
                 sortOrder = TracksColumns.TRACK_COUNT + " DESC";

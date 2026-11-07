@@ -35,6 +35,7 @@ import com.waykeep.app.AbstractActivity;
 import com.waykeep.app.R;
 import com.waykeep.app.TrackRecordedActivity;
 import com.waykeep.app.data.ContentProviderUtils;
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.DistanceFormatter;
 import com.waykeep.app.data.models.Track;
@@ -45,6 +46,7 @@ import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.share.ShareImageStore;
 import com.waykeep.app.share.TrackShareImageGenerator;
 import com.waykeep.app.util.IntentUtils;
+import com.waykeep.app.util.AltitudeGainLossSourceLabels;
 import com.waykeep.app.util.StringUtils;
 
 /**
@@ -143,8 +145,12 @@ public class MonthlyRecapActivity extends AbstractActivity {
         if (hasGain) {
             Pair<String, String> gainParts = StringUtils.getAltitudeParts(this, (float) gain, unitSystem);
             viewBinding.monthlyElevation.setText(getString(R.string.altitude_with_unit, gainParts.first, gainParts.second));
+            AltitudeGainLoss.Source source = altitudeSource(tracks);
+            viewBinding.monthlyElevationSource.setText(AltitudeGainLossSourceLabels.text(this, source));
+            viewBinding.monthlyElevationSource.setVisibility(View.VISIBLE);
         } else {
             viewBinding.monthlyElevation.setText(getString(R.string.value_unknown));
+            viewBinding.monthlyElevationSource.setVisibility(View.GONE);
         }
 
         viewBinding.monthlyCalendar.setAdapter(new CalendarAdapter(selected, tracks, this::openDay, this::showDaySummary));
@@ -232,9 +238,22 @@ public class MonthlyRecapActivity extends AbstractActivity {
             Pair<String, String> gainParts = StringUtils.getAltitudeParts(this, (float) gain, unitSystem);
             cards.add(new TrackShareImageGenerator.StatCard(
                     getString(R.string.altitude_with_unit, gainParts.first, gainParts.second),
-                    getString(R.string.share_image_stat_elevation_gain)));
+                    getString(R.string.gps_altitude_recap_source_label,
+                            getString(R.string.share_image_stat_elevation_gain),
+                            AltitudeGainLossSourceLabels.text(this, altitudeSource(tracks)))));
         }
         return cards;
+    }
+
+    private static AltitudeGainLoss.Source altitudeSource(List<Track> tracks) {
+        AltitudeGainLoss.Source source = null;
+        for (Track track : tracks) {
+            if (track.statistics().altitudeGainLoss() != null) {
+                AltitudeGainLoss.Source next = track.statistics().altitudeGainLoss().source();
+                source = source == null ? next : source.merge(next);
+            }
+        }
+        return source == null ? AltitudeGainLoss.Source.UNKNOWN : source;
     }
 
     private static List<Track> tracksInMonth(@NonNull List<Track> tracks, @NonNull YearMonth month) {

@@ -32,5 +32,15 @@ public record AltitudeGainLoss(float gain_m, float loss_m, Source source) {
                 return UNKNOWN;
             }
         }
+
+        public static Source mergeDatabaseValues(String values) {
+            if (values == null || values.isBlank()) return UNKNOWN;
+            Source merged = null;
+            for (String value : values.split(",")) {
+                Source next = fromDatabase(value.trim());
+                merged = merged == null ? next : merged.merge(next);
+            }
+            return merged == null ? UNKNOWN : merged;
+        }
     }
 }

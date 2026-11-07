@@ -111,6 +111,7 @@ public class IntervalStatisticsUpdater {
         private Duration time = Duration.ZERO;
         private Float gain_m;
         private Float loss_m;
+        private AltitudeGainLoss.Source altitudeGainLossSource = AltitudeGainLoss.Source.UNKNOWN;
         private HeartRate avgHeartRate;
         private Power avgPower;
 
@@ -127,6 +128,7 @@ public class IntervalStatisticsUpdater {
             time = Duration.ofMillis((long) (i.time.toMillis() * adjustFactor));
             gain_m = i.gain_m;
             loss_m = i.loss_m;
+            altitudeGainLossSource = i.altitudeGainLossSource;
             avgHeartRate = i.avgHeartRate;
             avgPower = i.avgPower;
         }
@@ -136,6 +138,7 @@ public class IntervalStatisticsUpdater {
             time = i.time;
             gain_m = i.gain_m;
             loss_m = i.loss_m;
+            altitudeGainLossSource = i.altitudeGainLossSource;
             avgHeartRate = i.avgHeartRate;
             avgPower = i.avgPower;
         }
@@ -146,6 +149,7 @@ public class IntervalStatisticsUpdater {
             if (trackStatistics.altitudeGainLoss() != null) {
                 gain_m = trackStatistics.altitudeGainLoss().gain_m();
                 loss_m = trackStatistics.altitudeGainLoss().loss_m();
+                altitudeGainLossSource = trackStatistics.altitudeGainLoss().source();
             }
             avgHeartRate = trackStatistics.avgHeartRate();
             avgPower = trackStatistics.avgPower();
@@ -164,6 +168,7 @@ public class IntervalStatisticsUpdater {
             if (trackStatistics.altitudeGainLoss() != null) {
                 gain_m = trackStatistics.altitudeGainLoss().gain_m();
                 loss_m = trackStatistics.altitudeGainLoss().loss_m();
+                altitudeGainLossSource = trackStatistics.altitudeGainLoss().source();
             }
             avgHeartRate = trackStatistics.avgHeartRate();
             avgPower = trackStatistics.avgPower();
@@ -178,7 +183,7 @@ public class IntervalStatisticsUpdater {
                     distance,
                     null,
                     null,
-                    gain_m != null ? new AltitudeGainLoss(gain_m, loss_m) : null,
+                    gain_m != null ? new AltitudeGainLoss(gain_m, loss_m, altitudeGainLossSource) : null,
                     avgHeartRate,
                     avgPower
             );

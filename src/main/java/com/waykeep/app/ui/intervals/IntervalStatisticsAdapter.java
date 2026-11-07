@@ -16,6 +16,7 @@ import com.waykeep.app.data.models.SpeedFormatter;
 import com.waykeep.app.data.models.Statistics;
 import com.waykeep.app.databinding.IntervalStatsListItemBinding;
 import com.waykeep.app.settings.UnitSystem;
+import com.waykeep.app.util.AltitudeGainLossSourceLabels;
 import com.waykeep.app.util.StringUtils;
 
 public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -63,8 +64,17 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(isReportSpeed).build(context);
         viewHolder.viewBinding.intervalItemRate.setText(formatter.formatSpeed(interval.getAverageSpeed()));
 
-        viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss() != null ? interval.altitudeGainLoss().gain_m() : null, unitSystem));
-        viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss() != null ? interval.altitudeGainLoss().loss_m() : null, unitSystem));
+        if (interval.altitudeGainLoss() != null) {
+            viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().gain_m(), unitSystem));
+            viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().loss_m(), unitSystem));
+            viewHolder.viewBinding.intervalItemAltitudeSource.setText(AltitudeGainLossSourceLabels.text(
+                    context, interval.altitudeGainLoss().source()));
+            viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(android.view.View.VISIBLE);
+        } else {
+            viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, null, unitSystem));
+            viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, null, unitSystem));
+            viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(android.view.View.GONE);
+        }
     }
 
     @Override

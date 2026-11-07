@@ -35,6 +35,11 @@ public class AggregatedStatisticsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     private static void createTrack(Context context, Distance totalDistance, Duration totalTime, String activityTypeLocalized) {
+        createTrack(context, totalDistance, totalTime, activityTypeLocalized, AltitudeGainLoss.Source.UNKNOWN);
+    }
+
+    private static void createTrack(Context context, Distance totalDistance, Duration totalTime,
+                                    String activityTypeLocalized, AltitudeGainLoss.Source source) {
         Track track = new Track(
                 null,
                 UUID.randomUUID(), //TODO Use constant UUID
@@ -51,7 +56,7 @@ public class AggregatedStatisticsTest {
                 totalDistance,
                 Speed.of(50),
                 new AltitudeExtremities(1250, 1250),
-                new AltitudeGainLoss(50, 50),
+                new AltitudeGainLoss(50, 50, source),
                 null,
                 null
         ));
@@ -71,6 +76,17 @@ public class AggregatedStatisticsTest {
 
         // then
         assertEquals(List.of(), result);
+    }
+
+    @Test
+    public void testAggregateMergesGpsAndBarometerSources() {
+        String biking = context.getString(R.string.activity_type_biking);
+        createTrack(context, Distance.ofKilometer(10), Duration.ofMinutes(40), biking, AltitudeGainLoss.Source.BAROMETER);
+        createTrack(context, Distance.ofKilometer(10), Duration.ofMinutes(40), biking, AltitudeGainLoss.Source.GPS_ESTIMATE);
+
+        List<AggregatedStatistic> result = new ContentProviderUtils(context).getAggregatedStatisticsForTracks(new TrackSelection());
+
+        assertEquals(AltitudeGainLoss.Source.MIXED, result.get(0).altitudeGainLossSource());
     }
 
     @Test

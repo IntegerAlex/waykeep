@@ -7,4 +7,5 @@
     <string name="gps_altitude_source_estimate">GPS estimate</string>
     <string name="gps_altitude_source_mixed">Mixed sources</string>
     <string name="gps_altitude_source_unknown">Source unknown</string>
+    <string name="gps_altitude_recap_source_label">%1$s · %2$s</string>
 </resources>
