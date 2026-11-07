@@ -110,8 +110,9 @@ public final class DiagnosticsRecovery {
     }
 
     public static List<TrackPoint> readRawFixes(RecoveryCandidate candidate) throws IOException {
-        Map<Coordinate, NavigableMap<Instant, SensorValues>> sensors = new HashMap<>();
+        Map<Coordinate, NavigableMap<Instant, Candidate>> candidates = new HashMap<>();
         List<RawFix> rawFixes = new ArrayList<>();
+        Instant firstAcceptedGpsFix = null;
         try (BufferedReader reader = Files.newBufferedReader(candidate.sourceFile().toPath(), StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -122,27 +123,43 @@ public final class DiagnosticsRecovery {
                 if ("trackpoint_candidate".equals(event)) {
                     Candidate candidatePoint = candidate(fields);
                     if (candidatePoint != null) {
-                        sensors.computeIfAbsent(candidatePoint.coordinate(), unused -> new TreeMap<>())
-                                .put(candidatePoint.time(), candidatePoint.sensors());
+                        candidates.computeIfAbsent(candidatePoint.coordinate(), unused -> new TreeMap<>())
+                                .put(candidatePoint.time(), candidatePoint);
                     }
                 } else if ("gps_fix".equals(event)) {
                     RawFix fix = rawFix(fields);
-                    if (fix != null) rawFixes.add(fix);
+                    if (fix != null) {
+                        rawFixes.add(fix);
+                        if (firstAcceptedGpsFix == null && fix.accepted()) firstAcceptedGpsFix = fix.position().time();
+                    }
                 }
             }
         }
 
-        List<TrackPoint> recovered = new ArrayList<>(rawFixes.size());
+        List<TrackPoint> recovered = new ArrayList<>(rawFixes.size() + candidates.size());
         for (RawFix fix : rawFixes) {
-            NavigableMap<Instant, SensorValues> byTime = sensors.get(fix.coordinate());
-            SensorValues values = removeNearest(byTime, fix.position().time());
+            NavigableMap<Instant, Candidate> byTime = candidates.get(fix.coordinate());
+            // Once accepted fixes exist, rejected fixes must leave candidates for sampled-fix recovery.
+            Candidate matched = fix.accepted() || firstAcceptedGpsFix == null
+                    ? removeNearest(byTime, fix.position().time()) : null;
+            TrackPoint candidatePoint = matched == null ? null : matched.trackPoint();
             recovered.add(new TrackPoint(null, TrackPoint.Type.TRACKPOINT, fix.position(),
-                    values == null ? null : values.distance(),
-                    values == null ? null : values.heartRate(),
-                    values == null ? null : values.temperature(),
-                    values == null ? null : values.cadence(),
-                    values == null ? null : values.power(),
-                    values == null ? null : values.altitudeGainLoss()));
+                    candidatePoint == null ? null : candidatePoint.sensorDistance(),
+                    candidatePoint == null ? null : candidatePoint.heartRate(),
+                    candidatePoint == null ? null : candidatePoint.temperature(),
+                    candidatePoint == null ? null : candidatePoint.cadence(),
+                    candidatePoint == null ? null : candidatePoint.power(),
+                    candidatePoint == null ? null : candidatePoint.altitudeGainLoss()));
+        }
+        if (firstAcceptedGpsFix != null) {
+            for (NavigableMap<Instant, Candidate> byTime : candidates.values()) {
+                for (Candidate point : byTime.values()) {
+                    if (point.trackPoint().type() == TrackPoint.Type.TRACKPOINT
+                            && point.time().isAfter(firstAcceptedGpsFix)) {
+                        recovered.add(point.trackPoint());
+                    }
+                }
+            }
         }
         recovered.sort(Comparator.comparing(TrackPoint::getTime));
         return recovered;
@@ -204,7 +221,7 @@ public final class DiagnosticsRecovery {
                 floatNumber(fields, "bearing_degrees"),
                 speed(fields, "speed_mps"));
         if (!position.hasValidLocation()) return null;
-        return new RawFix(position, Coordinate.of(latitude, longitude));
+        return new RawFix(position, Coordinate.of(latitude, longitude), "accepted".equals(fields.get("decision")));
     }
 
     @Nullable
@@ -214,21 +231,38 @@ public final class DiagnosticsRecovery {
         Instant time = instant(fields.get("time"));
         if (latitude == null || longitude == null || time == null
                 || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return null;
-        return new Candidate(Coordinate.of(latitude, longitude), time, new SensorValues(
+        TrackPoint.Type type;
+        try {
+            type = TrackPoint.Type.valueOf(fields.getOrDefault("type", TrackPoint.Type.TRACKPOINT.name()));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        Position position = new Position(
+                time,
+                latitude,
+                longitude,
+                distance(fields, "horizontal_accuracy_m"),
+                altitude(fields, "altitude_m"),
+                distance(fields, "vertical_accuracy_m"),
+                floatNumber(fields, "bearing_degrees"),
+                speed(fields, "speed_mps"));
+        if (!position.hasValidLocation()) return null;
+        TrackPoint point = new TrackPoint(null, type, position,
                 distance(fields, "sensor_distance_m"),
                 floatNumber(fields, "heart_rate_bpm") == null ? null : HeartRate.of(floatNumber(fields, "heart_rate_bpm")),
                 floatNumber(fields, "temperature_c") == null ? null : Temperature.of(floatNumber(fields, "temperature_c")),
                 floatNumber(fields, "cadence_rpm") == null ? null : Cadence.of(floatNumber(fields, "cadence_rpm")),
                 floatNumber(fields, "power_watts") == null ? null : Power.of(floatNumber(fields, "power_watts")),
-                altitudeGainLoss(fields)));
+                altitudeGainLoss(fields));
+        return new Candidate(Coordinate.of(latitude, longitude), time, point);
     }
 
     @Nullable
-    private static SensorValues removeNearest(@Nullable NavigableMap<Instant, SensorValues> values, Instant time) {
+    private static Candidate removeNearest(@Nullable NavigableMap<Instant, Candidate> values, Instant time) {
         if (values == null || values.isEmpty()) return null;
-        Map.Entry<Instant, SensorValues> before = values.floorEntry(time);
-        Map.Entry<Instant, SensorValues> after = values.ceilingEntry(time);
-        Map.Entry<Instant, SensorValues> nearest = before == null ? after
+        Map.Entry<Instant, Candidate> before = values.floorEntry(time);
+        Map.Entry<Instant, Candidate> after = values.ceilingEntry(time);
+        Map.Entry<Instant, Candidate> nearest = before == null ? after
                 : after == null || Duration.between(before.getKey(), time).compareTo(Duration.between(time, after.getKey())) <= 0
                 ? before : after;
         if (nearest == null || Duration.between(nearest.getKey(), time).abs().compareTo(SENSOR_MATCH_WINDOW) > 0) return null;
@@ -297,14 +331,10 @@ public final class DiagnosticsRecovery {
         }
     }
 
-    private record RawFix(Position position, Coordinate coordinate) {
+    private record RawFix(Position position, Coordinate coordinate, boolean accepted) {
     }
 
-    private record Candidate(Coordinate coordinate, Instant time, SensorValues sensors) {
-    }
-
-    private record SensorValues(Distance distance, HeartRate heartRate, Temperature temperature,
-                               Cadence cadence, Power power, AltitudeGainLoss altitudeGainLoss) {
+    private record Candidate(Coordinate coordinate, Instant time, TrackPoint trackPoint) {
     }
 
     private record Coordinate(long latitudeBits, long longitudeBits) {

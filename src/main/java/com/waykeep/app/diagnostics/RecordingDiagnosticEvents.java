@@ -98,6 +98,14 @@ public final class RecordingDiagnosticEvents {
         return fields;
     }
 
+    public static Map<String, Object> trackPointDecision(TrackPoint point, String decision) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("time", point.getTime().toString());
+        fields.put("type", point.type().name());
+        fields.put("decision", decision);
+        return fields;
+    }
+
     public static Map<String, Object> deviceState(int batteryPercent, boolean charging, boolean powerSave,
                                                   boolean deviceIdle, boolean screenInteractive,
                                                   String networkTransport, boolean networkConnected,
