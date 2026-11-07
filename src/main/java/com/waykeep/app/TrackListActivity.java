@@ -892,7 +892,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 return;
             }
 
-            if (route.isEmpty()) {
+            if (route.size() < 2) {
                 runOnUiThread(() -> Toast.makeText(this, R.string.gpx_route_no_points, Toast.LENGTH_LONG).show());
                 return;
             }
