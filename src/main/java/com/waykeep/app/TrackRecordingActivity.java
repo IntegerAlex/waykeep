@@ -91,6 +91,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
     private GpsStatusValue gpsStatus;
     private String gpsStatusText;
+    private String gpsAccuracyText;
+    private int lowBatteryPercent = -1;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -102,6 +104,18 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         service.getGpsStatusTextObservable()
                 .observe(TrackRecordingActivity.this, text -> {
                     gpsStatusText = text;
+                    updateStatusStrip();
+                });
+
+        service.getGpsAccuracyTextObservable()
+                .observe(TrackRecordingActivity.this, text -> {
+                    gpsAccuracyText = text;
+                    updateStatusStrip();
+                });
+
+        service.getLowBatteryPercentObservable()
+                .observe(TrackRecordingActivity.this, percent -> {
+                    lowBatteryPercent = percent == null ? -1 : percent;
                     updateStatusStrip();
                 });
 
@@ -455,14 +469,15 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
     private void onGpsStatusChanged(GpsStatusValue gpsStatusValue) {
         gpsStatus = gpsStatusValue;
+        if (!gpsStatusValue.hasGoodSignal()) {
+            gpsAccuracyText = null;
+        }
         updateStatusStrip();
     }
 
     /**
-     * The strip is the persistent home of recording state, visible on every tab. It stays silent
-     * while recording with a usable signal: a live dot alone answers "is it still recording?".
-     * Problems get words. A bad or lost signal means the distance is not counting, so the user
-     * has to know.
+     * The strip is the persistent home of recording state, visible on every tab. A usable signal
+     * shows its current accuracy; GPS problems and low battery get warning text.
      */
     private void updateStatusStrip() {
         if (!recordingStatus.isRecording()) {
@@ -472,27 +487,46 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         }
 
         String message = null;
+        boolean hideGpsDisabled = false;
         if (recordingStatus.isPaused()) {
             message = getString(R.string.track_paused_notification);
         } else if (gpsStatus != null && gpsStatus.isSignalUnusable()) {
             message = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_DISABLED || gpsStatus == GpsStatusValue.GPS_NONE) {
             if (!PreferencesUtils.shouldShowGpsDisabledWarning()) {
-                viewBinding.recordingStatusStrip.setVisibility(View.GONE);
-                stopStatusDotPulse();
-                return;
+                hideGpsDisabled = true;
+            } else {
+                message = gpsStatusMessage();
             }
-            message = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_ENABLED) {
             message = gpsStatusMessage();
         }
 
-        boolean nominal = message == null;
+        if (hideGpsDisabled && lowBatteryPercent < 0) {
+            viewBinding.recordingStatusStrip.setVisibility(View.GONE);
+            stopStatusDotPulse();
+            return;
+        }
+
+        boolean gpsProblem = message != null;
+        String detail = message;
+        if (detail == null && gpsStatus != null && gpsStatus.hasGoodSignal()) {
+            detail = gpsAccuracyText;
+        }
+        if (lowBatteryPercent >= 0) {
+            String batteryWarning = getString(R.string.recording_low_battery, lowBatteryPercent);
+            detail = detail == null ? batteryWarning
+                    : getString(R.string.recording_status_details, detail, batteryWarning);
+        }
+
+        boolean nominal = !gpsProblem && lowBatteryPercent < 0;
         viewBinding.recordingStatusStrip.setVisibility(View.VISIBLE);
-        viewBinding.recordingStatusStrip.setContentDescription(
-                nominal ? getString(R.string.recording_status_recording) : message);
-        viewBinding.recordingStatusStripText.setVisibility(nominal ? View.GONE : View.VISIBLE);
-        viewBinding.recordingStatusStripText.setText(message);
+        String description = detail == null ? getString(R.string.recording_status_recording)
+                : nominal ? getString(R.string.recording_status_details,
+                getString(R.string.recording_status_recording), detail) : detail;
+        viewBinding.recordingStatusStrip.setContentDescription(description);
+        viewBinding.recordingStatusStripText.setVisibility(detail == null ? View.GONE : View.VISIBLE);
+        viewBinding.recordingStatusStripText.setText(detail);
         viewBinding.recordingStatusStripDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this,
                 nominal ? R.color.semantic_recording_red : R.color.semantic_offline_amber)));
 
