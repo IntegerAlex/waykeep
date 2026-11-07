@@ -23,6 +23,7 @@ public class IntervalStatisticsUpdater {
     private final List<Interval> intervalList;
     private final Distance distanceInterval;
     private final RecentWindow recentWindow;
+    private final boolean splitOnManualLap;
     private Interval interval, lastInterval;
     private TrackPoint.Id lastTrackPointId;
 
@@ -30,11 +31,25 @@ public class IntervalStatisticsUpdater {
      * @param distanceInterval distance of every interval.
      */
     public IntervalStatisticsUpdater(Distance distanceInterval) {
-        this(distanceInterval, distanceInterval);
+        this(distanceInterval, distanceInterval, false);
     }
 
     public IntervalStatisticsUpdater(Distance distanceInterval, Distance recentWindowDistance) {
+        this(distanceInterval, recentWindowDistance, false);
+    }
+
+    /**
+     * @param splitOnManualLap true for the Intervals tab, which shows manual laps as
+     *                         separate rows. Voice announcements keep their own automatic
+     *                         distance schedule and must leave this false.
+     */
+    public IntervalStatisticsUpdater(Distance distanceInterval, boolean splitOnManualLap) {
+        this(distanceInterval, distanceInterval, splitOnManualLap);
+    }
+
+    public IntervalStatisticsUpdater(Distance distanceInterval, Distance recentWindowDistance, boolean splitOnManualLap) {
         this.distanceInterval = distanceInterval;
+        this.splitOnManualLap = splitOnManualLap;
         recentWindow = new RecentWindow(recentWindowDistance);
 
         interval = new Interval();
@@ -59,6 +74,9 @@ public class IntervalStatisticsUpdater {
             }
             lastTrackPointId = trackPoint.id();
             recentWindow.add(trackPoint);
+            if (splitOnManualLap && trackPoint.isSegmentManualStart()) {
+                closeIntervalAtManualLap();
+            }
             if (trackStatisticsUpdater == null) {
                 trackStatisticsUpdater = new TrackStatisticsUpdater(trackPoint);
             } else {
@@ -92,6 +110,30 @@ public class IntervalStatisticsUpdater {
         }
 
         return trackPoint != null ? trackPoint.id() : null;
+    }
+
+    /**
+     * A manual segment start (lap, resume) begins a new Intervals row. Splitting on the
+     * start instead of the end avoids an empty row when a recording is paused and not
+     * resumed. The leftover carried over from a distance-threshold overshoot still
+     * belongs to the interval that is being closed.
+     */
+    private void closeIntervalAtManualLap() {
+        if (trackStatisticsUpdater == null) {
+            return;
+        }
+
+        Interval completed = new Interval(interval);
+        completed.add(trackStatisticsUpdater.getTrackStatistics(), null);
+
+        if (!completed.distance.isZero() || !completed.time.isZero()) {
+            lastInterval.set(completed.toStatistics());
+            lastInterval = new Interval();
+            intervalList.add(lastInterval);
+        }
+
+        interval = new Interval();
+        trackStatisticsUpdater = null;
     }
 
     public List<Statistics> getIntervalList() {

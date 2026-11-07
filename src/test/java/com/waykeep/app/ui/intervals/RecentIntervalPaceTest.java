@@ -41,6 +41,22 @@ public class RecentIntervalPaceTest {
     }
 
     @Test
+    public void manualLapResetsTheRecentPaceWindow() {
+        IntervalStatisticsUpdater updater = new IntervalStatisticsUpdater(Distance.of(5000), WINDOW);
+        // 500 m before the lap plus 500 m after it would fill the 1000 m window in 150 s
+        // if the lap boundary were ignored. The reset must make the window incomplete.
+        updater.addTrackPoints(List.of(point(0, 0), point(60, 500)).iterator());
+        assertNull(updater.getRecentWindowSpeed());
+
+        updater.addTrackPoints(List.of(
+                point(60, 0, TrackPoint.Type.SEGMENT_END_MANUAL),
+                point(60, 0, TrackPoint.Type.SEGMENT_START_MANUAL)).iterator());
+        updater.addTrackPoints(List.of(point(150, 500)).iterator());
+
+        assertNull(updater.getRecentWindowSpeed());
+    }
+
+    @Test
     public void overlappingPointPagesDoNotDoubleCountTheBoundaryPoint() {
         IntervalStatisticsUpdater updater = new IntervalStatisticsUpdater(Distance.of(5000), WINDOW);
         updater.addTrackPoints(List.of(point(1, 0, 0), point(2, 60, 1000)).iterator());

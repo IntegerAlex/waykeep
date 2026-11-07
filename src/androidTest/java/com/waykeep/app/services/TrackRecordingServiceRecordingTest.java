@@ -2,6 +2,7 @@ package com.waykeep.app.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -284,6 +285,49 @@ public class TrackRecordingServiceRecordingTest {
         ), TestDataUtil.getTrackPoints(contentProviderUtils, trackId));
     }
 
+
+    @MediumTest
+    @Test
+    public void testRecording_manualLap() {
+        // given
+        String startTime = "2020-02-02T02:02:02Z";
+        TrackPointCreator trackPointCreator = service.getTrackPointCreator();
+        trackPointCreator.setClock(startTime);
+        Track.Id trackId = service.startNewTrack();
+        mockAltitudeChange(trackPointCreator, 0);
+
+        sendGPSLocation(trackPointCreator, "2020-02-02T02:02:03Z", 45.0, 35.0, 1, 15);
+        sendGPSLocation(trackPointCreator, "2020-02-02T02:02:05Z", 45.0001, 35.0, 1, 15);
+
+        Statistics beforeLap = contentProviderUtils.getTrack(trackId).statistics();
+        assertTrue(beforeLap.totalDistance().toM() > 0);
+
+        // when
+        trackPointCreator.setClock("2020-02-02T02:02:06Z");
+        assertTrue(service.recordLap());
+
+        // then: the lap boundary is END followed by START at one instant/location.
+        List<TrackPoint> trackPoints = TestDataUtil.getTrackPoints(contentProviderUtils, trackId);
+        TrackPoint segmentEnd = trackPoints.get(trackPoints.size() - 2);
+        TrackPoint segmentStart = trackPoints.get(trackPoints.size() - 1);
+        assertEquals(TrackPoint.Type.SEGMENT_END_MANUAL, segmentEnd.type());
+        assertEquals(TrackPoint.Type.SEGMENT_START_MANUAL, segmentStart.type());
+        assertEquals(segmentEnd.getTime(), segmentStart.getTime());
+        assertEquals(segmentEnd.position(), segmentStart.position());
+        assertNull(segmentStart.sensorDistance());
+
+        // and: track totals survive, the new lap starts at zero.
+        Statistics afterLap = contentProviderUtils.getTrack(trackId).statistics();
+        assertEquals(beforeLap.totalDistance().toM(), afterLap.totalDistance().toM(), 0.001);
+        assertEquals(0, service.getTrackRecordingManager().getDataForUI()
+                .currentSegment().totalDistance().toM(), 0.001);
+
+        // and: stopping still keeps the track totals.
+        trackPointCreator.setClock("2020-02-02T02:02:08Z");
+        service.endCurrentTrack();
+        assertEquals(beforeLap.totalDistance().toM(),
+                contentProviderUtils.getTrack(trackId).statistics().totalDistance().toM(), 0.001);
+    }
 
     @MediumTest
     @Test

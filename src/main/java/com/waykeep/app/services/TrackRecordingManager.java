@@ -313,6 +313,48 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         reset();
     }
 
+    /**
+     * Closes the current lap and starts the next one without pausing or stopping
+     * the sensors. The end and start share one instant and position, so the lap
+     * boundary is a single point on the map. The start carries no cumulative
+     * sensor data: the next lap starts at zero distance.
+     *
+     * @return whether a lap boundary was stored.
+     */
+    synchronized boolean recordLap() {
+        if (trackId == null) {
+            return false;
+        }
+
+        TrackPoint segmentEnd = withLapLocation(trackPointCreator.createSegmentEnd(), lastStoredTrackPointWithLocation);
+        insertTrackPoint(segmentEnd, true);
+
+        TrackPoint segmentStart = createLapStart(segmentEnd, lastStoredTrackPointWithLocation);
+        insertTrackPoint(segmentStart, false);
+        return true;
+    }
+
+    @VisibleForTesting
+    static TrackPoint createLapStart(@NonNull TrackPoint segmentEnd, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
+        return TrackPoint.createSegmentStartManualWithTime(segmentEnd.getTime(),
+                withLapLocation(segmentEnd, lastStoredTrackPointWithLocation).position());
+    }
+
+    /**
+     * A boundary without a fresh fix still belongs where the last stored point is, so
+     * both ends of a lap share one location instead of one of them losing the trace.
+     */
+    @VisibleForTesting
+    static TrackPoint withLapLocation(@NonNull TrackPoint trackPoint, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
+        Position position = trackPoint.position();
+        if (!position.hasLocation()
+                && lastStoredTrackPointWithLocation != null
+                && lastStoredTrackPointWithLocation.position().hasLocation()) {
+            return trackPoint.with(position.withCoordinates(lastStoredTrackPointWithLocation.position()));
+        }
+        return trackPoint;
+    }
+
     RecordingData getDataForUI() {
         if (trackId == null) {
             throw new RuntimeException("Requesting data if not recording should not be done.");

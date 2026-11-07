@@ -83,6 +83,14 @@ public record TrackPoint(
         return new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, time);
     }
 
+    /**
+     * Starts a manual segment at a known position (e.g., a lap boundary) without
+     * carrying cumulative sensor data, which belongs to the segment that just ended.
+     */
+    public static TrackPoint createSegmentStartManualWithTime(Instant time, Position position) {
+        return new TrackPoint(TrackPoint.Type.SEGMENT_START_MANUAL, position.with(time));
+    }
+
     public static TrackPoint with(TrackPoint trackPoint, Altitude.EGM2008 correctAltitude) {
         return new TrackPoint(
                 trackPoint.id,

@@ -43,19 +43,14 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int actualPosition = stackMode == StackMode.STACK_FROM_TOP ? position : getItemCount() - 1 - position;
-        int nextPosition = actualPosition + 1;
-        boolean isLast = actualPosition == getItemCount() - 1;
         IntervalStatisticsAdapter.ViewHolder viewHolder = (IntervalStatisticsAdapter.ViewHolder) holder;
         Statistics interval = intervalList.get(actualPosition);
         viewHolder.itemView.setTag(actualPosition);
 
-        Distance sumDistance;
-        if (isLast && actualPosition > 0) {
-            sumDistance = intervalList.get(actualPosition - 1).totalDistance()
-                    .multipliedBy(actualPosition)
-                    .plus(interval.totalDistance());
-        } else {
-            sumDistance = interval.totalDistance().multipliedBy(nextPosition);
+        // Manual laps make interval lengths non-uniform, so sum the actual rows.
+        Distance sumDistance = Distance.ZERO;
+        for (int i = 0; i <= actualPosition; i++) {
+            sumDistance = sumDistance.plus(intervalList.get(i).totalDistance());
         }
         viewHolder.viewBinding.intervalItemDistance.setText(DistanceFormatter.Builder()
                 .setUnit(unitSystem)

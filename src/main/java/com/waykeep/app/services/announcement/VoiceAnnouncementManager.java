@@ -175,6 +175,7 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
         if (intervalStatistics == null || !Objects.equals(currentTrackId, intervalTrackId)
                 || !currentIntervalDistance.equals(intervalDistance)
                 || !currentRecentPaceDistance.equals(recentPaceDistance)) {
+            // Voice laps follow the configured distance schedule, not manual lap buttons.
             intervalStatistics = new IntervalStatisticsUpdater(currentIntervalDistance, currentRecentPaceDistance);
             intervalDistance = currentIntervalDistance;
             recentPaceDistance = currentRecentPaceDistance;

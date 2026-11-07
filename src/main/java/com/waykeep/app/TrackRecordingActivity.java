@@ -318,7 +318,32 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem lap = menu.findItem(R.id.track_detail_lap);
+        if (lap != null) {
+            lap.setVisible(recordingStatus.isRecordingAndNotPaused());
+            lap.setContentDescription(getString(R.string.menu_lap_content_description));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.track_detail_lap) {
+            var service = trackRecordingServiceConnection.getTrackRecordingService();
+            if (service == null) {
+                Log.w(TAG, "Lap ignored: recording service is not connected.");
+                return true;
+            }
+            if (!service.recordLap()) {
+                Log.w(TAG, "Lap ignored: recording is paused or not active.");
+                return true;
+            }
+            ActivityUtils.vibrate(this, Duration.ofMillis(80));
+            Toast.makeText(this, R.string.lap_recorded, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
         if (item.getItemId() == R.id.track_detail_menu_show_on_map) {
             viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
             return true;
@@ -460,6 +485,9 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         viewBinding.trackRecordingFabAction.setImageResource(status.isPaused()
                 ? R.drawable.ic_baseline_play_arrow_24
                 : R.drawable.ic_baseline_pause_24);
+
+        // The lap action is only offered while actively recording.
+        invalidateOptionsMenu();
 
         updateStatusStrip();
 
