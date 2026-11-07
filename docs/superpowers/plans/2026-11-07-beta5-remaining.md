@@ -58,11 +58,11 @@
 
 ### Task 4: Add opt-in GPS elevation fallback
 
-**Files:** GPS altitude aggregation/recording path, settings and user-visible copy, and focused JVM tests.
+**Files:** GPS altitude aggregation/recording path; `AltitudeGainLoss`/track models; `TrackPointsColumns`, `TracksColumns`, `CustomSQLiteOpenHelper`, and `ContentProviderUtils`; recorded-statistics UI; settings/resources; migration and JVM tests.
 
-**Requirements:** Preserve barometer-derived gain/loss whenever barometer data exists. Allow a user to opt into an approximate GPS-derived fallback when it does not. Ignore fixes with missing or poor vertical accuracy; use a five-fix median window and a 3 m gain/loss deadband. Make the approximate source visible in the UI; do not claim GPS elevation is barometer quality.
+**Requirements:** Preserve barometer-derived gain/loss whenever barometer data exists. Add an explicit opt-in (default off) for approximate GPS-derived gain/loss when barometer data is unavailable. Ignore fixes with missing or >20 m vertical accuracy; use a five-fix median window and a 3 m gain/loss deadband. Persist whether gain/loss is barometer, GPS estimate, mixed, or unknown through the track/trackpoint schema so historical statistics are labeled correctly. Existing rows and imported tracks without provenance remain unknown, never labeled as GPS or barometer by guesswork.
 
-**Tests:** No-barometer fallback, barometer precedence, missing/poor vertical accuracy, smoothing/deadband, and source labeling.
+**Tests:** No-barometer fallback, barometer precedence, missing/poor vertical accuracy, smoothing/deadband, source propagation through track aggregation/readback, and migration of an existing schema with unchanged values.
 
 ### Task 5: Per-stat voice schedules and recent-interval pace
 
