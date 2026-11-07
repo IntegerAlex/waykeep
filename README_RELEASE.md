@@ -10,17 +10,22 @@
 5. Build reproducible release and attach to release
 6. ... wait until reproducibility is verified by F-Droid
 
-Two releases will be created:
-* Application id: `com.waykeep.app` (irreproducible)
-* Application id: `com.waykeep.app.playstore` (reproducible)
+Stable package: `com.waykeep.app` (reproducible flavor). The `.playstore` package is not used for the stable listing.
 
 For F-Droid the build status can be found [here](https://monitor.f-droid.org/builds/build).
 
-## F-Droid metadata handoff (local draft only)
+## Store submissions (prepared, not yet submitted)
 
-Waykeep is not listed on F-Droid. The local handoff draft is [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml); official app metadata belongs in the separate [fdroiddata repository](https://gitlab.com/fdroid/fdroiddata), not this repository. After review, copy the draft there as `metadata/com.waykeep.app.yml` and follow fdroiddata's contribution process. The local file is not a submission or a listing.
+Website: <https://waykeep.gossorg.in>
 
-The draft targets the released `v1.0.0-beta.5` tag (packaged version name `v1.0.0-beta.5irreproducible`, `versionCode` `6889`, commit `25f4dfefea038e298101f206135973f61271de51`) and uses the English Fastlane metadata as its starting point. In fdroiddata, `gradle: - irreproducible` selects the `irreproducible` release flavor; the corresponding Gradle task is `assembleIrreproducibleRelease` (locally: `./gradlew :assembleIrreproducibleRelease`). Recheck the version, tag, commit, and metadata when preparing a later release.
+- F-Droid metadata: [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml)
+- F-Droid MR text: [`distribution/fdroid/merge-request.md`](distribution/fdroid/merge-request.md)
+- IzzyOnDroid metadata: [`distribution/izzy/com.waykeep.app.yml`](distribution/izzy/com.waykeep.app.yml)
+- IzzyOnDroid request text: [`distribution/izzy/inclusion-request.md`](distribution/izzy/inclusion-request.md)
+
+The F-Droid file targets v1.0.0 (versionCode 6890, commit `d441ea574f49fa64018e3b4a03ca660ad68ddac8`) and uses `gradle: - reproducible`, which builds `com.waykeep.app` as an unsigned release for F-Droid signing. Copy it to `fdroiddata/metadata/com.waykeep.app.yml` when submitting. The IzzyOnDroid file uses `Builds: []` and the release APK. Listing text, icon, feature graphic, screenshots, and changelog live in `fastlane/metadata/android/en-US/`.
+
+Reproducible build check: two clean `assembleReproducibleRelease` builds produced the same unsigned APK SHA-256, `c2f9a321b379b9db85b13789fddc30aabd16888a1c64edd23ee71b653b92c5d7`.
 
 ## Reproducible builds
 

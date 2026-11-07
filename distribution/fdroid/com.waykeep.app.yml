@@ -1,38 +1,23 @@
-# LOCAL HANDOFF DRAFT ONLY — NOT SUBMITTED; NOT AN F-DROID LISTING.
-# Package ID is com.waykeep.app; review before copying to fdroiddata/metadata/com.waykeep.app.yml.
-# Fastlane en-US has an old OpenTracks title and stale network/license claims; those claims are reconciled here with README.md.
+# PREPARED FOR SUBMISSION — NOT YET SUBMITTED.
+# Copy to fdroiddata/metadata/com.waykeep.app.yml.
+# Listing text, icon, and screenshots live in the app's Fastlane metadata.
 AutoName: Waykeep
 Categories:
   - Sports & Health
 License: GPL-3.0-only
-WebSite: https://github.com/IntegerAlex/waykeep
+AuthorName: Akshat Kotpalliwar
+AuthorEmail: akshatkot@gmail.com
+WebSite: https://waykeep.gossorg.in
 SourceCode: https://github.com/IntegerAlex/waykeep
 IssueTracker: https://github.com/IntegerAlex/waykeep/issues
 Changelog: https://github.com/IntegerAlex/waykeep/releases
-Summary: A sport tracker buddy that respects your privacy.
-Description: |-
-    A sport tracking buddy that respects your privacy.
-
-    Sport and outdoor activities grant happiness, skill and confidence. Value your health by keeping track of your training.
-    Record runs and walks, and use the bike computer for cycling. Mark interesting locations along your way with pictures.
-    Keep recorded statistics in detail for analysis, and share only the data you choose.
-
-    * Voice announcements.
-    * Bluetooth LE sensors: heart rate, speed and distance, cadence, and power.
-    * Altitude gain and loss via the barometric sensor.
-    * Export tracks as KMZ (including photos), KML, or GPX.
-    * Offline-capable in-app maps, an activity feed, and a home-screen statistics widget.
-    * Dark and light themes, and no ads.
-
-    Network access is used to fetch map tiles; personal data is not uploaded.
-    Licensed under GPLv3; upstream-derived parts remain Apache 2.0.
 RepoType: git
 Repo: https://github.com/IntegerAlex/waykeep
 Builds:
-  - versionName: v1.0.0-beta.5irreproducible
-    versionCode: 6889
-    commit: 25f4dfefea038e298101f206135973f61271de51
+  - versionName: v1.0.0
+    versionCode: 6890
+    commit: d441ea574f49fa64018e3b4a03ca660ad68ddac8
     gradle:
-      - irreproducible
-CurrentVersion: v1.0.0-beta.5irreproducible
-CurrentVersionCode: 6889
+      - reproducible
+CurrentVersion: v1.0.0
+CurrentVersionCode: 6890

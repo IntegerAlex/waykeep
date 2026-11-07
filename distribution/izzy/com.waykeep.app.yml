@@ -1,0 +1,18 @@
+# PREPARED FOR SUBMISSION — NOT YET SUBMITTED.
+# IzzyOnDroid uses the GitHub release APK; Builds: [] means no source build.
+AutoName: Waykeep
+Categories:
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: Akshat Kotpalliwar
+AuthorEmail: akshatkot@gmail.com
+WebSite: https://waykeep.gossorg.in
+SourceCode: https://github.com/IntegerAlex/waykeep
+IssueTracker: https://github.com/IntegerAlex/waykeep/issues
+Changelog: https://github.com/IntegerAlex/waykeep/releases
+RepoType: git
+Repo: https://github.com/IntegerAlex/waykeep
+Builds: []
+Binaries: https://github.com/IntegerAlex/waykeep/releases/download/v1.0.0/com.waykeep.app_v1.0.0_6890-reproducible-release.apk
+CurrentVersion: v1.0.0
+CurrentVersionCode: 6890
