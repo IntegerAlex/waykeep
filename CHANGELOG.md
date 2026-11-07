@@ -105,6 +105,8 @@ repeated here.
   thumbnails; existing elevation/pace stats wired through the track-list cursor.
 - **Personal bests** activity (all-time records, each opens the record track).
 - **Monthly recap** activity (month pager, totals, Sunday-first calendar, share).
+  The four totals sit in a 2×2 grid and auto-size down to 16sp: at 36sp in one row of
+  four they clipped to `10....` / `1:2....` on a 360dp screen.
 - **HR-zone breakdown** on the recorded stats tab (Z5…Z1, non-zero only).
 - Feed fixes: GPS button gives immediate optimistic feedback and never blanks;
   logo tap scrolls to top instead of exiting; added **Exit** to the overflow.

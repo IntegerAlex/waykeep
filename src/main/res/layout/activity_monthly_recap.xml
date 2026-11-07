@@ -77,14 +77,20 @@
                     <TextView
                         android:id="@+id/monthly_activities"
                         style="@style/TextAppearance.OpenTracks.PrimaryValue"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:autoSizeMaxTextSize="36sp"
+                        android:autoSizeMinTextSize="16sp"
+                        android:autoSizeStepGranularity="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center"
                         tools:text="0" />
 
                     <TextView
                         style="@style/TextAppearance.OpenTracks.SecondaryHeader"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/monthly_recap_activities" />
 
                 </LinearLayout>
@@ -98,17 +104,32 @@
                     <TextView
                         android:id="@+id/monthly_distance"
                         style="@style/TextAppearance.OpenTracks.PrimaryValue"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:autoSizeMaxTextSize="36sp"
+                        android:autoSizeMinTextSize="16sp"
+                        android:autoSizeStepGranularity="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center"
                         tools:text="0" />
 
                     <TextView
                         style="@style/TextAppearance.OpenTracks.SecondaryHeader"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/stats_distance" />
 
                 </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -119,14 +140,20 @@
                     <TextView
                         android:id="@+id/monthly_time"
                         style="@style/TextAppearance.OpenTracks.PrimaryValue"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:autoSizeMaxTextSize="36sp"
+                        android:autoSizeMinTextSize="16sp"
+                        android:autoSizeStepGranularity="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center"
                         tools:text="0" />
 
                     <TextView
                         style="@style/TextAppearance.OpenTracks.SecondaryHeader"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/stats_moving_time" />
 
                 </LinearLayout>
@@ -140,14 +167,20 @@
                     <TextView
                         android:id="@+id/monthly_elevation"
                         style="@style/TextAppearance.OpenTracks.PrimaryValue"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:autoSizeMaxTextSize="36sp"
+                        android:autoSizeMinTextSize="16sp"
+                        android:autoSizeStepGranularity="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center"
                         tools:text="0" />
 
                     <TextView
                         style="@style/TextAppearance.OpenTracks.SecondaryHeader"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/stats_altitude" />
 
                 </LinearLayout>
