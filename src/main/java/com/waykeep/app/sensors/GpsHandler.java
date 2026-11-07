@@ -14,6 +14,7 @@ import androidx.core.location.GnssStatusCompat;
 import androidx.core.location.LocationManagerCompat;
 
 import com.waykeep.app.R;
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.Position;
 import com.waykeep.app.sensors.driver.Driver;
@@ -33,6 +34,7 @@ public class GpsHandler extends SensorHandler<Location, Position> {
 
     private GpsStatusManager gpsStatusManager;
     private Distance thresholdHorizontalAccuracy;
+    private final GpsAltitudeGainLossFallback altitudeGainLossFallback = new GpsAltitudeGainLossFallback();
 
     /** Satellite callbacks arrive at ~1 Hz; only changes are logged, and not more often than this. */
     @VisibleForTesting
@@ -123,7 +125,25 @@ public class GpsHandler extends SensorHandler<Location, Position> {
             return;
         }
 
+        if (PreferencesUtils.isGpsAltitudeFallbackEnabled()) {
+            altitudeGainLossFallback.add(position);
+        }
         super.onDataReceived(location);
+    }
+
+    @Nullable
+    AltitudeGainLoss getAltitudeGainLoss() {
+        return altitudeGainLossFallback.getEstimate();
+    }
+
+    void resetAltitudeGainLossFallback() {
+        altitudeGainLossFallback.reset();
+    }
+
+    @Override
+    void resetAggregated() {
+        super.resetAggregated();
+        altitudeGainLossFallback.resetAggregated();
     }
 
     @NonNull

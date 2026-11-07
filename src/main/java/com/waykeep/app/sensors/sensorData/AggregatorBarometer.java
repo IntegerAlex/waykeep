@@ -18,16 +18,16 @@ public class AggregatorBarometer extends Aggregator<AtmosphericPressure, Altitud
     protected void computeValue(@NonNull Raw<AtmosphericPressure> current) {
         if (previous == null) {
             lastAcceptedSensorValue = current.value();
-            output = new AltitudeGainLoss(0f, 0f);
+            output = new AltitudeGainLoss(0f, 0f, AltitudeGainLoss.Source.BAROMETER);
             return;
         }
 
         PressureSensorUtils.AltitudeChange altitudeChange = PressureSensorUtils.computeChangesWithSmoothing_m(lastAcceptedSensorValue, previous.value(), current.value());
         if (altitudeChange != null) {
             if (output == null) {
-                output = new AltitudeGainLoss(0f, 0f);
+                output = new AltitudeGainLoss(0f, 0f, AltitudeGainLoss.Source.BAROMETER);
             }
-            output = new AltitudeGainLoss(output.gain_m() + altitudeChange.getAltitudeGain_m(), output.loss_m() + altitudeChange.getAltitudeLoss_m());
+            output = new AltitudeGainLoss(output.gain_m() + altitudeChange.getAltitudeGain_m(), output.loss_m() + altitudeChange.getAltitudeLoss_m(), AltitudeGainLoss.Source.BAROMETER);
 
             lastAcceptedSensorValue = altitudeChange.currentSensorValue();
         }

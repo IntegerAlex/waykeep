@@ -246,6 +246,15 @@ public class StatisticsRecordedFragment extends Fragment {
 
             boolean show = altitudeGain_m != null && altitudeLoss_m != null;
             viewBinding.statsAltitudeGroup.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (show) {
+                int sourceLabel = switch (trackStatistics.altitudeGainLoss().source()) {
+                    case BAROMETER -> R.string.gps_altitude_source_barometer;
+                    case GPS_ESTIMATE -> R.string.gps_altitude_source_estimate;
+                    case MIXED -> R.string.gps_altitude_source_mixed;
+                    case UNKNOWN -> R.string.gps_altitude_source_unknown;
+                };
+                viewBinding.statsAltitudeSource.setText(sourceLabel);
+            }
         }
     }
 

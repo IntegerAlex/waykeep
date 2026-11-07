@@ -23,7 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import com.waykeep.app.data.models.AltitudeGainLoss;
+import com.waykeep.app.data.models.Track;
+import com.waykeep.app.data.models.TrackPoint;
 import com.waykeep.app.data.tables.MarkerColumns;
 import com.waykeep.app.data.tables.TrackPointsColumns;
 import com.waykeep.app.data.tables.TracksColumns;
@@ -156,6 +160,36 @@ public class CustomSQLiteOpenHelperTest {
     }
 
     @Test
+    public void onUpgradeFrom42PreservesElevationAndLeavesSourceUnknown() {
+        String databaseName = "task4-altitude-migration-" + UUID.randomUUID() + ".db";
+        try {
+            createVersion42(databaseName);
+
+            try (CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context, databaseName)) {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try (Cursor cursor = db.query(TracksColumns.TABLE_NAME, null, TracksColumns._ID + "=1", null, null, null, null)) {
+                    assertTrue(cursor.moveToFirst());
+                    Track track = ContentProviderUtils.createTrack(cursor);
+                    assertEquals(42f, track.statistics().altitudeGainLoss().gain_m(), 0.01f);
+                    assertEquals(17f, track.statistics().altitudeGainLoss().loss_m(), 0.01f);
+                    assertEquals(AltitudeGainLoss.Source.UNKNOWN, track.statistics().altitudeGainLoss().source());
+                    assertEquals("UNKNOWN", cursor.getString(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE)));
+                }
+                try (Cursor cursor = db.query(TrackPointsColumns.TABLE_NAME, null, TrackPointsColumns._ID + "=7", null, null, null, null)) {
+                    assertTrue(cursor.moveToFirst());
+                    TrackPoint point = ContentProviderUtils.fillTrackPoint(cursor);
+                    assertEquals(8f, point.altitudeGainLoss().gain_m(), 0.01f);
+                    assertEquals(4f, point.altitudeGainLoss().loss_m(), 0.01f);
+                    assertEquals(AltitudeGainLoss.Source.UNKNOWN, point.altitudeGainLoss().source());
+                    assertEquals("UNKNOWN", cursor.getString(cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_GAIN_LOSS_SOURCE)));
+                }
+            }
+        } finally {
+            context.deleteDatabase(databaseName);
+        }
+    }
+
+    @Test
     public void track_uuid_unique() {
         try (CustomSQLiteOpenHelper db = new CustomSQLiteOpenHelper(context, DATABASE_NAME)) {
             db.getWritableDatabase().execSQL("INSERT INTO tracks (uuid) VALUES (0x00)");
@@ -277,6 +311,24 @@ public class CustomSQLiteOpenHelperTest {
             dbBase.getWritableDatabase().execSQL(TRACKS_CREATE_TABLE_V23);
             dbBase.getWritableDatabase().execSQL(TRACKPOINTS_CREATE_TABLE_V23);
             dbBase.getWritableDatabase().execSQL(WAYPOINTS_CREATE_TABLE_V23);
+        }
+    }
+
+    private void createVersion42(String databaseName) {
+        try (SQLiteOpenHelper helper = new SQLiteOpenHelper(context, databaseName, null, 42) {
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+                db.execSQL("CREATE TABLE tracks (_id INTEGER PRIMARY KEY, uuid BLOB, name TEXT, description TEXT, activity_type TEXT, activity_type_localized TEXT, time_offset INTEGER, time_start INTEGER, time_stop INTEGER, duration_total INTEGER, duration_moving INTEGER, distance FLOAT, speed_max FLOAT, altitude_min FLOAT, altitude_max FLOAT, altitude_gain FLOAT, altitude_loss FLOAT)");
+                db.execSQL("CREATE TABLE trackpoints (_id INTEGER PRIMARY KEY, trackid INTEGER, type INTEGER, latitude INTEGER, longitude INTEGER, time INTEGER, elevation FLOAT, accuracy FLOAT, accuracy_vertical FLOAT, speed FLOAT, bearing FLOAT, sensor_heartrate FLOAT, sensor_temperature FLOAT, sensor_cadence FLOAT, sensor_distance FLOAT, sensor_power FLOAT, elevation_gain FLOAT, elevation_loss FLOAT)");
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            }
+        }) {
+            SQLiteDatabase db = helper.getWritableDatabase();
+            db.execSQL("INSERT INTO tracks VALUES (1, ?, 'legacy', '', 'unknown', 'Unknown', 0, 1000, 2000, 1000, 800, 12.5, 3.0, 90.0, 100.0, 42.0, 17.0)", new Object[]{new byte[16]});
+            db.execSQL("INSERT INTO trackpoints VALUES (7, 1, 0, 50000000, 80000000, 1500, 95.0, 4.0, 9.0, 2.0, 15.0, 120.0, 20.0, 80.0, 700.0, 1.0, 8.0, 4.0)");
         }
     }
 }

@@ -48,6 +48,7 @@ public interface TrackPointsColumns extends BaseColumns {
     String SENSOR_POWER = "sensor_power";
     String ALTITUDE_GAIN = "elevation_gain";
     String ALTITUDE_LOSS = "elevation_loss";
+    String ALTITUDE_GAIN_LOSS_SOURCE = "altitude_gain_loss_source";
 
     // Alias for sensor statistics
     String ALIAS_AVG_HR = "avg_hr";
@@ -76,6 +77,7 @@ public interface TrackPointsColumns extends BaseColumns {
             + TYPE + " TEXT CHECK(type IN (-2, -1, 0, 1, 3)), "
             + SENSOR_DISTANCE + " FLOAT, "
             + VERTICAL_ACCURACY + " FLOAT, "
+            + ALTITUDE_GAIN_LOSS_SOURCE + " TEXT NOT NULL DEFAULT 'UNKNOWN', "
             + "FOREIGN KEY (" + TRACKID + ") REFERENCES " + TracksColumns.TABLE_NAME + "(" + TracksColumns._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
             + ")";
 

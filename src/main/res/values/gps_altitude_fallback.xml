@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gps_altitude_fallback_key" translatable="false">gpsAltitudeGainLossFallback</string>
+    <string name="gps_altitude_fallback_title">Estimate elevation gain/loss with GPS</string>
+    <string name="gps_altitude_fallback_summary">Use GPS altitude only when barometer data is unavailable. GPS estimates can be noisy.</string>
+    <string name="gps_altitude_source_barometer">Barometer</string>
+    <string name="gps_altitude_source_estimate">GPS estimate</string>
+    <string name="gps_altitude_source_mixed">Mixed sources</string>
+    <string name="gps_altitude_source_unknown">Source unknown</string>
+</resources>

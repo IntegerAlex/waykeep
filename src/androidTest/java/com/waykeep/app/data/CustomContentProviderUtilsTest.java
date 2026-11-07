@@ -198,6 +198,7 @@ public class CustomContentProviderUtilsTest {
                 TracksColumns.MAX_ALTITUDE,
                 TracksColumns.ALTITUDE_GAIN,
                 TracksColumns.ALTITUDE_LOSS,
+                TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE,
         });
         cursor.addRow(new Object[]{
                 trackId.id(),
@@ -215,14 +216,38 @@ public class CustomContentProviderUtilsTest {
                 12.34f,
                 null,
                 null,
-                null,
-                null,
+                12f,
+                6f,
+                AltitudeGainLoss.Source.GPS_ESTIMATE.name(),
         });
         assertTrue(cursor.moveToFirst());
 
         Track track = ContentProviderUtils.createTrack(cursor);
         assertEquals(trackId, track.id());
         assertEquals(name, track.name());
+        assertEquals(AltitudeGainLoss.Source.GPS_ESTIMATE, track.statistics().altitudeGainLoss().source());
+    }
+
+    @Test
+    public void testTrackPointAltitudeSourceRoundTrip() {
+        Track.Id trackId = contentProviderUtils.insertTrack(TestDataUtil.createTrack(new Track.Id(1)));
+        TrackPoint expected = new TrackPoint(
+                null,
+                TrackPoint.Type.TRACKPOINT,
+                Position.of(Instant.ofEpochMilli(1_000)),
+                null,
+                null,
+                null,
+                null,
+                null,
+                new AltitudeGainLoss(5, 2, AltitudeGainLoss.Source.GPS_ESTIMATE));
+        contentProviderUtils.insertTrackPoint(expected, trackId);
+
+        try (TrackPointIterator iterator = contentProviderUtils.getTrackPointIterator(trackId, null)) {
+            assertTrue(iterator.hasNext());
+            TrackPoint actual = iterator.next();
+            assertEquals(expected.altitudeGainLoss(), actual.altitudeGainLoss());
+        }
     }
 
     private void assertCount(int trackCount, int trackPointCount, int markerCount) {
