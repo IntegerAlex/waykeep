@@ -21,6 +21,10 @@ limitations under the License.
         android:title="@string/menu_markers"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/track_list_follow_gpx"
+        android:title="@string/menu_follow_gpx"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/track_list_settings"
         android:icon="@drawable/ic_settings_24dp"
         android:title="@string/menu_settings"

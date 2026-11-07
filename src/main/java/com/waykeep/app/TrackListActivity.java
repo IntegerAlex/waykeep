@@ -60,6 +60,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.time.Duration;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,6 +70,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.osmdroid.util.GeoPoint;
+import org.xml.sax.SAXException;
+
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackListIterator;
 import com.waykeep.app.data.models.Track;
@@ -76,6 +80,8 @@ import com.waykeep.app.diagnostics.DiagnosticsRecovery;
 import com.waykeep.app.diagnostics.DiagnosticsRecovery.RecoveryCandidate;
 import com.waykeep.app.diagnostics.DiagnosticsShare;
 import com.waykeep.app.databinding.TrackListBinding;
+import com.waykeep.app.io.file.importer.GpxRouteParser;
+import com.waykeep.app.io.file.importer.RoutePoint;
 import com.waykeep.app.publicapi.DataProvider;
 import com.waykeep.app.sensors.GpsStatusValue;
 import com.waykeep.app.services.MissingPermissionException;
@@ -180,6 +186,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     // Pre-registered in onCreate: requesting background location from a dialog click
     // must use an early-registered launcher; registering late throws.
     private ActivityResultLauncher<String[]> backgroundPermissionLauncher;
+    private ActivityResultLauncher<String[]> gpxRoutePicker;
 
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
@@ -210,6 +217,13 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         backgroundPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             // Best-effort survival aid; recording proceeds regardless. Chain the battery prompt next.
             showBatteryPrompt();
+        });
+        gpxRoutePicker = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+            if (uri == null) {
+                Toast.makeText(this, R.string.gpx_route_cancelled, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            followGpxRoute(uri);
         });
 
         recordingStatusConnection = new TrackRecordingServiceConnection(bindChangedCallback);
@@ -447,6 +461,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.track_list_markers) {
             startActivity(IntentUtils.newIntent(this, MarkerListActivity.class));
+            return true;
+        }
+
+        if (item.getItemId() == R.id.track_list_follow_gpx) {
+            gpxRoutePicker.launch(new String[]{"*/*"});
             return true;
         }
 
@@ -787,6 +806,59 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             }
         };
         work.observe(this, observer);
+    }
+
+    private void followGpxRoute(Uri uri) {
+        trackLoader.execute(() -> {
+            List<RoutePoint> route;
+            try (InputStream input = getContentResolver().openInputStream(uri)) {
+                if (input == null) {
+                    throw new IOException("No stream for " + uri);
+                }
+                route = GpxRouteParser.parse(input, GpxRouteParser.MAX_POINTS);
+            } catch (IOException | SAXException | SecurityException e) {
+                Log.w(TAG, "Could not read GPX route.", e);
+                runOnUiThread(() -> Toast.makeText(this, R.string.gpx_route_parse_failed, Toast.LENGTH_LONG).show());
+                return;
+            }
+
+            if (route.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(this, R.string.gpx_route_no_points, Toast.LENGTH_LONG).show());
+                return;
+            }
+
+            ArrayList<GeoPoint> points = new ArrayList<>(route.size());
+            for (RoutePoint point : route) {
+                points.add(new GeoPoint(point.latitude(), point.longitude()));
+            }
+            runOnUiThread(() -> startRecordingWithRoute(points));
+        });
+    }
+
+    /**
+     * Starts a normal recording and hands the picked GPX route to the recording map as a guidance
+     * overlay, mirroring the suggested-routes flow.
+     */
+    private void startRecordingWithRoute(ArrayList<GeoPoint> route) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        try {
+            TrackRecordingServiceConnection.executeForeground(this, (service, connection) -> {
+                Track.Id trackId = service.startNewTrack();
+                if (trackId == null) {
+                    Toast.makeText(this, R.string.gpx_route_already_recording, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intent = IntentUtils.newIntent(this, TrackRecordingActivity.class);
+                intent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, trackId);
+                intent.putParcelableArrayListExtra(TrackRecordingActivity.EXTRA_PLANNED_ROUTE, route);
+                intent.putExtra(TrackRecordingActivity.EXTRA_OPEN_MAP_TAB, true);
+                startActivity(intent);
+            });
+        } catch (MissingPermissionException e) {
+            Toast.makeText(this, R.string.permission_recording_failed, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void startSensorsOrRecording(TrackRecordingServiceConnection.Callback callback) {

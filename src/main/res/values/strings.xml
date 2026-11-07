@@ -320,6 +320,11 @@ limitations under the License.
     <string name="menu_insert_photo">Insert photo</string>
     <string name="menu_insert_gallery_img">Insert gallery image</string>
     <string name="menu_markers">Markers</string>
+    <string name="menu_follow_gpx">Follow GPX</string>
+    <string name="gpx_route_cancelled">No GPX file selected.</string>
+    <string name="gpx_route_no_points">That GPX file has no route points.</string>
+    <string name="gpx_route_parse_failed">Could not read that GPX file.</string>
+    <string name="gpx_route_already_recording">A recording is already running.</string>
     <string name="menu_search">Search</string>
     <string name="menu_select_all">Select all</string>
     <string name="menu_settings">Settings</string>
