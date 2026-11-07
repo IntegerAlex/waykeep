@@ -31,8 +31,17 @@ limitations under the License.
 \n* use a heart rate sensor (Bluetooth LE only)
 \n* voice announcements (by time or distance)
 \n* create markers (incl. pictures)
+\n* split laps manually
+\n* follow a GPX route
+\n* weekly insights and streaks
+\n* configurable route color
+\n* optional heart-rate alerts
+\n* optional GPS elevation fallback
+\n* GPS accuracy and low-battery warnings
 \n* works completely offline
 \n* show tracks on a map (see below)</string>
+    <string name="help_insights_title">What does the home insight hero show?</string>
+    <string name="help_insights_content">The home hero summarizes recent activity: distance in the last 7 days, the 4-week weekly average, a neutral trend line, weekly goal progress, and a consecutive-week streak. Set the weekly goal in Settings → User Interface. All calculations use local track data only.</string>
     <string name="help_track_map_title">How to show a track on a map?</string>
     <string name="help_track_map_content">
         Every track has a built-in Map tab: open a recording or a saved track and switch to it.
@@ -50,6 +59,10 @@ limitations under the License.
         These apps need to support the KMZ file format (only locations and timestamps).
         In fact, an app needs to support <i>ACTION_VIEW</i> with MIME <i>application/vnd.google-earth.kmz</i>.
     </string>
+    <string name="help_follow_gpx_title">How do I follow a GPX route?</string>
+    <string name="help_follow_gpx_content">In the track list, open the overflow menu and choose Follow GPX, then pick a GPX file. Waykeep starts a recording and shows the route as a red dashed planned line. There is no turn-by-turn navigation. Map tiles keep the normal cache/offline behavior.</string>
+    <string name="help_route_color_title">How can I change the route color?</string>
+    <string name="help_route_color_content">Change the recorded route color in Settings → Map → Route color. It applies to the map route and to feed thumbnails. A planned GPX route stays red.</string>
     <string name="help_storage_pictures_title">How does Waykeep store pictures that were taken as markers?</string>
     <string name="help_storage_pictures_content">These are stored in the app internal storage (i.e., only accessible within Waykeep).</string>
     <string name="help_track_export_title">How can I export/share recorded tracks?</string>
@@ -61,6 +74,14 @@ limitations under the License.
         Waykeep uses the GPS sensor of the device to record the location continuously.
         If the GPS device reports inaccurate data (e.g., location, speed, elevation), Waykeep cannot do anything about it.
     </string>
+    <string name="help_manual_lap_title">How do manual laps work?</string>
+    <string name="help_manual_lap_content">The Lap action closes the current lap and starts a new one without pausing the recording. The Intervals tab follows these manual laps. Automatic voice “lap length” announcements remain independent and keep using the configured distance or time.</string>
+    <string name="help_heart_rate_alerts_title">How do heart-rate alerts work?</string>
+    <string name="help_heart_rate_alerts_content">Heart-rate alerts are opt-in in Settings → Sensors. The default threshold is 90%% of your maximum heart rate. The alert sounds once after 10 seconds above it and re-arms after 30 seconds below 85%%. Alerts use a toast and vibration. They are not medical advice.</string>
+    <string name="help_elevation_fallback_title">What is the GPS elevation fallback?</string>
+    <string name="help_elevation_fallback_content">This opt-in setting in Settings → Sensors computes approximate elevation gain and loss from GPS altitude only when no barometer value exists. Barometer data always wins. Statistics label GPS-only values as “GPS estimate”.</string>
+    <string name="help_gps_warnings_title">What do the GPS accuracy and battery warnings show?</string>
+    <string name="help_gps_warnings_content">While recording, the recording strip shows recent GPS accuracy, and a low-battery warning appears at 15% when recording and not charging. These warnings are informational; recording continues.</string>
     <string name="help_data_storage_title">How does Waykeep store sensor data?</string>
     <string name="help_data_storage_content"> Sensor data is stored per recorded location. In terms of a heart rate sensor, this means that only <i>one</i> heart rate measurement is stored per location. If you are standing still or are indoors, no sensor data will be recorded (but it will be shown). </string>
     <string name="help_gps_troubleshooting_title">Waykeep is not recording locations?</string>
