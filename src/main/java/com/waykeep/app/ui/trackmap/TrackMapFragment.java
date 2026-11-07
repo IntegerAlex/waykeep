@@ -506,8 +506,8 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
     }
 
     /**
-     * Creates a fresh, styled route overlay (a dark casing outline with the brand line on top)
-     * and attaches both to the map. The casing keeps the cyan route from blending into rivers,
+     * Creates a fresh, styled route overlay (a dark casing outline with the selected route line
+     * on top) and attaches both to the map. The casing keeps the route from blending into rivers,
      * forests or the basemap's own road fills.
      * New instances are required after clearing: osmdroid nulls a Polyline's internals on
      * detach, so a detached instance must never be reused.
@@ -523,7 +523,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         routeCasing = casing;
 
         Polyline line = new Polyline(viewBinding.trackMapView);
-        line.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.opentracks));
+        line.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), PreferencesUtils.getRouteColor().colorRes()));
         line.getOutlinePaint().setStrokeWidth(6 * density);
         viewBinding.trackMapView.getOverlays().add(line);
         return line;
@@ -544,7 +544,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         }
         float density = requireContext().getResources().getDisplayMetrics().density;
         Polyline plannedLine = new Polyline(viewBinding.trackMapView);
-        // Planned loop in red, live recorded route in brand cyan: never the same color.
+        // Planned loop in red, live recorded route in the user's route color: never the same color.
         plannedLine.getOutlinePaint().setColor(ContextCompat.getColor(requireContext(), R.color.red_dark));
         plannedLine.getOutlinePaint().setStrokeWidth(4 * density);
         plannedLine.getOutlinePaint().setPathEffect(new android.graphics.DashPathEffect(new float[]{12 * density, 8 * density}, 0));

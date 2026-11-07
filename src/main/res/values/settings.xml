@@ -56,6 +56,25 @@
     <string name="suggested_routes_profile_key" translatable="false">suggestedRoutesProfile</string>
     <string name="suggested_routes_profile_default" translatable="false">trekking</string>
 
+    <string name="settings_route_color_key" translatable="false">routeColor</string>
+    <string name="settings_route_color_default" translatable="false">CYAN</string>
+    <string-array name="route_color_entries">
+        <item>Cyan</item>
+        <item>Green</item>
+        <item>Orange</item>
+        <item>Magenta</item>
+        <item>Blue</item>
+        <item>White</item>
+    </string-array>
+    <string-array name="route_color_values">
+        <item>CYAN</item>
+        <item>GREEN</item>
+        <item>ORANGE</item>
+        <item>MAGENTA</item>
+        <item>BLUE</item>
+        <item>WHITE</item>
+    </string-array>
+
     <string-array name="suggested_routes_profile_entries">
         <item>Running / trekking (default)</item>
         <item>Asia-Pacific bike (avoids highways)</item>

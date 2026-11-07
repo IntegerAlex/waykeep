@@ -28,6 +28,14 @@ limitations under the License.
     <color name="semantic_offline_amber">#FF9F0A</color> <!-- Cached map warning / GPS searching -->
     <color name="map_polyline_stroke">#000000</color> <!-- 1px border around the route so it never blends into OSM rivers/forests -->
 
+    <!-- Recorded route line options; the black casing above stays for contrast -->
+    <color name="route_color_cyan">@color/waykeep_cyan</color>
+    <color name="route_color_green">@color/chart_altitude_border</color>
+    <color name="route_color_orange">@color/semantic_offline_amber</color>
+    <color name="route_color_magenta">@color/chart_power_border</color>
+    <color name="route_color_blue">@color/chart_speed_border</color>
+    <color name="route_color_white">@android:color/white</color>
+
     <color name="ic_launcher_background">#000000</color>
 
     <!-- Chart colors (vivid, legible on light and OLED-dark backgrounds) -->

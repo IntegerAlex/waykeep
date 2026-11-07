@@ -54,6 +54,7 @@ import com.waykeep.app.sensors.driver.SensorType;
 import com.waykeep.app.ui.customRecordingLayout.DataField;
 import com.waykeep.app.ui.customRecordingLayout.RecordingLayout;
 import com.waykeep.app.ui.customRecordingLayout.RecordingLayoutIO;
+import com.waykeep.app.ui.trackmap.RouteColor;
 
 /**
  * Utilities to access preferences stored in {@link SharedPreferences}.
@@ -442,6 +443,11 @@ public class PreferencesUtils {
 
     public static String getSuggestedRoutesProfile() {
         return getString(R.string.suggested_routes_profile_key, resources.getString(R.string.suggested_routes_profile_default));
+    }
+
+    public static RouteColor getRouteColor() {
+        return RouteColor.fromPreference(
+                getString(R.string.settings_route_color_key, resources.getString(R.string.settings_route_color_default)));
     }
 
     public static final String MAP_STYLE_CYCLOSM = "cyclosm";

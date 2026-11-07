@@ -25,6 +25,15 @@
         android:title="@string/suggested_routes_profile_title"
         app:useSimpleSummaryProvider="true" />
 
+    <ListPreference
+        android:defaultValue="@string/settings_route_color_default"
+        android:entries="@array/route_color_entries"
+        android:entryValues="@array/route_color_values"
+        android:key="@string/settings_route_color_key"
+        android:summary="@string/settings_route_color_summary"
+        android:title="@string/settings_route_color_title"
+        app:useSimpleSummaryProvider="true" />
+
     <Preference
         android:key="@string/map_clear_cache_key"
         android:summary="@string/map_clear_cache_summary"
