@@ -77,11 +77,9 @@ public class GpsAltitudeGainLossFallback {
 
     @Nullable
     public static AltitudeGainLoss select(@Nullable AltitudeGainLoss barometer,
-                                          @Nullable AltitudeGainLoss gpsEstimate,
-                                          boolean fallbackEnabled,
-                                          boolean barometerConnected) {
+                                           @Nullable AltitudeGainLoss gpsEstimate,
+                                           boolean fallbackEnabled) {
         if (barometer != null) return barometer;
-        if (barometerConnected) return null;
         return fallbackEnabled ? gpsEstimate : null;
     }
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Track;
 
 public class DiagnosticsRecoveryTest {
@@ -134,6 +135,7 @@ public class DiagnosticsRecoveryTest {
         assertEquals(3, fixes.size());
         assertEquals(18.5, fixes.get(0).position().latitude(), 0.000001);
         assertEquals(140f, fixes.get(0).heartRate().getBPM(), 0.001f);
+        assertEquals(AltitudeGainLoss.Source.GPS_ESTIMATE, fixes.get(0).altitudeGainLoss().source());
         assertEquals(18.7, fixes.get(1).position().latitude(), 0.000001);
         assertEquals(120.0, fixes.get(1).position().horizontalAccuracy().toM(), 0.001);
         assertEquals(18.7, fixes.get(2).position().latitude(), 0.000001);
@@ -142,6 +144,7 @@ public class DiagnosticsRecoveryTest {
         assertEquals(12.0, fixes.get(2).position().verticalAccuracy().toM(), 0.001);
         assertEquals(3.2f, fixes.get(2).position().speed().toMPS(), 0.001f);
         assertEquals(142f, fixes.get(2).heartRate().getBPM(), 0.001f);
+        assertEquals(AltitudeGainLoss.Source.GPS_ESTIMATE, fixes.get(2).altitudeGainLoss().source());
     }
 
     @Test
@@ -200,6 +203,7 @@ public class DiagnosticsRecoveryTest {
         fields.put("power_watts", 200);
         fields.put("altitude_gain_m", 5);
         fields.put("altitude_loss_m", 2);
+        fields.put("altitude_gain_loss_source", "GPS_ESTIMATE");
         return fields;
     }
 

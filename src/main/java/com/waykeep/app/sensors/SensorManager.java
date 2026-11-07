@@ -257,8 +257,7 @@ public class SensorManager implements SharedPreferences.OnSharedPreferenceChange
         AltitudeGainLoss altitudeGainLoss = GpsAltitudeGainLossFallback.select(
                 barometerAltitudeGainLoss != null ? barometerAltitudeGainLoss.data() : null,
                 gpsHandler.getAltitudeGainLoss(),
-                PreferencesUtils.isGpsAltitudeFallbackEnabled(),
-                altitudeChangeHandler.isConnected());
+                PreferencesUtils.isGpsAltitudeFallbackEnabled());
         SensorData<AltitudeGainLoss> altitudeGainLossData = altitudeGainLoss == null ? null
                 : barometerAltitudeGainLoss != null && altitudeGainLoss == barometerAltitudeGainLoss.data()
                 ? barometerAltitudeGainLoss

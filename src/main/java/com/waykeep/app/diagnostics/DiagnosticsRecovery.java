@@ -319,7 +319,10 @@ public final class DiagnosticsRecovery {
     private static AltitudeGainLoss altitudeGainLoss(Map<String, String> fields) {
         Float gain = floatNumber(fields, "altitude_gain_m");
         Float loss = floatNumber(fields, "altitude_loss_m");
-        return gain == null && loss == null ? null : new AltitudeGainLoss(gain == null ? 0 : gain, loss == null ? 0 : loss);
+        return gain == null && loss == null ? null : new AltitudeGainLoss(
+                gain == null ? 0 : gain,
+                loss == null ? 0 : loss,
+                AltitudeGainLoss.Source.fromDatabase(fields.get("altitude_gain_loss_source")));
     }
 
     @Nullable

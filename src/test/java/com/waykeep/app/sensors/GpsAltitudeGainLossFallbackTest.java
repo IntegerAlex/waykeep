@@ -71,14 +71,13 @@ public class GpsAltitudeGainLossFallbackTest {
     }
 
     @Test
-    public void usesGpsOnlyWhenEnabledAndBarometerHasNoValue() {
+    public void usesGpsWhenEnabledAndBarometerHasNoValueRegardlessOfConnection() {
         AltitudeGainLoss barometer = new AltitudeGainLoss(10, 4, AltitudeGainLoss.Source.BAROMETER);
         AltitudeGainLoss gps = new AltitudeGainLoss(8, 3, AltitudeGainLoss.Source.GPS_ESTIMATE);
 
-        assertSame(barometer, GpsAltitudeGainLossFallback.select(barometer, gps, true, true));
-        assertNull(GpsAltitudeGainLossFallback.select(null, gps, true, true));
-        assertSame(gps, GpsAltitudeGainLossFallback.select(null, gps, true, false));
-        assertNull(GpsAltitudeGainLossFallback.select(null, gps, false, false));
+        assertSame(barometer, GpsAltitudeGainLossFallback.select(barometer, gps, true));
+        assertSame(gps, GpsAltitudeGainLossFallback.select(null, gps, true));
+        assertNull(GpsAltitudeGainLossFallback.select(null, gps, false));
     }
 
     @Test

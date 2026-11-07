@@ -725,6 +725,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        // onDestroy() clears these managers, but a preference callback already queued on the
+        // main looper can still arrive afterwards.
+        if (voiceAnnouncementManager == null) return;
         voiceAnnouncementManager.onSharedPreferenceChanged(sharedPreferences, key);
         trackRecordingManager.onSharedPreferenceChanged(sharedPreferences, key);
         trackPointCreator.onSharedPreferenceChanged(sharedPreferences, key);

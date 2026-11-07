@@ -95,6 +95,7 @@ public final class RecordingDiagnosticEvents {
         fields.put("power_watts", point.power() != null ? point.power().getW() : null);
         fields.put("altitude_gain_m", point.altitudeGainLoss() != null ? point.altitudeGainLoss().gain_m() : null);
         fields.put("altitude_loss_m", point.altitudeGainLoss() != null ? point.altitudeGainLoss().loss_m() : null);
+        fields.put("altitude_gain_loss_source", point.altitudeGainLoss() != null ? point.altitudeGainLoss().source().name() : null);
         return fields;
     }
 
