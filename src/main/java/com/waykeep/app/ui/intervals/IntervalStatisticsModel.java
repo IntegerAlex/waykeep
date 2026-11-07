@@ -74,7 +74,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
             intervalsLiveData = new MutableLiveData<>();
             distanceInterval = interval.getDistance(unitSystem);
-            intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
+            intervalStatistics = new IntervalStatisticsUpdater(distanceInterval, true);
 
             loadIntervalStatistics(trackId);
         }
@@ -113,7 +113,7 @@ public class IntervalStatisticsModel extends AndroidViewModel {
 
         lastTrackPointId = null;
         distanceInterval = interval.getDistance(unitSystem);
-        intervalStatistics = new IntervalStatisticsUpdater(distanceInterval);
+        intervalStatistics = new IntervalStatisticsUpdater(distanceInterval, true);
         loadIntervalStatistics(trackId);
     }
 

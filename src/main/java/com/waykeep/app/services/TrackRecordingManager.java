@@ -326,7 +326,7 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return false;
         }
 
-        TrackPoint segmentEnd = trackPointCreator.createSegmentEnd();
+        TrackPoint segmentEnd = withLapLocation(trackPointCreator.createSegmentEnd(), lastStoredTrackPointWithLocation);
         insertTrackPoint(segmentEnd, true);
 
         TrackPoint segmentStart = createLapStart(segmentEnd, lastStoredTrackPointWithLocation);
@@ -336,13 +336,23 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
 
     @VisibleForTesting
     static TrackPoint createLapStart(@NonNull TrackPoint segmentEnd, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
-        Position position = segmentEnd.position();
+        return TrackPoint.createSegmentStartManualWithTime(segmentEnd.getTime(),
+                withLapLocation(segmentEnd, lastStoredTrackPointWithLocation).position());
+    }
+
+    /**
+     * A boundary without a fresh fix still belongs where the last stored point is, so
+     * both ends of a lap share one location instead of one of them losing the trace.
+     */
+    @VisibleForTesting
+    static TrackPoint withLapLocation(@NonNull TrackPoint trackPoint, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
+        Position position = trackPoint.position();
         if (!position.hasLocation()
                 && lastStoredTrackPointWithLocation != null
                 && lastStoredTrackPointWithLocation.position().hasLocation()) {
-            position = position.withCoordinates(lastStoredTrackPointWithLocation.position());
+            return trackPoint.with(position.withCoordinates(lastStoredTrackPointWithLocation.position()));
         }
-        return TrackPoint.createSegmentStartManualWithTime(segmentEnd.getTime(), position);
+        return trackPoint;
     }
 
     RecordingData getDataForUI() {

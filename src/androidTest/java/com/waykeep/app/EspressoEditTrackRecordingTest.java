@@ -60,6 +60,10 @@ public class EspressoEditTrackRecordingTest {
         {
             // TrackRecordingActivity
 
+            // The lap action must stay visible in the bottom app bar while recording.
+            waitUntilDisplayed(withId(R.id.track_detail_lap), UI_TIMEOUT);
+            onView(withId(R.id.track_detail_lap)).check(matches(isDisplayed()));
+
             // open menu
             onView(allOf(
                     withContentDescription(androidx.appcompat.R.string.abc_action_menu_overflow_description),

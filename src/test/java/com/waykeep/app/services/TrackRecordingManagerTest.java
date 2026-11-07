@@ -79,6 +79,19 @@ public class TrackRecordingManagerTest {
     }
 
     @Test
+    public void lapEndAlsoGetsTheFallbackLocationWithoutAFix() {
+        Instant now = Instant.parse("2026-10-31T10:05:00Z");
+        TrackPoint lastStored = trackPoint(TrackPoint.Type.TRACKPOINT, Speed.of(1.4));
+
+        TrackPoint end = TrackRecordingManager.withLapLocation(
+                new TrackPoint(TrackPoint.Type.SEGMENT_END_MANUAL, Position.of(now)), lastStored);
+
+        assertEquals(TrackPoint.Type.SEGMENT_END_MANUAL, end.type());
+        assertEquals(18.5, end.position().latitude(), 0);
+        assertEquals(73.8, end.position().longitude(), 0);
+    }
+
+    @Test
     public void lapStartFallsBackToTheLastStoredLocationWithoutAFix() {
         Instant now = Instant.parse("2026-10-31T10:05:00Z");
         TrackPoint lastStored = trackPoint(TrackPoint.Type.TRACKPOINT, Speed.of(1.4));

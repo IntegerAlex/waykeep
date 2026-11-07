@@ -331,10 +331,16 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.track_detail_lap) {
             var service = trackRecordingServiceConnection.getTrackRecordingService();
-            if (service != null && service.recordLap()) {
-                ActivityUtils.vibrate(this, Duration.ofMillis(80));
-                Toast.makeText(this, R.string.lap_recorded, Toast.LENGTH_SHORT).show();
+            if (service == null) {
+                Log.w(TAG, "Lap ignored: recording service is not connected.");
+                return true;
             }
+            if (!service.recordLap()) {
+                Log.w(TAG, "Lap ignored: recording is paused or not active.");
+                return true;
+            }
+            ActivityUtils.vibrate(this, Duration.ofMillis(80));
+            Toast.makeText(this, R.string.lap_recorded, Toast.LENGTH_SHORT).show();
             return true;
         }
 
