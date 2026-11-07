@@ -23,6 +23,7 @@ public record InsightSummary(
         @NonNull Distance fourWeekWeeklyAverage,
         @NonNull RollingLoad.Trend trend,
         @NonNull WeeklyStreak streak,
+        @NonNull DailyStreak dailyStreak,
         @NonNull Distance weeklyGoal
 ) {
 
@@ -32,7 +33,9 @@ public record InsightSummary(
                                          @NonNull Distance goal) {
         RollingLoad load = RollingLoad.compute(tracks, now);
         WeeklyStreak streak = WeeklyStreak.compute(tracks, now, zone, weekStart, goal);
-        return new InsightSummary(load.sevenDayDistance(), load.fourWeekWeeklyAverage(), load.trend(), streak, goal);
+        DailyStreak dailyStreak = DailyStreak.compute(tracks, now, zone);
+        return new InsightSummary(load.sevenDayDistance(), load.fourWeekWeeklyAverage(), load.trend(),
+                streak, dailyStreak, goal);
     }
 
     public boolean hasGoal() {
@@ -62,6 +65,6 @@ public record InsightSummary(
 
     @StringRes
     public int streakLineRes() {
-        return streak.completedWeeks() > 0 ? R.string.insight_streak_weeks : R.string.insight_streak_none;
+        return dailyStreak.consecutiveDays() > 0 ? R.string.insight_streak_days : R.string.insight_streak_none;
     }
 }
