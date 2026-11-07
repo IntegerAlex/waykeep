@@ -28,6 +28,7 @@ public class SensorsSettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.settings_sensors);
         setWheelCircumferenceInputFilter();
+        setHeartRateAlertThresholdInputFilter();
 
         UnitSystem unitSystem = PreferencesUtils.getUnitSystem();
 
@@ -101,6 +102,22 @@ public class SensorsSettingsFragment extends PreferenceFragmentCompat {
                     return newValueInt >= 100 && newValueInt < 4000;
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "Entered string is no number.");
+                }
+            }
+            return false;
+        });
+    }
+
+    private void setHeartRateAlertThresholdInputFilter() {
+        EditTextPreference thresholdPreference = findPreference(getString(R.string.settings_heart_rate_alert_threshold_percent_key));
+        thresholdPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue instanceof String newValueString) {
+                try {
+                    int percent = Integer.parseInt(newValueString);
+                    return percent >= PreferencesUtils.MIN_HEART_RATE_ALERT_PERCENT
+                            && percent <= PreferencesUtils.MAX_HEART_RATE_ALERT_PERCENT;
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Entered heart rate alert percentage is no number.");
                 }
             }
             return false;

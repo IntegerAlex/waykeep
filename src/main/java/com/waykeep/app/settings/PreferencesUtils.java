@@ -67,6 +67,8 @@ public class PreferencesUtils {
     private final static String TAG = PreferencesUtils.class.getSimpleName();
     private static final double MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE = 0.1;
     private static final long MIN_WEEKLY_GOAL_METERS = 1000;
+    static final int MIN_HEART_RATE_ALERT_PERCENT = 80;
+    static final int MAX_HEART_RATE_ALERT_PERCENT = 100;
 
     private static final int PREFERENCES_VERSION = 2;
 
@@ -420,6 +422,20 @@ public class PreferencesUtils {
         final int DEFAULT = Integer.parseInt(resources.getString(R.string.settings_sensor_heart_rate_max_default));
         int value = getInt(R.string.settings_sensor_heart_rate_max_key, DEFAULT);
         return new HeartRateZones(HeartRate.of(value));
+    }
+
+    public static boolean isHeartRateAlertEnabled() {
+        return getBoolean(R.string.settings_heart_rate_alert_enabled_key, false);
+    }
+
+    /**
+     * Percentage of maximum heart rate used as the one-shot alert threshold.
+     * Values outside 80–100 are clamped so a bad entry cannot disable or spam the alert.
+     */
+    public static int getHeartRateAlertThresholdPercent() {
+        int defaultValue = Integer.parseInt(resources.getString(R.string.settings_heart_rate_alert_threshold_percent_default));
+        int value = getInt(R.string.settings_heart_rate_alert_threshold_percent_key, defaultValue);
+        return Math.max(MIN_HEART_RATE_ALERT_PERCENT, Math.min(MAX_HEART_RATE_ALERT_PERCENT, value));
     }
 
     public static boolean shouldShowStatsOnLockscreen() {
