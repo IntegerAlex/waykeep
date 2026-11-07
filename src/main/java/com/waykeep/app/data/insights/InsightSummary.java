@@ -43,8 +43,15 @@ public record InsightSummary(
         return !hasGoal();
     }
 
+    public boolean hasActivity() {
+        return !sevenDayDistance.isZero() || !fourWeekWeeklyAverage.isZero();
+    }
+
     @StringRes
     public int trendLineRes() {
+        if (!hasActivity()) {
+            return R.string.insight_no_activity;
+        }
         return switch (trend) {
             case BUILDING -> R.string.insight_trend_building;
             case LOWER -> R.string.insight_trend_lower;

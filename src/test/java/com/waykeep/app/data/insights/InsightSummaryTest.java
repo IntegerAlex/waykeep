@@ -40,7 +40,8 @@ public class InsightSummaryTest {
         assertEquals(0, summary.sevenDayDistance().toM(), 0.001);
         assertEquals(0, summary.fourWeekWeeklyAverage().toM(), 0.001);
         assertEquals(RollingLoad.Trend.BUILDING, summary.trend());
-        assertEquals(R.string.insight_trend_building, summary.trendLineRes());
+        assertFalse(summary.hasActivity());
+        assertEquals(R.string.insight_no_activity, summary.trendLineRes());
         assertEquals(R.string.insight_streak_none, summary.streakLineRes());
         assertFalse(summary.hasGoal());
         assertTrue(summary.showsGoalHint());
