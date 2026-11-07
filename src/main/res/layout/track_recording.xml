@@ -26,8 +26,8 @@
 
         <!--
           Recording state, screen-wide so it is visible on the Stats, Map and Chart tabs.
-          Dot only while recording with a usable GPS signal; dot plus words for paused and
-          for GPS problems. Hidden when not recording.
+          Accuracy while GPS is usable, warning text for paused, GPS problems, or low battery.
+          Hidden when not recording.
         -->
         <LinearLayout
             android:id="@+id/recording_status_strip"

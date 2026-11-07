@@ -256,10 +256,13 @@ limitations under the License.
     <string name="gps_wait_for_signal">Waiting for GPS signal</string>
     <string name="gps_searching_satellites">Searching for satellites (%1$d/%2$d)</string>
     <string name="gps_approximate_location">Approximate location (±%1$d m)</string>
+    <string name="gps_accuracy_glance">GPS accuracy ±%1$d m</string>
     <string name="gps_status_acquiring_for">%1$s · %2$s</string>    <string name="gps_disabled_msg">GPS disabled</string>
     <string name="gps_fixed_and_ready">GPS fixed and ready</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">Waykeep is recording without GPS data.</string>
+    <string name="recording_low_battery">Low battery (%1$d%%) — connect charger</string>
+    <string name="recording_status_details">%1$s · %2$s</string>
     <!-- Image -->
     <string name="image_marker_count">Marker count</string>
     <plurals name="track_list_markers">

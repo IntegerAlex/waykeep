@@ -18,6 +18,8 @@ package com.waykeep.app.services;
 
 import android.app.Service;
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -36,6 +38,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ServiceCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -106,9 +109,19 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private MutableLiveData<RecordingStatus> recordingStatusObservable;
     private MutableLiveData<GpsStatusValue> gpsStatusObservable;
     private MutableLiveData<String> gpsStatusTextObservable;
+    private MutableLiveData<String> gpsAccuracyTextObservable;
+    private MutableLiveData<Integer> lowBatteryPercentObservable;
     private MutableLiveData<RecordingData> recordingDataObservable;
 
     private Handler handler;
+    private boolean batteryReceiverRegistered;
+
+    private final BroadcastReceiver batteryChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateLowBatteryWarning(intent);
+        }
+    };
 
     private TrackPointCreator trackPointCreator;
     private TrackRecordingManager trackRecordingManager;
@@ -144,6 +157,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         updateRecordingStatus(STATUS_DEFAULT);
         gpsStatusObservable = new MutableLiveData<>(STATUS_GPS_DEFAULT);
         gpsStatusTextObservable = new MutableLiveData<>(getString(STATUS_GPS_DEFAULT.message));
+        gpsAccuracyTextObservable = new MutableLiveData<>();
+        lowBatteryPercentObservable = new MutableLiveData<>(-1);
         recordingDataObservable = new MutableLiveData<>(RecordingData.NOT_RECORDING);
 
         trackPointCreator = new TrackPointCreator(this);
@@ -162,6 +177,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         if (diagnostics != null && isRecording()) {
             diagnostics.event("service_destroyed", Map.of("track_id", recordingStatus.trackId().id()));
         }
+        stopBatteryMonitoring();
         if (diagnostics != null) diagnostics.close();
         if (trackPointCreator != null && trackPointCreator.isStarted()) {
             stopSensors();
@@ -184,6 +200,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         recordingStatusObservable = null;
         gpsStatusObservable = null;
         recordingDataObservable = null;
+        gpsAccuracyTextObservable = null;
+        lowBatteryPercentObservable = null;
 
         Log.d(TAG, "Destroyed");
         super.onDestroy();
@@ -316,6 +334,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private void startRecording(Track.Id trackId, boolean serviceRestart) {
         updateRecordingStatus(RecordingStatus.record(trackId));
         TrackIdStorage.set(this, trackId);
+        startBatteryMonitoring();
 
         diagnostics.event("recording_started", Map.of(
                 "track_id", trackId.id(),
@@ -375,6 +394,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         diagnostics.event("recording_stopped", Map.of("track_id", stoppedTrackId.id()));
         diagnostics.finish(wasPaused ? "stopped_after_pause" : "stopped");
         TrackIdStorage.unset(this);
+        stopBatteryMonitoring();
 
         stopUpdateRecordingData();
         handler.removeCallbacks(deviceStateSnapshot);
@@ -390,7 +410,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         trackPointCreator.stop();
         stopForeground(true);
         notificationManager.stop();
+        lastGpsStatus = STATUS_GPS_DEFAULT;
         gpsStatusObservable.postValue(STATUS_GPS_DEFAULT);
+        gpsAccuracyTextObservable.postValue(null);
     }
 
     public Marker.Id createMarker() {
@@ -431,6 +453,10 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
 
         boolean stored = trackRecordingManager.onNewTrackPoint(trackPoint);
+        if (lastGpsStatus.hasGoodSignal() && trackPoint.position().hasLocation()) {
+            gpsAccuracyTextObservable.postValue(RecordingLiveStatus.formatAccuracy(
+                    trackPoint.position().horizontalAccuracy(), getString(R.string.gps_accuracy_glance)));
+        }
         //TODO Should be done during updateRecordingDataWhileRecording()
         notificationManager.updateTrackPoint(this, trackRecordingManager.getDataForUI(), thresholdHorizontalAccuracy);
         return stored;
@@ -454,6 +480,9 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         // The accuracy belongs to the last accepted position: it is only meaningful while
         // the signal is good. Otherwise it is stale and hides the real problem.
         lastGpsStatus = gpsStatusValue;
+        if (!gpsStatusValue.hasGoodSignal()) {
+            gpsAccuracyTextObservable.postValue(null);
+        }
         obs.postValue(gpsStatusValue);
         refreshGpsStatusText();
     }
@@ -541,6 +570,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         int batteryStatus = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
         boolean charging = plugged != 0 || batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING
                 || batteryStatus == BatteryManager.BATTERY_STATUS_FULL;
+        updateLowBatteryWarning(battery);
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         boolean powerSave = powerManager != null && powerManager.isPowerSaveMode();
@@ -599,6 +629,14 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         return gpsStatusTextObservable;
     }
 
+    public LiveData<String> getGpsAccuracyTextObservable() {
+        return gpsAccuracyTextObservable;
+    }
+
+    public LiveData<Integer> getLowBatteryPercentObservable() {
+        return lowBatteryPercentObservable;
+    }
+
     public LiveData<RecordingData> getRecordingDataObservable() {
         return recordingDataObservable;
     }
@@ -636,6 +674,39 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         Log.i(TAG, "new status " + recordingStatus + " -> " + status);
         recordingStatus = status;
         recordingStatusObservable.postValue(recordingStatus);
+    }
+
+    private void startBatteryMonitoring() {
+        if (batteryReceiverRegistered) return;
+        Intent battery = ContextCompat.registerReceiver(this, batteryChangedReceiver,
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED), ContextCompat.RECEIVER_EXPORTED);
+        batteryReceiverRegistered = true;
+        updateLowBatteryWarning(battery);
+    }
+
+    private void stopBatteryMonitoring() {
+        if (batteryReceiverRegistered) {
+            unregisterReceiver(batteryChangedReceiver);
+            batteryReceiverRegistered = false;
+        }
+        if (lowBatteryPercentObservable != null) {
+            lowBatteryPercentObservable.postValue(-1);
+        }
+    }
+
+    private void updateLowBatteryWarning(@Nullable Intent battery) {
+        int level = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        int plugged = battery == null ? 0 : battery.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+        int status = battery == null ? -1 : battery.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean charging = plugged != 0 || status == BatteryManager.BATTERY_STATUS_CHARGING
+                || status == BatteryManager.BATTERY_STATUS_FULL;
+        int warningPercent = isRecording()
+                ? RecordingLiveStatus.warningBatteryPercent(level, scale, charging)
+                : -1;
+        if (lowBatteryPercentObservable != null) {
+            lowBatteryPercentObservable.postValue(warningPercent);
+        }
     }
 
     @Deprecated //TODO Should be @VisibleForTesting
