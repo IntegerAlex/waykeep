@@ -26,7 +26,9 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.models.Distance;
@@ -51,17 +53,41 @@ class VoiceAnnouncementUtils {
     }
 
     static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet, UnitSystem unitSystem, boolean isReportSpeed, @Nullable Statistics currentInterval, @Nullable SensorStatistics sensorStatistics) {
+        EnumSet<VoiceAnnouncementScheduler.Statistic> included = EnumSet.noneOf(VoiceAnnouncementScheduler.Statistic.class);
+        if (shouldVoiceAnnounceTime()) included.add(VoiceAnnouncementScheduler.Statistic.TIME_OF_DAY);
+        if (shouldVoiceAnnounceTotalDistance()) included.add(VoiceAnnouncementScheduler.Statistic.TOTAL_DISTANCE);
+        if (shouldVoiceAnnounceMovingTime()) included.add(VoiceAnnouncementScheduler.Statistic.MOVING_TIME);
+        if (shouldVoiceAnnounceAverageSpeedPace()) included.add(VoiceAnnouncementScheduler.Statistic.AVERAGE_SPEED_PACE);
+        if (shouldVoiceAnnounceHeartRateCurrent()) included.add(VoiceAnnouncementScheduler.Statistic.CURRENT_HEART_RATE);
+        if (shouldVoiceAnnounceAverageHeartRate()) included.add(VoiceAnnouncementScheduler.Statistic.AVERAGE_HEART_RATE);
+        if (shouldVoiceAnnounceLapSpeedPace()) included.add(VoiceAnnouncementScheduler.Statistic.LAP_SPEED_PACE);
+        if (shouldVoiceAnnounceLapHeartRate()) included.add(VoiceAnnouncementScheduler.Statistic.LAP_HEART_RATE);
+        if (shouldVoiceAnnounceLapPower()) included.add(VoiceAnnouncementScheduler.Statistic.LAP_POWER);
+        return createStatistics(context, track, sensorDataSet, unitSystem, isReportSpeed,
+                currentInterval, null, false, sensorStatistics, included);
+    }
+
+    static Spannable createStatistics(Context context, Track track, SensorDataSet sensorDataSet,
+                                      UnitSystem unitSystem, boolean isReportSpeed,
+                                      @Nullable Statistics currentInterval,
+                                      @Nullable Speed recentWindowSpeed,
+                                      boolean useRecentWindowSpeed,
+                                      @Nullable SensorStatistics sensorStatistics,
+                                      Set<VoiceAnnouncementScheduler.Statistic> included) {
         Statistics trackStatistics = track.statistics();
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        if (shouldVoiceAnnounceTime()) {
+        if (included.contains(VoiceAnnouncementScheduler.Statistic.TIME_OF_DAY)) {
             appendTime(builder, track.stopTime());
         }
 
         Distance totalDistance = trackStatistics.totalDistance();
         Speed averageMovingSpeed = trackStatistics.getAverageMovingSpeed();
         Speed currentDistancePerTime = currentInterval != null ? currentInterval.getAverageSpeed() : null;
+        if (useRecentWindowSpeed) {
+            currentDistancePerTime = recentWindowSpeed;
+        }
 
         int perUnitStringId = R.string.empty;
         int distanceId = R.string.voiceDistance;
@@ -98,7 +124,7 @@ class VoiceAnnouncementUtils {
 
         double distanceInUnit = totalDistance.toKM_Miles(unitSystem);
 
-        if (shouldVoiceAnnounceTotalDistance()) {
+        if (included.contains(VoiceAnnouncementScheduler.Statistic.TOTAL_DISTANCE)) {
             builder.append(context.getString(R.string.total_distance));
             // Units should always be english singular for TTS.
             // See https://developer.android.com/reference/android/text/style/TtsSpan?hl=en#TYPE_MEASURE
@@ -112,14 +138,14 @@ class VoiceAnnouncementUtils {
 
         // Announce time
         Duration movingTime = trackStatistics.movingDuration();
-        if (shouldVoiceAnnounceMovingTime() && hasTravelledDistance && !movingTime.isZero()) {
+        if (included.contains(VoiceAnnouncementScheduler.Statistic.MOVING_TIME) && hasTravelledDistance && !movingTime.isZero()) {
             appendDuration(context, builder, movingTime);
             builder.append(".");
         }
 
         if (hasTravelledDistance) {
             if (isReportSpeed) {
-                if (shouldVoiceAnnounceAverageSpeedPace()) {
+                if (included.contains(VoiceAnnouncementScheduler.Statistic.AVERAGE_SPEED_PACE)) {
                     double speedInUnit = averageMovingSpeed.to(unitSystem);
                     builder.append(" ")
                             .append(context.getString(R.string.speed));
@@ -127,7 +153,7 @@ class VoiceAnnouncementUtils {
                     appendDecimalUnit(builder, MessageFormat.format(template, Map.of("n", speedInUnit)), speedInUnit, 1, unitSpeedTTS);
                     builder.append(".");
                 }
-                if (shouldVoiceAnnounceLapSpeedPace() && currentDistancePerTime != null) {
+                if (included.contains(VoiceAnnouncementScheduler.Statistic.LAP_SPEED_PACE) && currentDistancePerTime != null) {
                     double currentDistancePerTimeInUnit = currentDistancePerTime.to(unitSystem);
                     if (currentDistancePerTimeInUnit > 0) {
                         builder.append(" ")
@@ -138,7 +164,7 @@ class VoiceAnnouncementUtils {
                     }
                 }
             } else {
-                if (shouldVoiceAnnounceAverageSpeedPace()) {
+                if (included.contains(VoiceAnnouncementScheduler.Statistic.AVERAGE_SPEED_PACE)) {
                     Duration time = averageMovingSpeed.toPace(unitSystem);
                     builder.append(" ")
                             .append(context.getString(R.string.pace));
@@ -148,7 +174,7 @@ class VoiceAnnouncementUtils {
                             .append(".");
                 }
 
-                if (shouldVoiceAnnounceLapSpeedPace() && currentDistancePerTime != null) {
+                if (included.contains(VoiceAnnouncementScheduler.Statistic.LAP_SPEED_PACE) && currentDistancePerTime != null) {
                     Duration currentTime = currentDistancePerTime.toPace(unitSystem);
                     builder.append(" ")
                             .append(context.getString(R.string.lap_time));
@@ -161,7 +187,7 @@ class VoiceAnnouncementUtils {
         }
 
         SensorData<HeartRate> heartrate = sensorDataSet.heartRate();
-        if (shouldVoiceAnnounceHeartRateCurrent() && heartrate != null && heartrate.data().isValid()) { //TODO Check has an announceable value?
+        if (included.contains(VoiceAnnouncementScheduler.Statistic.CURRENT_HEART_RATE) && heartrate != null && heartrate.data().isValid()) { //TODO Check has an announceable value?
             int averageHeartRate = Math.round(heartrate.data().getBPM());
 
             builder.append(" ")
@@ -170,7 +196,7 @@ class VoiceAnnouncementUtils {
             builder.append(".");
         }
         if (hasTravelledDistance) {
-            if (shouldVoiceAnnounceAverageHeartRate() && sensorStatistics != null && sensorStatistics.hasHeartRate()) {
+            if (included.contains(VoiceAnnouncementScheduler.Statistic.AVERAGE_HEART_RATE) && sensorStatistics != null && sensorStatistics.hasHeartRate()) {
                 int averageHeartRate = Math.round(sensorStatistics.avgHeartRate().getBPM());
 
                 builder.append(" ")
@@ -178,7 +204,7 @@ class VoiceAnnouncementUtils {
                 appendCardinal(builder, context.getString(R.string.sensor_state_heart_rate_value, averageHeartRate), averageHeartRate);
                 builder.append(".");
             }
-            if (shouldVoiceAnnounceLapHeartRate() && currentInterval != null && currentInterval.avgHeartRate() != null) {
+            if (included.contains(VoiceAnnouncementScheduler.Statistic.LAP_HEART_RATE) && currentInterval != null && currentInterval.avgHeartRate() != null) {
                 int currentHeartRate = Math.round(currentInterval.avgHeartRate().getBPM());
 
                 builder.append(" ")
@@ -187,7 +213,7 @@ class VoiceAnnouncementUtils {
                 builder.append(".");
             }
 
-            if (shouldVoiceAnnounceLapPower() && currentInterval != null && currentInterval.avgPower() != null) {
+            if (included.contains(VoiceAnnouncementScheduler.Statistic.LAP_POWER) && currentInterval != null && currentInterval.avgPower() != null) {
                 int currentPower = Math.round(currentInterval.avgPower().getW());
                 if (shouldVoiceAnnounceUnit()) {
                     String template = context.getResources().getString(R.string.power_x_watt);
@@ -271,4 +297,3 @@ class VoiceAnnouncementUtils {
                 .append(localizedText, new TtsSpan.CardinalBuilder().setNumber(number).build(), SPAN_INCLUSIVE_EXCLUSIVE);
     }
 }
-
