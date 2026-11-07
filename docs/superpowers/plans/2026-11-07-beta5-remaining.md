@@ -68,6 +68,6 @@
 
 **Files:** `VoiceAnnouncementManager.java`, `VoiceAnnouncementUtils.java`, announcement settings/preferences, `IntervalStatisticsUpdater.java` if needed, and tests.
 
-**Requirements:** Each currently selectable spoken statistic can be disabled or assigned its own time- or distance-based schedule. Preserve legacy global settings as the initial/default behavior for existing users. Simultaneous due metrics may be combined into one utterance. Time-based interval pace is computed over the most recent configured distance window, not repeated from the start of the track. Retain the custom distance setting's 0.1-unit minimum.
+**Requirements:** Keep each existing per-stat include switch. Add a schedule choice per metric: `Use global` (default, preserving current global time/distance settings), `Off`, or one specific time- or distance-based interval. A specific schedule overrides global triggers for that metric; simultaneous due metrics may be combined into one utterance. Keep a separate recent-pace distance window, default `1.0` selected units and minimum `0.1`, so time-triggered lap pace uses the most recent window rather than the last completed interval from the beginning. The existing custom distance remains available to legacy/global scheduling.
 
 **Tests:** Independent schedules do not trigger each other; inherited legacy preferences preserve prior behavior; merged simultaneous triggers speak once; recent-window pace changes as new points arrive and handles insufficient distance/gaps.
