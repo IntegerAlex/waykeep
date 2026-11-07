@@ -188,4 +188,20 @@ public class GpxRouteParserTest {
             // Malformed input must fail safely, not silently return a partial route.
         }
     }
+
+    @Test
+    public void refusesExternalEntities() throws Exception {
+        try {
+            parse("""
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <!DOCTYPE gpx [<!ENTITY xxe SYSTEM "file:///etc/hostname">]>
+                    <gpx><trk><trkseg><trkpt lat="&xxe;" lon="0.0"/></trkseg></trk></gpx>
+                    """);
+            // Some parsers may instead skip the unreadable entity; either way no file data
+            // may end up in the route. A throwing parser is the expected JVM behaviour.
+            fail("External entities must not be expanded into a route");
+        } catch (SAXException expected) {
+            // XXE blocked by the external-entity features.
+        }
+    }
 }

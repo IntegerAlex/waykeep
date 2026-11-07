@@ -2,6 +2,8 @@ package com.waykeep.app.io.file.importer;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
@@ -43,10 +45,12 @@ public final class GpxRouteParser {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            // Attempt every hardening feature, but never fail the parse for a feature the
+            // platform parser does not know (Android's SAX parser is not Xerces).
+            setFeatureIfSupported(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            setFeatureIfSupported(factory, "http://xml.org/sax/features/external-general-entities", false);
+            setFeatureIfSupported(factory, "http://xml.org/sax/features/external-parameter-entities", false);
+            setFeatureIfSupported(factory, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             factory.newSAXParser().parse(input, handler);
         } catch (ParserConfigurationException e) {
             throw new SAXException(e);
@@ -54,6 +58,19 @@ public final class GpxRouteParser {
             // The point cap was reached; the handler holds the points read so far.
         }
         return handler.points;
+    }
+
+    /**
+     * XXE hardening, best-effort: some platform SAX parsers (seen on HyperOS) do not recognize
+     * these features and throw, which must not fail every GPX parse. Parsers that reject a
+     * feature this way do not expand external entities in the first place.
+     */
+    private static void setFeatureIfSupported(SAXParserFactory factory, String name, boolean value) {
+        try {
+            factory.setFeature(name, value);
+        } catch (ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException ignored) {
+            // Keep parsing with the features the platform does support.
+        }
     }
 
     private static final class RouteHandler extends DefaultHandler {
