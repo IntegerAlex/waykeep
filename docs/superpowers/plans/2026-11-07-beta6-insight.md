@@ -170,7 +170,7 @@ Rules:
 - The recorded route polyline uses the selected color; the black casing stays for contrast.
 - The planned/GPX route stays red so live and planned lines remain distinguishable.
 - Add a `ListPreference` in the Map settings screen with the six named options.
-- No new dependency or DB migration; no effect on share images or feed thumbnails in v0.
+- No new dependency or DB migration; share images are unchanged, while feed thumbnails use the selected color too.
 
 - [ ] **Step 1: Write failing `RouteColorTest` cases** for default, all six values, and unknown/null fallback.
 - [ ] **Step 2: Run the focused test and watch it fail.**
