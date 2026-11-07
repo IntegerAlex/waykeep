@@ -255,6 +255,42 @@
         <item>50</item>
         <item>100</item>
     </string-array>
+    <string name="voice_announcement_schedule_global" translatable="false">global</string>
+    <string name="voice_announcement_schedule_off" translatable="false">off</string>
+    <string-array name="voice_announcement_schedule_values">
+        <item>@string/voice_announcement_schedule_global</item>
+        <item>@string/voice_announcement_schedule_off</item>
+        <item>time:60</item>
+        <item>time:120</item>
+        <item>time:300</item>
+        <item>time:600</item>
+        <item>time:900</item>
+        <item>time:1800</item>
+        <item>time:3600</item>
+        <item>distance:0.1</item>
+        <item>distance:0.2</item>
+        <item>distance:0.5</item>
+        <item>distance:1</item>
+        <item>distance:5</item>
+        <item>distance:10</item>
+        <item>distance:25</item>
+        <item>distance:50</item>
+        <item>distance:100</item>
+    </string-array>
+    <string name="voice_announcement_recent_pace_distance_key" translatable="false">voiceRecentPaceDistance</string>
+    <string name="voice_announcement_recent_pace_distance_default" translatable="false">1.0</string>
+
+    <string name="voice_announce_time_schedule_key" translatable="false">voiceScheduleTime</string>
+    <string name="voice_announce_total_distance_schedule_key" translatable="false">voiceScheduleTotalDistance</string>
+    <string name="voice_announce_moving_time_schedule_key" translatable="false">voiceScheduleMovingTime</string>
+    <string name="voice_announce_average_speed_pace_schedule_key" translatable="false">voiceScheduleAverageSpeedPace</string>
+    <string name="voice_announce_heart_rate_current_schedule_key" translatable="false">voiceScheduleHeartRateCurrent</string>
+    <string name="voice_announce_average_heart_rate_schedule_key" translatable="false">voiceScheduleAverageHeartRate</string>
+    <string name="voice_announce_lap_speed_pace_schedule_key" translatable="false">voiceScheduleLapSpeedPace</string>
+    <string name="voice_announce_lap_heart_rate_schedule_key" translatable="false">voiceScheduleLapHeartRate</string>
+    <string name="voice_announce_lap_power_schedule_key" translatable="false">voiceScheduleLapPower</string>
+    <string name="voice_announcement_schedule_default" translatable="false">@string/voice_announcement_schedule_global</string>
+
     <string name="voice_speed_rate_key" translatable="false">voiceSpeedRate</string>
     <string name="voice_speed_rate_default" translatable="false">0.9</string>
     <string-array name="voice_speed_rate_values">
