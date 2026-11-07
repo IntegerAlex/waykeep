@@ -148,3 +148,32 @@ Rules:
 - [ ] **Step 3: Implement `InsightSummary`/`trendLine`.**
 - [ ] **Step 4: Add the hero layout and bind it from `trackLoader`; hide during search.**
 - [ ] **Step 5: Run the focused test and the full unit suite; commit `feat: add personalized home insight hero`.**
+
+### Task 6: Configurable route color
+
+**Files:**
+- Create: `src/main/java/com/waykeep/app/ui/trackmap/RouteColor.java`
+- Modify: `src/main/java/com/waykeep/app/settings/PreferencesUtils.java`
+- Modify: `src/main/java/com/waykeep/app/ui/trackmap/TrackMapFragment.java`
+- Modify: `src/main/res/xml/settings_map.xml`
+- Modify: `src/main/res/values/colors.xml`
+- Modify: `src/main/res/values/strings.xml`
+- Test: `src/test/java/com/waykeep/app/ui/trackmap/RouteColorTest.java`
+
+**Interfaces:**
+- `public enum RouteColor { CYAN, GREEN, ORANGE, MAGENTA, BLUE, WHITE }`
+- `public static RouteColor fromPreference(@Nullable String value)`; unknown/missing -> `CYAN`.
+- `public @ColorRes int colorRes()`.
+- `PreferencesUtils.getRouteColor()` returns the selected `RouteColor`; preference key `settings_route_color_key`, default `CYAN`.
+
+Rules:
+- The recorded route polyline uses the selected color; the black casing stays for contrast.
+- The planned/GPX route stays red so live and planned lines remain distinguishable.
+- Add a `ListPreference` in the Map settings screen with the six named options.
+- No new dependency or DB migration; no effect on share images or feed thumbnails in v0.
+
+- [ ] **Step 1: Write failing `RouteColorTest` cases** for default, all six values, and unknown/null fallback.
+- [ ] **Step 2: Run the focused test and watch it fail.**
+- [ ] **Step 3: Implement `RouteColor` and the preference accessor.**
+- [ ] **Step 4: Wire the map route line and add the Map settings list.**
+- [ ] **Step 5: Run the focused test and the full unit suite; commit `feat: add configurable route color`.**
