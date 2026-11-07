@@ -811,6 +811,11 @@ limitations under the License.
     <string name="monthly_recap_prev">‹</string>
     <string name="monthly_recap_next">›</string>
     <string name="monthly_recap_day_entry">%1$s · %2$s</string>
+    <string name="monthly_recap_day_detail">%1$s · %2$s</string>
+    <plurals name="monthly_recap_day_activities">
+        <item quantity="one">%1$d activity</item>
+        <item quantity="other">%1$d activities</item>
+    </plurals>
     <string name="hold_to_stop">Hold to stop</string>
     <string name="stop_recording_title">Stop recording?</string>
     <string name="share_ai_title">Analyze with AI</string>

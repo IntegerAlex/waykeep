@@ -108,6 +108,8 @@ repeated here.
   The four totals sit in a 2×2 grid and auto-size down to 16sp: at 36sp in one row of
   four they clipped to `10....` / `1:2....` on a 360dp screen. Tapping a day opens that
   day's activity, or a chooser when it has several; days without activities do nothing.
+  Long-pressing a day pops a summary card at the date itself (count, distance, moving
+  time) that dismisses after 2.5 s.
 - **HR-zone breakdown** on the recorded stats tab (Z5…Z1, non-zero only).
 - Feed fixes: GPS button gives immediate optimistic feedback and never blanks;
   logo tap scrolls to top instead of exiting; added **Exit** to the overflow.

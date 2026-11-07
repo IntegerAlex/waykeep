@@ -2,12 +2,17 @@ package com.waykeep.app.ui.monthlyRecap;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,6 +61,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
 
     private YearMonth month = YearMonth.now();
     private List<Track> monthTracks = List.of();
+    private PopupWindow dayPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,10 @@ public class MonthlyRecapActivity extends AbstractActivity {
     protected void onDestroy() {
         super.onDestroy();
         executor.shutdownNow();
+        if (dayPopup != null) {
+            dayPopup.dismiss();
+            dayPopup = null;
+        }
         viewBinding = null;
     }
 
@@ -137,7 +147,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
             viewBinding.monthlyElevation.setText(getString(R.string.value_unknown));
         }
 
-        viewBinding.monthlyCalendar.setAdapter(new CalendarAdapter(selected, tracks, this::openDay));
+        viewBinding.monthlyCalendar.setAdapter(new CalendarAdapter(selected, tracks, this::openDay, this::showDaySummary));
         viewBinding.monthlyEmpty.setVisibility(tracks.isEmpty() ? View.VISIBLE : View.GONE);
         viewBinding.monthlyShare.setEnabled(!tracks.isEmpty());
     }
@@ -264,6 +274,59 @@ public class MonthlyRecapActivity extends AbstractActivity {
                 .show();
     }
 
+    /**
+     * Long press shows the day's totals right at the cell, like a toast that stays put, instead
+     * of navigating away.
+     */
+    private void showDaySummary(View anchor, int day, List<Track> tracks) {
+        if (tracks.isEmpty() || isFinishing() || isDestroyed() || viewBinding == null) {
+            return;
+        }
+        Distance total = Distance.ZERO;
+        long movingSeconds = 0;
+        for (Track track : tracks) {
+            total = total.plus(track.statistics().totalDistance());
+            movingSeconds += track.statistics().movingDuration().getSeconds();
+        }
+        View content = getLayoutInflater().inflate(R.layout.monthly_day_popup, null);
+        ((TextView) content.findViewById(R.id.day_popup_title))
+                .setText(month.atDay(day).format(DateTimeFormatter.ofPattern("d MMMM yyyy")));
+        ((TextView) content.findViewById(R.id.day_popup_activities))
+                .setText(getResources().getQuantityString(R.plurals.monthly_recap_day_activities, tracks.size(), tracks.size()));
+        String distance = DistanceFormatter.Builder().setUnit(PreferencesUtils.getUnitSystem()).build(this).formatDistance(total);
+        ((TextView) content.findViewById(R.id.day_popup_detail))
+                .setText(getString(R.string.monthly_recap_day_detail, distance,
+                        StringUtils.formatElapsedTime(java.time.Duration.ofSeconds(movingSeconds))));
+
+        if (dayPopup != null) {
+            dayPopup.dismiss();
+        }
+        float density = getResources().getDisplayMetrics().density;
+        PopupWindow popup = new PopupWindow(content, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
+        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popup.setOutsideTouchable(true);
+        popup.setElevation(8 * density);
+
+        content.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int[] anchorLocation = new int[2];
+        anchor.getLocationOnScreen(anchorLocation);
+        int x = anchorLocation[0] + (anchor.getWidth() - content.getMeasuredWidth()) / 2;
+        int y = anchorLocation[1] - content.getMeasuredHeight() - (int) (8 * density);
+        if (y < 0) {
+            y = anchorLocation[1] + anchor.getHeight() + (int) (8 * density);
+        }
+        popup.showAtLocation(anchor, Gravity.NO_GRAVITY, Math.max(0, x), y);
+        dayPopup = popup;
+
+        View root = viewBinding.getRoot();
+        root.postDelayed(() -> {
+            if (dayPopup == popup) {
+                popup.dismiss();
+                dayPopup = null;
+            }
+        }, 2500);
+    }
+
     private void openTrack(Track track) {
         startActivity(IntentUtils.newIntent(this, TrackRecordedActivity.class)
                 .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, track.id()));
@@ -273,13 +336,19 @@ public class MonthlyRecapActivity extends AbstractActivity {
         void onDayClick(int day, List<Track> tracks);
     }
 
+    private interface DayLongClick {
+        void onDayLongClick(View anchor, int day, List<Track> tracks);
+    }
+
     private static class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
         private final List<Integer> days;
         private final Map<Integer, List<Track>> tracksByDay = new HashMap<>();
         private final DayClick dayClick;
+        private final DayLongClick dayLongClick;
 
-        CalendarAdapter(YearMonth month, List<Track> tracks, DayClick dayClick) {
+        CalendarAdapter(YearMonth month, List<Track> tracks, DayClick dayClick, DayLongClick dayLongClick) {
             this.dayClick = dayClick;
+            this.dayLongClick = dayLongClick;
             for (Track track : tracks) {
                 tracksByDay.computeIfAbsent(track.startTime().getDayOfMonth(), day -> new ArrayList<>()).add(track);
             }
@@ -301,7 +370,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bind(days.get(position), tracksByDay, dayClick);
+            holder.bind(days.get(position), tracksByDay, dayClick, dayLongClick);
         }
 
         @Override
@@ -317,7 +386,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
                 this.binding = binding;
             }
 
-            void bind(Integer day, Map<Integer, List<Track>> tracksByDay, DayClick dayClick) {
+            void bind(Integer day, Map<Integer, List<Track>> tracksByDay, DayClick dayClick, DayLongClick dayLongClick) {
                 if (day == null) {
                     binding.calendarDay.setText("");
                     binding.calendarDot.setVisibility(View.INVISIBLE);
@@ -330,10 +399,15 @@ public class MonthlyRecapActivity extends AbstractActivity {
                 binding.calendarDot.setVisibility(dayTracks != null ? View.VISIBLE : View.INVISIBLE);
                 if (dayTracks == null) {
                     binding.getRoot().setOnClickListener(null);
+                    binding.getRoot().setOnLongClickListener(null);
                     binding.getRoot().setClickable(false);
                 } else {
                     binding.getRoot().setClickable(true);
                     binding.getRoot().setOnClickListener(v -> dayClick.onDayClick(day, dayTracks));
+                    binding.getRoot().setOnLongClickListener(v -> {
+                        dayLongClick.onDayLongClick(v, day, dayTracks);
+                        return true;
+                    });
                 }
             }
         }
