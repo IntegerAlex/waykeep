@@ -342,6 +342,18 @@ limitations under the License.
     <string name="diagnostics_recovery_started">Recovery started. The copy will appear in your track list.</string>
     <string name="diagnostics_recovery_done">Recovered copy added to your track list.</string>
     <string name="diagnostics_recovery_failed">Could not create a recovered track copy.</string>
+    <!-- Home insight hero -->
+    <string name="insight_week_distance_label">This week</string>
+    <string name="insight_week_average_label">4-week average</string>
+    <string name="insight_trend_building">Building on recent weeks</string>
+    <string name="insight_trend_lower">Lower than your 4-week average</string>
+    <string name="insight_trend_steady">Steady with your 4-week average</string>
+    <string name="insight_trend_higher">Higher than your 4-week average</string>
+    <string name="insight_goal_progress">%1$s of %2$s this week</string>
+    <string name="insight_goal_progress_description">Weekly goal progress</string>
+    <string name="insight_streak_weeks">%1$d-week streak</string>
+    <string name="insight_streak_none">No streak yet</string>
+    <string name="insight_set_goal_hint">Set a weekly goal in Settings → User Interface</string>
     <string name="menu_select_layout">Select Layout</string>
     <string name="menu_show_on_map">Show on map</string>
     <string name="menu_voice_rate">Voice speed</string>
