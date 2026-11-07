@@ -47,8 +47,8 @@ android {
 
     defaultConfig {
         applicationId 'com.waykeep.app'
-        versionCode 6889
-        versionName "v1.0.0-beta.5"
+        versionCode 6890
+        versionName "v1.0.0"
 
         buildConfigField "String", "VERSION_NAME_FULL", "\"${getVersionName()}\""
 
@@ -120,15 +120,17 @@ android {
             versionNameSuffix 'irreproducible'
         }
         reproducible {
-            // Developer Binaries: https://codeberg.org/OpenTracksApp/OSMDashboard/releases/download/v%v/com.waykeep.app.playstore_%v.apk
-            // FDroid: https://f-droid.org/de/packages/com.waykeep.app.playstore
-            // PlayStore: https://play.google.com/store/apps/details?id=com.waykeep.app.playstore
+            // Stable package for F-Droid reproducible builds and developer binaries.
             dimension 'version'
-            applicationId 'com.waykeep.app.playstore'
+            applicationId 'com.waykeep.app'
 
-            base.archivesName = "com.waykeep.app.playstore_${getVersionName()}_${android.defaultConfig.versionCode}"
+            base.archivesName = "com.waykeep.app_${getVersionName()}_${android.defaultConfig.versionCode}"
 
-            signingConfig = signingConfigs.release
+            // F-Droid builds an unsigned release and signs it itself; a local signed
+            // release is used only when the release keystore properties are present.
+            if (System.getProperty("release_store_file") != null) {
+                signingConfig = signingConfigs.release
+            }
         }
     }
 

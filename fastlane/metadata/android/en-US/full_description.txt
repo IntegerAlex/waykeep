@@ -1,22 +1,27 @@
-A sport tracking buddy that respects your privacy.
+Waykeep is a private, local-first sport tracker for running, walking, cycling, and everyday routes.
 
-Sport and outdoor activities grants happiness, skill and confidence.
+Record GPS tracks with live distance, pace, speed, elevation, and optional heart-rate, cadence, and power sensors. Keep every track on your phone; there is no account, no analytics, and no upload of your activity data.
 
-Value your health by keeping track on your training.
-Records as you go running or walking, and gives you a bike computer with a bigger screen for cycling.
-Mark interesting locations along your way with pictures.
-Keep recorded statistics in great detail for analysis.
-Share only the data you want others to have.
+FEATURES
+* GPS recording with live stats and a low-battery warning
+* Offline-capable in-app map with cached map tiles
+* Manual laps and an Intervals tab that follows them
+* Voice announcements with per-statistic schedules
+* Bluetooth LE heart rate, speed/distance, cadence, and power
+* Optional high-heart-rate alert
+* Weekly insights: 7-day distance, 4-week average, goal progress, and a consecutive-day streak
+* Configurable route color for the map and feed thumbnails
+* Follow a GPX route as a planned overlay (no turn-by-turn)
+* Optional GPS elevation fallback when no barometer data exists
+* Export tracks as KMZ (including photos), KML, or GPX
+* Dark and light themes, a home-screen widget, personal bests, and monthly recaps
+* No ads, no accounts, no trackers
 
-* Voice announcements.
-* Supports Bluetooth LE sensors: heart rate, speed and distance (cycling), cadence (cycling), and power meter (cycling).
-* Altitude gain and loss: via barometric sensor.
-* Altitude shown in EGM2008 (above mean sea level); exported as WGS84.
-* Export data as tracks either as KMZ (incl. photos), KML, or GPX.
-* No Internet access or extra permissions.
-* Dark and light theme, respecting system settings.
-* No ads.
+PRIVACY
+Your tracks, journals, and sensor data stay on your device. Network access is used only to fetch map tiles; personal activity data is not uploaded.
 
-Libre software / Free Software / Open Source
-meaning you can use, study, change and share the source code.
-Licensed Apache 2.0
+LICENSE
+Waykeep is free and open source under GPL-3.0-only. It is based on OpenTracks; upstream-derived parts remain Apache-2.0.
+
+Website: https://waykeep.gossorg.in
+Source: https://github.com/IntegerAlex/waykeep

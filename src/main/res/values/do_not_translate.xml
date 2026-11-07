@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <resources>
-    <string name="app_web_url" translatable="false">https://github.com/IntegerAlex/waykeep</string>
+    <string name="app_web_url" translatable="false">https://waykeep.gossorg.in</string>
     <string name="app_name" translatable="false">Waykeep</string>
     <string name="launcher_name" translatable="false">Waykeep</string>
 

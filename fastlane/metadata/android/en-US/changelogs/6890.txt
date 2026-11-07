@@ -1,0 +1,10 @@
+Waykeep 1.0.0
+
+* Manual laps, with an Intervals tab that follows them
+* Weekly insights: 7-day distance, 4-week average, goal progress, and a consecutive-day streak
+* Optional one-shot high-heart-rate alert
+* Configurable route color for the map and feed thumbnails
+* Follow GPX routes as a planned overlay
+* Optional GPS elevation fallback with source labels
+* Better recording recovery and a compact diagnostics journal
+* Updated Help page for all new features

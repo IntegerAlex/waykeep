@@ -1,1 +1,1 @@
-A sport tracker buddy that respects your privacy.
+A private, local-first sport tracker for your routes.
