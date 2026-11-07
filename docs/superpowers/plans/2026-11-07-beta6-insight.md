@@ -48,11 +48,11 @@ Rules:
 - Else ratio = sevenDay / fourWeekAverage; `>= 1.10` HIGHER, `<= 0.90` LOWER, otherwise STEADY.
 - Ignore future tracks and tracks without a start time.
 
-- [ ] **Step 1: Write failing tests** for empty history, one 10 km ride today, four 10 km rides across 28 days (steady), a ride older than 28 days, a future ride, and the 7-day boundary.
-- [ ] **Step 2: Run `:testIrreproducibleDebugUnitTest --tests '*RollingLoadTest'` and watch it fail.**
-- [ ] **Step 3: Implement `RollingLoad` using `Distance.of(...)` and `Instant` only.**
+- [x] **Step 1: Write failing tests** for empty history, one 10 km ride today, four 10 km rides across 28 days (steady), a ride older than 28 days, a future ride, and the 7-day boundary.
+- [x] **Step 2: Run `:testIrreproducibleDebugUnitTest --tests '*RollingLoadTest'` and watch it fail.**
+- [x] **Step 3: Implement `RollingLoad` using `Distance.of(...)` and `Instant` only.**
 - [ ] **Step 4: Re-run the focused test and then the full unit suite.**
-- [ ] **Step 5: Commit `feat: add distance-only rolling load v0`.**
+- [x] **Step 5: Commit `feat: add distance-only rolling load v0`.**
 
 ### Task 2: Weekly goal and streak
 
