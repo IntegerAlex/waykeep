@@ -1,5 +1,5 @@
-# PREPARED FOR SUBMISSION — NOT YET SUBMITTED.
-# Copy to fdroiddata/metadata/com.waykeep.app.yml.
+# F-Droid metadata for com.waykeep.app.
+# Submitted in fdroiddata MR !56211.
 # Listing text, icon, and screenshots live in the app's Fastlane metadata.
 AutoName: Waykeep
 Categories:

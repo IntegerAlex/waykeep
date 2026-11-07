@@ -14,14 +14,15 @@ Stable package: `com.waykeep.app` (reproducible flavor). The `.playstore` packag
 
 For F-Droid the build status can be found [here](https://monitor.f-droid.org/builds/build).
 
-## Store submissions (prepared, not yet submitted)
+## Store submissions
 
 Website: <https://waykeep.gossorg.in>
 
 - F-Droid metadata: [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml)
 - F-Droid MR text: [`distribution/fdroid/merge-request.md`](distribution/fdroid/merge-request.md)
+- **F-Droid MR:** <https://gitlab.com/fdroid/fdroiddata/-/merge_requests/56211> (open; CI running)
 - IzzyOnDroid metadata: [`distribution/izzy/com.waykeep.app.yml`](distribution/izzy/com.waykeep.app.yml)
-- IzzyOnDroid request text: [`distribution/izzy/inclusion-request.md`](distribution/izzy/inclusion-request.md)
+- IzzyOnDroid request text: [`distribution/izzy/inclusion-request.md`](distribution/izzy/inclusion-request.md) — pending Codeberg auth and a release-signed APK
 
 The F-Droid file targets v1.0.0 (versionCode 6890, commit `d441ea574f49fa64018e3b4a03ca660ad68ddac8`) and uses `gradle: - reproducible`, which builds `com.waykeep.app` as an unsigned release for F-Droid signing. Copy it to `fdroiddata/metadata/com.waykeep.app.yml` when submitting. The IzzyOnDroid file uses `Builds: []` and the release APK. Listing text, icon, feature graphic, screenshots, and changelog live in `fastlane/metadata/android/en-US/`.
 
