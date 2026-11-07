@@ -387,7 +387,9 @@ trace.
   at 0 m instead of jumping by the network error.
 - While only that network point exists, the notification and status strip say
   "Approximate location (±N m)"; once satellites are visible but unusable they say
-  "Searching for satellites (used/visible)".
+  "Searching for satellites (used/visible)". Both now carry the elapsed acquisition time
+  ("· 00:35"), because a distance frozen at 0.00 m with nothing moving looks broken; a frozen
+  distance with a ticking clock looks like waiting, which is what it is.
 
 ### 8.5 Finishing a recording
 - Pressing Finish on the stop screen closed the whole app when the recording screen was the

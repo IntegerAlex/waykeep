@@ -59,6 +59,7 @@ import com.waykeep.app.services.announcement.VoiceAnnouncementManager;
 import com.waykeep.app.services.handlers.TrackPointCreator;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.ui.widget.StatsWidgetProvider;
+import com.waykeep.app.util.StringUtils;
 
 public class TrackRecordingService extends Service implements TrackPointCreator.Callback, SharedPreferences.OnSharedPreferenceChangeListener, TrackRecordingManager.IdleObserver {
 
@@ -113,6 +114,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private TrackRecordingManager trackRecordingManager;
     private RecordingDiagnostics diagnostics;
     private boolean hasReceivedGpsFix;
+    /** When acquisition started, so the status can show how long the receiver has been waiting. */
+    private long gpsAcquiringSinceMs;
     private GpsStatusValue lastGpsStatus = STATUS_GPS_DEFAULT;
     private String lastGpsStatusText;
     private int satellitesVisible = -1;
@@ -240,6 +243,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         }
         Log.i(TAG, "startNewTrack");
         hasReceivedGpsFix = false;
+        gpsAcquiringSinceMs = SystemClock.elapsedRealtime();
 
         // Set recording status
         Track.Id trackId = trackRecordingManager.startNewTrack();
@@ -253,6 +257,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     private void resumeTrack(Track.Id trackId, boolean serviceRestart) {
         hasReceivedGpsFix = false;
+        gpsAcquiringSinceMs = SystemClock.elapsedRealtime();
         if (!trackRecordingManager.resumeExistingTrack(trackId, serviceRestart, false)) {
             Log.w(TAG, "Cannot resume a non-existing track.");
             return;
@@ -498,15 +503,25 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
      */
     private String gpsStatusText(GpsStatusValue value) {
         if (!hasReceivedGpsFix && value.isGpsStarted() && !value.hasGoodSignal()) {
+            String text;
             Distance provisionalAccuracy = trackRecordingManager == null ? null : trackRecordingManager.provisionalStartAccuracy();
             if (provisionalAccuracy != null) {
-                return getString(R.string.gps_approximate_location, Math.round(provisionalAccuracy.toM()));
+                text = getString(R.string.gps_approximate_location, Math.round(provisionalAccuracy.toM()));
+            } else if (satellitesVisible >= 0) {
+                text = getString(R.string.gps_searching_satellites, satellitesUsedInFix, satellitesVisible);
+            } else {
+                text = getString(value.message);
             }
-            if (satellitesVisible >= 0) {
-                return getString(R.string.gps_searching_satellites, satellitesUsedInFix, satellitesVisible);
-            }
+            // The distance cannot move until a fix arrives. A ticking clock next to it is the
+            // difference between "waiting" and "frozen", which is what it looks like otherwise.
+            return getString(R.string.gps_status_acquiring_for, text, acquiringElapsed());
         }
         return getString(value.message);
+    }
+
+    private String acquiringElapsed() {
+        long elapsedMs = gpsAcquiringSinceMs == 0 ? 0 : SystemClock.elapsedRealtime() - gpsAcquiringSinceMs;
+        return StringUtils.formatElapsedTime(Duration.ofMillis(elapsedMs));
     }
 
     @Override
