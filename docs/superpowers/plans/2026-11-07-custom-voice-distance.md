@@ -14,13 +14,13 @@
 
 - Preserve existing global time/distance interval preferences and existing per-stat inclusion switches.
 - Custom distance is interpreted in the currently selected distance unit, matching the existing preset behavior.
-- Blank custom value falls back to the preset; only finite values greater than zero are accepted.
+- Blank custom value falls back to the preset; custom values must be finite and at least `0.1` selected units, matching the smallest existing preset.
 - No new dependency; no cloud or analytics.
 - Do not push upstream; cite Codeberg #2400 in the changelog/commit notes.
 
 ## Review Focus
 
-- Blank, malformed, zero, negative, NaN, or infinite custom values must not disable valid preset announcements.
+- Blank, malformed, below-minimum, NaN, or infinite custom values must not disable valid preset announcements.
 - Locale decimal separators must parse correctly, and partial parses must be rejected.
 - Changing units or the custom value while recording must refresh the active threshold.
 - Existing installs and their stored Float/String preset values must keep working.
@@ -47,8 +47,9 @@
 - [x] **Step 1: Write tests first** for a valid decimal value, blank fallback, invalid fallback, non-finite/non-positive rejection, and locale decimal parsing.
 - [x] **Step 2: Run** `./gradlew :testIrreproducibleDebugUnitTest --tests com.waykeep.app.settings.PreferencesUtilsTest`; confirm compilation/test failure because the helpers do not exist yet.
 - [x] **Step 3: Implement** strict locale-aware parsing and fallback in `PreferencesUtils`; read custom input from a new String preference key while retaining the old preset key.
-- [x] **Step 4: Add** an optional decimal `EditTextPreference`; accept blank or a finite positive number, reject other input, show the saved value, and document the current-unit/clear-to-reset behavior.
+- [x] **Step 4: Add** an optional decimal `EditTextPreference`; accept blank or a finite value of at least `0.1` selected units, reject other input, show the saved value, and document the current-unit/clear-to-reset behavior.
 - [x] **Step 5: Refresh** the recording manager's distance schedule when the custom key or units change.
 - [x] **Step 6: Document** the setting under Feed, stats & UX in `CHANGELOG.md`, citing Codeberg #2400.
 - [x] **Step 7: Verify** targeted test, full `:testIrreproducibleDebugUnitTest`, and `:assembleIrreproducibleDebug`.
 - [x] **Step 8: Commit** as `voice: allow a custom distance announcement interval`, with Codeberg #2400 and verification in the commit body.
+- [x] **Review fix:** Reject sub-`0.1` custom intervals to prevent per-update speech and scheduler index overflow; verify `customDistanceCannotBeSmallerThanTheSmallestPreset` RED→GREEN.

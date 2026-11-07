@@ -43,6 +43,20 @@ public class PreferencesUtilsTest {
     }
 
     @Test
+    public void customDistanceCannotBeSmallerThanTheSmallestPreset() {
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.US);
+            assertNull(PreferencesUtils.parseCustomVoiceAnnouncementDistance("0.099"));
+            assertFalse(PreferencesUtils.isValidCustomVoiceAnnouncementDistance("0.099"));
+            assertEquals(2.0, PreferencesUtils.resolveVoiceAnnouncementDistance("0.099", 2.0), 0.001);
+            assertEquals(0.1, PreferencesUtils.parseCustomVoiceAnnouncementDistance("0.1"), 0.001);
+        } finally {
+            Locale.setDefault(original);
+        }
+    }
+
+    @Test
     public void parsesLocaleDecimalSeparatorAndRestoresDefaultLocale() {
         Locale original = Locale.getDefault();
         try {

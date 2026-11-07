@@ -64,6 +64,7 @@ import com.waykeep.app.ui.customRecordingLayout.RecordingLayoutIO;
 public class PreferencesUtils {
 
     private final static String TAG = PreferencesUtils.class.getSimpleName();
+    private static final double MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE = 0.1;
 
     private static final int PREFERENCES_VERSION = 2;
 
@@ -546,7 +547,7 @@ public class PreferencesUtils {
         }
 
         double distance = parsed.doubleValue();
-        return Double.isFinite(distance) && distance > 0 ? distance : null;
+        return Double.isFinite(distance) && distance >= MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE ? distance : null;
     }
 
     static boolean isValidCustomVoiceAnnouncementDistance(@Nullable String value) {
