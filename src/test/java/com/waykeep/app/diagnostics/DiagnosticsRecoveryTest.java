@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -111,6 +112,38 @@ public class DiagnosticsRecoveryTest {
     }
 
     @Test
+    public void recoveryReconstructsSampledAcceptedFixesWithoutDuplicatingLoggedFixes() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
+        RecordingDiagnostics.SessionMetadata metadata = metadata(42);
+        Instant firstFixTime = Instant.parse("2026-10-30T01:44:00Z");
+        Instant rejectedFixTime = firstFixTime.plusSeconds(10);
+        Instant sampledFixTime = firstFixTime.plusSeconds(35);
+        diagnostics.beginSession(metadata);
+        diagnostics.event("gps_fix", gpsFixAt(18.5, 73.8, 8, "accepted", firstFixTime));
+        diagnostics.event("trackpoint_candidate", trackpointCandidate(firstFixTime, 18.5, 73.8, 140));
+        diagnostics.event("gps_fix", gpsFixAt(18.6, 73.8, 120, "poor_accuracy", rejectedFixTime));
+        diagnostics.event("trackpoint_candidate", trackpointCandidate(sampledFixTime, 18.7, 73.8, 142));
+        diagnostics.close();
+        assertTrue(RecordingDiagnostics.flushActive());
+        DiagnosticsRecovery.RecoveryCandidate candidate = DiagnosticsRecovery.findPending(
+                store, (trackId, sourceTrackUuid) -> trackId).orElseThrow();
+
+        var fixes = DiagnosticsRecovery.readRawFixes(candidate);
+
+        assertEquals(3, fixes.size());
+        assertEquals(18.5, fixes.get(0).position().latitude(), 0.000001);
+        assertEquals(140f, fixes.get(0).heartRate().getBPM(), 0.001f);
+        assertEquals(18.6, fixes.get(1).position().latitude(), 0.000001);
+        assertEquals(120.0, fixes.get(1).position().horizontalAccuracy().toM(), 0.001);
+        assertEquals(18.7, fixes.get(2).position().latitude(), 0.000001);
+        assertEquals(500.0, fixes.get(2).position().altitude().toM(), 0.001);
+        assertEquals(12.0, fixes.get(2).position().verticalAccuracy().toM(), 0.001);
+        assertEquals(3.2f, fixes.get(2).position().speed().toMPS(), 0.001f);
+        assertEquals(142f, fixes.get(2).heartRate().getBPM(), 0.001f);
+    }
+
+    @Test
     public void retryAfterRecoveryInsertDoesNotDuplicateCopy() throws Exception {
         DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
         RecordingDiagnostics.SessionMetadata metadata = metadata(42);
@@ -132,9 +165,13 @@ public class DiagnosticsRecoveryTest {
     }
 
     private Map<String, Object> gpsFix(double latitude, double longitude, double accuracy, String decision) {
+        return gpsFixAt(latitude, longitude, accuracy, decision, Instant.parse("2026-10-30T01:44:00Z"));
+    }
+
+    private Map<String, Object> gpsFixAt(double latitude, double longitude, double accuracy, String decision, Instant time) {
         return Map.of(
                 "provider", "gps",
-                "fix_time", "2026-10-30T01:44:00Z",
+                "fix_time", time.toString(),
                 "provider_time_millis", 1793324640000L,
                 "elapsed_realtime_nanos", 123456789L,
                 "latitude", latitude,
@@ -142,6 +179,27 @@ public class DiagnosticsRecoveryTest {
                 "horizontal_accuracy_m", accuracy,
                 "accuracy_threshold_m", 50,
                 "decision", decision);
+    }
+
+    private Map<String, Object> trackpointCandidate(Instant time, double latitude, double longitude, int heartRate) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("time", time.toString());
+        fields.put("type", "TRACKPOINT");
+        fields.put("latitude", latitude);
+        fields.put("longitude", longitude);
+        fields.put("horizontal_accuracy_m", 9);
+        fields.put("altitude_m", 500);
+        fields.put("vertical_accuracy_m", 12);
+        fields.put("speed_mps", 3.2);
+        fields.put("bearing_degrees", 90);
+        fields.put("sensor_distance_m", 100);
+        fields.put("heart_rate_bpm", heartRate);
+        fields.put("temperature_c", 23);
+        fields.put("cadence_rpm", 82);
+        fields.put("power_watts", 200);
+        fields.put("altitude_gain_m", 5);
+        fields.put("altitude_loss_m", 2);
+        return fields;
     }
 
     private RecordingDiagnostics.SessionMetadata metadata(long trackId) {

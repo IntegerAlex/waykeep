@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +25,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.waykeep.app.data.models.Track;
 
@@ -195,6 +198,10 @@ public final class RecordingDiagnostics implements AutoCloseable {
 
         private static final String TAG = "RecordingDiagnostics";
         private static final long FLUSH_INTERVAL_SECONDS = 5;
+        private static final long GPS_FIX_SAMPLE_INTERVAL_NANOS = TimeUnit.SECONDS.toNanos(30);
+        private static final Pattern ELAPSED_REALTIME_NANOS = Pattern.compile("\"elapsed_realtime_nanos\"\\s*:\\s*(\\d+)");
+        private static final Pattern GPS_FIX_EVENT = Pattern.compile("\"event\"\\s*:\\s*\"gps_fix\"");
+        private static final Pattern ACCEPTED_DECISION = Pattern.compile("\"decision\"\\s*:\\s*\"accepted\"");
         // A long recording must not consume the whole retention budget and evict every older session.
         private static final long MAX_SESSION_BYTES = 4L * 1024 * 1024;
 
@@ -213,6 +220,7 @@ public final class RecordingDiagnostics implements AutoCloseable {
         private FileOutputStream outputStream;
         private long nextSequence;
         private long bytesWritten;
+        private long lastAcceptedGpsFixElapsedRealtimeNanos = Long.MIN_VALUE;
         private boolean active = true;
         private boolean disabled;
         private boolean capped;
@@ -254,7 +262,23 @@ public final class RecordingDiagnostics implements AutoCloseable {
         synchronized void event(String type, Map<String, ?> fields) {
             if (!active || disabled || capped) return;
             Map<String, ?> snapshot = new LinkedHashMap<>(fields);
-            writer.execute(() -> writeEvent(type, snapshot));
+            writer.execute(() -> {
+                if (shouldWriteGpsFix(type, snapshot)) writeEvent(type, snapshot);
+            });
+        }
+
+        private boolean shouldWriteGpsFix(String type, Map<String, ?> fields) {
+            if (!"gps_fix".equals(type) || !"accepted".equals(fields.get("decision"))) return true;
+            Object elapsed = fields.get("elapsed_realtime_nanos");
+            if (!(elapsed instanceof Number number)) return true;
+            long elapsedNanos = number.longValue();
+            if (lastAcceptedGpsFixElapsedRealtimeNanos == Long.MIN_VALUE
+                    || elapsedNanos < lastAcceptedGpsFixElapsedRealtimeNanos
+                    || elapsedNanos - lastAcceptedGpsFixElapsedRealtimeNanos >= GPS_FIX_SAMPLE_INTERVAL_NANOS) {
+                lastAcceptedGpsFixElapsedRealtimeNanos = elapsedNanos;
+                return true;
+            }
+            return false;
         }
 
         synchronized void finish(String outcome, Runnable onFinished) {
@@ -437,11 +461,25 @@ public final class RecordingDiagnostics implements AutoCloseable {
                 if (!file.exists()) throw new IOException("Diagnostics session file is missing.");
                 if (store.isCleanEnd(file)) throw new IOException("Diagnostics session is already complete.");
                 nextSequence = store.lastSequence(file) + 1;
+                restoreGpsFixSampleState();
                 openOutput(true);
                 writeEvent("service_restart", Map.of("reason", "sticky_restart"));
                 flushOutput();
             } catch (IOException | RuntimeException e) {
                 disable(e);
+            }
+        }
+
+        private void restoreGpsFixSampleState() throws IOException {
+            try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!GPS_FIX_EVENT.matcher(line).find() || !ACCEPTED_DECISION.matcher(line).find()) continue;
+                    Matcher elapsed = ELAPSED_REALTIME_NANOS.matcher(line);
+                    long lastInLine = Long.MIN_VALUE;
+                    while (elapsed.find()) lastInLine = Long.parseLong(elapsed.group(1));
+                    if (lastInLine != Long.MIN_VALUE) lastAcceptedGpsFixElapsedRealtimeNanos = lastInLine;
+                }
             }
         }
 

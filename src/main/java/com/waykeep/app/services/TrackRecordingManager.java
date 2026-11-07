@@ -519,9 +519,10 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     }
 
     private void logTrackpoint(String event, TrackPoint trackPoint, String decision) {
-        Map<String, Object> fields = new LinkedHashMap<>(RecordingDiagnosticEvents.trackPoint(trackPoint));
+        Map<String, Object> fields = new LinkedHashMap<>("trackpoint_candidate".equals(event)
+                ? RecordingDiagnosticEvents.trackPoint(trackPoint)
+                : RecordingDiagnosticEvents.trackPointDecision(trackPoint, decision));
         if (trackId != null) fields.put("track_id", trackId.id());
-        if (decision != null) fields.put("decision", decision);
         diagnostics.event(event, fields);
     }
 

@@ -1,6 +1,7 @@
 package com.waykeep.app.diagnostics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -134,6 +135,57 @@ public class RecordingDiagnosticsTest {
         List<String> lines = awaitLineCount(store.fileFor(metadata), 3);
         assertTrue(lines.get(1).contains("\"event\":\"process_exit\""));
         assertTrue(lines.get(1).contains("IllegalStateException"));
+    }
+
+    @Test
+    public void samplesAcceptedGpsFixesAtThirtySecondIntervalsButKeepsOtherFixes() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
+        RecordingDiagnostics.SessionMetadata metadata = metadata();
+        diagnostics.beginSession(metadata);
+        diagnostics.event("gps_fix", gpsFix(100, "poor_accuracy"));
+        diagnostics.event("gps_fix", gpsFix(1_000_000_000L, "accepted"));
+        diagnostics.event("gps_fix", gpsFix(30_999_999_999L, "accepted"));
+        diagnostics.event("gps_fix", gpsFix(31_000_000_000L, "accepted"));
+        diagnostics.event("gps_fix", gpsFix(31_000_000_001L, "poor_accuracy"));
+        diagnostics.finish("stopped");
+
+        List<String> fixes = awaitLineCount(store.fileFor(metadata), 6).stream()
+                .filter(line -> line.contains("\"event\":\"gps_fix\""))
+                .toList();
+
+        assertEquals(4, fixes.size());
+        assertTrue(fixes.get(0).contains("\"decision\":\"poor_accuracy\""));
+        assertTrue(fixes.get(1).contains("\"elapsed_realtime_nanos\":1000000000"));
+        assertFalse(fixes.stream().anyMatch(line -> line.contains("\"elapsed_realtime_nanos\":30999999999")));
+        assertTrue(fixes.get(2).contains("\"elapsed_realtime_nanos\":31000000000"));
+        assertTrue(fixes.get(3).contains("\"decision\":\"poor_accuracy\""));
+    }
+
+    @Test
+    public void resumesAcceptedGpsFixSamplingStateFromTheJournal() throws Exception {
+        DiagnosticsStore store = new DiagnosticsStore(temp.getRoot());
+        RecordingDiagnostics.SessionMetadata metadata = metadata();
+        RecordingDiagnostics first = new RecordingDiagnostics(store);
+        first.beginSession(metadata);
+        first.event("gps_fix", gpsFix(10_000_000_000L, "accepted"));
+        first.close();
+        assertTrue(RecordingDiagnostics.flushActive());
+
+        RecordingDiagnostics resumed = new RecordingDiagnostics(store);
+        resumed.resumeSession(metadata);
+        resumed.event("gps_fix", gpsFix(20_000_000_000L, "accepted"));
+        resumed.finish("stopped");
+        assertTrue(RecordingDiagnostics.flushActive());
+
+        long recordedFixes = Files.readAllLines(store.fileFor(metadata).toPath()).stream()
+                .filter(line -> line.contains("\"event\":\"gps_fix\""))
+                .count();
+        assertEquals(1, recordedFixes);
+    }
+
+    private Map<String, Object> gpsFix(long elapsedRealtimeNanos, String decision) {
+        return Map.of("elapsed_realtime_nanos", elapsedRealtimeNanos, "decision", decision);
     }
 
     private RecordingDiagnostics.SessionMetadata metadata() {

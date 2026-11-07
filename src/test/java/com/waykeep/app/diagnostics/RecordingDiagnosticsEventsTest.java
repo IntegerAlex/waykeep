@@ -75,6 +75,22 @@ public class RecordingDiagnosticsEventsTest {
     }
 
     @Test
+    public void trackPointDecisionOmitsCandidatePositionAndSensorFields() {
+        Position position = new Position(Instant.parse("2026-10-30T01:44:00Z"),
+                18.5, 73.8, Distance.of(8), Altitude.WGS84.of(500), Distance.of(12), 90f, Speed.of(3.2));
+        TrackPoint point = new TrackPoint(null, TrackPoint.Type.TRACKPOINT, position,
+                Distance.of(100), HeartRate.of(140), Temperature.of(23), Cadence.of(80),
+                Power.of(200), new AltitudeGainLoss(5, 2));
+
+        Map<String, Object> fields = RecordingDiagnosticEvents.trackPointDecision(point, "below_distance_interval");
+
+        assertEquals(Map.of(
+                "time", "2026-10-30T01:44:00Z",
+                "type", "TRACKPOINT",
+                "decision", "below_distance_interval"), fields);
+    }
+
+    @Test
     public void gnssStatusIncludesSatelliteCounts() {
         Map<String, Object> fields = RecordingDiagnosticEvents.gnssStatus(14, 6, 41.5, 12345L);
 
