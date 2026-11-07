@@ -18,12 +18,17 @@ import java.io.File;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import com.waykeep.app.AbstractActivity;
 import com.waykeep.app.R;
+import com.waykeep.app.TrackRecordedActivity;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.DistanceFormatter;
@@ -34,6 +39,7 @@ import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.share.ShareImageStore;
 import com.waykeep.app.share.TrackShareImageGenerator;
+import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.StringUtils;
 
 /**
@@ -131,7 +137,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
             viewBinding.monthlyElevation.setText(getString(R.string.value_unknown));
         }
 
-        viewBinding.monthlyCalendar.setAdapter(new CalendarAdapter(selected, tracks));
+        viewBinding.monthlyCalendar.setAdapter(new CalendarAdapter(selected, tracks, this::openDay));
         viewBinding.monthlyEmpty.setVisibility(tracks.isEmpty() ? View.VISIBLE : View.GONE);
         viewBinding.monthlyShare.setEnabled(!tracks.isEmpty());
     }
@@ -235,14 +241,47 @@ public class MonthlyRecapActivity extends AbstractActivity {
         return month.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
     }
 
+    /** A day with one activity opens it; a day with several asks which one. */
+    private void openDay(int day, List<Track> tracks) {
+        if (tracks.isEmpty() || isFinishing() || viewBinding == null) {
+            return;
+        }
+        if (tracks.size() == 1) {
+            openTrack(tracks.get(0));
+            return;
+        }
+        DistanceFormatter formatter = DistanceFormatter.Builder().setUnit(PreferencesUtils.getUnitSystem()).build(this);
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm");
+        List<String> labels = new ArrayList<>();
+        for (Track track : tracks) {
+            labels.add(getString(R.string.monthly_recap_day_entry,
+                    track.startTime().format(time),
+                    formatter.formatDistance(track.statistics().totalDistance())));
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(month.atDay(day).format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
+                .setItems(labels.toArray(new String[0]), (dialog, which) -> openTrack(tracks.get(which)))
+                .show();
+    }
+
+    private void openTrack(Track track) {
+        startActivity(IntentUtils.newIntent(this, TrackRecordedActivity.class)
+                .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, track.id()));
+    }
+
+    private interface DayClick {
+        void onDayClick(int day, List<Track> tracks);
+    }
+
     private static class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
         private final List<Integer> days;
-        private final java.util.Map<Integer, Integer> counts = new java.util.HashMap<>();
+        private final Map<Integer, List<Track>> tracksByDay = new HashMap<>();
+        private final DayClick dayClick;
 
-        CalendarAdapter(YearMonth month, List<Track> tracks) {
+        CalendarAdapter(YearMonth month, List<Track> tracks, DayClick dayClick) {
+            this.dayClick = dayClick;
             for (Track track : tracks) {
-                int day = track.startTime().getDayOfMonth();
-                counts.put(day, counts.getOrDefault(day, 0) + 1);
+                tracksByDay.computeIfAbsent(track.startTime().getDayOfMonth(), day -> new ArrayList<>()).add(track);
             }
             days = new ArrayList<>();
             int leadingBlanks = month.atDay(1).getDayOfWeek().getValue() % 7; // Sunday-first.
@@ -262,8 +301,7 @@ public class MonthlyRecapActivity extends AbstractActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Integer day = days.get(position);
-            holder.bind(day, day == null ? 0 : counts.getOrDefault(day, 0));
+            holder.bind(days.get(position), tracksByDay, dayClick);
         }
 
         @Override
@@ -279,14 +317,24 @@ public class MonthlyRecapActivity extends AbstractActivity {
                 this.binding = binding;
             }
 
-            void bind(Integer day, int count) {
+            void bind(Integer day, Map<Integer, List<Track>> tracksByDay, DayClick dayClick) {
                 if (day == null) {
                     binding.calendarDay.setText("");
                     binding.calendarDot.setVisibility(View.INVISIBLE);
+                    binding.getRoot().setOnClickListener(null);
+                    binding.getRoot().setClickable(false);
                     return;
                 }
+                List<Track> dayTracks = tracksByDay.get(day);
                 binding.calendarDay.setText(String.valueOf(day));
-                binding.calendarDot.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
+                binding.calendarDot.setVisibility(dayTracks != null ? View.VISIBLE : View.INVISIBLE);
+                if (dayTracks == null) {
+                    binding.getRoot().setOnClickListener(null);
+                    binding.getRoot().setClickable(false);
+                } else {
+                    binding.getRoot().setClickable(true);
+                    binding.getRoot().setOnClickListener(v -> dayClick.onDayClick(day, dayTracks));
+                }
             }
         }
     }

@@ -254,8 +254,7 @@ limitations under the License.
     <string name="gps_wait_for_signal">Waiting for GPS signal</string>
     <string name="gps_searching_satellites">Searching for satellites (%1$d/%2$d)</string>
     <string name="gps_approximate_location">Approximate location (±%1$d m)</string>
-    <string name="gps_status_acquiring_for">%1$s · %2$s</string>
-    <string name="gps_disabled_msg">GPS disabled</string>
+    <string name="gps_status_acquiring_for">%1$s · %2$s</string>    <string name="gps_disabled_msg">GPS disabled</string>
     <string name="gps_fixed_and_ready">GPS fixed and ready</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">Waykeep is recording without GPS data.</string>
@@ -811,6 +810,7 @@ limitations under the License.
     <string name="monthly_recap_share_body">My %1$s on Waykeep.</string>
     <string name="monthly_recap_prev">‹</string>
     <string name="monthly_recap_next">›</string>
+    <string name="monthly_recap_day_entry">%1$s · %2$s</string>
     <string name="hold_to_stop">Hold to stop</string>
     <string name="stop_recording_title">Stop recording?</string>
     <string name="share_ai_title">Analyze with AI</string>

@@ -106,7 +106,8 @@ repeated here.
 - **Personal bests** activity (all-time records, each opens the record track).
 - **Monthly recap** activity (month pager, totals, Sunday-first calendar, share).
   The four totals sit in a 2×2 grid and auto-size down to 16sp: at 36sp in one row of
-  four they clipped to `10....` / `1:2....` on a 360dp screen.
+  four they clipped to `10....` / `1:2....` on a 360dp screen. Tapping a day opens that
+  day's activity, or a chooser when it has several; days without activities do nothing.
 - **HR-zone breakdown** on the recorded stats tab (Z5…Z1, non-zero only).
 - Feed fixes: GPS button gives immediate optimistic feedback and never blanks;
   logo tap scrolls to top instead of exiting; added **Exit** to the overflow.
