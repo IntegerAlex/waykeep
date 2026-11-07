@@ -542,6 +542,15 @@ limitations under the License.
     <string name="settings_sensor_bluetooth_service_filter_on">Only show Bluetooth devices that announce required services</string>
     <string name="settings_sensor_bluetooth_service_filter_off">Show all discoverable Bluetooth devices</string>
     <string name="settings_sensor_heart_rate_max">Zones: maximum Heart rate (bpm)</string>
+    <!-- Heart rate alerts -->
+    <string name="settings_heart_rate_alert_enabled_key">settings_heart_rate_alert_enabled_key</string>
+    <string name="settings_heart_rate_alert_threshold_percent_key">settings_heart_rate_alert_threshold_percent_key</string>
+    <string name="settings_heart_rate_alert_threshold_percent_default">90</string>
+    <string name="settings_heart_rate_alert_enabled_title">High heart rate alert</string>
+    <string name="settings_heart_rate_alert_enabled_summary">Vibrate and show a short reminder once after 10 seconds above your alert heart rate</string>
+    <string name="settings_heart_rate_alert_threshold_title">Alert at (% of maximum heart rate)</string>
+    <string name="settings_heart_rate_alert_threshold_summary">Between 80 and 100 percent</string>
+    <string name="heart_rate_alert_fired">Heart rate is high. Ease off if you need to.</string>
     <!-- Settings Stats -->
     <string name="settings_stats_rate_title">Preferred rate</string>
     <string name="settings_stats_units_imperial">Imperial (mi, ft)</string>

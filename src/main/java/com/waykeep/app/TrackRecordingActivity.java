@@ -17,17 +17,20 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,7 @@ import com.waykeep.app.chart.TrackDataHubInterface;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackDataHub;
 import com.waykeep.app.data.models.ActivityType;
+import com.waykeep.app.data.models.HeartRate;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackBuilder;
 import com.waykeep.app.data.models.TrackPoint;
@@ -45,6 +49,8 @@ import com.waykeep.app.databinding.TrackRecordingBinding;
 import com.waykeep.app.fragments.ChooseActivityTypeDialogFragment;
 import com.waykeep.app.fragments.StatisticsRecordingFragment;
 import com.waykeep.app.sensors.GpsStatusValue;
+import com.waykeep.app.services.HeartRateAlert;
+import com.waykeep.app.services.RecordingData;
 import com.waykeep.app.services.RecordingStatus;
 import com.waykeep.app.services.TrackRecordingService;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
@@ -94,6 +100,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     private String gpsAccuracyText;
     private int lowBatteryPercent = -1;
 
+    @Nullable
+    private HeartRateAlert heartRateAlert;
+
+    private final Observer<RecordingData> recordingDataObserver = this::onRecordingDataForHeartRateAlert;
+
     private final TrackRecordingServiceConnection.Callback bindChangedCallback = (service, unused) -> {
         service.getRecordingStatusObservable()
                 .observe(TrackRecordingActivity.this, this::onRecordingStatusChanged);
@@ -119,6 +130,9 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                     updateStatusStrip();
                 });
 
+        service.getRecordingDataObservable()
+                .observe(TrackRecordingActivity.this, recordingDataObserver);
+
         if (!service.isRecording()) {
             finish();
             return;
@@ -137,6 +151,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         }
         if (PreferencesUtils.isKey(R.string.stats_fullscreen_while_recording_key, key)) {
             setFullscreenPolicy();
+        }
+        if (PreferencesUtils.isKey(R.string.settings_heart_rate_alert_enabled_key, key)
+                || PreferencesUtils.isKey(R.string.settings_heart_rate_alert_threshold_percent_key, key)
+                || PreferencesUtils.isKey(R.string.settings_sensor_heart_rate_max_key, key)) {
+            heartRateAlert = null;
         }
         if (key == null) return;
 
@@ -471,6 +490,34 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
             // Permission not granted; caller handles null.
         }
         return null;
+    }
+
+    private void onRecordingDataForHeartRateAlert(@Nullable RecordingData data) {
+        if (!PreferencesUtils.isHeartRateAlertEnabled()) {
+            heartRateAlert = null;
+            return;
+        }
+
+        if (heartRateAlert == null) {
+            HeartRate max = PreferencesUtils.getHeartRateZones().getMax();
+            if (!max.isValid() || !Float.isFinite(max.getBPM()) || max.getBPM() <= 0f) {
+                return;
+            }
+            int threshold = Math.round(max.getBPM() * PreferencesUtils.getHeartRateAlertThresholdPercent() / 100f);
+            // Keep recovery below the alert threshold: at a low percentage the fixed 85% line
+            // would otherwise sit above it and let a plateau re-fire.
+            int rearm = Math.min(Math.round(max.getBPM() * 0.85f), threshold);
+            heartRateAlert = new HeartRateAlert(threshold, rearm, Duration.ofSeconds(10), Duration.ofSeconds(30));
+        }
+
+        HeartRate heartRate = data != null && data.sensorDataSet() != null && data.sensorDataSet().heartRate() != null
+                ? data.sensorDataSet().heartRate().data()
+                : null;
+
+        if (heartRateAlert.update(heartRate, Instant.now())) {
+            Toast.makeText(this, R.string.heart_rate_alert_fired, Toast.LENGTH_SHORT).show();
+            ActivityUtils.vibrate(this, Duration.ofMillis(400));
+        }
     }
 
     private void onRecordingStatusChanged(RecordingStatus status) {
