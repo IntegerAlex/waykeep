@@ -331,6 +331,26 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         startRecording(trackId, false);
     }
 
+    /**
+     * Closes the current lap and opens a new one. Recording, sensors and the
+     * current track continue; only the segment statistics and export segment split.
+     *
+     * @return whether the lap boundary was stored.
+     */
+    public boolean recordLap() {
+        if (!isRecordingAndNotPaused()) {
+            Log.w(TAG, "Ignore recordLap. Not recording or paused.");
+            return false;
+        }
+        if (!trackRecordingManager.recordLap()) {
+            return false;
+        }
+        diagnostics.event("lap_recorded", Map.of("track_id", recordingStatus.trackId().id()));
+        // Settle the UI on the new lap instead of waiting for the next periodic update.
+        recordingDataObservable.postValue(trackRecordingManager.getDataForUI());
+        return true;
+    }
+
     private void startRecording(Track.Id trackId, boolean serviceRestart) {
         updateRecordingStatus(RecordingStatus.record(trackId));
         TrackIdStorage.set(this, trackId);

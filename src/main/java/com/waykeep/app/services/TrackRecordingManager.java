@@ -313,6 +313,38 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
         reset();
     }
 
+    /**
+     * Closes the current lap and starts the next one without pausing or stopping
+     * the sensors. The end and start share one instant and position, so the lap
+     * boundary is a single point on the map. The start carries no cumulative
+     * sensor data: the next lap starts at zero distance.
+     *
+     * @return whether a lap boundary was stored.
+     */
+    synchronized boolean recordLap() {
+        if (trackId == null) {
+            return false;
+        }
+
+        TrackPoint segmentEnd = trackPointCreator.createSegmentEnd();
+        insertTrackPoint(segmentEnd, true);
+
+        TrackPoint segmentStart = createLapStart(segmentEnd, lastStoredTrackPointWithLocation);
+        insertTrackPoint(segmentStart, false);
+        return true;
+    }
+
+    @VisibleForTesting
+    static TrackPoint createLapStart(@NonNull TrackPoint segmentEnd, @Nullable TrackPoint lastStoredTrackPointWithLocation) {
+        Position position = segmentEnd.position();
+        if (!position.hasLocation()
+                && lastStoredTrackPointWithLocation != null
+                && lastStoredTrackPointWithLocation.position().hasLocation()) {
+            position = position.withCoordinates(lastStoredTrackPointWithLocation.position());
+        }
+        return TrackPoint.createSegmentStartManualWithTime(segmentEnd.getTime(), position);
+    }
+
     RecordingData getDataForUI() {
         if (trackId == null) {
             throw new RuntimeException("Requesting data if not recording should not be done.");

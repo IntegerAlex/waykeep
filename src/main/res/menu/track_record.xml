@@ -16,6 +16,12 @@ limitations under the License.
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/track_detail_lap"
+        android:icon="@drawable/ic_lap_24dp"
+        android:orderInCategory="0"
+        app:showAsAction="always"
+        android:title="@string/menu_lap" />
+    <item
         android:id="@+id/track_detail_menu_show_on_map"
         android:icon="@drawable/ic_map_24dp"
         app:showAsAction="ifRoom"

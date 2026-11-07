@@ -230,6 +230,7 @@ limitations under the License.
     <string name="recording_status_recording">Recording</string>
     <string name="track_paused_hint">Paused — GPS stays on, tap to resume</string>
     <string name="track_resumed">Resumed</string>
+    <string name="lap_recorded">Lap recorded</string>
     <string name="generic_save">Save</string>
     <string name="generic_tracks">Tracks</string>
     <string name="generic_overwrite">Overwrite</string>
@@ -318,6 +319,8 @@ limitations under the License.
     <string name="menu_import_file">Import file</string>
     <string name="menu_insert_marker">Insert marker</string>
     <string name="menu_insert_photo">Insert photo</string>
+    <string name="menu_lap">Lap</string>
+    <string name="menu_lap_content_description">Close this lap and start a new one</string>
     <string name="menu_insert_gallery_img">Insert gallery image</string>
     <string name="menu_markers">Markers</string>
     <string name="menu_search">Search</string>
