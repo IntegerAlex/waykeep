@@ -139,7 +139,9 @@ public final class DiagnosticsRecovery {
         List<TrackPoint> recovered = new ArrayList<>(rawFixes.size() + candidates.size());
         for (RawFix fix : rawFixes) {
             NavigableMap<Instant, Candidate> byTime = candidates.get(fix.coordinate());
-            Candidate matched = removeNearest(byTime, fix.position().time());
+            // Once accepted fixes exist, rejected fixes must leave candidates for sampled-fix recovery.
+            Candidate matched = fix.accepted() || firstAcceptedGpsFix == null
+                    ? removeNearest(byTime, fix.position().time()) : null;
             TrackPoint candidatePoint = matched == null ? null : matched.trackPoint();
             recovered.add(new TrackPoint(null, TrackPoint.Type.TRACKPOINT, fix.position(),
                     candidatePoint == null ? null : candidatePoint.sensorDistance(),

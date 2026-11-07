@@ -117,12 +117,12 @@ public class DiagnosticsRecoveryTest {
         RecordingDiagnostics diagnostics = new RecordingDiagnostics(store);
         RecordingDiagnostics.SessionMetadata metadata = metadata(42);
         Instant firstFixTime = Instant.parse("2026-10-30T01:44:00Z");
-        Instant rejectedFixTime = firstFixTime.plusSeconds(10);
         Instant sampledFixTime = firstFixTime.plusSeconds(35);
+        Instant rejectedFixTime = sampledFixTime.minusSeconds(1);
         diagnostics.beginSession(metadata);
         diagnostics.event("gps_fix", gpsFixAt(18.5, 73.8, 8, "accepted", firstFixTime));
         diagnostics.event("trackpoint_candidate", trackpointCandidate(firstFixTime, 18.5, 73.8, 140));
-        diagnostics.event("gps_fix", gpsFixAt(18.6, 73.8, 120, "poor_accuracy", rejectedFixTime));
+        diagnostics.event("gps_fix", gpsFixAt(18.7, 73.8, 120, "poor_accuracy", rejectedFixTime));
         diagnostics.event("trackpoint_candidate", trackpointCandidate(sampledFixTime, 18.7, 73.8, 142));
         diagnostics.close();
         assertTrue(RecordingDiagnostics.flushActive());
@@ -134,9 +134,10 @@ public class DiagnosticsRecoveryTest {
         assertEquals(3, fixes.size());
         assertEquals(18.5, fixes.get(0).position().latitude(), 0.000001);
         assertEquals(140f, fixes.get(0).heartRate().getBPM(), 0.001f);
-        assertEquals(18.6, fixes.get(1).position().latitude(), 0.000001);
+        assertEquals(18.7, fixes.get(1).position().latitude(), 0.000001);
         assertEquals(120.0, fixes.get(1).position().horizontalAccuracy().toM(), 0.001);
         assertEquals(18.7, fixes.get(2).position().latitude(), 0.000001);
+        assertEquals(sampledFixTime, fixes.get(2).getTime());
         assertEquals(500.0, fixes.get(2).position().altitude().toM(), 0.001);
         assertEquals(12.0, fixes.get(2).position().verticalAccuracy().toM(), 0.001);
         assertEquals(3.2f, fixes.get(2).position().speed().toMPS(), 0.001f);
