@@ -65,17 +65,23 @@ public class InsightSummaryTest {
     }
 
     @Test
-    public void goalOnWithCompletedWeeksUsesWeekCountCopy() {
-        InsightSummary summary = summary(RollingLoad.Trend.STEADY, GOAL, 3, true);
+    public void goalOnWithDailyStreakUsesDayCountCopy() {
+        InsightSummary summary = summary(RollingLoad.Trend.STEADY, GOAL, 3, true, 3);
 
         assertTrue(summary.hasGoal());
-        assertEquals(R.string.insight_streak_weeks, summary.streakLineRes());
-        assertEquals(3, summary.streak().completedWeeks());
+        assertEquals(R.string.insight_streak_days, summary.streakLineRes());
+        assertEquals(3, summary.dailyStreak().consecutiveDays());
     }
 
     private static InsightSummary summary(RollingLoad.Trend trend, Distance goal, int completedWeeks,
                                           boolean currentWeekMet) {
+        return summary(trend, goal, completedWeeks, currentWeekMet, 0);
+    }
+
+    private static InsightSummary summary(RollingLoad.Trend trend, Distance goal, int completedWeeks,
+                                          boolean currentWeekMet, int dailyStreakDays) {
         WeeklyStreak streak = new WeeklyStreak(completedWeeks, Distance.ofKilometer(5), currentWeekMet);
-        return new InsightSummary(Distance.ofKilometer(5), Distance.ofKilometer(5), trend, streak, goal);
+        DailyStreak dailyStreak = new DailyStreak(dailyStreakDays, dailyStreakDays > 0);
+        return new InsightSummary(Distance.ofKilometer(5), Distance.ofKilometer(5), trend, streak, dailyStreak, goal);
     }
 }

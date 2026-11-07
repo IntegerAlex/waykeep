@@ -642,8 +642,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             viewBinding.insightGoalBar.setMax(goalMeters);
             viewBinding.insightGoalBar.setProgressCompat(
                     (int) Math.min(Math.round(weekDistance.toM()), goalMeters), false);
-            viewBinding.insightStreakText.setText(summary.streak().completedWeeks() > 0
-                    ? getString(R.string.insight_streak_weeks, summary.streak().completedWeeks())
+            int streakDays = summary.dailyStreak().consecutiveDays();
+            viewBinding.insightStreakText.setText(streakDays > 0
+                    ? getString(R.string.insight_streak_days, streakDays)
                     : getString(summary.streakLineRes()));
         } else {
             viewBinding.insightGoalSection.setVisibility(View.GONE);
