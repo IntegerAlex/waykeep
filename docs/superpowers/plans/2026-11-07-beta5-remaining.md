@@ -4,7 +4,7 @@
 
 **Goal:** Finish the agreed beta.5 trust-and-live-recording work without sacrificing GPS honesty, recovery, or local-only privacy.
 
-**Architecture:** Split by ownership so worktrees can proceed independently: journal/recovery, F-Droid handoff, live recording status, GPS elevation fallback, and voice/lap scheduling. Integrate completed branches into `feature/local-diagnostics-recovery` in small batches; only one Gradle build may run at a time.
+**Architecture:** Split by ownership so worktrees can proceed independently: journal/recovery, F-Droid handoff, live recording status, GPS elevation fallback, and voice/lap scheduling. Tasks 1/2 were the first parallel wave. After Task 3 is reviewed and merged, run Tasks 4/5 concurrently in separate worktrees, then integrate them into `feature/local-diagnostics-recovery`; resolve shared-resource hunks during merge. Only one Gradle build may run at a time.
 
 **Tech Stack:** Android Java 17, existing AndroidX/Material dependencies, existing JUnit suite and Gradle product flavors.
 
