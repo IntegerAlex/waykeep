@@ -18,18 +18,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackPointIterator;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackPoint;
+import com.waykeep.app.settings.PreferencesUtils;
 
 /**
  * Renders a lightweight route thumbnail (no basemap) for a recorded track and caches it.
  * <p>
  * Reads track points on a background executor, draws the polyline onto a {@link Bitmap}, and
  * posts it back on the main thread. Results are cached in an {@link LruCache} keyed by
- * trackId + requested size, so scrolling the feed does not re-query SQLite.
+ * trackId + requested size + route color, so scrolling the feed does not re-query SQLite and
+ * a color change renders fresh thumbnails instead of reusing the previous color.
  */
 public class TrackThumbnailLoader {
 
@@ -40,7 +41,7 @@ public class TrackThumbnailLoader {
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(2);
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
     private final LruCache<String, Bitmap> cache;
-    private final int strokeColor;
+    private final Context appContext;
     private final int strokeWidthPx;
     private final int paddingPx;
 
@@ -49,9 +50,8 @@ public class TrackThumbnailLoader {
     }
 
     public TrackThumbnailLoader(@NonNull Context context) {
-        Context appContext = context.getApplicationContext();
+        this.appContext = context.getApplicationContext();
         this.contentProviderUtils = new ContentProviderUtils(appContext);
-        this.strokeColor = ContextCompat.getColor(appContext, R.color.opentracks);
 
         float density = appContext.getResources().getDisplayMetrics().density;
         this.strokeWidthPx = Math.max(2, Math.round(3 * density));
@@ -72,7 +72,9 @@ public class TrackThumbnailLoader {
             return;
         }
 
-        String key = trackId.id() + ":" + widthPx + "x" + heightPx;
+        RouteColor routeColor = PreferencesUtils.getRouteColor();
+        int strokeColor = ContextCompat.getColor(appContext, routeColor.colorRes());
+        String key = trackId.id() + ":" + widthPx + "x" + heightPx + ":" + routeColor.name();
         Bitmap cached = cache.get(key);
         if (cached != null) {
             callback.onThumbnail(cached);
@@ -80,7 +82,7 @@ public class TrackThumbnailLoader {
         }
 
         EXECUTOR.execute(() -> {
-            Bitmap bitmap = render(trackId, widthPx, heightPx);
+            Bitmap bitmap = render(trackId, widthPx, heightPx, strokeColor);
             if (bitmap != null) {
                 cache.put(key, bitmap);
             }
@@ -92,7 +94,7 @@ public class TrackThumbnailLoader {
         cache.evictAll();
     }
 
-    private Bitmap render(Track.Id trackId, int widthPx, int heightPx) {
+    private Bitmap render(Track.Id trackId, int widthPx, int heightPx, int strokeColor) {
         List<double[]> points = new ArrayList<>();
         double minLat = Double.MAX_VALUE, maxLat = -Double.MAX_VALUE;
         double minLon = Double.MAX_VALUE, maxLon = -Double.MAX_VALUE;
