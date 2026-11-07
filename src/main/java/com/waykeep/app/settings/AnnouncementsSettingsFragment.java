@@ -1,7 +1,10 @@
 package com.waykeep.app.settings;
 
+import android.text.InputType;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -29,5 +32,18 @@ public class AnnouncementsSettingsFragment extends PreferenceFragmentCompat {
 
         ListPreference voiceDistance = findPreference(getString(R.string.voice_announcement_distance_key));
         voiceDistance.setEntries(PreferencesUtils.getVoiceAnnouncementDistanceEntries());
+
+        EditTextPreference customDistance = findPreference(getString(R.string.voice_announcement_custom_distance_key));
+        customDistance.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        customDistance.setOnBindEditTextListener(editText -> editText.setInputType(
+                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED));
+        customDistance.setOnPreferenceChangeListener((preference, newValue) -> {
+            String value = (String) newValue;
+            if (PreferencesUtils.isValidCustomVoiceAnnouncementDistance(value)) {
+                return true;
+            }
+            Toast.makeText(requireContext(), R.string.settings_announcements_custom_distance_invalid, Toast.LENGTH_SHORT).show();
+            return false;
+        });
     }
 }

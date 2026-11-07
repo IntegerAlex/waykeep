@@ -449,6 +449,9 @@ limitations under the License.
     <string name="settings_night_mode_option_night_oled_dynamic">OLED friendly (DynamicColor)</string>
     <string name="settings_announcements_totaltime_frequency">Time interval</string>
     <string name="settings_announcements_distance_frequency">Lap length</string>
+    <string name="settings_announcements_custom_distance_title">Custom lap length</string>
+    <string name="settings_announcements_custom_distance_summary">Optional. Enter a distance in your selected units; clear it to use the preset above.</string>
+    <string name="settings_announcements_custom_distance_invalid">Enter a positive distance or leave this field blank.</string>
     <string name="settings_announcements_average_heart_rate">Average heart rate</string>
     <string name="settings_announcements_lap_heart_rate">Lap heart rate</string>
     <string name="settings_announcements_average_speed_pace">Average speed/pace</string>

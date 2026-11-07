@@ -220,7 +220,8 @@ public class VoiceAnnouncementManager implements SharedPreferences.OnSharedPrefe
             setFrequency(PreferencesUtils.getVoiceAnnouncementFrequency());
         }
 
-        if (PreferencesUtils.isKey(List.of(R.string.voice_announcement_distance_key, R.string.stats_units_key), key)) {
+        if (PreferencesUtils.isKey(List.of(R.string.voice_announcement_distance_key,
+                R.string.voice_announcement_custom_distance_key, R.string.stats_units_key), key)) {
             setFrequency(PreferencesUtils.getVoiceAnnouncementDistance());
         }
     }

@@ -75,6 +75,11 @@
             android:key="@string/voice_announcement_distance_key"
             android:title="@string/settings_announcements_distance_frequency"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:dialogMessage="@string/settings_announcements_custom_distance_summary"
+            android:key="@string/voice_announcement_custom_distance_key"
+            android:title="@string/settings_announcements_custom_distance_title" />
         <SwitchPreferenceCompat
             android:defaultValue="@bool/voice_announce_lap_speed_pace_default"
             android:key="@string/voice_announce_lap_speed_pace_key"
