@@ -51,6 +51,7 @@ public interface TracksColumns extends BaseColumns {
     String MAX_ALTITUDE = "altitude_max";
     String ALTITUDE_GAIN = "altitude_gain";
     String ALTITUDE_LOSS = "altitude_loss";
+    String ALTITUDE_GAIN_LOSS_SOURCE = "altitude_gain_loss_source";
 
     String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -69,7 +70,8 @@ public interface TracksColumns extends BaseColumns {
             + MIN_ALTITUDE + " FLOAT, "
             + MAX_ALTITUDE + " FLOAT, "
             + ALTITUDE_GAIN + " FLOAT, "
-            + ALTITUDE_LOSS + " FLOAT)";
+            + ALTITUDE_LOSS + " FLOAT, "
+            + ALTITUDE_GAIN_LOSS_SOURCE + " TEXT NOT NULL DEFAULT 'UNKNOWN')";
 
     String CREATE_TABLE_INDEX = "CREATE UNIQUE INDEX " + TABLE_NAME + "_" + UUID + "_index ON " + TABLE_NAME + "(" + UUID + ")";
 

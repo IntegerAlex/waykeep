@@ -32,6 +32,8 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.color.DynamicColors;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +64,7 @@ import com.waykeep.app.ui.customRecordingLayout.RecordingLayoutIO;
 public class PreferencesUtils {
 
     private final static String TAG = PreferencesUtils.class.getSimpleName();
+    private static final double MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE = 0.1;
 
     private static final int PREFERENCES_VERSION = 2;
 
@@ -101,6 +104,10 @@ public class PreferencesUtils {
 
     public static void setDefaultActivityLocalized(String newDefaultActivity) {
         setString(R.string.default_activity_key, newDefaultActivity);
+    }
+
+    public static boolean isGpsAltitudeFallbackEnabled() {
+        return getBoolean(R.string.gps_altitude_fallback_key, false);
     }
 
     /**
@@ -520,10 +527,49 @@ public class PreferencesUtils {
     /**
      * @return Result depends on getUnitSystem
      */
+    // #2400: the custom distance continues to override only the legacy/global lap length.
     public static Distance getVoiceAnnouncementDistance() {
         final float DEFAULT = Integer.parseInt(resources.getString(R.string.voice_announcement_distance_default));
-        float value = getFloat(R.string.voice_announcement_distance_key, DEFAULT);
+        float presetValue = getFloat(R.string.voice_announcement_distance_key, DEFAULT);
+        double value = resolveVoiceAnnouncementDistance(
+                getString(R.string.voice_announcement_custom_distance_key, ""), presetValue);
         return Distance.one(getUnitSystem()).multipliedBy(value);
+    }
+
+    public static Distance getVoiceAnnouncementRecentPaceDistance() {
+        String defaultValue = resources.getString(R.string.voice_announcement_recent_pace_distance_default);
+        double value = resolveVoiceAnnouncementDistance(
+                getString(R.string.voice_announcement_recent_pace_distance_key, defaultValue),
+                Double.parseDouble(defaultValue));
+        return Distance.one(getUnitSystem()).multipliedBy(value);
+    }
+
+    @Nullable
+    static Double parseCustomVoiceAnnouncementDistance(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        String text = value.trim();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        numberFormat.setGroupingUsed(false);
+        ParsePosition position = new ParsePosition(0);
+        Number parsed = numberFormat.parse(text, position);
+        if (parsed == null || position.getIndex() != text.length()) {
+            return null;
+        }
+
+        double distance = parsed.doubleValue();
+        return Double.isFinite(distance) && distance >= MIN_CUSTOM_VOICE_ANNOUNCEMENT_DISTANCE ? distance : null;
+    }
+
+    static boolean isValidCustomVoiceAnnouncementDistance(@Nullable String value) {
+        return value == null || value.isBlank() || parseCustomVoiceAnnouncementDistance(value) != null;
+    }
+
+    static double resolveVoiceAnnouncementDistance(@Nullable String customValue, double presetValue) {
+        Double customDistance = parseCustomVoiceAnnouncementDistance(customValue);
+        return customDistance == null ? presetValue : customDistance;
     }
 
     /**
@@ -544,6 +590,36 @@ public class PreferencesUtils {
             } else {
                 Distance distance = Distance.one(unitSystem).multipliedBy(Double.parseDouble(entryValues[i]));
                 entries[i] = formatter.formatDistance(distance);
+            }
+        }
+        return entries;
+    }
+
+    public static String[] getVoiceAnnouncementScheduleEntries() {
+        String[] values = resources.getStringArray(R.array.voice_announcement_schedule_values);
+        String[] entries = new String[values.length];
+        UnitSystem unitSystem = getUnitSystem();
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setDecimalPlaces(1)
+                .setThreshold(0)
+                .setUnit(unitSystem)
+                .build(resources);
+
+        for (int i = 0; i < values.length; i++) {
+            String value = values[i];
+            if ("global".equals(value)) {
+                entries[i] = resources.getString(R.string.settings_announcements_schedule_global);
+            } else if ("off".equals(value)) {
+                entries[i] = resources.getString(R.string.settings_announcements_schedule_off);
+            } else if (value.startsWith("time:")) {
+                long seconds = Long.parseLong(value.substring("time:".length()));
+                entries[i] = resources.getString(R.string.settings_announcements_schedule_every_minutes,
+                        Duration.ofSeconds(seconds).toMinutes());
+            } else {
+                double amount = Double.parseDouble(value.substring("distance:".length()));
+                Distance distance = Distance.one(unitSystem).multipliedBy(amount);
+                entries[i] = resources.getString(R.string.settings_announcements_schedule_every_distance,
+                        formatter.formatDistance(distance));
             }
         }
         return entries;

@@ -27,6 +27,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
     protected final SensorManager sensorManager;
 
     protected Aggregator<AggregatorInput, AggregatorOutput> aggregator;
+    private boolean connected;
 
     protected SensorHandler(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
@@ -55,6 +56,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
     }
 
     void disconnect() {
+        connected = false;
         if (driver == null) return;
 
         driver.disconnect();
@@ -98,6 +100,10 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
         return aggregator.getAggregatedValueWithSensorName(now);
     }
 
+    boolean isConnected() {
+        return connected;
+    }
+
     //TODO REMOVE
     @VisibleForTesting
     public void setAggregator(Aggregator<AggregatorInput, AggregatorOutput> aggregator) {
@@ -106,10 +112,12 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     public void onConnected(String sensorAddress, String sensorName) {
         SensorHandler.this.aggregator = createAggregator(sensorAddress, sensorName);
+        connected = true;
     }
 
     @Override
     public void onConnectionLost() {
+        connected = false;
         if (SensorHandler.this.aggregator == null) {
             Log.d(TAG, "Connection lost, but where not connected.");
             return;
@@ -133,6 +141,7 @@ public abstract class SensorHandler<AggregatorInput, AggregatorOutput> implement
 
     @Override
     public void onDisconnected() {
+        connected = false;
         SensorHandler.this.aggregator = null;
     }
 }

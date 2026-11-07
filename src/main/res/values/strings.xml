@@ -256,10 +256,13 @@ limitations under the License.
     <string name="gps_wait_for_signal">Waiting for GPS signal</string>
     <string name="gps_searching_satellites">Searching for satellites (%1$d/%2$d)</string>
     <string name="gps_approximate_location">Approximate location (±%1$d m)</string>
+    <string name="gps_accuracy_glance">GPS accuracy ±%1$d m</string>
     <string name="gps_status_acquiring_for">%1$s · %2$s</string>    <string name="gps_disabled_msg">GPS disabled</string>
     <string name="gps_fixed_and_ready">GPS fixed and ready</string>
     <string name="gps_recording_status">%1$s: %2$s</string>
     <string name="gps_recording_without_signal">Waykeep is recording without GPS data.</string>
+    <string name="recording_low_battery">Low battery (%1$d%%) — connect charger</string>
+    <string name="recording_status_details">%1$s · %2$s</string>
     <!-- Image -->
     <string name="image_marker_count">Marker count</string>
     <plurals name="track_list_markers">
@@ -449,6 +452,16 @@ limitations under the License.
     <string name="settings_night_mode_option_night_oled_dynamic">OLED friendly (DynamicColor)</string>
     <string name="settings_announcements_totaltime_frequency">Time interval</string>
     <string name="settings_announcements_distance_frequency">Lap length</string>
+    <string name="settings_announcements_custom_distance_title">Custom lap length</string>
+    <string name="settings_announcements_custom_distance_summary">Optional. Enter a distance in your selected units; clear it to use the preset above.</string>
+    <string name="settings_announcements_custom_distance_invalid">Enter at least 0.1 in your selected units, or leave this field blank.</string>
+    <string name="settings_announcements_schedule_title">Announcement schedule</string>
+    <string name="settings_announcements_schedule_global">Use global</string>
+    <string name="settings_announcements_schedule_off">Off</string>
+    <string name="settings_announcements_schedule_every_minutes">Every %1$d minutes</string>
+    <string name="settings_announcements_schedule_every_distance">Every %1$s</string>
+    <string name="settings_announcements_recent_pace_distance_title">Recent pace window</string>
+    <string name="settings_announcements_recent_pace_distance_summary">Distance used to calculate lap pace during time-triggered announcements, in your selected units.</string>
     <string name="settings_announcements_average_heart_rate">Average heart rate</string>
     <string name="settings_announcements_lap_heart_rate">Lap heart rate</string>
     <string name="settings_announcements_average_speed_pace">Average speed/pace</string>

@@ -177,6 +177,16 @@
                         tools:text="0" />
 
                     <TextView
+                        android:id="@+id/monthly_elevation_source"
+                        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        tools:text="GPS estimate"
+                        tools:visibility="visible" />
+
+                    <TextView
                         style="@style/TextAppearance.OpenTracks.SecondaryHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

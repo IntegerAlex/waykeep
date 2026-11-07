@@ -149,7 +149,8 @@ public record TrackPoint(
         if (altitudeGainLoss != null && lastTrackPoint.altitudeGainLoss() != null) {
             newAltitudeGainLoss = new AltitudeGainLoss(
                     altitudeGainLoss.gain_m() - lastTrackPoint.altitudeGainLoss.gain_m(),
-                    altitudeGainLoss.loss_m() - lastTrackPoint.altitudeGainLoss.loss_m());
+                    altitudeGainLoss.loss_m() - lastTrackPoint.altitudeGainLoss.loss_m(),
+                    altitudeGainLoss.source());
         }
         return new TrackPoint(
                 id,

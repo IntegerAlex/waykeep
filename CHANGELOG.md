@@ -111,6 +111,7 @@ repeated here.
   Long-pressing a day pops a summary card at the date itself (count, distance, moving
   time) that dismisses after 2.5 s.
 - **HR-zone breakdown** on the recorded stats tab (Z5…Z1, non-zero only).
+- **Custom voice-announcement lap length**: enter an interval of at least 0.1 in the selected distance units; clearing it restores the existing preset. (Codeberg #2400.)
 - Feed fixes: GPS button gives immediate optimistic feedback and never blanks;
   logo tap scrolls to top instead of exiting; added **Exit** to the overflow.
 

@@ -65,6 +65,7 @@ public class SegmentStatisticUpdater {
     private Speed maxSpeed;
     private Float totalAltitudeGain_m = null;
     private Float totalAltitudeLoss_m = null;
+    private AltitudeGainLoss.Source altitudeGainLossSource = AltitudeGainLoss.Source.UNKNOWN;
     // The average heart rate seen on this track
     private HeartRate avgHeartRate = null;
     private Power avgPower = null;
@@ -101,6 +102,7 @@ public class SegmentStatisticUpdater {
         if (statistics.altitudeGainLoss() != null) {
             totalAltitudeGain_m = statistics.altitudeGainLoss().gain_m();
             totalAltitudeLoss_m = statistics.altitudeGainLoss().loss_m();
+            altitudeGainLossSource = statistics.altitudeGainLoss().source();
         }
         avgHeartRate = statistics.avgHeartRate();
         avgPower = statistics.avgPower();
@@ -123,7 +125,7 @@ public class SegmentStatisticUpdater {
 
                 // This is calculated from the smoothed altitude, so this can actually be less than the current altitude.
                 altitudeExtremities.hasData() ? new AltitudeExtremities(altitudeExtremities.getMin(), altitudeExtremities.getMax()) : null,
-                totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m) : null,
+                totalAltitudeGain_m != null && totalAltitudeLoss_m != null ? new AltitudeGainLoss(totalAltitudeGain_m, totalAltitudeLoss_m, altitudeGainLossSource) : null,
                 avgHeartRate,
                 avgPower
         );
@@ -199,6 +201,9 @@ public class SegmentStatisticUpdater {
     public void addTotalAltitudeGainLoss(AltitudeGainLoss altitudeGainLoss) {
         if (totalAltitudeGain_m == null) {
             totalAltitudeGain_m = 0f;
+            altitudeGainLossSource = altitudeGainLoss.source();
+        } else {
+            altitudeGainLossSource = altitudeGainLossSource.merge(altitudeGainLoss.source());
         }
         totalAltitudeGain_m += altitudeGainLoss.gain_m();
 

@@ -4,6 +4,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 
 import com.waykeep.app.R;
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.DistanceFormatter;
 import com.waykeep.app.data.models.HeartRate;
 import com.waykeep.app.data.models.Speed;
@@ -15,8 +16,19 @@ import com.waykeep.app.services.RecordingData;
 import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.ui.customRecordingLayout.DataField;
 import com.waykeep.app.util.StringUtils;
+import com.waykeep.app.util.AltitudeGainLossSourceLabels;
 
 public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<StatsGenericItemBinding> {
+
+    protected final void setAltitudeGainLossSource(AltitudeGainLoss value) {
+        if (value == null) {
+            getBinding().statsDescriptionSecondary.setVisibility(android.view.View.GONE);
+        } else {
+            getBinding().statsDescriptionSecondary.setText(
+                    AltitudeGainLossSourceLabels.text(getContext(), value.source()));
+            getBinding().statsDescriptionSecondary.setVisibility(android.view.View.VISIBLE);
+        }
+    }
 
     @Override
     protected StatsGenericItemBinding createViewBinding(LayoutInflater inflater) {
@@ -266,13 +278,15 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Float gain = data.trackStatistics().altitudeGainLoss() != null ? data.trackStatistics().altitudeGainLoss().gain_m() : null;
+            AltitudeGainLoss altitudeGainLoss = data.trackStatistics().altitudeGainLoss();
+            Float gain = altitudeGainLoss != null ? altitudeGainLoss.gain_m() : null;
 
             Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), gain, unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
             getBinding().statsDescriptionMain.setText(R.string.stats_gain);
+            setAltitudeGainLossSource(altitudeGainLoss);
         }
     }
 
@@ -280,13 +294,15 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
-            Float loss = data.trackStatistics().altitudeGainLoss() != null ? data.trackStatistics().altitudeGainLoss().loss_m() : null;
+            AltitudeGainLoss altitudeGainLoss = data.trackStatistics().altitudeGainLoss();
+            Float loss = altitudeGainLoss != null ? altitudeGainLoss.loss_m() : null;
 
             Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), loss, unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
             getBinding().statsDescriptionMain.setText(R.string.stats_loss);
+            setAltitudeGainLossSource(altitudeGainLoss);
         }
     }
 

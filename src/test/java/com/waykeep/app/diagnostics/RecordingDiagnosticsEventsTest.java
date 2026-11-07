@@ -61,8 +61,8 @@ public class RecordingDiagnosticsEventsTest {
         Position position = new Position(Instant.parse("2026-10-30T01:44:00Z"),
                 18.5, 73.8, Distance.of(8), Altitude.WGS84.of(500), Distance.of(12), 90f, Speed.of(3.2));
         TrackPoint point = new TrackPoint(null, TrackPoint.Type.TRACKPOINT, position,
-                Distance.of(100), HeartRate.of(140), Temperature.of(23), Cadence.of(80),
-                Power.of(200), new AltitudeGainLoss(5, 2));
+                 Distance.of(100), HeartRate.of(140), Temperature.of(23), Cadence.of(80),
+                 Power.of(200), new AltitudeGainLoss(5, 2, AltitudeGainLoss.Source.GPS_ESTIMATE));
 
         Map<String, Object> fields = RecordingDiagnosticEvents.trackPoint(point);
 
@@ -72,6 +72,23 @@ public class RecordingDiagnosticsEventsTest {
         assertEquals(80f, (Float) fields.get("cadence_rpm"), 0.01f);
         assertEquals(200f, (Float) fields.get("power_watts"), 0.01f);
         assertEquals(5f, (Float) fields.get("altitude_gain_m"), 0.01f);
+        assertEquals("GPS_ESTIMATE", fields.get("altitude_gain_loss_source"));
+    }
+
+    @Test
+    public void trackPointDecisionOmitsCandidatePositionAndSensorFields() {
+        Position position = new Position(Instant.parse("2026-10-30T01:44:00Z"),
+                18.5, 73.8, Distance.of(8), Altitude.WGS84.of(500), Distance.of(12), 90f, Speed.of(3.2));
+        TrackPoint point = new TrackPoint(null, TrackPoint.Type.TRACKPOINT, position,
+                Distance.of(100), HeartRate.of(140), Temperature.of(23), Cadence.of(80),
+                Power.of(200), new AltitudeGainLoss(5, 2));
+
+        Map<String, Object> fields = RecordingDiagnosticEvents.trackPointDecision(point, "below_distance_interval");
+
+        assertEquals(Map.of(
+                "time", "2026-10-30T01:44:00Z",
+                "type", "TRACKPOINT",
+                "decision", "below_distance_interval"), fields);
     }
 
     @Test

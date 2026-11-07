@@ -35,6 +35,11 @@ public class AggregatedStatisticsTest {
     private final Context context = ApplicationProvider.getApplicationContext();
 
     private static void createTrack(Context context, Distance totalDistance, Duration totalTime, String activityTypeLocalized) {
+        createTrack(context, totalDistance, totalTime, activityTypeLocalized, AltitudeGainLoss.Source.UNKNOWN);
+    }
+
+    private static void createTrack(Context context, Distance totalDistance, Duration totalTime,
+                                    String activityTypeLocalized, AltitudeGainLoss.Source source) {
         Track track = new Track(
                 null,
                 UUID.randomUUID(), //TODO Use constant UUID
@@ -51,7 +56,7 @@ public class AggregatedStatisticsTest {
                 totalDistance,
                 Speed.of(50),
                 new AltitudeExtremities(1250, 1250),
-                new AltitudeGainLoss(50, 50),
+                new AltitudeGainLoss(50, 50, source),
                 null,
                 null
         ));
@@ -74,6 +79,17 @@ public class AggregatedStatisticsTest {
     }
 
     @Test
+    public void testAggregateMergesGpsAndBarometerSources() {
+        String biking = context.getString(R.string.activity_type_biking);
+        createTrack(context, Distance.ofKilometer(10), Duration.ofMinutes(40), biking, AltitudeGainLoss.Source.BAROMETER);
+        createTrack(context, Distance.ofKilometer(10), Duration.ofMinutes(40), biking, AltitudeGainLoss.Source.GPS_ESTIMATE);
+
+        List<AggregatedStatistic> result = new ContentProviderUtils(context).getAggregatedStatisticsForTracks(new TrackSelection());
+
+        assertEquals(AltitudeGainLoss.Source.MIXED, result.get(0).altitudeGainLossSource());
+    }
+
+    @Test
     public void testAggregate_oneBikingTrack() {
         // given
         Distance totalDistance = Distance.ofKilometer(10);
@@ -87,7 +103,7 @@ public class AggregatedStatisticsTest {
 
         // then
         assertEquals(List.of(
-                new AggregatedStatistic("biking", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50))
+                new AggregatedStatistic("biking", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50), 0f)
         ), result);
     }
 
@@ -106,7 +122,7 @@ public class AggregatedStatisticsTest {
 
         // then
         assertEquals(List.of(
-                new AggregatedStatistic("biking", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50))
+                new AggregatedStatistic("biking", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50), 0f)
         ), result);
     }
 
@@ -137,10 +153,10 @@ public class AggregatedStatisticsTest {
 
         // then
         assertEquals(List.of(
-                new AggregatedStatistic("biking", 5, Duration.ofMinutes(200), Distance.ofKilometer(50), Speed.of(50)),
-                new AggregatedStatistic("walking", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50)),
-                new AggregatedStatistic("running", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50)),
-                new AggregatedStatistic("driving", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50))
+                new AggregatedStatistic("biking", 5, Duration.ofMinutes(200), Distance.ofKilometer(50), Speed.of(50), 0f),
+                new AggregatedStatistic("walking", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50), 0f),
+                new AggregatedStatistic("running", 2, Duration.ofMinutes(80), Distance.ofKilometer(20), Speed.of(50), 0f),
+                new AggregatedStatistic("driving", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50), 0f)
         ), result);
     }  
     
@@ -175,8 +191,8 @@ public class AggregatedStatisticsTest {
 
         // then
         assertEquals(List.of(
-                new AggregatedStatistic("biking", 5, Duration.ofMinutes(200), Distance.ofKilometer(50), Speed.of(50)),
-                new AggregatedStatistic("driving", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50))
+                new AggregatedStatistic("biking", 5, Duration.ofMinutes(200), Distance.ofKilometer(50), Speed.of(50), 0f),
+                new AggregatedStatistic("driving", 1, Duration.ofMinutes(40), Distance.ofKilometer(10), Speed.of(50), 0f)
         ), result);
     }
 }

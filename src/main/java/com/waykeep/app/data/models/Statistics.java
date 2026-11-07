@@ -114,7 +114,8 @@ public record Statistics(
         if (altitudeGainLoss != null && other.altitudeGainLoss != null) {
             newAltitudeGainLoss = new AltitudeGainLoss(
                     altitudeGainLoss.gain_m() + other.altitudeGainLoss.gain_m(),
-                    altitudeGainLoss.loss_m() + other.altitudeGainLoss.loss_m()
+                    altitudeGainLoss.loss_m() + other.altitudeGainLoss.loss_m(),
+                    altitudeGainLoss.source().merge(other.altitudeGainLoss.source())
             );
         } else {
             newAltitudeGainLoss = altitudeGainLoss != null ? altitudeGainLoss : other.altitudeGainLoss;

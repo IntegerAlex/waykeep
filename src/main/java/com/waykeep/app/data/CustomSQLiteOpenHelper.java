@@ -29,7 +29,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 42;
+    private static final int DATABASE_VERSION = 43;
 
     private final Context context;
 
@@ -86,6 +86,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 40 -> upgradeFrom39to40(db);
                 case 41 -> upgradeFrom40to41(db);
                 case 42 -> upgradeFrom41to42(db);
+                case 43 -> upgradeFrom42to43(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -96,6 +97,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int toVersion = oldVersion - 1; toVersion >= newVersion; toVersion--) {
             Log.i(TAG, "Downgrade from " + oldVersion + " to " + toVersion);
             switch (toVersion) {
+                case 42 -> downgradeFrom43to42(db);
                 case 23 -> downgradeFrom24to23(db);
                 case 24 -> downgradeFrom25to24(db);
                 case 25 -> downgradeFrom26to25(db);
@@ -794,4 +796,27 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
     }
+
+    private void upgradeFrom42to43(SQLiteDatabase db) {
+        db.beginTransaction();
+        addColumnIfMissing(db, TracksColumns.TABLE_NAME, TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE);
+        addColumnIfMissing(db, TrackPointsColumns.TABLE_NAME, TrackPointsColumns.ALTITUDE_GAIN_LOSS_SOURCE);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void downgradeFrom43to42(SQLiteDatabase db) {
+        // Keep additive provenance columns; version 42 ignores unknown columns.
+    }
+
+    private static void addColumnIfMissing(SQLiteDatabase db, String table, String column) {
+        try (Cursor cursor = db.rawQuery("PRAGMA table_info(" + table + ")", null)) {
+            int nameIndex = cursor.getColumnIndexOrThrow("name");
+            while (cursor.moveToNext()) {
+                if (column.equals(cursor.getString(nameIndex))) return;
+            }
+        }
+        db.execSQL("ALTER TABLE " + table + " ADD COLUMN " + column + " TEXT NOT NULL DEFAULT 'UNKNOWN'");
+    }
+
 }

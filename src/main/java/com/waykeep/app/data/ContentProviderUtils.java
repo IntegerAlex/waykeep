@@ -101,6 +101,7 @@ public class ContentProviderUtils {
         int maxAltitudeIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAX_ALTITUDE);
         int altitudeGainIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN);
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_LOSS);
+        int altitudeGainLossSourceIndex = cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE);
 
         Statistics trackStatistics = new Statistics(
                 Instant.ofEpochMilli(cursor.getLong(startTimeIndex)),
@@ -112,7 +113,10 @@ public class ContentProviderUtils {
 
                 Speed.of(cursor.getFloat(maxSpeedIndex)),
                 cursor.isNull(minAltitudeIndex) || cursor.isNull(maxAltitudeIndex) ? null : new AltitudeExtremities(cursor.getFloat(minAltitudeIndex), cursor.getFloat(maxAltitudeIndex)),
-                cursor.isNull(altitudeGainIndex) || cursor.isNull(altitudeLossIndex) ? null : new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex)),
+                cursor.isNull(altitudeGainIndex) || cursor.isNull(altitudeLossIndex) ? null : new AltitudeGainLoss(
+                        cursor.getFloat(altitudeGainIndex),
+                        cursor.getFloat(altitudeLossIndex),
+                        AltitudeGainLoss.Source.fromDatabase(cursor.getString(altitudeGainLossSourceIndex))),
 
                 null,
                 null
@@ -296,6 +300,7 @@ public class ContentProviderUtils {
         if (trackStatistics.altitudeGainLoss() != null) {
             values.put(TracksColumns.ALTITUDE_GAIN, trackStatistics.altitudeGainLoss().gain_m());
             values.put(TracksColumns.ALTITUDE_LOSS, trackStatistics.altitudeGainLoss().loss_m());
+            values.put(TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE, trackStatistics.altitudeGainLoss().source().name());
         }
         return values;
     }
@@ -541,10 +546,14 @@ public class ContentProviderUtils {
         int sensorPowerIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.SENSOR_POWER);
         int altitudeGainIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_GAIN);
         int altitudeLossIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_LOSS);
+        int altitudeGainLossSourceIndex = cursor.getColumnIndexOrThrow(TrackPointsColumns.ALTITUDE_GAIN_LOSS_SOURCE);
 
         AltitudeGainLoss altitudeGainLoss = null;
         if (!cursor.isNull(altitudeGainIndex) && !cursor.isNull(altitudeLossIndex)) {
-            altitudeGainLoss = new AltitudeGainLoss(cursor.getFloat(altitudeGainIndex), cursor.getFloat(altitudeLossIndex));
+            altitudeGainLoss = new AltitudeGainLoss(
+                    cursor.getFloat(altitudeGainIndex),
+                    cursor.getFloat(altitudeLossIndex),
+                    AltitudeGainLoss.Source.fromDatabase(cursor.getString(altitudeGainLossSourceIndex)));
         }
 
         return new TrackPoint(
@@ -667,6 +676,7 @@ public class ContentProviderUtils {
         if (trackPoint.altitudeGainLoss() != null) {
             values.put(TrackPointsColumns.ALTITUDE_GAIN, trackPoint.altitudeGainLoss().gain_m());
             values.put(TrackPointsColumns.ALTITUDE_LOSS, trackPoint.altitudeGainLoss().loss_m());
+            values.put(TrackPointsColumns.ALTITUDE_GAIN_LOSS_SOURCE, trackPoint.altitudeGainLoss().source().name());
         }
         return values;
     }
@@ -772,7 +782,9 @@ public class ContentProviderUtils {
                         Duration.ofMillis(cursor.getLong(cursor.getColumnIndexOrThrow(TracksColumns.MOVINGTIME))),
                         Distance.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE))),
                         Speed.of(cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED))),
-                        cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN))
+                        cursor.getFloat(cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN)),
+                        AltitudeGainLoss.Source.mergeDatabaseValues(cursor.getString(
+                                cursor.getColumnIndexOrThrow(TracksColumns.ALTITUDE_GAIN_LOSS_SOURCE)))
                 ));
             }
             return aggregatedStatistics;
