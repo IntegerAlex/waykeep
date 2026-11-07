@@ -60,9 +60,9 @@
 
 **Files:** GPS altitude aggregation/recording path; `AltitudeGainLoss`/track models; `TrackPointsColumns`, `TracksColumns`, `CustomSQLiteOpenHelper`, and `ContentProviderUtils`; recorded-statistics UI; settings/resources; migration and JVM tests.
 
-**Requirements:** Preserve barometer-derived gain/loss whenever barometer data exists. Add an explicit opt-in (default off) for approximate GPS-derived gain/loss when barometer data is unavailable. Ignore fixes with missing or >20 m vertical accuracy; use a five-fix median window and a 3 m gain/loss deadband. Persist whether gain/loss is barometer, GPS estimate, mixed, or unknown through the track/trackpoint schema so historical statistics are labeled correctly. Existing rows and imported tracks without provenance remain unknown, never labeled as GPS or barometer by guesswork.
+**Requirements:** Preserve barometer-derived gain/loss whenever barometer data exists. Add an explicit opt-in (default off) for approximate GPS-derived gain/loss when barometer data is unavailable. Ignore fixes with missing or >20 m vertical accuracy; use a five-fix median window and a 3 m gain/loss deadband. Extend `AltitudeGainLoss` with source values `BAROMETER`, `GPS_ESTIMATE`, `MIXED`, and `UNKNOWN`. Migrate SQLite schema v42 to v43 by adding nullable `altitude_gain_source` text columns to `tracks` and `trackpoints`; existing rows and imported tracks without provenance remain unknown, never labeled as GPS or barometer by guesswork. Recorded and aggregated statistics must display `GPS estimate` for GPS-derived gain/loss.
 
-**Tests:** No-barometer fallback, barometer precedence, missing/poor vertical accuracy, smoothing/deadband, source propagation through track aggregation/readback, and migration of an existing schema with unchanged values.
+**Tests:** No-barometer fallback, barometer precedence, missing/poor vertical accuracy, smoothing/deadband, source propagation through track aggregation/readback, and a migration test opening a v42 database with unchanged track/point values and NULL source columns.
 
 ### Task 5: Per-stat voice schedules and recent-interval pace
 
