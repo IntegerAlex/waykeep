@@ -24,6 +24,13 @@
             app:key="@string/stats_custom_layout_key"
             app:title="@string/settings_recording_customize_layout_title" />
 
+        <EditTextPreference
+            android:defaultValue="@string/settings_weekly_goal_default"
+            android:inputType="number"
+            android:key="@string/settings_weekly_goal_key"
+            android:summary="@string/settings_weekly_goal_summary"
+            android:title="@string/settings_weekly_goal_title" />
+
         <com.waykeep.app.settings.ResetDialogPreference
             android:dialogMessage="@string/settings_layout_reset_confirm_message"
             android:dialogTitle="@string/settings_layout_reset_confirm_title"

@@ -93,6 +93,9 @@
 
     <string name="recording_distance_interval_key" translatable="false">recordingDistanceInterval</string>
     <string name="recording_distance_interval_default" translatable="false">10</string>
+
+    <string name="settings_weekly_goal_key" translatable="false">weeklyGoalDistance</string>
+    <string name="settings_weekly_goal_default" translatable="false">20000</string>
     <string-array name="recording_distance_interval_values">
         <item>1</item>
         <item>2</item>

@@ -57,6 +57,17 @@ public class PreferencesUtilsTest {
     }
 
     @Test
+    public void weeklyGoalIsOffOrAtLeastOneKilometre() {
+        assertTrue(PreferencesUtils.isValidWeeklyGoalMeters("0"));
+        assertTrue(PreferencesUtils.isValidWeeklyGoalMeters("1000"));
+        assertTrue(PreferencesUtils.isValidWeeklyGoalMeters("20000"));
+        assertFalse(PreferencesUtils.isValidWeeklyGoalMeters("999"));
+        assertFalse(PreferencesUtils.isValidWeeklyGoalMeters("-1"));
+        assertFalse(PreferencesUtils.isValidWeeklyGoalMeters("abc"));
+        assertFalse(PreferencesUtils.isValidWeeklyGoalMeters(null));
+    }
+
+    @Test
     public void parsesLocaleDecimalSeparatorAndRestoresDefaultLocale() {
         Locale original = Locale.getDefault();
         try {
