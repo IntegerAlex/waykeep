@@ -20,7 +20,7 @@ For F-Droid the build status can be found [here](https://monitor.f-droid.org/bui
 
 Waykeep is not listed on F-Droid. The local handoff draft is [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml); official app metadata belongs in the separate [fdroiddata repository](https://gitlab.com/fdroid/fdroiddata), not this repository. After review, copy the draft there as `metadata/com.waykeep.app.yml` and follow fdroiddata's contribution process. The local file is not a submission or a listing.
 
-The draft targets the released `v1.0.0-beta.4` tag (packaged version name `v1.0.0-beta.4irreproducible`, `versionCode` `6888`, commit `ce4bc1722306ccc6f69a420a520758fd991c7336`) and uses the English Fastlane metadata as its starting point. In fdroiddata, `gradle: - irreproducible` selects the `irreproducible` release flavor; the corresponding Gradle task is `assembleIrreproducibleRelease` (locally: `./gradlew :assembleIrreproducibleRelease`). Recheck the version, tag, commit, and metadata when preparing a later release.
+The draft targets the released `v1.0.0-beta.5` tag (packaged version name `v1.0.0-beta.5irreproducible`, `versionCode` `6889`, commit `25f4dfefea038e298101f206135973f61271de51`) and uses the English Fastlane metadata as its starting point. In fdroiddata, `gradle: - irreproducible` selects the `irreproducible` release flavor; the corresponding Gradle task is `assembleIrreproducibleRelease` (locally: `./gradlew :assembleIrreproducibleRelease`). Recheck the version, tag, commit, and metadata when preparing a later release.
 
 ## Reproducible builds
 

@@ -29,10 +29,10 @@ Description: |-
 RepoType: git
 Repo: https://github.com/IntegerAlex/waykeep
 Builds:
-  - versionName: v1.0.0-beta.4irreproducible
-    versionCode: 6888
-    commit: ce4bc1722306ccc6f69a420a520758fd991c7336
+  - versionName: v1.0.0-beta.5irreproducible
+    versionCode: 6889
+    commit: 25f4dfefea038e298101f206135973f61271de51
     gradle:
       - irreproducible
-CurrentVersion: v1.0.0-beta.4irreproducible
-CurrentVersionCode: 6888
+CurrentVersion: v1.0.0-beta.5irreproducible
+CurrentVersionCode: 6889
