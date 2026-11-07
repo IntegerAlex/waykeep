@@ -1,5 +1,7 @@
 package com.waykeep.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -28,6 +30,11 @@ public class AboutActivity extends AbstractActivity {
         setSupportActionBar(viewBinding.bottomAppBarLayout.bottomAppBar);
 
         ViewUtils.makeClickableLinks(findViewById(android.R.id.content));
+
+        // The autoLink span on this TextView does not take touches, so bind the whole line.
+        viewBinding.aboutMaintainer.setMovementMethod(null);
+        viewBinding.aboutMaintainer.setOnClickListener(v -> startActivity(
+                new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.maintainer_url)))));
     }
 
     @NonNull

@@ -18,6 +18,8 @@ limitations under the License.
     <string name="about_description"><i>Waykeep</i> is a sport tracking application that completely respects your privacy.</string>
     <string name="app_tagline">Your routes, on your phone.</string>
     <string name="about_url">Project webpage: <a href="%1$s">%1$s</a></string>
+    <string name="about_maintainer">Forked and maintained by Akshat Kotpalliwar\nhttps://www.akshatkotpalliwar.in/</string>
+    <string name="maintainer_url" translatable="false">https://www.akshatkotpalliwar.in/</string>
     <string name="about_version_name">Version name: %1$s</string>
     <string name="about_version_code">Version code: %1$d</string>
     <string name="about_history">Waykeep is based on <a href="https://codeberg.org/OpenTracksApp/OpenTracks"><i>OpenTracks</i></a>, an open-source sport tracker, itself a fork of <a href="https://code.google.com/archive/p/mytracks/"><i>Google\'s MyTracks</i></a> (discontinued in 2016).</string>
