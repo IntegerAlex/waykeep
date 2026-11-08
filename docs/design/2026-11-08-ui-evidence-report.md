@@ -21,9 +21,9 @@ Screenshots are local evidence in `/tmp/opencode/`; they are not committed becau
 | F4 | fixed | `icon_badge_surface` has a dark night value, so the themed glyph stays visible. |
 | F5 | fixed | Tile attribution is drawn with a wrapped `StaticLayout` and a scrim. |
 | F6 | fixed (labels) | Both icon buttons now have content descriptions and tooltips; visible text labels remain an open design question. |
-| F7 | open | Percentile pace scale and x-axis title placement are not changed yet. |
+| F7 | fixed | Pace/speed use a 5th–95th percentile axis; clipped outliers get edge triangles; the x-axis unit is muted and smaller than the ticks. |
 | F8 | fixed | Auto-generated titles use `DateUtils.formatDateTime` instead of the ISO timestamp. |
-| F9 | partial | The repeated interval gain/loss column is hidden when no interval has data; elevation min/max is still not shown on Stats. |
+| F9 | partial | The repeated interval gain/loss column is hidden when no interval has data; elevation min/max is still not shown on Stats, and the recording screen still shows its default Gain/Loss cells as dashes. |
 | F10 | fixed | RecyclerView bottom padding is computed from the bottom bar plus half the FAB height. |
 
 ---
