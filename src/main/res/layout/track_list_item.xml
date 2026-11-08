@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Home log row: 64dp route index on the left, name + context stacked beside it, distance and
-  duration right-aligned in mono. Pace, elevation, description and the marker chip stay in the
-  layout (gone) only so the generated binding keeps its shape; the adapter no longer fills them.
-  Rows are separated by the hairline at the bottom, not by cards.
+  Home log row, route-first: an 88dp route tile on the left, a small tracked date and context
+  line beside it, and the distance as the dominant number on the right. The hairline is drawn
+  by the list's ItemDecoration so it follows the final row height at large font scales.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="76dp"
-    android:paddingStart="16dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="10dp">
+    android:minHeight="112dp"
+    android:paddingStart="20dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="12dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/track_list_item_thumb_card"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        app:cardCornerRadius="12dp"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,90 +37,94 @@
 
     <ImageView
         android:id="@+id/track_list_item_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:background="@drawable/bg_icon_circle"
         android:contentDescription="@string/image_track"
-        android:padding="3dp"
+        android:padding="4dp"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@id/track_list_item_thumb_card"
         app:layout_constraintEnd_toEndOf="@id/track_list_item_thumb_card"
         tools:src="@drawable/ic_activity_bike_24dp" />
 
-    <TextView
-        android:id="@+id/track_list_item_name"
-        style="?attr/textAppearanceTitleMedium"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="?attr/colorOnSurface"
-        app:layout_constraintEnd_toStartOf="@id/track_list_item_distance"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_thumb_card"
-        app:layout_constraintTop_toTopOf="@id/track_list_item_thumb_card"
-        tools:text="Evening Ride" />
-
-    <TextView
-        android:id="@+id/track_list_item_distance"
-        style="@style/TextAppearance.OpenTracks.RowStats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:gravity="end"
-        app:layout_constraintBaseline_toBaselineOf="@id/track_list_item_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_name"
-        tools:text="12.40 km" />
-
     <LinearLayout
-        android:id="@+id/track_list_item_context_row"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@id/track_list_item_duration"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_name">
-
-        <ImageView
-            android:id="@+id/track_list_item_row_dot"
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_status_dot"
-            android:visibility="gone"
-            tools:visibility="visible" />
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/track_list_item_thumb_card"
+        app:layout_constraintEnd_toStartOf="@id/track_list_item_numbers"
+        app:layout_constraintStart_toEndOf="@id/track_list_item_thumb_card"
+        app:layout_constraintTop_toTopOf="@id/track_list_item_thumb_card">
 
         <TextView
-            android:id="@+id/track_list_item_date"
-            style="@style/TextAppearance.OpenTracks.RowContext"
-            android:layout_width="0dp"
+            android:id="@+id/track_list_item_name"
+            style="@style/TextAppearance.OpenTracks.RowDate"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_weight="1"
-            android:gravity="start"
-            tools:text="Today 07:13 · Road cycling · 3 markers" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="08 NOV 26" />
+
+        <LinearLayout
+            android:id="@+id/track_list_item_context_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/track_list_item_row_dot"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_status_dot"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/track_list_item_date"
+                style="@style/TextAppearance.OpenTracks.RowContext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                tools:text="Today 07:47 · street running" />
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/track_list_item_duration"
-        style="@style/TextAppearance.OpenTracks.RowStats"
+    <LinearLayout
+        android:id="@+id/track_list_item_numbers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_context_row"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/track_list_item_thumb_card"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/track_list_item_context_row"
-        app:layout_constraintTop_toTopOf="@id/track_list_item_context_row"
-        tools:text="1:02:33" />
+        app:layout_constraintTop_toTopOf="@id/track_list_item_thumb_card">
 
-    <!-- The hairline is drawn by the list's ItemDecoration so it follows the final row height,
-         including a context line that wraps at large font scales. -->
+        <TextView
+            android:id="@+id/track_list_item_distance"
+            style="@style/TextAppearance.OpenTracks.RowDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            tools:text="3.24 km" />
 
-    <!-- Pace, elevation, description, the marker chip, the separate time view and the activity
-         label left the row: the detail screen owns that data now. -->
+        <TextView
+            android:id="@+id/track_list_item_duration"
+            style="@style/TextAppearance.OpenTracks.RowStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="end"
+            tools:text="26:58" />
+    </LinearLayout>
+
+    <!-- Pace, elevation, description, the marker chip and the separate time view left the row:
+         the detail screen owns that data now. -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,6 +75,17 @@ limitations under the License.
     <color name="icon_badge_surface">#E6FFFFFF</color>
     <color name="hero_scrim_end">#B3000000</color>
 
+    <!-- "Track at dusk" surface system: cool bone in daylight, asphalt after dark. -->
+    <color name="track_surface">#F1F4F1</color>
+    <color name="track_surface_low">#E8EDE9</color>
+    <color name="track_surface_container">#DFE6E1</color>
+    <color name="track_surface_high">#D5DDD8</color>
+    <color name="track_ink">#0B0E0D</color>
+    <color name="track_ink_muted">#46524D</color>
+    <color name="track_outline">#6F7C76</color>
+    <color name="track_outline_variant">#C3CCC7</color>
+    <color name="track_lane">#C9D3CD</color>
+
     <color name="heart_rate_zone_textcolor_5">#FF0000</color>
     <color name="heart_rate_zone_textcolor_4">#FFBD04</color>
     <color name="heart_rate_zone_textcolor_3">#6ACC2B</color>

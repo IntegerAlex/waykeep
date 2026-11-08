@@ -33,8 +33,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.google.android.material.tabs.TabLayoutMediator;
-
 import com.waykeep.app.chart.ChartFragment;
 import com.waykeep.app.chart.TrackDataHubInterface;
 import com.waykeep.app.data.TrackDataHub;
@@ -51,6 +49,7 @@ import com.waykeep.app.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import com.waykeep.app.ui.intervals.IntervalsFragment;
 import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
+import com.waykeep.app.ui.util.DetailTabs;
 import com.waykeep.app.util.IntentUtils;
 
 /**
@@ -93,13 +92,11 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
 
         CustomFragmentPagerAdapter pagerAdapter = new CustomFragmentPagerAdapter(this);
         viewBinding.trackDetailActivityViewPager.setAdapter(pagerAdapter);
-        new TabLayoutMediator(viewBinding.trackDetailActivityTablayout, viewBinding.trackDetailActivityViewPager,
-                (tab, position) -> tab.setText(pagerAdapter.getPageTitle(position))).attach();
-        if (savedInstanceState != null) {
-            viewBinding.trackDetailActivityViewPager.setCurrentItem(savedInstanceState.getInt(CURRENT_TAB_TAG_KEY));
-        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_MAP_TAB, false)) {
-            viewBinding.trackDetailActivityViewPager.setCurrentItem(MAP_TAB_POSITION);
-        }
+        int initialTab = savedInstanceState != null
+                ? savedInstanceState.getInt(CURRENT_TAB_TAG_KEY)
+                : (getIntent().getBooleanExtra(EXTRA_OPEN_MAP_TAB, false) ? MAP_TAB_POSITION : 0);
+        DetailTabs.bind(viewBinding.trackDetailActivityTabs,
+                viewBinding.trackDetailActivityViewPager, initialTab);
 
         trackRecordingServiceConnection = new TrackRecordingServiceConnection(bindCallback);
 
@@ -315,17 +312,6 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
         @Override
         public int getItemCount() {
             return 4;
-        }
-
-        public CharSequence getPageTitle(int position) {
-            return switch (position) {
-                case 0 -> getString(R.string.track_detail_stats_tab);
-                case 1 -> getString(R.string.track_detail_intervals_tab);
-                case 2 -> getString(R.string.track_detail_chart_tab);
-                case 3 -> getString(R.string.track_detail_map_tab);
-                default ->
-                        throw new RuntimeException("There isn't Fragment associated with the position: " + position);
-            };
         }
     }
 

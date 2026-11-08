@@ -15,6 +15,38 @@ limitations under the License.
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Icon plus visible label, so the bottom actions are readable without guessing. -->
+    <style name="BottomAction" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="iconGravity">textTop</item>
+        <item name="iconPadding">2dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconTint">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Chart metric chips use the same checked language as the detail segmented control. -->
+    <style name="ChartMetricChip" parent="Widget.Material3.Chip.Filter">
+        <item name="android:textColor">@color/tab_toggle_text</item>
+        <item name="android:textSize">13sp</item>
+        <item name="chipBackgroundColor">@color/tab_toggle_background</item>
+        <item name="chipStrokeColor">?attr/colorOutline</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">20dp</item>
+        <item name="chipMinHeight">40dp</item>
+        <item name="checkedIconTint">?attr/colorOnPrimary</item>
+    </style>
+
     <!-- bottom buttons bar -->
     <style name="BottomButton" parent="Widget.Material3Expressive.Button.TextButton">
         <item name="android:layout_height">wrap_content</item>

@@ -299,22 +299,15 @@
             app:layout_constraintEnd_toStartOf="@id/guideline3"
             tools:text="km/h" />
 
-        <!-- Barrier -->
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/stats_speed_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="stats_max_speed_value,stats_moving_speed_value,stats_average_speed_value" />
-
-        <!-- Horizontal line -->
+        <!-- Horizontal line. Anchored to the last value in the taller column, so it follows a
+             label that wraps at large font scales instead of a barrier's stale first measure. -->
         <View
             android:id="@+id/stats_altitude_horizontal_line"
             style="@style/HorizontalLine"
             android:layout_margin="8dp"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@id/stats_speed_barrier" />
+            app:layout_constraintTop_toBottomOf="@id/stats_average_speed_value" />
 
         <!-- Altitude gain and loss -->
         <androidx.constraintlayout.widget.Group
@@ -680,21 +673,8 @@
             app:layout_constraintStart_toEndOf="@id/stats_avg_power_value"
             app:layout_constraintEnd_toStartOf="@id/guideline3" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/stats_power_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="stats_max_power_value,stats_avg_power_value" />
-
-        <!-- Horizontal Line -->
-        <View
-            android:id="@+id/stats_end_horizontal_line"
-            style="@style/HorizontalLine"
-            android:layout_margin="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@id/stats_power_barrier" />
+        <!-- No closing rule: the last section ends the screen. A rule anchored to an optional
+             sensor barrier crossed the pace values when that sensor was absent. -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

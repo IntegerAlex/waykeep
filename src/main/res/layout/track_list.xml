@@ -26,7 +26,7 @@ limitations under the License.
         <com.google.android.material.search.SearchBar
             android:id="@+id/track_list_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             app:layout_behavior="@string/searchbar_scrolling_view_behavior"
             app:menu="@menu/track_list"
             app:navigationIcon="@drawable/ic_logo_color_24dp" />
@@ -80,120 +80,98 @@ limitations under the License.
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:id="@+id/insight_hero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardElevation="0dp">
+            android:background="?attr/colorSurfaceContainerLow"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/insight_week_distance_label"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/insight_week_distance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/insight_week_average_label"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/insight_week_average"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
-                    </LinearLayout>
-                </LinearLayout>
+                android:baselineAligned="true"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/insight_trend"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+                    android:id="@+id/insight_week_distance"
+                    style="@style/TextAppearance.OpenTracks.ScoreValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
 
                 <LinearLayout
-                    android:id="@+id/insight_goal_section"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:gravity="end"
                     android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/insight_week_distance_label"
+                        android:textAppearance="@style/TextAppearance.OpenTracks.LaneLabel" />
 
                     <TextView
                         android:id="@+id/insight_goal_progress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/insight_goal_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:contentDescription="@string/insight_goal_progress_description"
-                        app:trackThickness="6dp" />
-
-                    <TextView
-                        android:id="@+id/insight_streak_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textAppearance="?attr/textAppearanceTitleSmall" />
+                        android:textAppearance="@style/TextAppearance.OpenTracks.LaneLabel" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <com.waykeep.app.ui.insights.WeekLaneView
+                android:id="@+id/insight_lane"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:contentDescription="@string/insight_goal_progress_description" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/insight_set_goal_hint"
-                    android:layout_width="match_parent"
+                    android:id="@+id/insight_week_average"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/insight_set_goal_hint"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:visibility="gone" />
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.OpenTracks.MetaValue" />
+
+                <TextView
+                    android:id="@+id/insight_streak_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.OpenTracks.MetaValue" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/insight_trend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/insight_set_goal_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/insight_set_goal_hint"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView
@@ -259,34 +237,28 @@ limitations under the License.
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/aggregated_stats_button"
-            style="@style/Widget.Material3Expressive.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/BottomAction"
             android:contentDescription="@string/menu_aggregated_statistics"
+            android:text="@string/action_stats"
             android:tooltipText="@string/menu_aggregated_statistics"
-            app:icon="@drawable/ic_statistics_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            app:icon="@drawable/ic_statistics_24dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sensor_start_button"
-            style="@style/Widget.Material3Expressive.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            style="@style/BottomAction"
+            android:layout_marginStart="4dp"
             android:contentDescription="@string/action_start_gps"
+            android:text="@string/action_gps"
             android:tooltipText="@string/action_start_gps"
-            app:icon="@drawable/ic_gps_off_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            app:icon="@drawable/ic_gps_off_24dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/suggested_routes_button"
-            style="@style/Widget.Material3Expressive.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            style="@style/BottomAction"
+            android:layout_marginStart="4dp"
             android:contentDescription="@string/suggested_routes_title"
-            app:icon="@drawable/ic_route_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            android:text="@string/action_routes"
+            app:icon="@drawable/ic_route_24dp" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 

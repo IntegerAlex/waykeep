@@ -330,6 +330,9 @@ limitations under the License.
     <string name="menu_aggregated_statistics">Aggregated stats</string>
     <string name="action_start_gps">Start GPS</string>
     <string name="action_stop_gps">Stop GPS</string>
+    <string name="action_stats">Stats</string>
+    <string name="action_gps">GPS</string>
+    <string name="action_routes">Routes</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_export_all">Export all (one file per track)</string>
@@ -377,6 +380,8 @@ limitations under the License.
     <string name="insight_trend_steady">Steady with your 4-week average</string>
     <string name="insight_trend_higher">Higher than your 4-week average</string>
     <string name="insight_goal_progress">%1$s of %2$s in the last 7 days</string>
+    <string name="insight_goal_percent">%1$d%% of %2$s</string>
+    <string name="insight_average_compact">4-week avg %1$s</string>
     <string name="insight_goal_progress_description">Weekly goal progress</string>
     <string name="insight_streak_days">%1$d-day streak</string>
     <string name="insight_streak_none">No streak yet</string>

@@ -325,8 +325,8 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
      */
     private void addRowDivider(RecyclerView list) {
         float density = getResources().getDisplayMetrics().density;
-        int insetStart = Math.round(92 * density);
-        int insetEnd = Math.round(16 * density);
+        int insetStart = Math.round(124 * density);
+        int insetEnd = Math.round(20 * density);
         Paint paint = new Paint();
         paint.setColor(MaterialColors.getColor(list,
                 com.google.android.material.R.attr.colorOutlineVariant, 0));
@@ -667,28 +667,30 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 .setUnit(PreferencesUtils.getUnitSystem())
                 .setDecimalPlaces(1)
                 .build(this);
-        viewBinding.insightWeekDistance.setText(formatter.formatDistance(summary.sevenDayDistance()));
-        viewBinding.insightWeekAverage.setText(formatter.formatDistance(summary.fourWeekWeeklyAverage()));
+        Distance weekDistance = summary.goalProgressDistance();
+        viewBinding.insightWeekDistance.setText(formatter.formatDistance(weekDistance));
+        viewBinding.insightWeekAverage.setText(getString(R.string.insight_average_compact,
+                formatter.formatDistance(summary.fourWeekWeeklyAverage())));
         viewBinding.insightTrend.setText(summary.trendLineRes());
 
-        if (summary.hasGoal()) {
-            Distance weekDistance = summary.goalProgressDistance();
-            viewBinding.insightGoalSection.setVisibility(View.VISIBLE);
-            viewBinding.insightSetGoalHint.setVisibility(View.GONE);
-            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_progress,
-                    formatter.formatDistance(weekDistance),
-                    formatter.formatDistance(summary.weeklyGoal())));
+        int streakDays = summary.dailyStreak().consecutiveDays();
+        viewBinding.insightStreakText.setText(streakDays > 0
+                ? getString(R.string.insight_streak_days, streakDays)
+                : getString(summary.streakLineRes()));
 
-            int goalMeters = (int) Math.round(summary.weeklyGoal().toM());
-            viewBinding.insightGoalBar.setMax(goalMeters);
-            viewBinding.insightGoalBar.setProgressCompat(
-                    (int) Math.min(Math.round(weekDistance.toM()), goalMeters), false);
-            int streakDays = summary.dailyStreak().consecutiveDays();
-            viewBinding.insightStreakText.setText(streakDays > 0
-                    ? getString(R.string.insight_streak_days, streakDays)
-                    : getString(summary.streakLineRes()));
+        if (summary.hasGoal()) {
+            Distance goal = summary.weeklyGoal();
+            viewBinding.insightSetGoalHint.setVisibility(View.GONE);
+            viewBinding.insightGoalProgress.setVisibility(View.VISIBLE);
+            viewBinding.insightLane.setVisibility(View.VISIBLE);
+            int percent = (int) Math.min(100, Math.round(100.0 * weekDistance.toM() / goal.toM()));
+            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_percent,
+                    percent, formatter.formatDistance(goal)));
+            viewBinding.insightLane.setValues(weekDistance.toM(), goal.toM(),
+                    summary.fourWeekWeeklyAverage().toM());
         } else {
-            viewBinding.insightGoalSection.setVisibility(View.GONE);
+            viewBinding.insightGoalProgress.setVisibility(View.GONE);
+            viewBinding.insightLane.setVisibility(View.GONE);
             viewBinding.insightSetGoalHint.setVisibility(View.VISIBLE);
         }
 

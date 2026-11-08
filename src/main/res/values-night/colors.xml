@@ -10,4 +10,15 @@ Waykeep brand tokens for dark/OLED mode.
     <color name="waykeep_accent">@color/waykeep_cyan</color>
     <!-- Activity badge behind a themed glyph: dark on OLED, so the white icon stays visible. -->
     <color name="icon_badge_surface">#E61C1B1F</color>
+
+    <!-- "Track at dusk": asphalt ground, bone ink, cyan lane. -->
+    <color name="track_surface">#07090A</color>
+    <color name="track_surface_low">#0D1011</color>
+    <color name="track_surface_container">#121617</color>
+    <color name="track_surface_high">#181D1E</color>
+    <color name="track_ink">#E8EDEA</color>
+    <color name="track_ink_muted">#A7B3AD</color>
+    <color name="track_outline">#6B7872</color>
+    <color name="track_outline_variant">#2A3330</color>
+    <color name="track_lane">#232B29</color>
 </resources>

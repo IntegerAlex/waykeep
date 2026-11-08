@@ -128,12 +128,12 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <!-- Quiet tab labels: state comes from the 2dp indicator, never from coloured text. -->
+    <!-- Quiet tab labels: state comes from the 3dp indicator, never from coloured text. -->
     <style name="TextAppearance.OpenTracks.TabText" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:fontFamily">@font/inter</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
 
     <!-- Status strip: only shown when recording state or GPS is not nominal. -->
@@ -164,6 +164,59 @@
         <item name="android:letterSpacing">0</item>
         <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
+    </style>
+
+    <!--
+      "Track at dusk" home scale. Inter speaks, JetBrains Mono measures. The score value is the
+      one number the eye lands on; lane labels are tracked, never used as kickers above a heading.
+    -->
+    <style name="TextAppearance.OpenTracks.ScoreValue" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">48sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.LaneLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.MetaValue" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.RowDistance" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.RowDate" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:singleLine">true</item>
     </style>
 
     <!-- Aggregated-stats and share screens use the Primary/Secondary families above. -->
