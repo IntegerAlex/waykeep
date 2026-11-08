@@ -13,7 +13,8 @@
     android:minHeight="76dp"
     android:paddingStart="16dp"
     android:paddingTop="10dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    android:paddingBottom="10dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/track_list_item_thumb_card"
@@ -117,16 +118,8 @@
         app:layout_constraintTop_toTopOf="@id/track_list_item_context_row"
         tools:text="1:02:33" />
 
-    <View
-        android:id="@+id/track_list_item_row_rule"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="?attr/colorOutlineVariant"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/track_list_item_name"
-        app:layout_constraintTop_toBottomOf="@id/track_list_item_thumb_card" />
+    <!-- The hairline is drawn by the list's ItemDecoration so it follows the final row height,
+         including a context line that wraps at large font scales. -->
 
     <!-- Pace, elevation, description, the marker chip, the separate time view and the activity
          label left the row: the detail screen owns that data now. -->

@@ -17,9 +17,13 @@ limitations under the License.
     <color name="oled_friendly">@android:color/black</color>
     <!-- Brand colors -->
     <!-- Waykeep: high-visibility cyan; darkened for light backgrounds, bright on OLED (values-night). -->
+    <!-- Bright cyan: large fills, map routes and dark surfaces only. -->
     <color name="waykeep_cyan">#00A6B8</color>
+    <!-- Dim cyan: text and icons on light surfaces (5.08:1 on white, WCAG 1.4.3). -->
     <color name="waykeep_cyan_dim">#007A87</color>
-    <color name="opentracks">@color/waykeep_cyan</color>
+    <!-- Theme-aware accent role: dim on light, bright on dark (values-night). -->
+    <color name="waykeep_accent">@color/waykeep_cyan_dim</color>
+    <color name="opentracks">@color/waykeep_accent</color>
     <color name="opentracks_transparent">@color/waykeep_cyan_transparent</color> <!-- TODO REMOVE -->
     <color name="waykeep_cyan_transparent">#5500A6B8</color>
 

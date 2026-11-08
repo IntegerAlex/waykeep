@@ -27,6 +27,7 @@
         tools:text="15 km/h" />
 
     <LinearLayout
+        android:id="@+id/interval_altitude_column"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

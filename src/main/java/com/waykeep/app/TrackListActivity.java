@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.Manifest;
@@ -55,19 +57,18 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.WeekFields;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -259,6 +260,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         adapter = new TrackListAdapter(this, viewBinding.trackList, recordingStatus, unitSystem);
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
+        addRowDivider(viewBinding.trackList);
         viewBinding.trackListEmptyAction.setOnClickListener(view -> viewBinding.trackListFabAction.performClick());
         viewBinding.diagnosticsRecoveryNotNow.setOnClickListener(view -> deferRecoveryPrompt());
         viewBinding.diagnosticsRecoveryCopy.setOnClickListener(view -> recoverTrackCopy());
@@ -314,6 +316,46 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         setSupportActionBar(viewBinding.trackListToolbar);
         adapter.setActionModeCallback(contextualActionModeCallback);
+        applyBottomBarClearance();
+    }
+
+    /**
+     * Hairline under each row. Drawn as a decoration, not inside the item, so it follows the
+     * final row height when the context line wraps at large font scales.
+     */
+    private void addRowDivider(RecyclerView list) {
+        float density = getResources().getDisplayMetrics().density;
+        int insetStart = Math.round(92 * density);
+        int insetEnd = Math.round(16 * density);
+        Paint paint = new Paint();
+        paint.setColor(MaterialColors.getColor(list,
+                com.google.android.material.R.attr.colorOutlineVariant, 0));
+        list.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent,
+                               @NonNull RecyclerView.State state) {
+                int right = parent.getWidth() - parent.getPaddingRight() - insetEnd;
+                for (int i = 0; i < parent.getChildCount(); i++) {
+                    View child = parent.getChildAt(i);
+                    canvas.drawRect(insetStart, child.getBottom() - 1, right, child.getBottom(), paint);
+                }
+            }
+        });
+    }
+
+    /**
+     * The cradled record FAB protrudes above the bottom app bar, so the RecyclerView needs that
+     * much extra bottom padding to keep the last row readable and tappable at any font scale.
+     */
+    private void applyBottomBarClearance() {
+        View list = viewBinding.trackList;
+        View bar = viewBinding.bottomAppBar;
+        View fab = viewBinding.trackListFabAction;
+        list.post(() -> {
+            int margin = Math.round(8 * getResources().getDisplayMetrics().density);
+            int bottom = bar.getHeight() + fab.getHeight() / 2 + margin;
+            list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(), bottom);
+        });
     }
 
     private void requestRequiredPermissions() {
@@ -597,7 +639,6 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             // Insight covers the whole history, so skip it while the feed is filtered.
             final InsightSummary insight = TextUtils.isEmpty(query)
                     ? InsightSummary.compute(items, Instant.now(), ZoneId.systemDefault(),
-                    WeekFields.of(Locale.getDefault()).getFirstDayOfWeek(),
                     PreferencesUtils.getWeeklyGoalDistance())
                     : null;
             runOnUiThread(() -> {
@@ -631,7 +672,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         viewBinding.insightTrend.setText(summary.trendLineRes());
 
         if (summary.hasGoal()) {
-            Distance weekDistance = summary.streak().currentWeekDistance();
+            Distance weekDistance = summary.goalProgressDistance();
             viewBinding.insightGoalSection.setVisibility(View.VISIBLE);
             viewBinding.insightSetGoalHint.setVisibility(View.GONE);
             viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_progress,
@@ -687,6 +728,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private void updateGpsMenuItem(boolean isGpsStarted, boolean isRecording) {
         MaterialButton startGpsMenuItem = viewBinding.sensorStartButton;
         startGpsMenuItem.setVisibility(!isRecording ? View.VISIBLE : View.INVISIBLE);
+        int gpsAction = isGpsStarted ? R.string.action_stop_gps : R.string.action_start_gps;
+        startGpsMenuItem.setContentDescription(getString(gpsAction));
+        startGpsMenuItem.setTooltipText(getString(gpsAction));
         if (!isRecording) {
             android.graphics.drawable.Drawable icon = AppCompatResources.getDrawable(this,
                     isGpsStarted ? gpsStatusValue.icon : R.drawable.ic_gps_off_24dp);

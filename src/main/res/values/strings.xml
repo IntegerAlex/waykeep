@@ -328,6 +328,8 @@ limitations under the License.
     <string name="marker_list_empty_message">You don\'t have any markers</string>
     <!-- Menu -->
     <string name="menu_aggregated_statistics">Aggregated stats</string>
+    <string name="action_start_gps">Start GPS</string>
+    <string name="action_stop_gps">Stop GPS</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_export_all">Export all (one file per track)</string>
@@ -367,14 +369,14 @@ limitations under the License.
     <string name="diagnostics_recovery_done">Recovered copy added to your track list.</string>
     <string name="diagnostics_recovery_failed">Could not create a recovered track copy.</string>
     <!-- Home insight hero -->
-    <string name="insight_week_distance_label">This week</string>
+    <string name="insight_week_distance_label">Last 7 days</string>
     <string name="insight_week_average_label">4-week average</string>
     <string name="insight_no_activity">No activity yet — record a track to start your baseline</string>
     <string name="insight_trend_building">Building on recent weeks</string>
     <string name="insight_trend_lower">Lower than your 4-week average</string>
     <string name="insight_trend_steady">Steady with your 4-week average</string>
     <string name="insight_trend_higher">Higher than your 4-week average</string>
-    <string name="insight_goal_progress">%1$s of %2$s this week</string>
+    <string name="insight_goal_progress">%1$s of %2$s in the last 7 days</string>
     <string name="insight_goal_progress_description">Weekly goal progress</string>
     <string name="insight_streak_days">%1$d-day streak</string>
     <string name="insight_streak_none">No streak yet</string>

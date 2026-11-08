@@ -262,6 +262,8 @@ limitations under the License.
             style="@style/Widget.Material3Expressive.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/menu_aggregated_statistics"
+            android:tooltipText="@string/menu_aggregated_statistics"
             app:icon="@drawable/ic_statistics_24dp"
             app:iconTint="?attr/colorOnBackground" />
 
@@ -271,6 +273,8 @@ limitations under the License.
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:contentDescription="@string/action_start_gps"
+            android:tooltipText="@string/action_start_gps"
             app:icon="@drawable/ic_gps_off_24dp"
             app:iconTint="?attr/colorOnBackground" />
 
