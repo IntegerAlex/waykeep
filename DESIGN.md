@@ -64,6 +64,7 @@ The display face is used only at large sizes. Research on glanceable reading fin
 - **Home feed**: `track_list_item.xml` is route-first: 88dp fitted route tile, 11sp tracked date, 26sp display distance, 12sp context.
 - **Bottom actions**: `BottomAction` shows an icon and a visible label; content descriptions update with GPS state.
 - **Detail route hero**: the recorded route above the segmented tabs, with the whole shape fitted and the distance/date/time overlay.
+- **Stats strip**: the default Stats view is three metrics — moving pace, moving time, elevation range. The full instrument grid lives behind a “More stats” toggle; the duplicated start date and auto-generated date header are removed.
 - **Detail shell**: `MaterialButtonToggleGroup` pills in a horizontal scroll, synced by `DetailTabs`.
 - **Chart controls**: `ChartMetricChip` and the axis pills share `tab_toggle_background` / `tab_toggle_text`.
 - **Map**: `WrappedCopyrightOverlay` wraps the attribution and keeps it legible.

@@ -213,6 +213,29 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="TextAppearance.OpenTracks.StripLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.StripValue" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="TextAppearance.OpenTracks.HeroMeta" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="android:textColor">@color/hero_ink_muted</item>

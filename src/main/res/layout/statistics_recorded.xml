@@ -71,18 +71,7 @@
             app:layout_constraintTop_toBottomOf="@id/stats_name_value"
             tools:text="Here will be a description that could be really long and it would show completely without problems." />
 
-        <TextView
-            android:id="@+id/stats_start_datetime_value"
-            style="?attr/textAppearanceBody2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="end"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/stats_description_barrier"
-            tools:text="Saturday 6th, 16:44" />
+
 
         <!-- Barrier -->
         <androidx.constraintlayout.widget.Barrier
@@ -99,7 +88,162 @@
             android:layout_margin="8dp"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@id/stats_start_datetime_value" />
+            app:layout_constraintTop_toBottomOf="@id/stats_description_barrier" />
+
+        <!-- Quiet default strip: the three metrics that answer "how did it go?" -->
+        <LinearLayout
+            android:id="@+id/stats_strip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/colorSurfaceContainerLow"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/stats_information_horizontal_line">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/stats_strip_pace_label"
+                    style="@style/TextAppearance.OpenTracks.StripLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeStepGranularity="1sp"
+                    tools:text="Moving pace" />
+
+                <TextView
+                    android:id="@+id/stats_strip_pace_value"
+                    style="@style/TextAppearance.OpenTracks.StripValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeMaxTextSize="20sp"
+                    android:autoSizeStepGranularity="1sp"
+                    tools:text="8:11" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="?attr/colorOutlineVariant" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_moving_time"
+                    android:textAppearance="@style/TextAppearance.OpenTracks.StripLabel"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeStepGranularity="1sp" />
+
+                <TextView
+                    android:id="@+id/stats_strip_moving_time_value"
+                    style="@style/TextAppearance.OpenTracks.StripValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeMaxTextSize="20sp"
+                    android:autoSizeStepGranularity="1sp"
+                    tools:text="26:29" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="?attr/colorOutlineVariant" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_elevation"
+                    android:textAppearance="@style/TextAppearance.OpenTracks.StripLabel"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeStepGranularity="1sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:baselineAligned="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/stats_strip_elevation_value"
+                        style="@style/TextAppearance.OpenTracks.StripValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="10sp"
+                        android:autoSizeMaxTextSize="20sp"
+                        android:autoSizeStepGranularity="1sp"
+                        tools:text="214–251" />
+
+                    <TextView
+                        android:id="@+id/stats_strip_elevation_unit"
+                        style="@style/TextAppearance.OpenTracks.PrimaryUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        tools:text="m" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/stats_strip_line"
+            style="@style/HorizontalLine"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/stats_strip" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/stats_more_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/stats_more"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/stats_strip_line" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/stats_more_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="stats_distance_label,stats_distance_value,stats_distance_unit,stats_moving_time_label,stats_moving_time_value,stats_total_time_label,stats_total_time_value,stats_speed_horizontal_line,stats_max_speed_label,stats_max_speed_value,stats_max_speed_unit,stats_moving_speed_label,stats_moving_speed_value,stats_moving_speed_unit,stats_average_speed_label,stats_average_speed_value,stats_average_speed_unit" />
 
         <!-- Distance -->
         <TextView
@@ -111,7 +255,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toStartOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@id/stats_information_horizontal_line" />
+            app:layout_constraintTop_toBottomOf="@id/stats_more_button" />
 
         <TextView
             android:id="@+id/stats_distance_value"
@@ -145,7 +289,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/guideline2"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@id/stats_information_horizontal_line" />
+            app:layout_constraintTop_toBottomOf="@id/stats_more_button" />
 
         <TextView
             android:id="@+id/stats_moving_time_value"

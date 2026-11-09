@@ -603,6 +603,11 @@ limitations under the License.
     <string name="stats_pace">Pace</string>
     <string name="stats_speed">Speed</string>
     <string name="stats_distance">Distance</string>
+    <string name="stats_elevation">Elevation</string>
+    <string name="stats_strip_moving_pace">Moving pace</string>
+    <string name="stats_strip_moving_speed">Moving speed</string>
+    <string name="stats_more">More stats</string>
+    <string name="stats_less">Less stats</string>
     <string name="stats_total_time">Total time</string>
     <string name="stats_split_interval">Split interval</string>
     <string name="stats_sensors_heart_rate">Heart rate</string>
