@@ -26,6 +26,23 @@ Screenshots are local evidence in `/tmp/opencode/`; they are not committed becau
 | F9 | partial | The repeated interval gain/loss column is hidden when no interval has data; elevation min/max is still not shown on Stats, and the recording screen still shows its default Gain/Loss cells as dashes. |
 | F10 | fixed | RecyclerView bottom padding is computed from the bottom bar plus half the FAB height. |
 
+## Typography decision — 2026-11-09
+
+**Decision:** Inter for UI text, Barlow Condensed Bold for large display numbers, JetBrains Mono for small tabular data.
+
+**Evidence**
+
+- Sawyer et al. (2017) and NN/g: condensed text required 11.2% more time in glanceable reading, and the penalty is worst at small sizes [16][17]. This rules out setting UI labels or body text in Barlow Condensed.
+- *Journal of Vision* (2020) and *Ergonomics* (2021): wider letter shapes improve letter recognition at small visual angles [18][19]. The UI face stays regular-width.
+- Butterick, Google Fonts Knowledge and Fonts.com: tabular lining figures are the right choice for columns, tables and values that change in place [20][21][22]. Barlow Condensed carries `tnum`; JetBrains Mono is tabular by construction.
+- Butterick, *Mixing fonts*: most documents tolerate a second font, few a third [20]. The app uses three roles, not three competing voices.
+- Monotype's sports-typography case study: numbers must stay distinct and legible at speed, and condensed cuts are used for long names and tight space [23]. That supports a display face for large numerals, not for small text.
+- Typeface-personality research shows fonts influence perceived brand personality [24][25], but it does not establish that Barlow is objectively more "sporty" than Archivo or Saira. That part is a brand decision.
+- Localization: Inter covers Cyrillic and Greek; Barlow, Archivo and Saira do not. Waykeep ships 57 locales, including Russian, Ukrainian, Bulgarian and Greek. The display face is therefore limited to digits; UI text stays Inter.
+
+**Not supported by the evidence:** that a condensed face improves legibility, or that one display face is objectively more sporty than another.
+
+
 ---
 
 ## 1. Today's run check
@@ -263,3 +280,13 @@ These are **open questions**, not findings. They require user testing or a produ
 13. Consolvo, S., McDonald, D. W., Toscos, T., Chen, M. Y., Froehlich, J., Harrison, B., Klasnja, P., LaMarca, A., LeGrand, L., Libby, R., Smith, I., & Landay, J. A. (2008). **Activity Sensing in the Wild: A Field Trial of UbiFit Garden.** CHI 2008. https://makeabilitylab.cs.washington.edu/media/publications/Consolvo_ActivitySensingInTheWildAFieldTrialOfUbifitGarden_CHI2008.pdf
 14. Google. **Developer documentation style guide: Dates and times.** https://developers.google.com/style/dates-times
 15. Nielsen Norman Group. **Date-Input Form Fields: UX Design Guidelines.** https://www.nngroup.com/articles/date-input/
+16. Sawyer, B. D., et al. (2017). **The Cost of "Cool": Typographic Style Legibility in Reading.** Proceedings of the Human Factors and Ergonomics Society. https://www.bendsawyer.com/wp-content/uploads/2025/05/Sawyer_et-al_2017_The-Cost-of-Cool-Typographic-Style-Legibility-in-Reading.pdf
+17. Nielsen Norman Group. **Typography for Glanceable Reading: Bigger Is Better.** https://www.nngroup.com/articles/glanceable-fonts/
+18. **Fonts of wider letter shapes improve legibility.** Journal of Vision (2020). https://jov.arvojournals.org/article.aspx?articleid=2771109
+19. **Fonts of wider letter shapes improve letter recognition in parafovea and periphery.** Ergonomics (2021). https://www.tandfonline.com/doi/pdf/10.1080/00140139.2021.1991001
+20. Butterick, M. **Alternate figures** and **Mixing fonts.** Practical Typography. https://practicaltypography.com/alternate-figures.html · https://practicaltypography.com/mixing-fonts.html
+21. Google Fonts Knowledge. **Understanding numerals.** https://fonts.google.com/knowledge/introducing_type/understanding_numerals
+22. Fonts.com. **Proportional vs. Tabular Figures.** https://www.myfonts.com/pages/fontscom-learning-fontology-level-3-numbers-proportional-vs-tabular-figures/
+23. Monotype. **The challenging game of designing for sports.** https://enterprise.monotype.com/resources/articles/the-challenging-game-of-designing-for-sports
+24. **Using Type Font Characteristics to Communicate Brand Personality of New Brands** (2012). https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2027518
+25. **Communicating brand gender through type fonts** (2014). https://doi.org/10.1080/13527266.2014.918050

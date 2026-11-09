@@ -31,32 +31,36 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.PrimaryValue" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
     <style name="TextAppearance.OpenTracks.SecondaryValue" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:fontFeatureSettings">tnum</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
     <style name="TextAppearance.OpenTracks.HiddenValue" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">@color/light_gray</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
@@ -76,12 +80,13 @@
     -->
 
     <style name="TextAppearance.OpenTracks.HeroValue" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">56sp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFeatureSettings">tnum</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -171,13 +176,13 @@
       one number the eye lands on; lane labels are tracked, never used as kickers above a heading.
     -->
     <style name="TextAppearance.OpenTracks.ScoreValue" parent="TextAppearance.Material3.DisplayLarge">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">48sp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFeatureSettings">tnum</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -200,13 +205,13 @@
     </style>
 
     <style name="TextAppearance.OpenTracks.RowDistance" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">26sp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFeatureSettings">tnum</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
         <item name="android:singleLine">true</item>
     </style>
 

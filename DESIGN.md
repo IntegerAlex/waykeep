@@ -29,17 +29,21 @@ Bright cyan never carries small text on light. Text and icons use the accent rol
 
 ## Type
 
-Inter speaks; JetBrains Mono measures. Every number uses tabular figures.
+Inter speaks; Barlow Condensed headlines; JetBrains Mono measures. Large display numbers use Barlow Condensed with tabular figures; small data stays in JetBrains Mono; UI text stays in Inter so Cyrillic and Greek locales do not fall back.
 
 | Style | Face | Size | Notes |
 |---|---|---|---|
-| `ScoreValue` | JetBrains Mono | 48sp | Bold, -0.02 tracking, the week distance |
-| `RowDistance` | JetBrains Mono | 26sp | Bold, -0.02 tracking |
+| `ScoreValue` | Barlow Condensed Bold | 48sp | -0.01 tracking, the week distance |
+| `RowDistance` | Barlow Condensed Bold | 26sp | -0.01 tracking |
+| `PrimaryValue` / `SecondaryValue` | Barlow Condensed Bold | 36sp | Detail and recap numbers |
+| `HeroValue` | Barlow Condensed Bold | 56sp | Recording primary value |
 | `LaneLabel` | Inter | 11sp | Caps, 0.12 tracking, accent |
 | `MetaValue` | JetBrains Mono | 12sp | Averages and streaks |
 | `RowDate` | Inter | 11sp | Caps, 0.1 tracking, accent |
 | `RowContext` | Inter | 12sp | Two lines maximum |
 | `TabText` | Inter | 14sp | Segmented control and tabs |
+
+The display face is used only at large sizes. Research on glanceable reading finds condensed text is slower at small sizes; Inter stays the UI face. Tabular figures are used wherever numbers sit in columns or change in place.
 
 ## Shape and surface
 

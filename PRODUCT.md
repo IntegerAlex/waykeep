@@ -40,7 +40,7 @@ Recording happens one-handed, outdoors, with gloves or in motion. Reviewing happ
 
 - Name: Waykeep.
 - Accent: cyan. Dim `#007A87` for text/icons on light, bright cyan for dark surfaces, fills and routes.
-- Faces already bundled: Inter for interface text, JetBrains Mono for measurements.
+- Faces already bundled: Inter for interface text, Barlow Condensed for large display numbers, JetBrains Mono for small tabular measurements.
 - Dark theme is first-class, including OLED black.
 - Voice is neutral and non-judgemental; no shame copy, no hype.
 

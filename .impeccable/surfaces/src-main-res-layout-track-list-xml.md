@@ -33,7 +33,7 @@ Sporty and kinetic, pinned by the user. Material 3 structure, brand through them
 
 THESIS: The week is a race lane, not a stat card. The home opens on one horizontal lane that carries the seven-day distance toward the goal, with the route feed below as a wall of route shapes. It refuses the gray insight card and the text-first list row.
 
-OWN-WORLD: "Track at dusk." Asphalt near-black and cool bone light, safety cyan for the lane and the live route, recording red only for the record state. Inter speaks; JetBrains Mono measures. 16dp surfaces, pill controls, 2dp lane lines, tonal separation instead of drop shadows. No nested cards, no gray-on-gray.
+OWN-WORLD: "Track at dusk." Asphalt near-black and cool bone light, safety cyan for the lane and the live route, recording red only for the record state. Inter speaks; Barlow Condensed headlines the large numbers; JetBrains Mono measures the small data. 16dp surfaces, pill controls, 2dp lane lines, tonal separation instead of drop shadows. No nested cards, no gray-on-gray.
 
 STORY: The user sees the week's distance, how far it sits from the goal and the four-week baseline in one look, then recognises a recent run by its shape rather than by reading a date.
 
