@@ -279,9 +279,13 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
             AltitudeGainLoss altitudeGainLoss = data.trackStatistics().altitudeGainLoss();
-            Float gain = altitudeGainLoss != null ? altitudeGainLoss.gain_m() : null;
+            setVisible(altitudeGainLoss != null);
+            if (altitudeGainLoss == null) {
+                return;
+            }
 
-            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), gain, unitSystem);
+            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(
+                    getContext(), altitudeGainLoss.gain_m(), unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
@@ -295,9 +299,13 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
         @Override
         public void onChanged(UnitSystem unitSystem, RecordingData data) {
             AltitudeGainLoss altitudeGainLoss = data.trackStatistics().altitudeGainLoss();
-            Float loss = altitudeGainLoss != null ? altitudeGainLoss.loss_m() : null;
+            setVisible(altitudeGainLoss != null);
+            if (altitudeGainLoss == null) {
+                return;
+            }
 
-            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(getContext(), loss, unitSystem);
+            Pair<String, String> valueAndUnit = StringUtils.getAltitudeParts(
+                    getContext(), altitudeGainLoss.loss_m(), unitSystem);
 
             getBinding().statsValue.setText(valueAndUnit.first);
             getBinding().statsUnit.setText(valueAndUnit.second);
