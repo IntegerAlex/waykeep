@@ -67,6 +67,15 @@ public class TrackThumbnailLoader {
     }
 
     public void load(@NonNull Track.Id trackId, int widthPx, int heightPx, @NonNull Callback callback) {
+        load(trackId, widthPx, heightPx, paddingPx, strokeWidthPx, callback);
+    }
+
+    /**
+     * Loads a route with an explicit inset and stroke. The hero uses a larger inset and stroke
+     * so the entire shape sits clearly inside the frame instead of touching its edges.
+     */
+    public void load(@NonNull Track.Id trackId, int widthPx, int heightPx, int insetPx,
+                     int strokePx, @NonNull Callback callback) {
         if (widthPx <= 0 || heightPx <= 0) {
             callback.onThumbnail(null);
             return;
@@ -74,7 +83,8 @@ public class TrackThumbnailLoader {
 
         RouteColor routeColor = PreferencesUtils.getRouteColor();
         int strokeColor = ContextCompat.getColor(appContext, routeColor.colorRes());
-        String key = trackId.id() + ":" + widthPx + "x" + heightPx + ":" + routeColor.name();
+        String key = trackId.id() + ":" + widthPx + "x" + heightPx + ":" + routeColor.name()
+                + ":" + insetPx + ":" + strokePx;
         Bitmap cached = cache.get(key);
         if (cached != null) {
             callback.onThumbnail(cached);
@@ -82,7 +92,7 @@ public class TrackThumbnailLoader {
         }
 
         EXECUTOR.execute(() -> {
-            Bitmap bitmap = render(trackId, widthPx, heightPx, strokeColor);
+            Bitmap bitmap = render(trackId, widthPx, heightPx, strokeColor, insetPx, strokePx);
             if (bitmap != null) {
                 cache.put(key, bitmap);
             }
@@ -94,7 +104,8 @@ public class TrackThumbnailLoader {
         cache.evictAll();
     }
 
-    private Bitmap render(Track.Id trackId, int widthPx, int heightPx, int strokeColor) {
+    private Bitmap render(Track.Id trackId, int widthPx, int heightPx, int strokeColor,
+                          int paddingPx, int strokeWidthPx) {
         List<double[]> points = new ArrayList<>();
         double minLat = Double.MAX_VALUE, maxLat = -Double.MAX_VALUE;
         double minLon = Double.MAX_VALUE, maxLon = -Double.MAX_VALUE;

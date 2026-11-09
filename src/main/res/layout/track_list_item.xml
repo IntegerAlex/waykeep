@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/image_track"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/bg_route_placeholder" />
 
     </com.google.android.material.card.MaterialCardView>

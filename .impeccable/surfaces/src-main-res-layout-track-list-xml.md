@@ -37,7 +37,7 @@ OWN-WORLD: "Track at dusk." Asphalt near-black and cool bone light, safety cyan 
 
 STORY: The user sees the week's distance, how far it sits from the goal and the four-week baseline in one look, then recognises a recent run by its shape rather than by reading a date.
 
-FIRST VIEWPORT: Full-width tonal lane panel under the search bar. Total distance at 48sp mono on the left, "LAST 7 DAYS" at 11sp tracked on the right. A 64dp lane below with a moving runner marker, goal finish, four-week ghost marker and distance ticks. The feed starts immediately under it with 88dp route tiles, a 26sp mono distance and an 11sp tracked date.
+FIRST VIEWPORT: The latest real route as a full-width asphalt hero under the search bar, with the whole shape fitted and the date, distance and time overlaid in fixed light ink. A compact week strip follows: the rolling 7-day distance, "LAST 7 DAYS", the goal percentage, and the common-scale lane with its numbers still visible. The feed starts under the strip with 88dp fitted route tiles, a 26sp display distance and an 11sp tracked date.
 
 FORM: Material 3 Expressive native, code-led. The signature interaction is the lane filling and the runner marker travelling to the current distance on load, plus the route tile lifting into the detail map.
 

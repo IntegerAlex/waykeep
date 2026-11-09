@@ -69,6 +69,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -108,10 +109,13 @@ import com.waykeep.app.ui.monthlyRecap.MonthlyRecapActivity;
 import com.waykeep.app.ui.tour.TourOverlay;
 import com.waykeep.app.ui.personalBests.PersonalBestsActivity;
 import com.waykeep.app.ui.suggested.SuggestedRoutesActivity;
+import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
+import com.waykeep.app.ui.util.ListItemUtils;
 import com.waykeep.app.ui.util.RecyclerViewSwipeDeleteCallback;
 import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.PermissionRequester;
+import com.waykeep.app.util.StringUtils;
 
 /**
  * An activity displaying a list of tracks.
@@ -127,6 +131,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private TrackRecordingServiceConnection recordingStatusConnection;
     private TrackListAdapter adapter;
     private final ExecutorService trackLoader = Executors.newSingleThreadExecutor();
+    private TrackThumbnailLoader latestRouteLoader;
 
     private TrackListBinding viewBinding;
     private RecoveryCandidate recoveryPromptCandidate;
@@ -257,6 +262,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        latestRouteLoader = new TrackThumbnailLoader(this);
         adapter = new TrackListAdapter(this, viewBinding.trackList, recordingStatus, unitSystem);
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
@@ -417,6 +423,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onDestroy() {
         super.onDestroy();
         trackLoader.shutdownNow();
+        if (latestRouteLoader != null) {
+            latestRouteLoader.evictAll();
+        }
         searchHandler.removeCallbacksAndMessages(null);
         viewBinding = null;
         recordingStatusConnection = null;
@@ -641,10 +650,14 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                     ? InsightSummary.compute(items, Instant.now(), ZoneId.systemDefault(),
                     PreferencesUtils.getWeeklyGoalDistance())
                     : null;
+            final TrackListIterator.Item latest = items.isEmpty() ? null : items.get(0);
+            final List<TrackListIterator.Item> feedItems = TextUtils.isEmpty(query) && items.size() > 1
+                    ? items.subList(1, items.size())
+                    : items;
             runOnUiThread(() -> {
                 if (!isFinishing() && !isDestroyed() && adapter != null) {
                     adapter.setHighlightQuery(query);
-                    adapter.swapData(items);
+                    adapter.swapData(feedItems);
                     boolean empty = items.isEmpty();
                     viewBinding.trackListEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
                     if (empty) {
@@ -652,7 +665,58 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                         viewBinding.trackListEmptyMessage.setText(searching ? R.string.track_list_no_results : R.string.track_list_empty_message);
                         viewBinding.trackListEmptyAction.setVisibility(searching ? View.GONE : View.VISIBLE);
                     }
+                    renderLatestRoute(TextUtils.isEmpty(query) ? latest : null);
                     renderInsight(insight);
+                }
+            });
+        });
+    }
+
+    /**
+     * Fills the latest-route hero. The whole route is fitted into the frame; the hero is hidden
+     * while the feed is filtered, so it always matches the unfiltered history.
+     */
+    private void renderLatestRoute(@Nullable TrackListIterator.Item latest) {
+        if (viewBinding == null) {
+            return;
+        }
+        if (latest == null) {
+            viewBinding.latestRouteHero.setVisibility(View.GONE);
+            viewBinding.latestRouteImage.setImageDrawable(null);
+            return;
+        }
+        viewBinding.latestRouteHero.setVisibility(View.VISIBLE);
+        viewBinding.latestRouteHero.setOnClickListener(view -> startActivity(
+                IntentUtils.newIntent(this, TrackRecordedActivity.class)
+                        .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, latest.id())));
+
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(2)
+                .build(this);
+        viewBinding.latestRouteDate.setText(ListItemUtils.getDateTimeText(this,
+                latest.startTime(), latest.zoneOffset()));
+        viewBinding.latestRouteDistance.setText(formatter.formatDistance(latest.totalDistance()));
+
+        String time = StringUtils.formatElapsedTime(latest.totalTime());
+        String activity = latest.activityTypeLocalized();
+        viewBinding.latestRouteMeta.setText(activity.isEmpty()
+                ? time
+                : time + " · " + activity.toUpperCase(Locale.getDefault()));
+
+        viewBinding.latestRouteImage.post(() -> {
+            int width = viewBinding.latestRouteImage.getWidth();
+            int height = viewBinding.latestRouteImage.getHeight();
+            float density = getResources().getDisplayMetrics().density;
+            latestRouteLoader.load(latest.id(), width, height,
+                    Math.round(28 * density), Math.round(5 * density), bitmap -> {
+                if (viewBinding == null) {
+                    return;
+                }
+                if (bitmap != null) {
+                    viewBinding.latestRouteImage.setImageBitmap(bitmap);
+                } else {
+                    viewBinding.latestRouteImage.setImageDrawable(null);
                 }
             });
         });

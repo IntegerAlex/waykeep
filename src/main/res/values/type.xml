@@ -187,6 +187,41 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <!-- Fixed light ink for the asphalt route hero, independent of the day/night theme. -->
+    <style name="TextAppearance.OpenTracks.HeroScore" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/barlow_condensed_bold</item>
+        <item name="android:textColor">@color/hero_ink</item>
+        <item name="android:textSize">64sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">32sp</item>
+        <item name="android:autoSizeMaxTextSize">64sp</item>
+        <item name="android:autoSizeStepGranularity">2sp</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.HeroLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textColor">@color/waykeep_cyan</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.OpenTracks.HeroMeta" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColor">@color/hero_ink_muted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="TextAppearance.OpenTracks.LaneLabel" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">?attr/colorPrimary</item>

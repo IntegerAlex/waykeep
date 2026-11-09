@@ -59,9 +59,11 @@ The display face is used only at large sizes. Research on glanceable reading fin
 
 ## Components
 
-- **Home lane**: `WeekLaneView` draws the track, fill, distance ticks, four-week dashed baseline, finish line and runner marker.
-- **Home feed**: `track_list_item.xml` is route-first: 88dp tile, 11sp tracked date, 26sp mono distance, 12sp context.
+- **Home route hero**: the latest real route, rendered at the hero size with the whole shape fitted (`fitCenter`) on asphalt; fixed light ink for distance, date and time.
+- **Week strip**: `WeekLaneView` plus the weekly distance and goal numbers, kept visible below the route hero.
+- **Home feed**: `track_list_item.xml` is route-first: 88dp fitted route tile, 11sp tracked date, 26sp display distance, 12sp context.
 - **Bottom actions**: `BottomAction` shows an icon and a visible label; content descriptions update with GPS state.
+- **Detail route hero**: the recorded route above the segmented tabs, with the whole shape fitted and the distance/date/time overlay.
 - **Detail shell**: `MaterialButtonToggleGroup` pills in a horizontal scroll, synced by `DetailTabs`.
 - **Chart controls**: `ChartMetricChip` and the axis pills share `tab_toggle_background` / `tab_toggle_text`.
 - **Map**: `WrappedCopyrightOverlay` wraps the attribution and keeps it legible.

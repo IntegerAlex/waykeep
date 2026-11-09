@@ -33,15 +33,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.waykeep.app.chart.ChartFragment;
 import com.waykeep.app.chart.TrackDataHubInterface;
+import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.TrackDataHub;
+import com.waykeep.app.data.models.DistanceFormatter;
+import com.waykeep.app.data.models.Statistics;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.databinding.TrackRecordedBinding;
 import com.waykeep.app.fragments.StatisticsRecordedFragment;
 import com.waykeep.app.services.RecordingStatus;
 import com.waykeep.app.services.TrackRecordingService;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
+import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.settings.SettingsActivity;
 import com.waykeep.app.share.ShareUtils;
 import com.waykeep.app.share.ShareTrackImageActivity;
@@ -49,8 +57,11 @@ import com.waykeep.app.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import com.waykeep.app.ui.intervals.IntervalsFragment;
 import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
+import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.DetailTabs;
+import com.waykeep.app.ui.util.ListItemUtils;
 import com.waykeep.app.util.IntentUtils;
+import com.waykeep.app.util.StringUtils;
 
 /**
  * An activity to show the track detail, record a new track or resumes an existing one.
@@ -76,6 +87,8 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
 
     private Track.Id trackId;
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
+    private final ExecutorService heroLoader = Executors.newSingleThreadExecutor();
+    private TrackThumbnailLoader heroThumbnailLoader;
 
     private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
@@ -87,6 +100,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
         super.onCreate(savedInstanceState);
 
         handleIntent(getIntent());
+        heroThumbnailLoader = new TrackThumbnailLoader(this);
 
         trackDataHub = new TrackDataHub(this);
 
@@ -120,6 +134,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
 
         if (trackId != null) {
             trackDataHub.loadTrack(trackId);
+            loadTrackHero();
         }
 
         trackRecordingServiceConnection.bind(this);
@@ -136,6 +151,70 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(CURRENT_TAB_TAG_KEY, viewBinding.trackDetailActivityViewPager.getCurrentItem());
+    }
+
+    /**
+     * Loads the recorded track off the main thread and fills the route hero. The route bitmap
+     * is rendered at the hero's own size with the whole shape fitted.
+     */
+    private void loadTrackHero() {
+        final Track.Id id = trackId;
+        if (id == null) {
+            return;
+        }
+        heroLoader.execute(() -> {
+            Track track = new ContentProviderUtils(this).getTrack(id);
+            if (track == null) {
+                return;
+            }
+            runOnUiThread(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    renderTrackHero(track);
+                }
+            });
+        });
+    }
+
+    private void renderTrackHero(@NonNull Track track) {
+        Statistics stats = track.statistics();
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(2)
+                .build(this);
+        viewBinding.trackDetailHeroDate.setText(ListItemUtils.getDateTimeText(this,
+                track.startTime().toInstant(), track.startTime().getOffset()));
+        viewBinding.trackDetailHeroDistance.setText(formatter.formatDistance(stats.totalDistance()));
+        String time = StringUtils.formatElapsedTime(stats.totalDuration());
+        String activity = track.activityTypeLocalized();
+        viewBinding.trackDetailHeroMeta.setText(activity.isEmpty()
+                ? time
+                : time + " · " + activity.toUpperCase(Locale.getDefault()));
+
+        viewBinding.trackDetailHeroImage.post(() -> {
+            int width = viewBinding.trackDetailHeroImage.getWidth();
+            int height = viewBinding.trackDetailHeroImage.getHeight();
+            float density = getResources().getDisplayMetrics().density;
+            heroThumbnailLoader.load(trackId, width, height,
+                    Math.round(28 * density), Math.round(5 * density), bitmap -> {
+                if (viewBinding == null) {
+                    return;
+                }
+                if (bitmap != null) {
+                    viewBinding.trackDetailHeroImage.setImageBitmap(bitmap);
+                } else {
+                    viewBinding.trackDetailHeroImage.setImageDrawable(null);
+                }
+            });
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        heroLoader.shutdownNow();
+        if (heroThumbnailLoader != null) {
+            heroThumbnailLoader.evictAll();
+        }
     }
 
     @NonNull
