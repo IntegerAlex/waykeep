@@ -1,0 +1,9 @@
+Waykeep 1.1.0
+
+* Route-led Home and Track Detail: the latest real route is the hero, fitted whole in the frame
+* Weekly goal stays visible as a compact strip with its distance and percentage
+* Route-first feed with real route shapes; the latest run is not repeated
+* Quiet three-metric Stats strip, with the full instrument grid behind More stats
+* Inter + Barlow Condensed display type, tabular data in JetBrains Mono
+* Percentile pace/speed chart with clipped-outlier markers
+* Recording screen hides empty Gain/Loss cells
