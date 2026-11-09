@@ -246,7 +246,9 @@ public class TrackListAdapter extends ListAdapter<TrackListIterator.Item, Recycl
             viewBinding.trackListItemIcon.setImageResource(iconId);
             viewBinding.trackListItemIcon.setContentDescription(context.getString(iconDesc));
 
-            viewBinding.trackListItemThumbnail.setImageResource(R.drawable.bg_route_placeholder);
+            // Background stays behind the transparent route bitmap, so the tile keeps its gradient.
+            viewBinding.trackListItemThumbnail.setBackgroundResource(R.drawable.bg_route_tile);
+            viewBinding.trackListItemThumbnail.setImageDrawable(null);
             renderThumbnail();
 
             viewBinding.trackListItemName.setText(highlight(displayName(tracksListItem)));

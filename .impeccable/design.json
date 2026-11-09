@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "platform": "android",
+  "world": "Track at dusk",
+  "colors": {
+    "waykeep_cyan": { "light": "#00A6B8", "dark": "#00E5FF", "role": "fill/route" },
+    "waykeep_cyan_dim": { "light": "#007A87", "dark": "#008B99", "role": "legacy" },
+    "waykeep_accent": { "light": "#007A87", "dark": "#00E5FF", "role": "text/icon" },
+    "track_surface": { "light": "#F1F4F1", "dark": "#07090A" },
+    "track_surface_low": { "light": "#E8EDE9", "dark": "#0D1011" },
+    "track_surface_container": { "light": "#DFE6E1", "dark": "#121617" },
+    "track_surface_high": { "light": "#D5DDD8", "dark": "#181D1E" },
+    "track_ink": { "light": "#0B0E0D", "dark": "#E8EDEA" },
+    "track_ink_muted": { "light": "#46524D", "dark": "#A7B3AD" },
+    "track_outline": { "light": "#6F7C76", "dark": "#6B7872" },
+    "track_outline_variant": { "light": "#C3CCC7", "dark": "#2A3330" },
+    "track_lane": { "light": "#C9D3CD", "dark": "#232B29" },
+    "icon_badge_surface": { "light": "#E6FFFFFF", "dark": "#E61C1B1F" },
+    "semantic_recording_red": { "light": "#FF3B30", "dark": "#FF3B30" }
+  },
+  "type": {
+    "ui": "Inter",
+    "measurement": "JetBrains Mono",
+    "scoreValue": "48sp bold -0.02",
+    "rowDistance": "26sp bold -0.02",
+    "laneLabel": "11sp caps 0.12",
+    "metaValue": "12sp mono",
+    "rowDate": "11sp caps 0.1",
+    "rowContext": "12sp",
+    "tabText": "14sp"
+  },
+  "shape": {
+    "routeTile": "16dp",
+    "pill": "20dp",
+    "laneLine": "2dp",
+    "hairline": "1dp"
+  },
+  "motion": {
+    "lane": "650ms decelerate",
+    "tabs": "instant"
+  }
+}

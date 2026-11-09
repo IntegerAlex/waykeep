@@ -98,6 +98,7 @@ public class ChartView extends View {
     private final int backgroundColor;
     private final Paint axisPaint;
     private final Paint xAxisMarkerPaint;
+    private final Paint xAxisTitlePaint;
     private final Paint gridPaint;
     private final Paint crosshairPaint;
     private final Paint tooltipBackgroundPaint;
@@ -266,7 +267,7 @@ public class ChartView extends View {
         paceSeries = new ChartValueSeries(context,
                 0,
                 Integer.MAX_VALUE,
-                new int[]{1, 2, 5, 10, 15, 20, 30, 60, 120},
+                new int[]{1, 2, 3, 5, 10, 15, 20, 30, 60, 120},
                 R.string.description_pace_metric,
                 R.string.description_pace_imperial,
                 R.string.description_pace_nautical,
@@ -294,6 +295,10 @@ public class ChartView extends View {
             }
         };
         seriesList.add(paceSeries);
+
+        // Pace and speed have long tails: a stop or a sprint should not flatten the useful band.
+        speedSeries.setPercentileScale(true);
+        paceSeries.setPercentileScale(true);
 
         heartRateSeries = new ChartValueSeries(context,
                 0,
@@ -380,6 +385,11 @@ public class ChartView extends View {
 
         xAxisMarkerPaint = new Paint(axisPaint);
         xAxisMarkerPaint.setTextAlign(Align.CENTER);
+
+        // The axis unit is a title, not a tick: smaller and quieter than the tick labels.
+        xAxisTitlePaint = new Paint(axisPaint);
+        xAxisTitlePaint.setTextSize(fontSizeSmall * 0.9f);
+        xAxisTitlePaint.setColor(withAlpha(ThemeUtils.getTextColorPrimary(context), 0x99));
 
         gridPaint = new Paint();
         gridPaint.setStyle(Style.STROKE);
@@ -591,6 +601,9 @@ public class ChartView extends View {
         synchronized (chartPoints) {
             chartPoints.clear();
             xExtremityMonitor.reset();
+            for (ChartValueSeries series : seriesList) {
+                series.reset();
+            }
             zoomLevel = 1;
             cancelInspectionHide();
             cancelFade();
@@ -789,6 +802,46 @@ public class ChartView extends View {
                 chartValueSeries.drawPath(canvas, titleDimensions.titlePositions.size() < 3);
             }
         }
+        drawOutOfRangeIndicators(canvas);
+    }
+
+    /**
+     * Marks clipped pace/speed outliers at the plot edge. The axis uses the 5th-95th percentile,
+     * so a stop or a sprint can sit outside it; the triangle says the data continues.
+     */
+    private void drawOutOfRangeIndicators(Canvas canvas) {
+        float density = getResources().getDisplayMetrics().density;
+        float right = getScrollX() + leftBorder + effectiveWidth - 6 * density;
+        float top = topBorder + 6 * density;
+        float bottom = topBorder + effectiveHeight - 6 * density;
+        Path triangle = new Path();
+        for (ChartValueSeries series : seriesList) {
+            if (!series.isEnabled() || !series.hasData()) {
+                continue;
+            }
+            boolean low = series.hasValuesBelowAxis();
+            boolean high = series.hasValuesAboveAxis();
+            if (!low && !high) {
+                continue;
+            }
+            Paint paint = series.getMarkerPaint();
+            if (high) {
+                triangle.rewind();
+                triangle.moveTo(right - 5 * density, top + 6 * density);
+                triangle.lineTo(right + 5 * density, top + 6 * density);
+                triangle.lineTo(right, top);
+                triangle.close();
+                canvas.drawPath(triangle, paint);
+            }
+            if (low) {
+                triangle.rewind();
+                triangle.moveTo(right - 5 * density, bottom - 6 * density);
+                triangle.lineTo(right + 5 * density, bottom - 6 * density);
+                triangle.lineTo(right, bottom);
+                triangle.close();
+                canvas.drawPath(triangle, paint);
+            }
+        }
     }
 
     /**
@@ -887,9 +940,9 @@ public class ChartView extends View {
         int y = topBorder + effectiveHeight;
         canvas.drawLine(x, y, x + effectiveWidth, y, axisPaint);
         String label = getXAxisLabel();
-        Rect rect = getRect(axisPaint, label);
+        Rect rect = getRect(xAxisTitlePaint, label);
         int yOffset = rect.height() / 2;
-        canvas.drawText(label, x + effectiveWidth - rect.width(), y + 3 * yOffset, axisPaint);
+        canvas.drawText(label, x + effectiveWidth - rect.width(), y + 3 * yOffset, xAxisTitlePaint);
 
         double interval = getXAxisInterval();
         NumberFormat numberFormat = interval < 1 ? X_FRACTION_FORMAT : X_NUMBER_FORMAT;

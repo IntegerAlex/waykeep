@@ -3,7 +3,6 @@ package com.waykeep.app.data.insights;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -17,25 +16,34 @@ import com.waykeep.app.data.models.Distance;
  *
  * <p>Pure JVM: formatting decisions are exposed as string resource ids so they can be unit
  * tested without an Android {@code Context}. All copy stays neutral (no verdicts).</p>
+ *
+ * <p>Every distance in the hero uses the same rolling seven-day window, so the top value and
+ * the goal progress can never disagree about what "this week" means.</p>
  */
 public record InsightSummary(
         @NonNull Distance sevenDayDistance,
         @NonNull Distance fourWeekWeeklyAverage,
         @NonNull RollingLoad.Trend trend,
-        @NonNull WeeklyStreak streak,
         @NonNull DailyStreak dailyStreak,
         @NonNull Distance weeklyGoal
 ) {
 
     @NonNull
     public static InsightSummary compute(@NonNull List<TrackListIterator.Item> tracks, @NonNull Instant now,
-                                         @NonNull ZoneId zone, @NonNull DayOfWeek weekStart,
-                                         @NonNull Distance goal) {
+                                         @NonNull ZoneId zone, @NonNull Distance goal) {
         RollingLoad load = RollingLoad.compute(tracks, now);
-        WeeklyStreak streak = WeeklyStreak.compute(tracks, now, zone, weekStart, goal);
         DailyStreak dailyStreak = DailyStreak.compute(tracks, now, zone);
         return new InsightSummary(load.sevenDayDistance(), load.fourWeekWeeklyAverage(), load.trend(),
-                streak, dailyStreak, goal);
+                dailyStreak, goal);
+    }
+
+    /**
+     * Distance counted toward the weekly goal. Deliberately the same rolling seven-day value
+     * the hero shows above it; do not reintroduce a second (calendar-week) window here.
+     */
+    @NonNull
+    public Distance goalProgressDistance() {
+        return sevenDayDistance;
     }
 
     public boolean hasGoal() {

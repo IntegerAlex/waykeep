@@ -47,22 +47,36 @@ limitations under the License.
                     android:id="@+id/chart_axis_time"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
+                    android:layout_height="40dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="72dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textColor="@color/tab_toggle_text"
+                    android:textSize="13sp"
+                    app:backgroundTint="@color/tab_toggle_background"
+                    app:cornerRadius="20dp"
+                    app:strokeColor="?attr/colorOutline"
+                    app:strokeWidth="1dp"
                     android:text="@string/chart_axis_time" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/chart_axis_distance"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
+                    android:layout_height="40dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="72dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textColor="@color/tab_toggle_text"
+                    android:textSize="13sp"
+                    app:backgroundTint="@color/tab_toggle_background"
+                    app:cornerRadius="20dp"
+                    app:strokeColor="?attr/colorOutline"
+                    app:strokeWidth="1dp"
                     android:text="@string/chart_axis_distance" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -77,35 +91,35 @@ limitations under the License.
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chart_metric_elevation"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/ChartMetricChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chart_metric_elevation" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chart_metric_speed"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/ChartMetricChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chart_metric_speed" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chart_metric_heart_rate"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/ChartMetricChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chart_metric_heart_rate" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chart_metric_cadence"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/ChartMetricChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chart_metric_cadence" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chart_metric_power"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/ChartMetricChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chart_metric_power" />

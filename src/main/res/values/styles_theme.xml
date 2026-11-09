@@ -23,6 +23,18 @@
     <style name="DayNightColorTheme" parent="DayNightDynamicTheme">
         <item name="colorPrimary">@color/opentracks</item>
         <item name="colorSecondary">@color/opentracks</item>
+        <item name="colorSurface">@color/track_surface</item>
+        <item name="colorSurfaceVariant">@color/track_surface_container</item>
+        <item name="colorSurfaceContainerLow">@color/track_surface_low</item>
+        <item name="colorSurfaceContainer">@color/track_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/track_surface_high</item>
+        <item name="colorSurfaceBright">@color/track_surface</item>
+        <item name="colorSurfaceDim">@color/track_surface_low</item>
+        <item name="colorOnSurface">@color/track_ink</item>
+        <item name="colorOnSurfaceVariant">@color/track_ink_muted</item>
+        <item name="colorOutline">@color/track_outline</item>
+        <item name="colorOutlineVariant">@color/track_outline_variant</item>
+        <item name="android:colorBackground">@color/track_surface</item>
     </style>
 
     <style name="NightOledDynamicTheme" parent="Theme.Material3Expressive.Dark.NoActionBar">
@@ -46,8 +58,16 @@
         <item name="android:navigationBarColor">@color/oled_friendly</item>
 
         <item name="colorSurface">@color/oled_friendly</item>
-        <item name="colorSurfaceContainer">@color/oled_friendly</item>
+        <item name="colorSurfaceVariant">@color/track_surface_container</item>
+        <item name="colorSurfaceContainerLow">@color/track_surface_low</item>
+        <item name="colorSurfaceContainer">@color/track_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/track_surface_high</item>
+        <item name="colorSurfaceBright">@color/track_surface_high</item>
         <item name="colorSurfaceDim">@color/oled_friendly</item>
+        <item name="colorOnSurface">@color/track_ink</item>
+        <item name="colorOnSurfaceVariant">@color/track_ink_muted</item>
+        <item name="colorOutline">@color/track_outline</item>
+        <item name="colorOutlineVariant">@color/track_outline_variant</item>
         <item name="backgroundColor">@color/oled_friendly</item>
         <item name="android:windowBackground">@color/oled_friendly</item>
 

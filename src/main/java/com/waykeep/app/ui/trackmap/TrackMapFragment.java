@@ -7,8 +7,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -40,8 +45,9 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.views.overlay.CopyrightOverlay;
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
@@ -219,10 +225,7 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
         scaleBarOverlay.setAlignRight(false);
         viewBinding.trackMapView.getOverlays().add(scaleBarOverlay);
 
-        CopyrightOverlay copyrightOverlay = new CopyrightOverlay(requireContext());
-        copyrightOverlay.setAlignBottom(false);
-        copyrightOverlay.setAlignRight(false);
-        viewBinding.trackMapView.getOverlays().add(copyrightOverlay);
+        viewBinding.trackMapView.getOverlays().add(new WrappedCopyrightOverlay(requireContext()));
 
         if (savedInstanceState != null) {
             viewBinding.trackMapView.getController().setZoom(savedInstanceState.getDouble(STATE_ZOOM, 15.0));
@@ -926,5 +929,54 @@ public class TrackMapFragment extends Fragment implements TrackDataHub.Listener 
             GeoPoint position,
             Drawable icon
     ) {
+    }
+
+    /**
+     * Draws the tile attribution wrapped to the map width. osmdroid's CopyrightOverlay renders a
+     * single line that clips at the screen edge; OSMF attribution must stay legible and visible
+     * without interaction, so this uses a StaticLayout and a small scrim instead.
+     */
+    private static final class WrappedCopyrightOverlay extends Overlay {
+        private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint scrimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final float margin;
+
+        WrappedCopyrightOverlay(Context context) {
+            float density = context.getResources().getDisplayMetrics().density;
+            margin = 8 * density;
+            textPaint.setColor(Color.WHITE);
+            textPaint.setTextSize(11 * density);
+            scrimPaint.setColor(0x99000000);
+        }
+
+        @Override
+        public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+            if (shadow) {
+                return;
+            }
+            String notice = mapView.getTileProvider().getTileSource().getCopyrightNotice();
+            if (notice == null || notice.isEmpty()) {
+                return;
+            }
+            int available = (int) (canvas.getWidth() - 2 * margin);
+            if (available <= 0) {
+                return;
+            }
+            StaticLayout layout = StaticLayout.Builder
+                    .obtain(notice, 0, notice.length(), textPaint, available)
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .build();
+            float textWidth = 0;
+            for (int line = 0; line < layout.getLineCount(); line++) {
+                textWidth = Math.max(textWidth, layout.getLineWidth(line));
+            }
+            RectF scrim = new RectF(margin / 2, margin / 2,
+                    margin / 2 + textWidth + margin, margin / 2 + layout.getHeight() + margin);
+            canvas.drawRoundRect(scrim, margin / 2, margin / 2, scrimPaint);
+            canvas.save();
+            canvas.translate(margin, margin);
+            layout.draw(canvas);
+            canvas.restore();
+        }
     }
 }

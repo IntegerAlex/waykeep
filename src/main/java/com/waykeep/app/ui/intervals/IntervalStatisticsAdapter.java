@@ -2,6 +2,7 @@ package com.waykeep.app.ui.intervals;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
     private final StackMode stackMode;
     private UnitSystem unitSystem;
     private boolean isReportSpeed;
+    private boolean showAltitude;
 
     public IntervalStatisticsAdapter(Context context, StackMode stackMode, UnitSystem unitSystem, boolean isReportSpeed) {
         this.unitSystem = unitSystem;
@@ -59,16 +61,20 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(isReportSpeed).build(context);
         viewHolder.viewBinding.intervalItemRate.setText(formatter.formatSpeed(interval.getAverageSpeed()));
 
-        if (interval.altitudeGainLoss() != null) {
-            viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().gain_m(), unitSystem));
-            viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().loss_m(), unitSystem));
-            viewHolder.viewBinding.intervalItemAltitudeSource.setText(AltitudeGainLossSourceLabels.text(
-                    context, interval.altitudeGainLoss().source()));
-            viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(android.view.View.VISIBLE);
-        } else {
-            viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, null, unitSystem));
-            viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, null, unitSystem));
-            viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(android.view.View.GONE);
+        // A whole column of "▲ - m / ▼ - m" is noise when the recording has no gain/loss data.
+        viewHolder.viewBinding.intervalAltitudeColumn.setVisibility(showAltitude ? View.VISIBLE : View.GONE);
+        if (showAltitude) {
+            if (interval.altitudeGainLoss() != null) {
+                viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().gain_m(), unitSystem));
+                viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().loss_m(), unitSystem));
+                viewHolder.viewBinding.intervalItemAltitudeSource.setText(AltitudeGainLossSourceLabels.text(
+                        context, interval.altitudeGainLoss().source()));
+                viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, null, unitSystem));
+                viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, null, unitSystem));
+                viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -81,6 +87,7 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         this.unitSystem = unitSystem;
         this.isReportSpeed = isReportSpeed;
         intervalList = data;
+        showAltitude = data.stream().anyMatch(statistics -> statistics.altitudeGainLoss() != null);
 
         this.notifyDataSetChanged();
     }

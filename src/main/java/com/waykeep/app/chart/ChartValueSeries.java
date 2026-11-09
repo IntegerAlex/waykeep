@@ -29,9 +29,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.waykeep.app.settings.UnitSystem;
 import com.waykeep.app.data.statistics.ExtremityMonitor;
+import com.waykeep.app.data.statistics.Percentile;
 
 /**
  * This class encapsulates the meta data for one series of the chart values.
@@ -52,7 +55,12 @@ abstract class ChartValueSeries {
     private final Paint strokePaint;
     private final Paint titlePaint;
     private final Paint markerPaint;
+    private static final int MIN_PERCENTILE_SAMPLES = 20;
+    private static final double PERCENTILE_LOW = 0.05;
+    private static final double PERCENTILE_HIGH = 0.95;
+
     private final ExtremityMonitor extremityMonitor = new ExtremityMonitor();
+    private final List<Double> values = new ArrayList<>();
     private final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
     private final Path path = new Path();
 
@@ -63,6 +71,7 @@ abstract class ChartValueSeries {
     private int minMarkerValue = 0;
     private int maxMarkerValue = interval * ChartView.Y_AXIS_INTERVALS;
     private boolean enabled = true;
+    private boolean percentileScale = false;
 
     ChartValueSeries(Context context, int absoluteMin, int absoluteMax, int[] intervalValues, int metricTitleId, int imperialTitleId, int nauticalTitleId, int fillColor, int strokeColor, int fontSizeSmall, int fontSizeMedium) {
         this.absoluteMin = absoluteMin;
@@ -116,6 +125,26 @@ abstract class ChartValueSeries {
     }
 
     /**
+     * Uses the 5th-95th percentile for the axis bounds when enough samples exist. Intended for
+     * pace and speed, where a stop or a sprint would otherwise flatten the useful band.
+     */
+    void setPercentileScale(boolean percentileScale) {
+        this.percentileScale = percentileScale;
+    }
+
+    /**
+     * Clears every sample and the axis state. Called when the chart is reset for a new track.
+     */
+    void reset() {
+        extremityMonitor.reset();
+        values.clear();
+        path.rewind();
+        interval = 1;
+        minMarkerValue = 0;
+        maxMarkerValue = interval * ChartView.Y_AXIS_INTERVALS;
+    }
+
+    /**
      * Returns true if the series has data.
      */
     boolean hasData() {
@@ -127,8 +156,26 @@ abstract class ChartValueSeries {
      */
     void update(ChartPoint chartPoint) {
         if (isChartPointValid(chartPoint)) {
-            extremityMonitor.update(extractDataFromChartPoint(chartPoint));
+            Double value = extractDataFromChartPoint(chartPoint);
+            if (value != null && Double.isFinite(value)) {
+                extremityMonitor.update(value);
+                values.add(value);
+            }
         }
+    }
+
+    /**
+     * True when a sample sits below the drawn axis, i.e. the chart is clipping a fast outlier.
+     */
+    boolean hasValuesBelowAxis() {
+        return hasData() && extremityMonitor.getMin() < minMarkerValue;
+    }
+
+    /**
+     * True when a sample sits above the drawn axis, i.e. the chart is clipping a slow outlier.
+     */
+    boolean hasValuesAboveAxis() {
+        return hasData() && extremityMonitor.getMax() > maxMarkerValue;
     }
 
     abstract Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint);
@@ -182,10 +229,19 @@ abstract class ChartValueSeries {
      * Updates the y axis dimension.
      */
     void updateDimension() {
-        double min = hasData() ? extremityMonitor.getMin() : 0.0;
-        double max = hasData() ? extremityMonitor.getMax() : 1.0;
+        double fullMin = hasData() ? extremityMonitor.getMin() : 0.0;
+        double fullMax = hasData() ? extremityMonitor.getMax() : 1.0;
+        double min = fullMin;
+        double max = fullMax;
+        if (percentileScale && values.size() >= MIN_PERCENTILE_SAMPLES) {
+            min = Percentile.of(values, PERCENTILE_LOW, fullMin);
+            max = Percentile.of(values, PERCENTILE_HIGH, fullMax);
+        }
         min = Math.max(min, absoluteMin);
         max = Math.min(max, absoluteMax);
+        if (max <= min) {
+            max = min + 1;
+        }
         interval = getInterval(min, max);
         minMarkerValue = getMinMarkerValue(min, interval);
         maxMarkerValue = minMarkerValue + interval * ChartView.Y_AXIS_INTERVALS;

@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.location.LocationManager;
 import android.Manifest;
@@ -55,12 +57,12 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.WeekFields;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,10 +109,13 @@ import com.waykeep.app.ui.monthlyRecap.MonthlyRecapActivity;
 import com.waykeep.app.ui.tour.TourOverlay;
 import com.waykeep.app.ui.personalBests.PersonalBestsActivity;
 import com.waykeep.app.ui.suggested.SuggestedRoutesActivity;
+import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
+import com.waykeep.app.ui.util.ListItemUtils;
 import com.waykeep.app.ui.util.RecyclerViewSwipeDeleteCallback;
 import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.PermissionRequester;
+import com.waykeep.app.util.StringUtils;
 
 /**
  * An activity displaying a list of tracks.
@@ -126,6 +131,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private TrackRecordingServiceConnection recordingStatusConnection;
     private TrackListAdapter adapter;
     private final ExecutorService trackLoader = Executors.newSingleThreadExecutor();
+    private TrackThumbnailLoader latestRouteLoader;
 
     private TrackListBinding viewBinding;
     private RecoveryCandidate recoveryPromptCandidate;
@@ -256,9 +262,11 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        latestRouteLoader = new TrackThumbnailLoader(this);
         adapter = new TrackListAdapter(this, viewBinding.trackList, recordingStatus, unitSystem);
         viewBinding.trackList.setLayoutManager(layoutManager);
         viewBinding.trackList.setAdapter(adapter);
+        addRowDivider(viewBinding.trackList);
         viewBinding.trackListEmptyAction.setOnClickListener(view -> viewBinding.trackListFabAction.performClick());
         viewBinding.diagnosticsRecoveryNotNow.setOnClickListener(view -> deferRecoveryPrompt());
         viewBinding.diagnosticsRecoveryCopy.setOnClickListener(view -> recoverTrackCopy());
@@ -314,6 +322,46 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         setSupportActionBar(viewBinding.trackListToolbar);
         adapter.setActionModeCallback(contextualActionModeCallback);
+        applyBottomBarClearance();
+    }
+
+    /**
+     * Hairline under each row. Drawn as a decoration, not inside the item, so it follows the
+     * final row height when the context line wraps at large font scales.
+     */
+    private void addRowDivider(RecyclerView list) {
+        float density = getResources().getDisplayMetrics().density;
+        int insetStart = Math.round(124 * density);
+        int insetEnd = Math.round(20 * density);
+        Paint paint = new Paint();
+        paint.setColor(MaterialColors.getColor(list,
+                com.google.android.material.R.attr.colorOutlineVariant, 0));
+        list.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent,
+                               @NonNull RecyclerView.State state) {
+                int right = parent.getWidth() - parent.getPaddingRight() - insetEnd;
+                for (int i = 0; i < parent.getChildCount(); i++) {
+                    View child = parent.getChildAt(i);
+                    canvas.drawRect(insetStart, child.getBottom() - 1, right, child.getBottom(), paint);
+                }
+            }
+        });
+    }
+
+    /**
+     * The cradled record FAB protrudes above the bottom app bar, so the RecyclerView needs that
+     * much extra bottom padding to keep the last row readable and tappable at any font scale.
+     */
+    private void applyBottomBarClearance() {
+        View list = viewBinding.trackList;
+        View bar = viewBinding.bottomAppBar;
+        View fab = viewBinding.trackListFabAction;
+        list.post(() -> {
+            int margin = Math.round(8 * getResources().getDisplayMetrics().density);
+            int bottom = bar.getHeight() + fab.getHeight() / 2 + margin;
+            list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(), bottom);
+        });
     }
 
     private void requestRequiredPermissions() {
@@ -375,6 +423,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onDestroy() {
         super.onDestroy();
         trackLoader.shutdownNow();
+        if (latestRouteLoader != null) {
+            latestRouteLoader.evictAll();
+        }
         searchHandler.removeCallbacksAndMessages(null);
         viewBinding = null;
         recordingStatusConnection = null;
@@ -597,13 +648,16 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             // Insight covers the whole history, so skip it while the feed is filtered.
             final InsightSummary insight = TextUtils.isEmpty(query)
                     ? InsightSummary.compute(items, Instant.now(), ZoneId.systemDefault(),
-                    WeekFields.of(Locale.getDefault()).getFirstDayOfWeek(),
                     PreferencesUtils.getWeeklyGoalDistance())
                     : null;
+            final TrackListIterator.Item latest = items.isEmpty() ? null : items.get(0);
+            final List<TrackListIterator.Item> feedItems = TextUtils.isEmpty(query) && items.size() > 1
+                    ? items.subList(1, items.size())
+                    : items;
             runOnUiThread(() -> {
                 if (!isFinishing() && !isDestroyed() && adapter != null) {
                     adapter.setHighlightQuery(query);
-                    adapter.swapData(items);
+                    adapter.swapData(feedItems);
                     boolean empty = items.isEmpty();
                     viewBinding.trackListEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
                     if (empty) {
@@ -611,7 +665,58 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                         viewBinding.trackListEmptyMessage.setText(searching ? R.string.track_list_no_results : R.string.track_list_empty_message);
                         viewBinding.trackListEmptyAction.setVisibility(searching ? View.GONE : View.VISIBLE);
                     }
+                    renderLatestRoute(TextUtils.isEmpty(query) ? latest : null);
                     renderInsight(insight);
+                }
+            });
+        });
+    }
+
+    /**
+     * Fills the latest-route hero. The whole route is fitted into the frame; the hero is hidden
+     * while the feed is filtered, so it always matches the unfiltered history.
+     */
+    private void renderLatestRoute(@Nullable TrackListIterator.Item latest) {
+        if (viewBinding == null) {
+            return;
+        }
+        if (latest == null) {
+            viewBinding.latestRouteHero.setVisibility(View.GONE);
+            viewBinding.latestRouteImage.setImageDrawable(null);
+            return;
+        }
+        viewBinding.latestRouteHero.setVisibility(View.VISIBLE);
+        viewBinding.latestRouteHero.setOnClickListener(view -> startActivity(
+                IntentUtils.newIntent(this, TrackRecordedActivity.class)
+                        .putExtra(TrackRecordedActivity.EXTRA_TRACK_ID, latest.id())));
+
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(2)
+                .build(this);
+        viewBinding.latestRouteDate.setText(ListItemUtils.getDateTimeText(this,
+                latest.startTime(), latest.zoneOffset()));
+        viewBinding.latestRouteDistance.setText(formatter.formatDistance(latest.totalDistance()));
+
+        String time = StringUtils.formatElapsedTime(latest.totalTime());
+        String activity = latest.activityTypeLocalized();
+        viewBinding.latestRouteMeta.setText(activity.isEmpty()
+                ? time
+                : time + " · " + activity.toUpperCase(Locale.getDefault()));
+
+        viewBinding.latestRouteImage.post(() -> {
+            int width = viewBinding.latestRouteImage.getWidth();
+            int height = viewBinding.latestRouteImage.getHeight();
+            float density = getResources().getDisplayMetrics().density;
+            latestRouteLoader.load(latest.id(), width, height,
+                    Math.round(28 * density), Math.round(5 * density), bitmap -> {
+                if (viewBinding == null) {
+                    return;
+                }
+                if (bitmap != null) {
+                    viewBinding.latestRouteImage.setImageBitmap(bitmap);
+                } else {
+                    viewBinding.latestRouteImage.setImageDrawable(null);
                 }
             });
         });
@@ -626,28 +731,30 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 .setUnit(PreferencesUtils.getUnitSystem())
                 .setDecimalPlaces(1)
                 .build(this);
-        viewBinding.insightWeekDistance.setText(formatter.formatDistance(summary.sevenDayDistance()));
-        viewBinding.insightWeekAverage.setText(formatter.formatDistance(summary.fourWeekWeeklyAverage()));
+        Distance weekDistance = summary.goalProgressDistance();
+        viewBinding.insightWeekDistance.setText(formatter.formatDistance(weekDistance));
+        viewBinding.insightWeekAverage.setText(getString(R.string.insight_average_compact,
+                formatter.formatDistance(summary.fourWeekWeeklyAverage())));
         viewBinding.insightTrend.setText(summary.trendLineRes());
 
-        if (summary.hasGoal()) {
-            Distance weekDistance = summary.streak().currentWeekDistance();
-            viewBinding.insightGoalSection.setVisibility(View.VISIBLE);
-            viewBinding.insightSetGoalHint.setVisibility(View.GONE);
-            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_progress,
-                    formatter.formatDistance(weekDistance),
-                    formatter.formatDistance(summary.weeklyGoal())));
+        int streakDays = summary.dailyStreak().consecutiveDays();
+        viewBinding.insightStreakText.setText(streakDays > 0
+                ? getString(R.string.insight_streak_days, streakDays)
+                : getString(summary.streakLineRes()));
 
-            int goalMeters = (int) Math.round(summary.weeklyGoal().toM());
-            viewBinding.insightGoalBar.setMax(goalMeters);
-            viewBinding.insightGoalBar.setProgressCompat(
-                    (int) Math.min(Math.round(weekDistance.toM()), goalMeters), false);
-            int streakDays = summary.dailyStreak().consecutiveDays();
-            viewBinding.insightStreakText.setText(streakDays > 0
-                    ? getString(R.string.insight_streak_days, streakDays)
-                    : getString(summary.streakLineRes()));
+        if (summary.hasGoal()) {
+            Distance goal = summary.weeklyGoal();
+            viewBinding.insightSetGoalHint.setVisibility(View.GONE);
+            viewBinding.insightGoalProgress.setVisibility(View.VISIBLE);
+            viewBinding.insightLane.setVisibility(View.VISIBLE);
+            int percent = (int) Math.min(100, Math.round(100.0 * weekDistance.toM() / goal.toM()));
+            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_percent,
+                    percent, formatter.formatDistance(goal)));
+            viewBinding.insightLane.setValues(weekDistance.toM(), goal.toM(),
+                    summary.fourWeekWeeklyAverage().toM());
         } else {
-            viewBinding.insightGoalSection.setVisibility(View.GONE);
+            viewBinding.insightGoalProgress.setVisibility(View.GONE);
+            viewBinding.insightLane.setVisibility(View.GONE);
             viewBinding.insightSetGoalHint.setVisibility(View.VISIBLE);
         }
 
@@ -687,6 +794,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     private void updateGpsMenuItem(boolean isGpsStarted, boolean isRecording) {
         MaterialButton startGpsMenuItem = viewBinding.sensorStartButton;
         startGpsMenuItem.setVisibility(!isRecording ? View.VISIBLE : View.INVISIBLE);
+        int gpsAction = isGpsStarted ? R.string.action_stop_gps : R.string.action_start_gps;
+        startGpsMenuItem.setContentDescription(getString(gpsAction));
+        startGpsMenuItem.setTooltipText(getString(gpsAction));
         if (!isRecording) {
             android.graphics.drawable.Drawable icon = AppCompatResources.getDrawable(this,
                     isGpsStarted ? gpsStatusValue.icon : R.drawable.ic_gps_off_24dp);

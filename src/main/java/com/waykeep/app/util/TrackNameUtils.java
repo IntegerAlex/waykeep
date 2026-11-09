@@ -17,6 +17,7 @@
 package com.waykeep.app.util;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -69,5 +70,15 @@ public class TrackNameUtils {
      */
     public static String formatListDate(OffsetDateTime startTime) {
         return startTime.format(DateTimeFormatter.ofPattern("dd MMM yy", Locale.getDefault()));
+    }
+
+    /**
+     * Detail-header title for auto-generated names. DateUtils keeps the field order, month
+     * names and RTL behaviour in the device locale instead of a hardcoded pattern.
+     */
+    public static String formatDisplayDate(Context context, OffsetDateTime startTime) {
+        return DateUtils.formatDateTime(context, startTime.toInstant().toEpochMilli(),
+                DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_WEEKDAY
+                        | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH);
     }
 }

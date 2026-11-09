@@ -33,6 +33,14 @@ public abstract class StatisticViewHolder<T extends ViewBinding> {
         return binding.getRoot();
     }
 
+    /**
+     * Lets a field disappear when the recording has no value for it (for example, gain/loss
+     * without a barometer or GPS elevation fallback) instead of showing a repeated dash.
+     */
+    public void setVisible(boolean visible) {
+        getView().setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
     T getBinding() {
         return binding;
     }

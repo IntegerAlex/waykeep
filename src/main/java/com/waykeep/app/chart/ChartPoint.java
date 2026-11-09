@@ -39,7 +39,8 @@ public record ChartPoint(
                 smoothedSpeed != null
                         ? smoothedSpeed.to(unitSystem)
                         : null,
-                smoothedSpeed != null
+                // Pace is undefined at zero speed; a stop is a gap, not a 0:00 pace.
+                smoothedSpeed != null && !smoothedSpeed.isZero()
                         ? smoothedSpeed.toPace(unitSystem).toSeconds() / 60d
                         : null,
                 trackPoint.heartRate() != null
