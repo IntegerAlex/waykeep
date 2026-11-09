@@ -420,3 +420,21 @@ trace.
 - Device-verified task stack: after removing the app from recents during a recording, tapping
   the notification now produces a two-activity task rooted at the track list, and Finish
   returns to it instead of the launcher.
+
+## 9. Route-led UI (v1.1.0)
+
+- Home opens on the latest real route, fitted whole in the frame; the distance, date and
+  time sit below it on asphalt. The weekly goal stays visible as a compact common-scale
+  strip with its numbers.
+- The feed starts at the next track, so the hero is not repeated. Every feed tile fits the
+  whole route shape.
+- Track Detail carries the recorded route above the segmented tabs. Stats defaults to a
+  three-metric strip (moving pace, moving time, elevation range); the full instrument grid
+  is behind “More stats”.
+- Type stack: Inter for UI text, Barlow Condensed for large display numbers, JetBrains Mono
+  for small tabular data. Barlow Condensed is limited to display sizes; Inter keeps
+  Cyrillic/Greek coverage.
+- Pace and speed charts use the 5th–95th percentile with edge markers for clipped
+  outliers; the x-axis unit is no longer styled like a tick.
+- Recording hides empty Gain/Loss cells when no barometer or GPS elevation fallback data
+  exists.

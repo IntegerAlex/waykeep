@@ -20,11 +20,13 @@ Website: <https://waykeep.gossorg.in>
 
 - F-Droid metadata: [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml)
 - F-Droid MR text: [`distribution/fdroid/merge-request.md`](distribution/fdroid/merge-request.md)
-- **F-Droid MR:** <https://gitlab.com/fdroid/fdroiddata/-/merge_requests/56211> (open; CI green)
+- **F-Droid MR:** <https://gitlab.com/fdroid/fdroiddata/-/merge_requests/56211> (closed; CI green; reapply after the maintenance threshold)
 
-The F-Droid file targets v1.0.0 (versionCode 6890, commit `d441ea574f49fa64018e3b4a03ca660ad68ddac8`) and uses `gradle: - reproducible`, which builds `com.waykeep.app` as an unsigned release for F-Droid signing. Copy it to `fdroiddata/metadata/com.waykeep.app.yml` when submitting. Listing text, icon, feature graphic, screenshots, and changelog live in `fastlane/metadata/android/en-US/`.
+The F-Droid file targets v1.1.0 (versionCode 6891, commit `bd7d6b3549e6dd2d5c76ac4a48ff3d9d0080c81d`) and uses `gradle: - reproducible`, which builds `com.waykeep.app` as an unsigned release for F-Droid signing. Copy it to `fdroiddata/metadata/com.waykeep.app.yml` when submitting. Listing text, icon, feature graphic, screenshots, and changelog live in `fastlane/metadata/android/en-US/`.
 
-Reproducible build check: two clean `assembleReproducibleRelease` builds produced the same unsigned APK SHA-256, `c2f9a321b379b9db85b13789fddc30aabd16888a1c64edd23ee71b653b92c5d7`.
+Release tag: `waykeep-v1.1.0`. The historical upstream repo already has a 2011 `v1.1.0` tag, so the fork uses the `waykeep-` prefix for this release rather than overwriting upstream history.
+
+Reproducible build check: two clean `assembleReproducibleRelease` builds produced the same unsigned APK SHA-256, `cd92bb25a0e5664e5c8e0fdea8e079c2d9b5d944e458cfbfc01ac58bfa7b6b26` (`com.waykeep.app_waykeep-v1.1.0_6891-reproducible-release-unsigned.apk`).
 
 ## Reproducible builds
 

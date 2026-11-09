@@ -14,14 +14,14 @@ RepoType: git
 Repo: https://github.com/IntegerAlex/waykeep
 
 Builds:
-  - versionName: v1.0.0
-    versionCode: 6890
-    commit: d441ea574f49fa64018e3b4a03ca660ad68ddac8
+  - versionName: v1.1.0
+    versionCode: 6891
+    commit: bd7d6b3549e6dd2d5c76ac4a48ff3d9d0080c81d
     gradle:
       - reproducible
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 UpdateCheckData: build.gradle|versionCode\s+(\d+)|.|versionName\s+"([^"]+)"
-CurrentVersion: v1.0.0
-CurrentVersionCode: 6890
+CurrentVersion: v1.1.0
+CurrentVersionCode: 6891
