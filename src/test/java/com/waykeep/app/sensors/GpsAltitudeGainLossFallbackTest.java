@@ -7,11 +7,16 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.waykeep.app.data.models.Altitude;
 import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Distance;
 import com.waykeep.app.data.models.Position;
+import com.waykeep.app.data.models.Statistics;
+import com.waykeep.app.data.models.TrackPoint;
+import com.waykeep.app.data.statistics.TrackStatisticsUpdater;
 
 public class GpsAltitudeGainLossFallbackTest {
 
@@ -98,6 +103,63 @@ public class GpsAltitudeGainLossFallbackTest {
 
         assertEquals(0, fallback.getEstimate().gain_m(), 0.01);
         assertEquals(0, fallback.getEstimate().loss_m(), 0.01);
+    }
+
+    @Test
+    public void applyToImportedComputesGainLossFromAltitudeWithoutVerticalAccuracy() {
+        List<TrackPoint> points = new ArrayList<>(List.of(
+                importedPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC, 100, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 100, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 100, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 100, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 100, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 106, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 106, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 106, null)
+        ));
+
+        GpsAltitudeGainLossFallback.applyToImported(points);
+
+        assertNull(points.get(3).altitudeGainLoss());
+        assertEquals(new AltitudeGainLoss(0, 0, AltitudeGainLoss.Source.GPS_ESTIMATE), points.get(4).altitudeGainLoss());
+        assertEquals(new AltitudeGainLoss(6, 0, AltitudeGainLoss.Source.GPS_ESTIMATE), points.get(7).altitudeGainLoss());
+
+        Statistics stats = new TrackStatisticsUpdater(points).getTrackStatistics();
+        assertEquals(new AltitudeGainLoss(6, 0, AltitudeGainLoss.Source.GPS_ESTIMATE), stats.altitudeGainLoss());
+    }
+
+    @Test
+    public void applyToImportedPreservesExistingAltitudeGainLoss() {
+        AltitudeGainLoss existing = new AltitudeGainLoss(4, 2, AltitudeGainLoss.Source.BAROMETER);
+        List<TrackPoint> points = new ArrayList<>(List.of(
+                importedPoint(TrackPoint.Type.SEGMENT_START_AUTOMATIC, 100, existing),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 110, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 110, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 110, null),
+                importedPoint(TrackPoint.Type.TRACKPOINT, 110, null)
+        ));
+
+        GpsAltitudeGainLossFallback.applyToImported(points);
+
+        assertSame(existing, points.get(0).altitudeGainLoss());
+        assertNull(points.get(4).altitudeGainLoss());
+    }
+
+    private static TrackPoint importedPoint(
+            TrackPoint.Type type,
+            double altitudeM,
+            AltitudeGainLoss gainLoss) {
+        return new TrackPoint(
+                null,
+                type,
+                position(altitudeM, null),
+                Distance.of(0),
+                null,
+                null,
+                null,
+                null,
+                gainLoss
+        );
     }
 
     private static Position position(double altitudeM, Double verticalAccuracyM) {

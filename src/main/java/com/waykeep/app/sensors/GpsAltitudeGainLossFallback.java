@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.Position;
+import com.waykeep.app.data.models.TrackPoint;
 
 /** Downstream opt-in fallback for Codeberg #1570; GPS altitude remains noisy despite this filter. */
 public class GpsAltitudeGainLossFallback {
@@ -33,6 +34,12 @@ public class GpsAltitudeGainLossFallback {
             return;
         }
 
+        addAltitude(altitude);
+    }
+
+    public void addAltitude(double altitude) {
+        if (!Double.isFinite(altitude)) return;
+
         if (altitudes.size() == WINDOW_SIZE) {
             altitudes.removeFirst();
         }
@@ -56,6 +63,37 @@ public class GpsAltitudeGainLossFallback {
         }
 
         estimate = new AltitudeGainLoss(gainM, lossM, AltitudeGainLoss.Source.GPS_ESTIMATE);
+    }
+
+    /**
+     * Populates {@link AltitudeGainLoss} from {@code <ele>} on imported tracks that do not carry
+     * explicit gain/loss extensions. Codeberg #555 reported gain 0 for imported GPX; #556 fixed
+     * only OpenTracks' own exports by adding {@code <opentracks:gain>}/{@code <opentracks:loss>}.
+     */
+    public static void applyToImported(List<TrackPoint> trackPoints) {
+        for (TrackPoint point : trackPoints) {
+            if (point.altitudeGainLoss() != null) {
+                return;
+            }
+        }
+
+        GpsAltitudeGainLossFallback fallback = new GpsAltitudeGainLossFallback();
+        for (int i = 0; i < trackPoints.size(); i++) {
+            TrackPoint current = trackPoints.get(i);
+            if (current.type() != TrackPoint.Type.TRACKPOINT) {
+                fallback.reset();
+            }
+            if (current.position().hasVerticalAccuracy()) {
+                fallback.add(current.position());
+            } else if (current.position().hasAltitude()) {
+                fallback.addAltitude(current.position().altitude().toM());
+            }
+            AltitudeGainLoss estimate = fallback.getEstimate();
+            if (estimate != null) {
+                trackPoints.set(i, current.with(estimate));
+                fallback.resetAggregated();
+            }
+        }
     }
 
     @Nullable

@@ -28,6 +28,7 @@ import com.waykeep.app.data.models.Speed;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackPoint;
 import com.waykeep.app.data.statistics.TrackStatisticsUpdater;
+import com.waykeep.app.sensors.GpsAltitudeGainLossFallback;
 import com.waykeep.app.ui.markers.MarkerUtils;
 import com.waykeep.app.util.FileUtils;
 
@@ -191,6 +192,7 @@ public class TrackImporter {
                 trackPoints.set(i, newCurrent);
             }
         }
+        GpsAltitudeGainLossFallback.applyToImported(trackPoints);
     }
 
     /**

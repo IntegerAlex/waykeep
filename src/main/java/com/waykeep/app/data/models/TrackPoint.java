@@ -142,6 +142,20 @@ public record TrackPoint(
         );
     }
 
+    public TrackPoint with(AltitudeGainLoss newAltitudeGainLoss) {
+        return new TrackPoint(
+                id,
+                type,
+                position,
+                sensorDistance,
+                heartRate,
+                temperature,
+                cadence,
+                power,
+                newAltitudeGainLoss
+        );
+    }
+
     @NonNull
     public Instant getTime() {
         return position.time();
