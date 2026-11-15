@@ -161,6 +161,16 @@ public class TrackShareImageGenerator {
         canvas.drawRect(0, 0, widthPx, heightPx, paint);
     }
 
+    /**
+     * Darkens the basemap so the title and stat values stay readable: light at the top,
+     * nearly opaque behind the stats grid.
+     */
+    private static void drawMapScrim(@NonNull Canvas canvas, int widthPx, int heightPx) {
+        Paint paint = new Paint();
+        paint.setShader(new LinearGradient(0, 0, 0, heightPx, 0x66000000, 0xD9000000, Shader.TileMode.CLAMP));
+        canvas.drawRect(0, 0, widthPx, heightPx, paint);
+    }
+
     private static Bitmap renderCard(@NonNull Context context, @NonNull String title,
                                     @NonNull String subtitle, @NonNull List<RouteSampler.LatLon> routePoints,
                                     @NonNull List<StatCard> cards, boolean routeOnly,
@@ -172,10 +182,39 @@ public class TrackShareImageGenerator {
         Bitmap bitmap = Bitmap.createBitmap(widthPx, heightPx, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
-        drawBackground(context, canvas, background, widthPx, heightPx, density);
-
         float padding = 48 * density;
         float y = padding;
+
+        // Layout first: the map is fetched for the whole card, but the route stays in the
+        // composition area above the stats.
+        float routeTop = y + 88 * scaledDensity;
+        // Strava composition: map fills the top half, stats the bottom half.
+        float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.52f;
+
+        // MAP_TINT is a full-bleed background like LIGHT/DARK, not a thumbnail inside the card.
+        Bitmap mapBitmap = null;
+        MapTileFetcher.Fit mapFit = null;
+        if (background == Background.MAP_TINT && !routePoints.isEmpty() && routeBottom > routeTop) {
+            try {
+                MapTileFetcher.MapResult map = MapTileFetcher.render(context, routePoints, widthPx, heightPx,
+                        0, Math.round(routeTop), widthPx, Math.round(routeBottom - routeTop));
+                if (map != null) {
+                    mapBitmap = map.bitmap;
+                    mapFit = map.fit;
+                }
+            } catch (RuntimeException ignored) {
+                // Fall back to the plain gradient: a share card must never fail to render.
+            }
+        }
+
+        drawBackground(context, canvas, background, widthPx, heightPx, density);
+        if (mapBitmap != null) {
+            canvas.drawBitmap(mapBitmap, 0, 0, null);
+            mapBitmap.recycle();
+            drawMapScrim(canvas, widthPx, heightPx);
+            drawRouteMercator(canvas, routePoints, mapFit, 0, 0,
+                    ContextCompat.getColor(context, R.color.opentracks), density);
+        }
 
         Paint titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(theme.textPrimary());
@@ -196,25 +235,7 @@ public class TrackShareImageGenerator {
         y += 40 * scaledDensity;
 
         if (!routePoints.isEmpty() || routeOnly) {
-            float routeTop = y;
-            // Strava composition: map fills the top half, stats the bottom half.
-            float routeBottom = routeOnly || cards.isEmpty() ? heightPx - padding - 40 * scaledDensity : heightPx * 0.52f;
-            int mapW = Math.round(widthPx - 2 * padding);
-            int mapH = Math.round(routeBottom - routeTop);
-            MapTileFetcher.MapResult map = null;
-            if (background == Background.MAP_TINT && mapH > 0 && !routePoints.isEmpty()) {
-                try {
-                    map = MapTileFetcher.render(context, routePoints, mapW, mapH);
-                } catch (RuntimeException e) {
-                    map = null;
-                }
-            }
-            if (map != null) {
-                canvas.drawBitmap(map.bitmap, padding, routeTop, null);
-                drawRouteMercator(canvas, routePoints, map.fit, padding, routeTop,
-                        ContextCompat.getColor(context, R.color.opentracks), density);
-                map.bitmap.recycle();
-            } else {
+            if (mapBitmap == null) {
                 drawRoute(canvas, routePoints, padding, routeTop, widthPx - padding, routeBottom,
                         ContextCompat.getColor(context, R.color.opentracks), theme.placeholder(), density);
             }
