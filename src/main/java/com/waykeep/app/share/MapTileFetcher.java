@@ -85,12 +85,24 @@ public final class MapTileFetcher {
     }
 
     /**
-     * Computes the zoom + transform fitting the route into a canvas region, or null if impossible.
+     * Computes the zoom + transform fitting the route into the whole canvas.
      * Pure math, no I/O: safe to call before deciding to fetch.
      */
     @Nullable
     public static Fit fit(@NonNull List<RouteSampler.LatLon> points, int canvasWidthPx, int canvasHeightPx) {
-        if (points.size() < 2 || canvasWidthPx <= 0 || canvasHeightPx <= 0) {
+        return fit(points, canvasWidthPx, canvasHeightPx, 0, 0, canvasWidthPx, canvasHeightPx);
+    }
+
+    /**
+     * Computes the zoom + transform fitting the route into {@code region} of a canvas. Tiles are
+     * still fetched for the whole canvas, so a full-bleed basemap can extend past the region.
+     * The zoom also has to keep the canvas-wide tile count inside {@link #CAP_TILES}, otherwise
+     * the first preview would spend seconds fetching tiles nobody asked for.
+     */
+    @Nullable
+    public static Fit fit(@NonNull List<RouteSampler.LatLon> points, int canvasWidthPx, int canvasHeightPx,
+                          int regionLeft, int regionTop, int regionWidth, int regionHeight) {
+        if (points.size() < 2 || regionWidth <= 0 || regionHeight <= 0) {
             return null;
         }
         for (int z = 19; z >= 1; z--) {
@@ -99,42 +111,66 @@ public final class MapTileFetcher {
                 continue;
             }
             int count = (b.tileMaxX - b.tileMinX + 1) * (b.tileMaxY - b.tileMinY + 1);
-            if (count <= CAP_TILES) {
-                double padFrac = 0.12;
-                double bboxW = Math.max(b.maxPx - b.minPx, 1);
-                double bboxH = Math.max(b.maxPy - b.minPy, 1);
-                double scale = Math.min(canvasWidthPx / (bboxW * (1 + 2 * padFrac)),
-                        canvasHeightPx / (bboxH * (1 + 2 * padFrac)));
-                scale = Math.min(scale, 8.0);
-                double offX = (canvasWidthPx - bboxW * scale) / 2.0 - b.minPx * scale;
-                double offY = (canvasHeightPx - bboxH * scale) / 2.0 - b.minPy * scale;
-                return new Fit(z, scale, offX, offY);
+            if (count > CAP_TILES) {
+                continue;
+            }
+            double padFrac = 0.12;
+            double bboxW = Math.max(b.maxPx - b.minPx, 1);
+            double bboxH = Math.max(b.maxPy - b.minPy, 1);
+            double scale = Math.min(regionWidth / (bboxW * (1 + 2 * padFrac)),
+                    regionHeight / (bboxH * (1 + 2 * padFrac)));
+            scale = Math.min(scale, 8.0);
+            double offX = regionLeft + (regionWidth - bboxW * scale) / 2.0 - b.minPx * scale;
+            double offY = regionTop + (regionHeight - bboxH * scale) / 2.0 - b.minPy * scale;
+            Fit fit = new Fit(z, scale, offX, offY);
+            if (tileCountForCanvas(fit, canvasWidthPx, canvasHeightPx) <= CAP_TILES) {
+                return fit;
             }
         }
         return null;
     }
 
-    /**
-     * Fetches tiles for the fitted zoom and returns them composited into a canvas-sized bitmap.
-     */
+    private static int tileCountForCanvas(@NonNull Fit fit, int canvasWidthPx, int canvasHeightPx) {
+        int maxTile = 1 << fit.zoom;
+        int areas = (tileIndex((canvasWidthPx - fit.offX) / fit.scale, maxTile)
+                - tileIndex((0 - fit.offX) / fit.scale, maxTile) + 1)
+                * (tileIndex((canvasHeightPx - fit.offY) / fit.scale, maxTile)
+                - tileIndex((0 - fit.offY) / fit.scale, maxTile) + 1);
+        return Math.max(areas, 1);
+    }
+
     @Nullable
     public static MapResult render(@NonNull Context context,
                                   @NonNull List<RouteSampler.LatLon> points,
                                   int canvasWidthPx, int canvasHeightPx) {
-        Fit fit = fit(points, canvasWidthPx, canvasHeightPx);
+        return render(context, points, canvasWidthPx, canvasHeightPx, 0, 0, canvasWidthPx, canvasHeightPx);
+    }
+
+    /**
+     * Fetches tiles for the fitted zoom and returns them composited into a canvas-sized bitmap.
+     * Tiles cover the whole canvas even when the route is fitted into a smaller region.
+     */
+    @Nullable
+    public static MapResult render(@NonNull Context context,
+                                  @NonNull List<RouteSampler.LatLon> points,
+                                  int canvasWidthPx, int canvasHeightPx,
+                                  int regionLeft, int regionTop, int regionWidth, int regionHeight) {
+        Fit fit = fit(points, canvasWidthPx, canvasHeightPx, regionLeft, regionTop, regionWidth, regionHeight);
         if (fit == null) {
             return null;
         }
-        Bounds b = boundsFor(points, fit.zoom);
-        if (b == null) {
-            return null;
-        }
+        int maxTile = 1 << fit.zoom;
 
-        int tileCols = b.tileMaxX - b.tileMinX + 1;
-        int tileRows = b.tileMaxY - b.tileMinY + 1;
+        int tileMinX = tileIndex((0 - fit.offX) / fit.scale, maxTile);
+        int tileMinY = tileIndex((0 - fit.offY) / fit.scale, maxTile);
+        int tileMaxX = tileIndex((canvasWidthPx - fit.offX) / fit.scale, maxTile);
+        int tileMaxY = tileIndex((canvasHeightPx - fit.offY) / fit.scale, maxTile);
+
+        int tileCols = tileMaxX - tileMinX + 1;
+        int tileRows = tileMaxY - tileMinY + 1;
         List<Future<Bitmap>> futures = new ArrayList<>();
-        for (int ty = b.tileMinY; ty <= b.tileMaxY; ty++) {
-            for (int tx = b.tileMinX; tx <= b.tileMaxX; tx++) {
+        for (int ty = tileMinY; ty <= tileMaxY; ty++) {
+            for (int tx = tileMinX; tx <= tileMaxX; tx++) {
                 final int fz = fit.zoom;
                 final int fx = tx;
                 final int fy = ty;
@@ -146,8 +182,8 @@ public final class MapTileFetcher {
         Canvas gridCanvas = new Canvas(grid);
         android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG);
         int idx = 0;
-        for (int ty = b.tileMinY; ty <= b.tileMaxY; ty++) {
-            for (int tx = b.tileMinX; tx <= b.tileMaxX; tx++) {
+        for (int ty = tileMinY; ty <= tileMaxY; ty++) {
+            for (int tx = tileMinX; tx <= tileMaxX; tx++) {
                 Bitmap tile = null;
                 try {
                     tile = futures.get(idx).get();
@@ -155,8 +191,8 @@ public final class MapTileFetcher {
                     tile = null;
                 }
                 idx++;
-                int dx = (tx - b.tileMinX) * TILE_SIZE;
-                int dy = (ty - b.tileMinY) * TILE_SIZE;
+                int dx = (tx - tileMinX) * TILE_SIZE;
+                int dy = (ty - tileMinY) * TILE_SIZE;
                 if (tile != null) {
                     gridCanvas.drawBitmap(tile, dx, dy, paint);
                 } else {
@@ -171,14 +207,18 @@ public final class MapTileFetcher {
         Canvas canvas = new Canvas(output);
         Rect src = new Rect(0, 0, grid.getWidth(), grid.getHeight());
         RectF dst = new RectF(
-                (float) (b.tileMinX * TILE_SIZE * fit.scale + fit.offX),
-                (float) (b.tileMinY * TILE_SIZE * fit.scale + fit.offY),
-                (float) ((b.tileMaxX + 1) * TILE_SIZE * fit.scale + fit.offX),
-                (float) ((b.tileMaxY + 1) * TILE_SIZE * fit.scale + fit.offY));
+                (float) (tileMinX * TILE_SIZE * fit.scale + fit.offX),
+                (float) (tileMinY * TILE_SIZE * fit.scale + fit.offY),
+                (float) ((tileMaxX + 1) * TILE_SIZE * fit.scale + fit.offX),
+                (float) ((tileMaxY + 1) * TILE_SIZE * fit.scale + fit.offY));
         canvas.drawBitmap(grid, src, dst, paint);
         grid.recycle();
 
         return new MapResult(output, fit);
+    }
+
+    private static int tileIndex(double mercatorPx, int maxTile) {
+        return Math.max(0, Math.min(maxTile - 1, (int) Math.floor(mercatorPx / TILE_SIZE)));
     }
 
     /**
