@@ -306,6 +306,10 @@ limitations under the License.
     <string name="import_error_list_dialog_title">Files not imported</string>
     <string name="import_file_imported">File %1$s imported</string>
     <string name="import_prevent_reimport">You have set prevent re-import track</string>
+    <string name="import_confirm_title">Import from another app?</string>
+    <string name="import_confirm_message_single">Another app sent a file to Waykeep. Only import it if you asked for it.</string>
+    <string name="import_confirm_message_multiple">Another app sent %1$d files to Waykeep. Only import them if you asked for them.</string>
+    <string name="import_confirm_positive">Import</string>
     <string name="import_progress_message">Importing from %1$s…</string>
     <string name="import_progress_summary_ok_msg">Files imported</string>
     <string name="import_progress_summary_exists_msg">Already exists</string>

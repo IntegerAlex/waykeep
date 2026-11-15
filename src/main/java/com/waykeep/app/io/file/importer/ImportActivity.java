@@ -26,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +51,13 @@ public class ImportActivity extends AbstractActivity {
 
     private static final String BUNDLE_DOCUMENT_URIS = "document_uris";
     private static final String BUNDLE_IS_DIRECTORY = "is_directory";
+    private static final String BUNDLE_CONFIRMED = "confirmed";
 
     private ImportActivityBinding viewBinding;
 
     private ArrayList<Uri> documentUris = new ArrayList<>();
     private boolean isDirectory;
+    private boolean confirmed;
 
     private Importer importer;
 
@@ -84,6 +88,7 @@ public class ImportActivity extends AbstractActivity {
         } else {
             documentUris = savedInstanceState.getParcelable(BUNDLE_DOCUMENT_URIS);
             isDirectory = savedInstanceState.getBoolean(BUNDLE_IS_DIRECTORY);
+            confirmed = savedInstanceState.getBoolean(BUNDLE_CONFIRMED);
         }
 
         final List<DocumentFile> documentFiles;
@@ -96,13 +101,40 @@ public class ImportActivity extends AbstractActivity {
                     .toList();
         }
 
+        //Works for a directory, but we might have received multiple files via SEND_MULTIPLE.
+        viewBinding.importActivityToolbar.setTitle(getString(R.string.import_progress_message, documentFiles.get(0).getName()));
+
+        // CVE-2026-107056: anything not started from Waykeep's own import UI needs a user tap first.
+        if (!confirmed && ImportTrust.consume(intent)) {
+            confirmed = true;
+        }
+        if (confirmed) {
+            startImport(documentFiles);
+        } else {
+            confirmExternalImport(documentFiles);
+        }
+    }
+
+    private void startImport(List<DocumentFile> documentFiles) {
         importer = new Importer(this, documentFiles);
         importer.getLiveData()
                 .observe(this, this::setProgress);
         importer.startImport();
+    }
 
-        //Works for a directory, but we might have received multiple files via SEND_MULTIPLE.
-        viewBinding.importActivityToolbar.setTitle(getString(R.string.import_progress_message, documentFiles.get(0).getName()));
+    private void confirmExternalImport(List<DocumentFile> documentFiles) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.import_confirm_title)
+                .setMessage(documentFiles.size() == 1
+                        ? getString(R.string.import_confirm_message_single)
+                        : getString(R.string.import_confirm_message_multiple, documentFiles.size()))
+                .setCancelable(false)
+                .setPositiveButton(R.string.import_confirm_positive, (dialog, which) -> {
+                    confirmed = true;
+                    startImport(documentFiles);
+                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> finish())
+                .show();
     }
 
     @NonNull
@@ -120,7 +152,9 @@ public class ImportActivity extends AbstractActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        importer.cancel();
+        if (importer != null) {
+            importer.cancel();
+        }
         return super.onSupportNavigateUp();
     }
 
@@ -129,6 +163,7 @@ public class ImportActivity extends AbstractActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(BUNDLE_DOCUMENT_URIS, documentUris);
         outState.putBoolean(BUNDLE_IS_DIRECTORY, isDirectory);
+        outState.putBoolean(BUNDLE_CONFIRMED, confirmed);
     }
 
     private void setProgress(Importer.Summary summary) {

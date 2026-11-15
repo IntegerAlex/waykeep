@@ -73,7 +73,7 @@ public abstract class DirectoryChooserActivity extends AppCompatActivity {
         protected Intent createNextActivityIntent(Uri directoryUri) {
             Intent intent = IntentUtils.newIntent(this, ImportActivity.class);
             intent.putExtra(ImportActivity.EXTRA_DIRECTORY_URI_KEY, directoryUri);
-            return intent;
+            return ImportTrust.markInternal(intent);
         }
     }
 

@@ -19,6 +19,7 @@ import com.waykeep.app.R;
 import com.waykeep.app.io.file.TrackFileFormat;
 import com.waykeep.app.io.file.TrackFilenameGenerator;
 import com.waykeep.app.io.file.importer.ImportActivity;
+import com.waykeep.app.io.file.importer.ImportTrust;
 import com.waykeep.app.io.healthconnect.exporter.HealthConnectUtils;
 import com.waykeep.app.util.IntentUtils;
 
@@ -41,7 +42,7 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
                     }
                     intent.setClipData(clipData);
                 }
-                startActivity(intent);
+                startActivity(ImportTrust.markInternal(intent));
             });
 
     @Override
