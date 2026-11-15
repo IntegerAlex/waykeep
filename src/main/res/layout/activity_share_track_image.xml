@@ -46,7 +46,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_aspect_feed"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.OpenTracks.ShareImageToggle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -54,7 +54,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_aspect_square"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.OpenTracks.ShareImageToggle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -62,7 +62,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share_image_aspect_story"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.OpenTracks.ShareImageToggle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
