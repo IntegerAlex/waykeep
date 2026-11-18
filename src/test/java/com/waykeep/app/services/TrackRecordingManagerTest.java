@@ -47,6 +47,39 @@ public class TrackRecordingManagerTest {
     }
 
     @Test
+    public void freshNetworkFixCanBeTheStart() {
+        long now = 1_000_000_000_000L;
+        assertTrue(TrackRecordingManager.isProvisionalStartFresh(now - 5_000_000_000L, now));
+    }
+
+    @Test
+    public void staleNetworkFixIsRejected() {
+        long now = 1_000_000_000_000L;
+        assertFalse(TrackRecordingManager.isProvisionalStartFresh(now - 11_000_000_000L, now));
+    }
+
+    @Test
+    public void futureNetworkFixIsRejected() {
+        long now = 1_000_000_000_000L;
+        assertFalse(TrackRecordingManager.isProvisionalStartFresh(now + 1_000_000_000L, now));
+    }
+
+    @Test
+    public void absurdProvisionalStartIsDiscarded() {
+        assertTrue(TrackRecordingManager.discardProvisionalStart(true, Distance.of(840_000)));
+    }
+
+    @Test
+    public void nearbyProvisionalStartSurvivesTheFirstFix() {
+        assertFalse(TrackRecordingManager.discardProvisionalStart(true, Distance.of(2_000)));
+    }
+
+    @Test
+    public void nonProvisionalStartIsNeverDiscarded() {
+        assertFalse(TrackRecordingManager.discardProvisionalStart(false, Distance.of(840_000)));
+    }
+
+    @Test
     public void stationaryTrackPointIsSkipped() {
         assertTrue(TrackRecordingManager.isStationary(trackPoint(TrackPoint.Type.TRACKPOINT, Speed.of(0))));
     }

@@ -57,6 +57,12 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     // Network fixes are coarser than GPS (cell-based ones are ~100 m), so they cannot use the
     // 50 m recording threshold; beyond this they are too vague to be a start point.
     private static final Distance PROVISIONAL_START_MAX_ACCURACY = Distance.of(150);
+    // The provider can hand back a cached fix from another city with a plausible accuracy (e.g.
+    // right after a flight). Only a recently observed fix can describe where the track starts.
+    private static final Duration PROVISIONAL_START_MAX_AGE = Duration.ofSeconds(10);
+    // The first GPS fix proves the provisional start wrong only beyond this distance: closer than
+    // this it may still be the real departure point of someone moving while the chip was cold.
+    private static final Distance PROVISIONAL_START_DISCARD_BEYOND = Distance.of(50_000);
 
     private final Runnable ON_IDLE = this::onIdle;
 
@@ -178,7 +184,15 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return;
         }
 
-        Distance accuracy = location != null && location.hasAccuracy() ? Distance.of(location.getAccuracy()) : null;
+        if (location == null
+                || !isProvisionalStartFresh(location.getElapsedRealtimeNanos(), SystemClock.elapsedRealtimeNanos())) {
+            diagnostics.event("provisional_start", Map.of(
+                    "accepted", false,
+                    "reason", location == null ? "no_fix" : "stale_fix"));
+            return;
+        }
+
+        Distance accuracy = location.hasAccuracy() ? Distance.of(location.getAccuracy()) : null;
         if (accuracy == null || accuracy.greaterThan(PROVISIONAL_START_MAX_ACCURACY)) {
             diagnostics.event("provisional_start", Map.of(
                     "accepted", false,
@@ -206,6 +220,25 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
     @VisibleForTesting
     static boolean connectsProvisionalStart(boolean lastStoredIsProvisional, @NonNull Distance distance) {
         return lastStoredIsProvisional && !distance.greaterThan(PROVISIONAL_START_MAX_CONNECT);
+    }
+
+    /**
+     * A network fix older than this cannot describe the departure point: providers hand back cached
+     * positions that can be a whole trip out of date while still reporting a plausible accuracy.
+     */
+    @VisibleForTesting
+    static boolean isProvisionalStartFresh(long fixElapsedRealtimeNanos, long nowElapsedRealtimeNanos) {
+        long ageNanos = nowElapsedRealtimeNanos - fixElapsedRealtimeNanos;
+        return ageNanos >= 0 && ageNanos <= PROVISIONAL_START_MAX_AGE.toNanos();
+    }
+
+    /**
+     * The first GPS fix of a session proves the provisional start wrong only beyond an absurd
+     * distance; a smaller disagreement is someone who moved while the chip was still cold.
+     */
+    @VisibleForTesting
+    static boolean discardProvisionalStart(boolean lastStoredIsProvisional, @NonNull Distance distance) {
+        return lastStoredIsProvisional && distance.greaterThan(PROVISIONAL_START_DISCARD_BEYOND);
     }
 
     /**
@@ -243,6 +276,21 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             return null;
         }
         return lastStoredTrackPointWithLocation.position().horizontalAccuracy();
+    }
+
+    /**
+     * Removes a provisional start that the first GPS fix proved wrong (cached network position).
+     * Statistics keep the departure time; only the bogus location row goes away.
+     */
+    private void discardProvisionalStartPoint(@NonNull Distance distance) {
+        TrackPoint bogus = lastStoredTrackPointWithLocation;
+        if (bogus != null) {
+            contentProviderUtils.deleteTrackPoint(trackId, bogus.getTime());
+            diagnostics.event("provisional_start_discarded", Map.of("distance_m", distance.toM()));
+        }
+        lastStoredTrackPoint = null;
+        lastStoredTrackPointWithLocation = null;
+        lastStoredIsProvisionalStart = false;
     }
 
     /**
@@ -445,6 +493,10 @@ public class TrackRecordingManager implements SharedPreferences.OnSharedPreferen
             distanceToLastStoredTrackPoint = trackPoint.distanceToPreviousFromLocation(lastStoredTrackPointWithLocation);
         } else {
             distanceToLastStoredTrackPoint = trackPoint.distanceToPrevious(lastStoredTrackPoint);
+        }
+
+        if (discardProvisionalStart(lastStoredIsProvisionalStart, distanceToLastStoredTrackPoint)) {
+            discardProvisionalStartPoint(distanceToLastStoredTrackPoint);
         }
 
         if (provisionalStartHopIsNoise(lastStoredIsProvisionalStart, provisionalStartAccuracy(), distanceToLastStoredTrackPoint)) {

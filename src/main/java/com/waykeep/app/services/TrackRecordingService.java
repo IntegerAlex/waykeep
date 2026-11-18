@@ -575,10 +575,10 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public void onRawGpsFix(Position position, String provider, long providerTimeMillis,
-                            long elapsedRealtimeNanos, Distance threshold, String decision) {
+                            long elapsedRealtimeNanos, Distance threshold, String decision, boolean isMock) {
         hasReceivedGpsFix = true;
         diagnostics.event("gps_fix", RecordingDiagnosticEvents.gpsFix(
-                position, providerTimeMillis, provider, elapsedRealtimeNanos, threshold, decision));
+                position, providerTimeMillis, provider, elapsedRealtimeNanos, threshold, decision, isMock));
     }
 
     private void recordDeviceState() {

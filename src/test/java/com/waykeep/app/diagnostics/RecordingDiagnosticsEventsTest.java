@@ -28,7 +28,7 @@ public class RecordingDiagnosticsEventsTest {
                 Distance.of(82), null, null, 91f, Speed.of(2.8));
 
         Map<String, Object> fields = RecordingDiagnosticEvents.gpsFix(
-                position, 1793324679000L, "gps", 123456789L, Distance.of(50), "rejected_accuracy");
+                position, 1793324679000L, "gps", 123456789L, Distance.of(50), "rejected_accuracy", false);
 
         assertEquals(18.5, fields.get("latitude"));
         assertEquals(73.8, fields.get("longitude"));
@@ -37,6 +37,19 @@ public class RecordingDiagnosticsEventsTest {
         assertEquals(1793324679000L, fields.get("provider_time_millis"));
         assertEquals(123456789L, fields.get("elapsed_realtime_nanos"));
         assertEquals("rejected_accuracy", fields.get("decision"));
+        assertEquals(false, fields.get("mock"));
+    }
+
+    @Test
+    public void gpsFixRecordsMockLocations() {
+        Position position = new Position(
+                Instant.parse("2026-10-30T01:44:00Z"), 18.5, 73.8,
+                Distance.of(5), null, null, null, null);
+
+        Map<String, Object> fields = RecordingDiagnosticEvents.gpsFix(
+                position, 0L, "gps", 0L, Distance.of(50), "accepted", true);
+
+        assertEquals(true, fields.get("mock"));
     }
 
     @Test

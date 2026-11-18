@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.location.GnssStatusCompat;
+import androidx.core.location.LocationCompat;
 import androidx.core.location.LocationManagerCompat;
 
 import com.waykeep.app.R;
@@ -115,7 +116,8 @@ public class GpsHandler extends SensorHandler<Location, Position> {
         boolean accurate = validLocation && position.fulfillsAccuracy(thresholdHorizontalAccuracy);
         String decision = !validLocation ? "invalid_location" : accurate ? "accepted" : "poor_accuracy";
         trackPointCreator.sendRawGpsFix(position, location.getProvider(), location.getTime(),
-                location.getElapsedRealtimeNanos(), thresholdHorizontalAccuracy, decision);
+                location.getElapsedRealtimeNanos(), thresholdHorizontalAccuracy, decision,
+                LocationCompat.isMock(location));
         if (!validLocation) {
             Log.w(TAG, "Ignore newTrackPoint. Location is invalid.");
             return;

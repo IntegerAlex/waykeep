@@ -629,6 +629,15 @@ public class ContentProviderUtils {
     }
 
     /**
+     * Deletes a single trackPoint identified by its track and timestamp.
+     */
+    public void deleteTrackPoint(@NonNull Track.Id trackId, @NonNull Instant time) {
+        contentResolver.delete(CustomContentProvider.UrlType.TRACKPOINTS.getUri(),
+                TrackPointsColumns.TRACKID + "=? AND " + TrackPointsColumns.TIME + "=?",
+                new String[]{String.valueOf(trackId.id()), String.valueOf(time.toEpochMilli())});
+    }
+
+    /**
      * Creates the {@link ContentValues} for a {@link TrackPoint}.
      *
      * @param trackPoint the trackPoint

@@ -166,8 +166,8 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public void sendRawGpsFix(Position position, String provider, long providerTimeMillis,
-                              long elapsedRealtimeNanos, Distance threshold, String decision) {
-        service.onRawGpsFix(position, provider, providerTimeMillis, elapsedRealtimeNanos, threshold, decision);
+                              long elapsedRealtimeNanos, Distance threshold, String decision, boolean isMock) {
+        service.onRawGpsFix(position, provider, providerTimeMillis, elapsedRealtimeNanos, threshold, decision, isMock);
     }
 
     public void sendGnssStatus(int satellitesVisible, int satellitesUsedInFix,
@@ -195,7 +195,7 @@ public class TrackPointCreator implements SharedPreferences.OnSharedPreferenceCh
         boolean newTrackPoint(TrackPoint trackPoint, Distance thresholdHorizontalAccuracy);
 
         void onRawGpsFix(Position position, String provider, long providerTimeMillis,
-                         long elapsedRealtimeNanos, Distance threshold, String decision);
+                         long elapsedRealtimeNanos, Distance threshold, String decision, boolean isMock);
 
         void onGnssStatus(int satellitesVisible, int satellitesUsedInFix, Double maxSnrDb, long sinceConnectMs);
 

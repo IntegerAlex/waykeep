@@ -16,9 +16,11 @@ public final class RecordingDiagnosticEvents {
     }
 
     public static Map<String, Object> gpsFix(Position position, long providerTimeMillis, String provider, long elapsedRealtimeNanos,
-                                             Distance accuracyThreshold, String decision) {
+                                             Distance accuracyThreshold, String decision, boolean isMock) {
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("provider", provider);
+        // Mock fixes are indistinguishable from real ones once stored; record it for later audits.
+        fields.put("mock", isMock);
         fields.put("fix_time", position.time() != null ? position.time().toString() : null);
         fields.put("provider_time_millis", providerTimeMillis);
         fields.put("elapsed_realtime_nanos", elapsedRealtimeNanos);
