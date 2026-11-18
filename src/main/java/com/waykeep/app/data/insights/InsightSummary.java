@@ -5,7 +5,9 @@ import androidx.annotation.StringRes;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.TrackListIterator;
@@ -24,7 +26,7 @@ public record InsightSummary(
         @NonNull Distance sevenDayDistance,
         @NonNull Distance fourWeekWeeklyAverage,
         @NonNull RollingLoad.Trend trend,
-        @NonNull DailyStreak dailyStreak,
+        @NonNull WeeklyStreak weeklyStreak,
         @NonNull Distance weeklyGoal
 ) {
 
@@ -32,9 +34,9 @@ public record InsightSummary(
     public static InsightSummary compute(@NonNull List<TrackListIterator.Item> tracks, @NonNull Instant now,
                                          @NonNull ZoneId zone, @NonNull Distance goal) {
         RollingLoad load = RollingLoad.compute(tracks, now);
-        DailyStreak dailyStreak = DailyStreak.compute(tracks, now, zone);
+        WeeklyStreak weeklyStreak = WeeklyStreak.compute(tracks, now, zone, WeekFields.of(Locale.getDefault()));
         return new InsightSummary(load.sevenDayDistance(), load.fourWeekWeeklyAverage(), load.trend(),
-                dailyStreak, goal);
+                weeklyStreak, goal);
     }
 
     /**
@@ -48,6 +50,15 @@ public record InsightSummary(
 
     public boolean hasGoal() {
         return weeklyGoal.toM() > 0;
+    }
+
+    /** Progress toward the weekly goal, clamped to 0..100 for progress bars and copy. */
+    public int goalPercent() {
+        if (!hasGoal()) {
+            return 0;
+        }
+        long percent = Math.round(100.0 * goalProgressDistance().toM() / weeklyGoal.toM());
+        return (int) Math.max(0, Math.min(100, percent));
     }
 
     public boolean showsGoalHint() {
@@ -73,6 +84,6 @@ public record InsightSummary(
 
     @StringRes
     public int streakLineRes() {
-        return dailyStreak.consecutiveDays() > 0 ? R.string.insight_streak_days : R.string.insight_streak_none;
+        return weeklyStreak.consecutiveWeeks() > 0 ? R.string.insight_streak_weeks : R.string.insight_streak_none;
     }
 }

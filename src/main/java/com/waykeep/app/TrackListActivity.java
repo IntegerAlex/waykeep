@@ -737,9 +737,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 formatter.formatDistance(summary.fourWeekWeeklyAverage())));
         viewBinding.insightTrend.setText(summary.trendLineRes());
 
-        int streakDays = summary.dailyStreak().consecutiveDays();
-        viewBinding.insightStreakText.setText(streakDays > 0
-                ? getString(R.string.insight_streak_days, streakDays)
+        int streakWeeks = summary.weeklyStreak().consecutiveWeeks();
+        viewBinding.insightStreakText.setText(streakWeeks > 0
+                ? getString(R.string.insight_streak_weeks, streakWeeks)
                 : getString(summary.streakLineRes()));
 
         if (summary.hasGoal()) {
@@ -747,7 +747,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             viewBinding.insightSetGoalHint.setVisibility(View.GONE);
             viewBinding.insightGoalProgress.setVisibility(View.VISIBLE);
             viewBinding.insightLane.setVisibility(View.VISIBLE);
-            int percent = (int) Math.min(100, Math.round(100.0 * weekDistance.toM() / goal.toM()));
+            int percent = summary.goalPercent();
             viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_percent,
                     percent, formatter.formatDistance(goal)));
             viewBinding.insightLane.setValues(weekDistance.toM(), goal.toM(),

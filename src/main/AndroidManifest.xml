@@ -453,6 +453,18 @@ limitations under the License.
                 android:resource="@xml/stats_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".ui.widget.GoalWidgetProvider"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/goal_widget_info" />
+        </receiver>
+
         <!--Necessary for SDK < 33 to (re-)store per app locale information-->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

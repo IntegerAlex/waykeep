@@ -69,12 +69,28 @@ public class InsightSummaryTest {
     }
 
     @Test
-    public void goalOnWithDailyStreakUsesDayCountCopy() {
+    public void goalOnWithWeeklyStreakUsesWeekCountCopy() {
         InsightSummary summary = summary(RollingLoad.Trend.STEADY, GOAL, 3);
 
         assertTrue(summary.hasGoal());
-        assertEquals(R.string.insight_streak_days, summary.streakLineRes());
-        assertEquals(3, summary.dailyStreak().consecutiveDays());
+        assertEquals(R.string.insight_streak_weeks, summary.streakLineRes());
+        assertEquals(3, summary.weeklyStreak().consecutiveWeeks());
+    }
+
+    @Test
+    public void goalPercentClampsAtOneHundred() {
+        InsightSummary summary = new InsightSummary(
+                Distance.ofKilometer(30), Distance.ofKilometer(5), RollingLoad.Trend.HIGHER,
+                new WeeklyStreak(2, true), GOAL);
+
+        assertEquals(100, summary.goalPercent());
+    }
+
+    @Test
+    public void goalPercentIsZeroWithoutAGoal() {
+        InsightSummary summary = summary(RollingLoad.Trend.STEADY, Distance.ZERO, 1);
+
+        assertEquals(0, summary.goalPercent());
     }
 
     @Test
@@ -105,8 +121,8 @@ public class InsightSummaryTest {
                 0);
     }
 
-    private static InsightSummary summary(RollingLoad.Trend trend, Distance goal, int dailyStreakDays) {
-        DailyStreak dailyStreak = new DailyStreak(dailyStreakDays, dailyStreakDays > 0);
-        return new InsightSummary(Distance.ofKilometer(5), Distance.ofKilometer(5), trend, dailyStreak, goal);
+    private static InsightSummary summary(RollingLoad.Trend trend, Distance goal, int weeklyStreakWeeks) {
+        WeeklyStreak weeklyStreak = new WeeklyStreak(weeklyStreakWeeks, weeklyStreakWeeks > 0);
+        return new InsightSummary(Distance.ofKilometer(5), Distance.ofKilometer(5), trend, weeklyStreak, goal);
     }
 }

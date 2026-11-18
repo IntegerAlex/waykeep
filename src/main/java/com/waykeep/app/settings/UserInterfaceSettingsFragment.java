@@ -12,6 +12,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.waykeep.app.R;
+import com.waykeep.app.ui.widget.GoalWidgetProvider;
 
 public class UserInterfaceSettingsFragment extends PreferenceFragmentCompat {
 
@@ -21,6 +22,9 @@ public class UserInterfaceSettingsFragment extends PreferenceFragmentCompat {
                 PreferencesUtils.applyNightMode();
                 Toast.makeText(getContext(), R.string.settings_theme_switch_restart, Toast.LENGTH_LONG).show();
             });
+        }
+        if (PreferencesUtils.isKey(R.string.settings_weekly_goal_key, key)) {
+            GoalWidgetProvider.requestRefresh(requireContext().getApplicationContext());
         }
     };
 

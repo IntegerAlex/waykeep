@@ -64,6 +64,7 @@ import com.waykeep.app.services.announcement.VoiceAnnouncementManager;
 import com.waykeep.app.services.handlers.TrackPointCreator;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.ui.widget.StatsWidgetProvider;
+import com.waykeep.app.ui.widget.GoalWidgetProvider;
 import com.waykeep.app.util.StringUtils;
 
 public class TrackRecordingService extends Service implements TrackPointCreator.Callback, SharedPreferences.OnSharedPreferenceChangeListener, TrackRecordingManager.IdleObserver {
@@ -431,6 +432,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         stopSensors();
 
         StatsWidgetProvider.requestRefresh(this);
+        GoalWidgetProvider.requestRefresh(this);
     }
 
     void stopSensors() {
