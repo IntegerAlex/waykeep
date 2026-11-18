@@ -45,6 +45,8 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.waykeep.app.BuildConfig;
@@ -67,6 +69,8 @@ import com.waykeep.app.util.StringUtils;
 public class TrackRecordingService extends Service implements TrackPointCreator.Callback, SharedPreferences.OnSharedPreferenceChangeListener, TrackRecordingManager.IdleObserver {
 
     private static final String TAG = TrackRecordingService.class.getSimpleName();
+    // Bounded: a pre-warm injects two commands; anything more is a stuck retry loop.
+    private static final int MAX_PENDING_ASSISTANCE_EVENTS = 8;
 
     @VisibleForTesting
     public static final Duration RECORDING_DATA_UPDATE_INTERVAL = Duration.ofSeconds(1);
@@ -126,6 +130,8 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
     private TrackPointCreator trackPointCreator;
     private TrackRecordingManager trackRecordingManager;
     private RecordingDiagnostics diagnostics;
+    /** Pre-warm assistance results, held until a recording session exists to journal them. */
+    private final List<Map<String, Object>> pendingAssistanceEvents = new ArrayList<>();
     private boolean hasReceivedGpsFix;
     /** When acquisition started, so the status can show how long the receiver has been waiting. */
     private long gpsAcquiringSinceMs;
@@ -359,6 +365,7 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
         diagnostics.event("recording_started", Map.of(
                 "track_id", trackId.id(),
                 "service_restart", serviceRestart));
+        flushPendingAssistanceEvents();
         recordDeviceState();
         handler.removeCallbacks(deviceStateSnapshot);
         handler.postDelayed(deviceStateSnapshot, Duration.ofMinutes(1).toMillis());
@@ -526,7 +533,26 @@ public class TrackRecordingService extends Service implements TrackPointCreator.
 
     @Override
     public void onGnssAssistance(String command, boolean accepted, String errorClass) {
-        diagnostics.event("gnss_assistance", RecordingDiagnosticEvents.gnssAssistance(command, accepted, errorClass));
+        Map<String, Object> event = RecordingDiagnosticEvents.gnssAssistance(command, accepted, errorClass);
+        if (recordingStatus.isRecording()) {
+            diagnostics.event("gnss_assistance", event);
+            return;
+        }
+        // The journal only exists while recording; keep a pre-warm result for the next session.
+        synchronized (pendingAssistanceEvents) {
+            if (pendingAssistanceEvents.size() < MAX_PENDING_ASSISTANCE_EVENTS) {
+                pendingAssistanceEvents.add(event);
+            }
+        }
+    }
+
+    private void flushPendingAssistanceEvents() {
+        synchronized (pendingAssistanceEvents) {
+            for (Map<String, Object> event : pendingAssistanceEvents) {
+                diagnostics.event("gnss_assistance", event);
+            }
+            pendingAssistanceEvents.clear();
+        }
     }
 
     private void refreshGpsStatusText() {
