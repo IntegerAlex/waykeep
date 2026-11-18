@@ -80,6 +80,7 @@ public class GoalWidgetProvider extends AppWidgetProvider {
         InsightSummary summary = insightSummary(context);
         DistanceFormatter formatter = DistanceFormatter.Builder()
                 .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(1)
                 .build(context);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_goal);

@@ -90,7 +90,10 @@ public class StatsWidgetProvider extends AppWidgetProvider {
         Totals week = total(contentProviderUtils.getAggregatedStatisticsForTracks(new TrackSelection().addDateRange(weekStart, now)));
         Totals month = total(contentProviderUtils.getAggregatedStatisticsForTracks(new TrackSelection().addDateRange(monthStart, now)));
 
-        DistanceFormatter formatter = DistanceFormatter.Builder().setUnit(PreferencesUtils.getUnitSystem()).build(context);
+        DistanceFormatter formatter = DistanceFormatter.Builder()
+                .setUnit(PreferencesUtils.getUnitSystem())
+                .setDecimalPlaces(1)
+                .build(context);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_stats);
         views.setTextViewText(R.id.widget_week_distance, formatter.formatDistance(week.distance));
