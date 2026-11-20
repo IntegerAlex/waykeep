@@ -89,6 +89,13 @@ public class ImportActivity extends AbstractActivity {
             documentUris = savedInstanceState.getParcelable(BUNDLE_DOCUMENT_URIS);
             isDirectory = savedInstanceState.getBoolean(BUNDLE_IS_DIRECTORY);
             confirmed = savedInstanceState.getBoolean(BUNDLE_CONFIRMED);
+            // A relaunch (font scale, theme, split screen) can hand back a saved state without
+            // our keys. An import cannot be resumed without its URIs, so leave gracefully
+            // instead of crashing on null; not found in the upstream tracker.
+            if (documentUris == null || documentUris.isEmpty()) {
+                finish();
+                return;
+            }
         }
 
         final List<DocumentFile> documentFiles;
