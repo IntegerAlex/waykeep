@@ -5,7 +5,7 @@ _Waykeep_ is a privacy-respecting sport tracker for Android. It is a fork of [_O
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Source: GitHub](https://img.shields.io/badge/source-IntegerAlex%2Fwaykeep-black.svg)](https://github.com/IntegerAlex/waykeep)
 
-> **Status:** under active development, not yet on F-Droid or Google Play.
+> **Status:** under active development. Distributed as signed APKs from [GitHub releases](https://github.com/IntegerAlex/waykeep/releases); no Google Play or F-Droid listing.
 > Build from source: `./gradlew :assembleIrreproducibleDebug`
 > (flavor names in [`AGENTS.md`](AGENTS.md)).
 > Bug reports and feature requests belong in the [Waykeep issue tracker](https://github.com/IntegerAlex/waykeep/issues).

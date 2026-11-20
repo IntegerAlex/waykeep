@@ -2,38 +2,74 @@
 
 ## Craft new releases
 
-1. Execute use `RELEASE.sh`.
-2. Push to Codeberg
-3. Create release on Codeberg (incl. changelog)
-   This actually creates a tag that is later used by F-Droid
-4. Pull from Codeberg
-5. Build reproducible release and attach to release
-6. ... wait until reproducibility is verified by F-Droid
+1. Decide the version: bump `versionCode` and `versionName` in `build.gradle`, commit, then tag
+   (`waykeep-vX.Y.Z`). The tag supplies the filename's version string, so tag before building.
+2. Build the signed release (see [Signing](#signing)).
+3. Verify it: `aapt dump badging`, `apksigner verify --print-certs`, `sha256sum`.
+4. Create the GitHub release and attach the APK, with the checksum and certificate fingerprint in
+   the notes.
+5. Update `website/src/lib/site.ts` (`LATEST`, `LINKS.apk`, `APK`) so the site points at it.
 
-Stable package: `com.waykeep.app` (reproducible flavor). The `.playstore` package is not used for the stable listing.
+Stable package: `com.waykeep.app` (reproducible flavor). Distribution is direct from GitHub
+releases; there is no Google Play or F-Droid listing.
 
-For F-Droid the build status can be found [here](https://monitor.f-droid.org/builds/build).
+## Signing
 
-## Store submissions
+Release properties are read from `System.getProperty`, so keep them in the user-level
+`~/.gradle/gradle.properties` (never in the repository):
+
+```properties
+systemProp.release_store_file=/home/<user>/.android-keys/waykeep-release.jks
+systemProp.release_store_password=…
+systemProp.release_key_alias=waykeep
+systemProp.release_key_password=…
+```
+
+Then `./gradlew :assembleReproducibleRelease` produces a signed APK. Without those properties the
+flavor stays unsigned, which keeps reproducible audit builds possible. Nightly builds use the
+separate `nightly_*` properties; do not reuse the release key for them.
+
+Current release certificate (SHA-256 — every future update must be signed with it):
+
+```
+10a76228001d51448bec8ab43036bf491cba176f6f6e924a18a108607388fb3c
+```
+
+v1.1.1 signed APK SHA-256: `d8f7f8fc2339c8f0316046aafcdfb717c5255c0b3421321be75d32a4c6181a97`.
+Losing the keystore permanently blocks updates for anyone who installed this build, so keep an
+offline backup.
+
+Reproducible build check: two clean `assembleReproducibleRelease` builds without signing produced
+the same unsigned APK SHA-256 for v1.1.0,
+`cd92bb25a0e5664e5c8e0fdea8e079c2d9b5d944e458cfbfc01ac58bfa7b6b26`
+(`com.waykeep.app_waykeep-v1.1.0_6891-reproducible-release-unsigned.apk`).
+
+## Distribution
 
 Website: <https://waykeep.gossorg.in>
 
-- F-Droid metadata: [`distribution/fdroid/com.waykeep.app.yml`](distribution/fdroid/com.waykeep.app.yml)
-- F-Droid MR text: [`distribution/fdroid/merge-request.md`](distribution/fdroid/merge-request.md)
-- **F-Droid MR:** <https://gitlab.com/fdroid/fdroiddata/-/merge_requests/56211> (closed; CI green; reapply after the maintenance threshold)
+- Releases: <https://github.com/IntegerAlex/waykeep/releases>
+- Release feed: <https://github.com/IntegerAlex/waykeep/releases.atom>
+- F-Droid draft (kept, not submitted): [`distribution/fdroid/`](distribution/fdroid/)
 
-The F-Droid file targets v1.1.0 (versionCode 6891, commit `bd7d6b3549e6dd2d5c76ac4a48ff3d9d0080c81d`) and uses `gradle: - reproducible`, which builds `com.waykeep.app` as an unsigned release for F-Droid signing. Copy it to `fdroiddata/metadata/com.waykeep.app.yml` when submitting. Listing text, icon, feature graphic, screenshots, and changelog live in `fastlane/metadata/android/en-US/`.
+F-Droid submission is deferred: the earlier merge request
+(<https://gitlab.com/fdroid/fdroiddata/-/merge_requests/56211>) was closed because the project had
+not cleared F-Droid's maintenance threshold. Revisit it after roughly three months of activity.
 
-Release tag: `waykeep-v1.1.0`. The historical upstream repo already has a 2011 `v1.1.0` tag, so the fork uses the `waykeep-` prefix for this release rather than overwriting upstream history.
+Before ever publishing both: a developer-signed APK and an F-Droid-signed build share
+`com.waykeep.app` but not the certificate, so neither can be installed over the other. Users would
+have to uninstall, and with no cloud sync that means losing tracks.
 
-Reproducible build check: two clean `assembleReproducibleRelease` builds produced the same unsigned APK SHA-256, `cd92bb25a0e5664e5c8e0fdea8e079c2d9b5d944e458cfbfc01ac58bfa7b6b26` (`com.waykeep.app_waykeep-v1.1.0_6891-reproducible-release-unsigned.apk`).
+Listing text, icon, feature graphic, screenshots, and changelog live in
+`fastlane/metadata/android/en-US/`.
 
 ## Reproducible builds
 
-A lot of detailed information can be found [here](https://f-droid.org/docs/Reproducible_Builds/)
+General documentation: <https://f-droid.org/docs/Reproducible_Builds/>
 
 Technical requirements:
-* Must be build using OpenJDK17
+* Must be built using OpenJDK 17
+* Signing properties must be absent, otherwise the artifact is signed
 
 ## Translations (localization)
 
