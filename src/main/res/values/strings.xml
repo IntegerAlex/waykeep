@@ -900,6 +900,17 @@ limitations under the License.
         <item quantity="one">%1$d activity</item>
         <item quantity="other">%1$d activities</item>
     </plurals>
+    <string name="memories_title">Memories</string>
+    <string name="memories_empty">Runs you give a mood land here — a private timeline of how they felt.</string>
+    <string name="memory_prompt_title">How was it?</string>
+    <string name="memory_add_photo">Add photo</string>
+    <string name="memory_photo_failed">Could not attach that photo.</string>
+    <string name="memory_mood_0">Rough</string>
+    <string name="memory_mood_1">Meh</string>
+    <string name="memory_mood_2">Okay</string>
+    <string name="memory_mood_3">Good</string>
+    <string name="memory_mood_4">Great</string>
+    <string name="memory_edit_title">Memory</string>
     <string name="hold_to_stop">Hold to stop</string>
     <string name="stop_recording_title">Stop recording?</string>
     <string name="share_ai_title">Analyze with AI</string>

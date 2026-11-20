@@ -23,19 +23,27 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.MarkerIterator;
+import com.waykeep.app.data.RunMemoryStore;
+import com.waykeep.app.data.backup.MemoriesCodec;
+import com.waykeep.app.data.models.RunMemory;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.util.FileUtils;
 
@@ -75,7 +83,81 @@ public class KMZTrackImporter {
             }
         }
 
+        importMemories(fileUri);
+
         return trackIdsWithImages;
+    }
+
+    private static final String KMZ_MEMORIES_DIR = "memories";
+    private static final String KMZ_MEMORIES_MANIFEST = "memories.json";
+
+    /**
+     * Restores run memories from a backup's memories.json + memories/ entries.
+     * Optional payload: old backups have neither, and unknown entries are ignored.
+     * Memories only fill gaps — a memory already on the device is never overwritten.
+     */
+    private void importMemories(Uri uri) {
+        List<MemoriesCodec.Entry> memories = null;
+        Map<String, byte[]> memoryPhotos = new HashMap<>();
+
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+             ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                String fileName = zipEntry.getName();
+                if (KMZ_MEMORIES_MANIFEST.equals(fileName)) {
+                    memories = MemoriesCodec.decode(readFullyString(zipInputStream));
+                } else if (fileName.startsWith(KMZ_MEMORIES_DIR + "/") && hasImageExtension(fileName)) {
+                    memoryPhotos.put(fileName, readFullyBytes(zipInputStream));
+                }
+                zipInputStream.closeEntry();
+            }
+        } catch (IOException | RuntimeException e) {
+            Log.e(TAG, "Could not read memories from kmz", e);
+            return;
+        }
+
+        if (memories == null || memories.isEmpty()) {
+            return;
+        }
+
+        ContentProviderUtils contentProviderUtils = new ContentProviderUtils(context);
+        RunMemoryStore memoryStore = new RunMemoryStore(context);
+        for (MemoriesCodec.Entry entry : memories) {
+            try {
+                Track track = contentProviderUtils.getTrack(UUID.fromString(entry.trackUuid()));
+                if (track == null || memoryStore.get(track.id()) != null) {
+                    continue;
+                }
+                String devicePhotoName = null;
+                byte[] photoData = entry.photoName() != null ? memoryPhotos.get(entry.photoName()) : null;
+                if (photoData != null) {
+                    String ext = entry.photoName().substring(entry.photoName().lastIndexOf('.'));
+                    devicePhotoName = "memory-" + entry.trackUuid() + ext;
+                    File photoFile = new File(FileUtils.getPhotoDir(context, track.id()), devicePhotoName);
+                    try (OutputStream outputStream = new FileOutputStream(photoFile)) {
+                        outputStream.write(photoData);
+                    }
+                }
+                memoryStore.save(new RunMemory(track.id(), entry.mood(), devicePhotoName));
+            } catch (IllegalArgumentException | IOException e) {
+                Log.e(TAG, "Could not restore a memory", e);
+            }
+        }
+    }
+
+    private String readFullyString(ZipInputStream zipInputStream) throws IOException {
+        return new String(readFullyBytes(zipInputStream), java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private byte[] readFullyBytes(ZipInputStream zipInputStream) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        int read;
+        while ((read = zipInputStream.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
+        }
+        return out.toByteArray();
     }
 
     /**
@@ -95,7 +177,7 @@ public class KMZTrackImporter {
                 }
 
                 String fileName = zipEntry.getName();
-                if (hasImageExtension(fileName)) {
+                if (!fileName.startsWith(KMZ_MEMORIES_DIR + "/") && hasImageExtension(fileName)) {
                     readAndSaveImageFile(zipInputStream, trackId, importNameForFilename(fileName));
                 }
 

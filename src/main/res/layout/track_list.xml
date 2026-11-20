@@ -305,6 +305,14 @@ limitations under the License.
             android:tooltipText="@string/action_start_gps"
             app:icon="@drawable/ic_gps_off_24dp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/memories_button"
+            style="@style/BottomAction"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/memories_title"
+            android:text="@string/memories_title"
+            app:icon="@drawable/mood_sticker_3" />
+
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

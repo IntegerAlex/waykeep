@@ -1,0 +1,59 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,2.5 a33.5,33.5 0 1,0 0.01,0 z" />
+
+    <path android:pathData="M36,6 a30,30 0 1,0 0.01,0 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="50"
+                android:endY="62"
+                android:startColor="#FFE18A"
+                android:endColor="#EFA51C"
+                android:startX="22"
+                android:startY="10"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M36,6 a30,30 0 1,0 0.01,0 z"
+        android:strokeWidth="2"
+        android:strokeColor="#C77E0A" />
+
+    <!-- Tired, lowered eyebrows -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M22,29 Q27,26 32,28"
+        android:strokeWidth="3"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M50,29 Q45,26 40,28"
+        android:strokeWidth="3"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+
+    <!-- Half-lidded eyes -->
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M25,35 h8 v3 h-8 z" />
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M39,35 h8 v3 h-8 z" />
+
+    <!-- Flat, weary mouth -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M26,50 Q36,46 46,50"
+        android:strokeWidth="3.5"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+</vector>

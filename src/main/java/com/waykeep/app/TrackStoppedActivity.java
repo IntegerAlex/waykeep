@@ -23,6 +23,7 @@ import com.waykeep.app.io.healthconnect.exporter.HealthConnectUtils;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
 import com.waykeep.app.settings.PreferencesUtils;
 import com.waykeep.app.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
+import com.waykeep.app.ui.memory.MemoryStripController;
 import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.StringUtils;
 
@@ -71,6 +72,8 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
 
         viewBinding.trackEditDescription.setText(track.description());
 
+        new MemoryStripController(this, findViewById(R.id.memory_strip_view), trackId, null);
+
         viewBinding.time.setText(StringUtils.formatElapsedTime(track.statistics().movingDuration()));
 
         {
@@ -96,8 +99,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             storeTrackMetaData(contentProviderUtils, track);
             ExportUtils.postWorkoutExport(this, trackId);
             HealthConnectUtils.postExportTrack(this, trackId);
-            BackupUtils.postBackup(this);
-            // If the recording screen was the task root (e.g. opened from the notification after
+            BackupUtils.postBackup(this);            // If the recording screen was the task root (e.g. opened from the notification after
             // the task was gone), finishing here leaves an empty task and the app closes.
             if (isTaskRoot()) {
                 startActivity(IntentUtils.newIntent(this, TrackListActivity.class));

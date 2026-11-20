@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/memory_strip_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+    <ImageView
+        android:id="@+id/memory_mood_0"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:contentDescription="@string/memory_mood_0"
+        android:src="@drawable/mood_sticker_0" />
+
+    <ImageView
+        android:id="@+id/memory_mood_1"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/memory_mood_1"
+        android:src="@drawable/mood_sticker_1" />
+
+    <ImageView
+        android:id="@+id/memory_mood_2"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/memory_mood_2"
+        android:src="@drawable/mood_sticker_2" />
+
+    <ImageView
+        android:id="@+id/memory_mood_3"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/memory_mood_3"
+        android:src="@drawable/mood_sticker_3" />
+
+    <ImageView
+        android:id="@+id/memory_mood_4"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/memory_mood_4"
+        android:src="@drawable/mood_sticker_4" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/memory_photo"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_icon_circle"
+        android:contentDescription="@string/memory_add_photo"
+        android:padding="10dp"
+        android:src="@drawable/ic_add_a_photo_24dp" />
+</LinearLayout>

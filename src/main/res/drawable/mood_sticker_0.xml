@@ -1,0 +1,66 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+
+    <!-- Sticker border -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,2.5 a33.5,33.5 0 1,0 0.01,0 z" />
+
+    <!-- Face with depth gradient -->
+    <path android:pathData="M36,6 a30,30 0 1,0 0.01,0 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="50"
+                android:endY="62"
+                android:startColor="#FFD66B"
+                android:endColor="#E8940F"
+                android:startX="22"
+                android:startY="10"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M36,6 a30,30 0 1,0 0.01,0 z"
+        android:strokeWidth="2"
+        android:strokeColor="#C77E0A" />
+
+    <!-- Angled, pained eyebrows -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M21,27 L32,31"
+        android:strokeWidth="3"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M51,27 L40,31"
+        android:strokeWidth="3"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+
+    <!-- Eyes -->
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M27,36 a3,3 0 1,0 0.01,0 z" />
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M45,36 a3,3 0 1,0 0.01,0 z" />
+
+    <!-- Frown -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24,52 Q36,43 48,52"
+        android:strokeWidth="3.5"
+        android:strokeColor="#6B4A0E"
+        android:strokeLineCap="round" />
+
+    <!-- Sweat drop -->
+    <path
+        android:fillColor="#7FC8F8"
+        android:pathData="M55,14 q5,7 0,11 q-5,-4 0,-11 z" />
+</vector>

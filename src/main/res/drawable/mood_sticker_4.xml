@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,2.5 a33.5,33.5 0 1,0 0.01,0 z" />
+
+    <path android:pathData="M36,6 a30,30 0 1,0 0.01,0 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="50"
+                android:endY="62"
+                android:startColor="#FFF0A0"
+                android:endColor="#FBBC3C"
+                android:startX="22"
+                android:startY="10"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M36,6 a30,30 0 1,0 0.01,0 z"
+        android:strokeWidth="2"
+        android:strokeColor="#C77E0A" />
+
+    <!-- Sparkle eyes: four-point stars -->
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M27,25 L29.2,30.8 L35,33 L29.2,35.2 L27,41 L24.8,35.2 L19,33 L24.8,30.8 Z" />
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M45,25 L47.2,30.8 L53,33 L47.2,35.2 L45,41 L42.8,35.2 L37,33 L42.8,30.8 Z" />
+
+    <!-- Open, beaming mouth -->
+    <path
+        android:fillColor="#6B4A0E"
+        android:pathData="M23,42 Q36,58 49,42 Z" />
+
+    <!-- Blush -->
+    <path
+        android:fillColor="#66F0688C"
+        android:pathData="M19,41 a4.5,4.5 0 1,0 0.01,0 z" />
+    <path
+        android:fillColor="#66F0688C"
+        android:pathData="M53,41 a4.5,4.5 0 1,0 0.01,0 z" />
+</vector>

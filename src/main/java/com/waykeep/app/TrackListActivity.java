@@ -109,6 +109,7 @@ import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.monthlyRecap.MonthlyRecapActivity;
 import com.waykeep.app.ui.tour.TourOverlay;
 import com.waykeep.app.ui.personalBests.PersonalBestsActivity;
+import com.waykeep.app.ui.memory.MemoriesActivity;
 import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
 import com.waykeep.app.ui.util.ListItemUtils;
@@ -247,6 +248,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         recordingStatusConnection = new TrackRecordingServiceConnection(bindChangedCallback);
 
         viewBinding.aggregatedStatsButton.setOnClickListener((view) -> startActivity(IntentUtils.newIntent(this, AggregatedStatisticsActivity.class)));
+        viewBinding.memoriesButton.setOnClickListener((view) -> startActivity(IntentUtils.newIntent(this, MemoriesActivity.class)));
         viewBinding.sensorStartButton.setOnClickListener((view) -> {
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {

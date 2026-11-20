@@ -23,17 +23,23 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.waykeep.app.data.ContentProviderUtils;
 import com.waykeep.app.data.MarkerIterator;
+import com.waykeep.app.data.RunMemoryStore;
+import com.waykeep.app.data.backup.MemoriesCodec;
 import com.waykeep.app.data.models.Marker;
+import com.waykeep.app.data.models.RunMemory;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.ui.markers.MarkerUtils;
 import com.waykeep.app.util.FileUtils;
@@ -78,6 +84,9 @@ public class KMZTrackExporter implements TrackExporter {
 
             // Add photos
             if (fileTrackExporter.isExportPhotos()) addImages(context, tracks ,zipOutputStream);
+
+            // Add run memories: moods always, photos only when photos are exported.
+            addMemories(tracks, zipOutputStream);
             return true;
         } catch (InterruptedException | IOException e) {
             Log.e(TAG, "Unable to write track", e);
@@ -135,5 +144,53 @@ public class KMZTrackExporter implements TrackExporter {
         String ext = FileUtils.getExtension(marker.photoUrl());
         ext = ext == null ? "" : "." + ext;
         return KMZ_IMAGES_DIR + File.separatorChar + FileUtils.sanitizeFileName(marker.id().id() + ext);
+    }
+
+    private static final String KMZ_MEMORIES_DIR = "memories";
+    private static final String KMZ_MEMORIES_MANIFEST = "memories.json";
+
+    /**
+     * Writes run memories (mood per track + optional photo) as a self-contained
+     * {@code memories.json} plus {@code memories/<uuid>.<ext>} files. Older app
+     * versions ignore both, and old backups without them import unchanged.
+     */
+    private void addMemories(List<Track> tracks, ZipOutputStream zipOutputStream) throws IOException {
+        RunMemoryStore memoryStore = new RunMemoryStore(context);
+        List<MemoriesCodec.Entry> entries = new ArrayList<>();
+        for (Track track : tracks) {
+            RunMemory memory = memoryStore.get(track.id());
+            if (memory == null) {
+                continue;
+            }
+            String photoName = null;
+            if (memory.photoName() != null) {
+                File photoFile = new File(FileUtils.getPhotoDir(context, track.id()), memory.photoName());
+                if (fileTrackExporter.isExportPhotos() && photoFile.isFile()) {
+                    String ext = memory.photoName().lastIndexOf('.') >= 0
+                            ? memory.photoName().substring(memory.photoName().lastIndexOf('.')) : ".jpg";
+                    String kmzPath = KMZ_MEMORIES_DIR + File.separatorChar + track.uuid() + ext;
+                    addFile(zipOutputStream, photoFile, kmzPath);
+                    photoName = kmzPath;
+                }
+            }
+            entries.add(new MemoriesCodec.Entry(track.uuid().toString(), memory.mood(), photoName));
+        }
+
+        if (entries.isEmpty()) {
+            return;
+        }
+        zipOutputStream.putNextEntry(new ZipEntry(KMZ_MEMORIES_MANIFEST));
+        zipOutputStream.write(MemoriesCodec.encode(entries).getBytes(StandardCharsets.UTF_8));
+        zipOutputStream.closeEntry();
+    }
+
+    private void addFile(ZipOutputStream zipOutputStream, File file, String zipPath) throws IOException {
+        try (InputStream inputStream = new FileInputStream(file)) {
+            zipOutputStream.putNextEntry(new ZipEntry(zipPath));
+            readToOutputStream(inputStream, zipOutputStream);
+            zipOutputStream.closeEntry();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "could not add file to zip: " + zipPath);
+        }
     }
 }

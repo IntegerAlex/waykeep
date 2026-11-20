@@ -19,6 +19,7 @@ import com.waykeep.app.Startup;
 import com.waykeep.app.data.models.ActivityType;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.tables.MarkerColumns;
+import com.waykeep.app.data.tables.RunMemoryColumns;
 import com.waykeep.app.data.tables.TrackPointsColumns;
 import com.waykeep.app.data.tables.TracksColumns;
 
@@ -29,7 +30,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 43;
+    private static final int DATABASE_VERSION = 44;
 
     private final Context context;
 
@@ -59,6 +60,9 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL(MarkerColumns.CREATE_TABLE);
         db.execSQL(MarkerColumns.CREATE_TABLE_INDEX);
+
+        db.execSQL(RunMemoryColumns.CREATE_TABLE);
+        db.execSQL(RunMemoryColumns.CREATE_TABLE_INDEX);
     }
 
     @Override
@@ -87,6 +91,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 41 -> upgradeFrom40to41(db);
                 case 42 -> upgradeFrom41to42(db);
                 case 43 -> upgradeFrom42to43(db);
+                case 44 -> upgradeFrom43to44(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -98,6 +103,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
             Log.i(TAG, "Downgrade from " + oldVersion + " to " + toVersion);
             switch (toVersion) {
                 case 42 -> downgradeFrom43to42(db);
+                case 43 -> downgradeFrom44to43(db);
                 case 23 -> downgradeFrom24to23(db);
                 case 24 -> downgradeFrom25to24(db);
                 case 25 -> downgradeFrom26to25(db);
@@ -803,6 +809,20 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         addColumnIfMissing(db, TrackPointsColumns.TABLE_NAME, TrackPointsColumns.ALTITUDE_GAIN_LOSS_SOURCE);
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    private void upgradeFrom43to44(SQLiteDatabase db) {
+        db.beginTransaction();
+        db.execSQL(RunMemoryColumns.CREATE_TABLE);
+        db.execSQL(RunMemoryColumns.CREATE_TABLE_INDEX);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void downgradeFrom44to43(SQLiteDatabase db) {
+        // Memories are optional decoration; dropping the table loses nothing the
+        // older version could render.
+        db.execSQL("DROP TABLE IF EXISTS " + RunMemoryColumns.TABLE_NAME);
     }
 
     private void downgradeFrom43to42(SQLiteDatabase db) {

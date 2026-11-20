@@ -170,6 +170,8 @@ dependencies {
     // Already on the classpath through androidx.test.ext:junit; declared so pure-JVM checks
     // (layout/preference logic) can run without a device.
     testImplementation 'junit:junit:4.13.2'
+    // Real org.json for JVM tests; android.jar only ships non-functional stubs of it.
+    testImplementation 'org.json:json:20240303'
 
     androidTestUtil 'androidx.test:orchestrator:1.6.1'
 }

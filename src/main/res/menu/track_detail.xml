@@ -16,6 +16,9 @@ limitations under the License.
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/track_detail_memory"
+        android:title="@string/memory_edit_title" />
+    <item
         android:id="@+id/track_detail_menu_show_on_map"
         android:icon="@drawable/ic_map_24dp"
         app:showAsAction="ifRoom"

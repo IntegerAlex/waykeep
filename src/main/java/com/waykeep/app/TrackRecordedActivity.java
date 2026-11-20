@@ -56,6 +56,7 @@ import com.waykeep.app.share.ShareTrackImageActivity;
 import com.waykeep.app.ui.aggregatedStatistics.ConfirmDeleteDialogFragment;
 import com.waykeep.app.ui.intervals.IntervalsFragment;
 import com.waykeep.app.ui.markers.MarkerListActivity;
+import com.waykeep.app.ui.memory.MemoryStripController;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
 import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.DetailTabs;
@@ -86,6 +87,8 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     private TrackRecordedBinding viewBinding;
 
     private Track.Id trackId;
+    private androidx.activity.result.ActivityResultLauncher<androidx.activity.result.PickVisualMediaRequest> memoryPhotoPicker;
+    private com.waykeep.app.ui.memory.MemoryStripController activeMemoryController;
     private RecordingStatus recordingStatus = TrackRecordingService.STATUS_DEFAULT;
     private final ExecutorService heroLoader = Executors.newSingleThreadExecutor();
     private TrackThumbnailLoader heroThumbnailLoader;
@@ -98,6 +101,9 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        memoryPhotoPicker = registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia(),
+                uri -> { if (activeMemoryController != null) activeMemoryController.onPhotoPicked(uri); });
 
         handleIntent(getIntent());
         heroThumbnailLoader = new TrackThumbnailLoader(this);
@@ -297,6 +303,11 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
             return true;
         }
 
+        if (item.getItemId() == R.id.track_detail_memory) {
+            showMemoryDialog();
+            return true;
+        }
+
         if (item.getItemId() == R.id.track_detail_markers) {
             Intent intent = IntentUtils.newIntent(this, MarkerListActivity.class)
                     .putExtra(MarkerListActivity.EXTRA_TRACK_ID, trackId);
@@ -342,6 +353,21 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
     @Override
     protected Track.Id getRecordingTrackId() {
         return recordingStatus.trackId();
+    }
+
+    /** Edit-or-add dialog for this track's memory: the shared mood strip. */
+    private void showMemoryDialog() {
+        View strip = getLayoutInflater().inflate(R.layout.memory_edit_strip, null);
+        activeMemoryController = new com.waykeep.app.ui.memory.MemoryStripController(this, strip, trackId, null,
+                () -> memoryPhotoPicker.launch(new androidx.activity.result.PickVisualMediaRequest.Builder()
+                        .setMediaType(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build()));
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.memory_edit_title)
+                .setView(strip)
+                .setPositiveButton(android.R.string.ok, null)
+                .setOnDismissListener(dialog -> activeMemoryController = null)
+                .show();
     }
 
     @Override
