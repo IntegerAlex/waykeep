@@ -458,10 +458,6 @@ public class PreferencesUtils {
         return getBoolean(R.string.map_rotate_with_heading_key, DEFAULT);
     }
 
-    public static String getSuggestedRoutesProfile() {
-        return getString(R.string.suggested_routes_profile_key, resources.getString(R.string.suggested_routes_profile_default));
-    }
-
     public static RouteColor getRouteColor() {
         return RouteColor.fromPreference(
                 getString(R.string.settings_route_color_key, resources.getString(R.string.settings_route_color_default)));

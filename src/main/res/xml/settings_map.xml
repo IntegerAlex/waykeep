@@ -17,15 +17,6 @@
         android:title="@string/map_rotate_with_heading_title" />
 
     <ListPreference
-        android:defaultValue="@string/suggested_routes_profile_default"
-        android:entries="@array/suggested_routes_profile_entries"
-        android:entryValues="@array/suggested_routes_profile_values"
-        android:key="@string/suggested_routes_profile_key"
-        android:summary="@string/suggested_routes_profile_summary"
-        android:title="@string/suggested_routes_profile_title"
-        app:useSimpleSummaryProvider="true" />
-
-    <ListPreference
         android:defaultValue="@string/settings_route_color_default"
         android:entries="@array/route_color_entries"
         android:entryValues="@array/route_color_values"

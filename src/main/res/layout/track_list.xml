@@ -305,14 +305,6 @@ limitations under the License.
             android:tooltipText="@string/action_start_gps"
             app:icon="@drawable/ic_gps_off_24dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/suggested_routes_button"
-            style="@style/BottomAction"
-            android:layout_marginStart="4dp"
-            android:contentDescription="@string/suggested_routes_title"
-            android:text="@string/action_routes"
-            app:icon="@drawable/ic_route_24dp" />
-
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

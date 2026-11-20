@@ -109,7 +109,6 @@ import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.monthlyRecap.MonthlyRecapActivity;
 import com.waykeep.app.ui.tour.TourOverlay;
 import com.waykeep.app.ui.personalBests.PersonalBestsActivity;
-import com.waykeep.app.ui.suggested.SuggestedRoutesActivity;
 import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
 import com.waykeep.app.ui.util.ListItemUtils;
@@ -248,7 +247,6 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         recordingStatusConnection = new TrackRecordingServiceConnection(bindChangedCallback);
 
         viewBinding.aggregatedStatsButton.setOnClickListener((view) -> startActivity(IntentUtils.newIntent(this, AggregatedStatisticsActivity.class)));
-        viewBinding.suggestedRoutesButton.setOnClickListener((view) -> startActivity(IntentUtils.newIntent(this, SuggestedRoutesActivity.class)));
         viewBinding.sensorStartButton.setOnClickListener((view) -> {
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -1023,7 +1021,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
     /**
      * Starts a normal recording and hands the picked GPX route to the recording map as a guidance
-     * overlay, mirroring the suggested-routes flow.
+     * overlay.
      */
     private void startRecordingWithRoute(ArrayList<GeoPoint> route) {
         if (isFinishing() || isDestroyed()) {

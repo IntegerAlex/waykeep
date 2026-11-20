@@ -336,7 +336,6 @@ limitations under the License.
     <string name="action_stop_gps">Stop GPS</string>
     <string name="action_stats">Stats</string>
     <string name="action_gps">GPS</string>
-    <string name="action_routes">Routes</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_export_all">Export all (one file per track)</string>
@@ -663,8 +662,6 @@ limitations under the License.
     <string name="map_offline_only_summary">Never download map tiles; use cached tiles only. Saves data and battery on weak signal.</string>
     <string name="map_rotate_with_heading_title">Rotate map with compass</string>
     <string name="map_rotate_with_heading_summary">Turn the map to your heading while the compass is active</string>
-    <string name="suggested_routes_profile_title">Suggested-loop routing profile</string>
-    <string name="suggested_routes_profile_summary">BRouter profile used to generate running loops</string>
     <string name="settings_route_color_title">Route color</string>
     <string name="settings_route_color_summary">Color of the recorded route line on the map</string>
     <string name="map_clear_cache_title">Clear tile cache</string>
@@ -910,20 +907,7 @@ limitations under the License.
     <string name="share_ai_prompt_copied">Analysis prompt copied — paste it with the file</string>
     <string name="share_ai_preparing">Preparing file for AI analysis…</string>
     <string name="share_ai_failed">Could not prepare the file. Please try again.</string>
-    <string name="suggested_routes_title">Suggested routes</string>
     <string name="stop_recording_message">The current track will be saved.</string>
-    <string name="suggested_routes_hint">Tap the map to place your start pin, pick a distance, then Generate.</string>
-    <string name="suggested_routes_3km">3 km</string>
-    <string name="suggested_routes_5km">5 km</string>
-    <string name="suggested_routes_10km">10 km</string>
-    <string name="suggested_routes_my_location">My location</string>
-    <string name="suggested_routes_generate">Generate</string>
-    <string name="suggested_routes_run">Run this route</string>
-    <string name="suggested_routes_searching">Finding routes… this can take up to a minute.</string>
-    <string name="suggested_routes_error">Couldn\'t reach the route server. Check your connection and retry.</string>
-    <string name="suggested_routes_found">Pick a route, then Run.</string>
-    <string name="suggested_routes_no_match">No loop within 500 m of %1$s (closest: %2$s). Try another distance or start point.</string>
-    <string name="suggested_routes_no_location">Location unavailable — tap the map to place the pin.</string>
     <string name="instant_export_enabled_summary">Export track to storage after recording is finished</string>
     <string name="instant_export_enabled_title">Instant post-workout export</string>
     <string name="settings_backup_section">Automatic backup</string>
