@@ -11,35 +11,49 @@ import java.util.List;
 
 /**
  * Memories travel inside KMZ backups as memories.json; the codec must round-trip
- * and tolerate older or damaged backups (a backup must never fail to import
- * because of an optional payload).
+ * multiple photos per memory, still read the pre-multi-photo format, and tolerate
+ * older or damaged backups (a backup must never fail to import because of an
+ * optional payload).
  */
 public class MemoriesCodecTest {
 
     @Test
-    public void roundTripsMoodAndPhoto() {
+    public void roundTripsMoodAndMultiplePhotos() {
         String json = MemoriesCodec.encode(List.of(
-                new MemoriesCodec.Entry("aaa-bbb", 2, "images/memory-1.jpg"),
-                new MemoriesCodec.Entry("ccc-ddd", 4, null)));
+                new MemoriesCodec.Entry("aaa-bbb", 2, List.of("images/m1.jpg", "images/m2.jpg")),
+                new MemoriesCodec.Entry("ccc-ddd", 4, List.of())));
 
         List<MemoriesCodec.Entry> decoded = MemoriesCodec.decode(json);
         assertEquals(2, decoded.size());
         assertEquals("aaa-bbb", decoded.get(0).trackUuid());
         assertEquals(2, decoded.get(0).mood());
-        assertEquals("images/memory-1.jpg", decoded.get(0).photoName());
+        assertEquals(2, decoded.get(0).photoNames().size());
+        assertEquals("images/m1.jpg", decoded.get(0).photoNames().get(0));
+        assertEquals("images/m2.jpg", decoded.get(0).photoNames().get(1));
         assertEquals(4, decoded.get(1).mood());
-        assertEquals(null, decoded.get(1).photoName());
+        assertTrue(decoded.get(1).photoNames().isEmpty());
     }
 
     @Test
-    public void decodesEntriesWithoutPhoto() {
+    public void decodesTheOldSinglePhotoFormat() {
+        List<MemoriesCodec.Entry> decoded = MemoriesCodec.decode(
+                "{\"version\":1,\"memories\":[{\"trackUuid\":\"x\",\"mood\":3,"
+                        + "\"photo\":\"images/old.jpg\"}]}");
+
+        assertEquals(1, decoded.size());
+        assertEquals(3, decoded.get(0).mood());
+        assertEquals(List.of("images/old.jpg"), decoded.get(0).photoNames());
+    }
+
+    @Test
+    public void decodesEntriesWithoutPhotos() {
         List<MemoriesCodec.Entry> decoded = MemoriesCodec.decode(
                 "{\"version\":1,\"memories\":[{\"trackUuid\":\"x\"}]}");
 
         assertEquals(1, decoded.size());
         assertEquals("x", decoded.get(0).trackUuid());
         assertEquals(-1, decoded.get(0).mood());
-        assertEquals(null, decoded.get(0).photoName());
+        assertTrue(decoded.get(0).photoNames().isEmpty());
     }
 
     @Test

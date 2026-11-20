@@ -1,6 +1,5 @@
 package com.waykeep.app.ui.memory;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,6 +17,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.waykeep.app.R;
@@ -27,9 +28,11 @@ import com.waykeep.app.data.models.Track;
 import com.waykeep.app.util.FileUtils;
 
 /**
- * Wires the shared "How was it?" strip: five mood stickers plus an optional photo.
+ * Wires the shared "How was it?" strip: five mood stickers plus optional photos.
  * Every change is written through immediately — the memory exists the moment the
- * runner taps, not after some save button.
+ * runner taps, not after some save button. Each photo pick appends; long-press
+ * removes the most recently added one. The photo slot shows the latest photo and
+ * a count when there is more than one.
  */
 public class MemoryStripController {
 
@@ -40,11 +43,10 @@ public class MemoryStripController {
 
     @Nullable
     private Integer selectedMood;
-    @Nullable
-    private String savedPhotoName;
+    @NonNull
+    private final List<String> savedPhotoNames = new ArrayList<>();
     @Nullable
     private final Runnable onSaved;
-
     @Nullable
     private View strip;
 
@@ -78,8 +80,8 @@ public class MemoryStripController {
         RunMemory existing = store.get(trackId);
         if (existing != null) {
             selectedMood = existing.mood();
-            savedPhotoName = existing.photoName();
-            showPhotoPreview(strip, existing.photoName());
+            savedPhotoNames.addAll(existing.photoNames());
+            showPhotoPreview();
         }
         paintMoods();
 
@@ -97,6 +99,17 @@ public class MemoryStripController {
                             .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                             .build()));
         }
+        // Long-press removes the most recently added photo.
+        strip.findViewById(R.id.memory_photo).setOnLongClickListener(v -> {
+            if (!savedPhotoNames.isEmpty()) {
+                File last = new File(FileUtils.getPhotoDir(activity, trackId),
+                        savedPhotoNames.remove(savedPhotoNames.size() - 1));
+                last.delete();
+                showPhotoPreview();
+                writeThrough();
+            }
+            return true;
+        });
 
         for (int mood = RunMemory.MOOD_MIN; mood <= RunMemory.MOOD_MAX; mood++) {
             int captured = mood;
@@ -104,7 +117,7 @@ public class MemoryStripController {
                 // Tap the selected sticker again to clear the mood.
                 selectedMood = selectedMood != null && selectedMood == captured ? RunMemory.MOOD_UNSET : captured;
                 paintMoods();
-                writeThrough(onSaved);
+                writeThrough();
             });
         }
     }
@@ -112,7 +125,7 @@ public class MemoryStripController {
     /** Entry point for a host-provided photo picker result. */
     public void onPhotoPicked(@Nullable Uri uri) {
         if (uri != null && strip != null) {
-            attachPhoto(strip, uri);
+            attachPhoto(uri);
         }
     }
 
@@ -125,18 +138,15 @@ public class MemoryStripController {
         }
     }
 
-    private void attachPhoto(View strip, Uri uri) {
+    private void attachPhoto(@NonNull Uri uri) {
         try {
             File dir = FileUtils.getPhotoDir(activity, trackId);
             String newName = "memory-" + UUID.randomUUID() + ".jpg";
             File out = new File(dir, newName);
             if (copyScaled(uri, out)) {
-                if (savedPhotoName != null && !savedPhotoName.equals(newName)) {
-                    new File(dir, savedPhotoName).delete();
-                }
-                savedPhotoName = newName;
-                showPhotoPreview(strip, newName);
-                writeThrough(onSaved);
+                savedPhotoNames.add(newName);
+                showPhotoPreview();
+                writeThrough();
             }
         } catch (IOException | RuntimeException e) {
             android.widget.Toast.makeText(activity, R.string.memory_photo_failed, android.widget.Toast.LENGTH_SHORT).show();
@@ -173,17 +183,34 @@ public class MemoryStripController {
         return true;
     }
 
-    private void showPhotoPreview(View strip, @Nullable String photoName) {
-        ImageView preview = strip.findViewById(R.id.memory_photo);
-        if (photoName == null) {
-            preview.setImageResource(R.drawable.ic_add_a_photo_24dp);
-            preview.setPadding(pad(), pad(), pad(), pad());
+    /** Latest photo in the slot; a count label when there is more than one. */
+    private void showPhotoPreview() {
+        if (strip == null) {
             return;
         }
-        File file = new File(FileUtils.getPhotoDir(activity, trackId), photoName);
+        ImageView preview = strip.findViewById(R.id.memory_photo);
+        if (savedPhotoNames.isEmpty()) {
+            preview.setImageResource(R.drawable.ic_add_a_photo_24dp);
+            int pad = pad();
+            preview.setPadding(pad, pad, pad, pad);
+            preview.setContentDescription(activity.getString(R.string.memory_add_photo));
+            return;
+        }
+        File file = new File(FileUtils.getPhotoDir(activity, trackId),
+                savedPhotoNames.get(savedPhotoNames.size() - 1));
         if (file.isFile()) {
             preview.setImageURI(Uri.fromFile(file));
             preview.setPadding(0, 0, 0, 0);
+        } else {
+            preview.setImageResource(R.drawable.ic_add_a_photo_24dp);
+            int pad = pad();
+            preview.setPadding(pad, pad, pad, pad);
+        }
+        if (savedPhotoNames.size() > 1) {
+            preview.setContentDescription(activity.getString(R.string.memory_photo_count,
+                    savedPhotoNames.size()));
+        } else {
+            preview.setContentDescription(activity.getString(R.string.memory_add_photo));
         }
     }
 
@@ -191,13 +218,13 @@ public class MemoryStripController {
         return Math.round(10 * activity.getResources().getDisplayMetrics().density);
     }
 
-    private void writeThrough(@Nullable Runnable onSaved) {
+    private void writeThrough() {
         Integer mood = selectedMood;
-        String photoName = savedPhotoName;
-        if ((mood == null || mood == RunMemory.MOOD_UNSET) && photoName == null) {
+        if ((mood == null || mood == RunMemory.MOOD_UNSET) && savedPhotoNames.isEmpty()) {
             store.delete(trackId);
         } else {
-            store.save(new RunMemory(trackId, mood == null ? RunMemory.MOOD_UNSET : mood, photoName));
+            store.save(new RunMemory(trackId, mood == null ? RunMemory.MOOD_UNSET : mood,
+                    List.copyOf(savedPhotoNames)));
         }
         if (onSaved != null) {
             onSaved.run();

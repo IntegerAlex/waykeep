@@ -904,6 +904,7 @@ limitations under the License.
     <string name="memories_empty">Runs you give a mood land here — a private timeline of how they felt.</string>
     <string name="memory_prompt_title">How was it?</string>
     <string name="memory_add_photo">Add photo</string>
+    <string name="memory_photo_count">%1$d photos — long-press to remove the last</string>
     <string name="memory_photo_failed">Could not attach that photo.</string>
     <string name="memory_mood_0">Rough</string>
     <string name="memory_mood_1">Meh</string>

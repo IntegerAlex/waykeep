@@ -30,7 +30,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = CustomSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 44;
+    private static final int DATABASE_VERSION = 45;
 
     private final Context context;
 
@@ -92,6 +92,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
                 case 42 -> upgradeFrom41to42(db);
                 case 43 -> upgradeFrom42to43(db);
                 case 44 -> upgradeFrom43to44(db);
+                case 45 -> upgradeFrom44to45(db);
                 default -> throw new RuntimeException("Not implemented: upgrade to " + toVersion);
             }
         }
@@ -104,6 +105,7 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
             switch (toVersion) {
                 case 42 -> downgradeFrom43to42(db);
                 case 43 -> downgradeFrom44to43(db);
+                case 44 -> downgradeFrom45to44(db);
                 case 23 -> downgradeFrom24to23(db);
                 case 24 -> downgradeFrom25to24(db);
                 case 25 -> downgradeFrom26to25(db);
@@ -823,6 +825,21 @@ class CustomSQLiteOpenHelper extends SQLiteOpenHelper {
         // Memories are optional decoration; dropping the table loses nothing the
         // older version could render.
         db.execSQL("DROP TABLE IF EXISTS " + RunMemoryColumns.TABLE_NAME);
+    }
+
+    /** Photos became a list: wrap the pre-multi-photo single file name in an array. */
+    private void upgradeFrom44to45(SQLiteDatabase db) {
+        db.execSQL("UPDATE " + RunMemoryColumns.TABLE_NAME
+                + " SET " + RunMemoryColumns.PHOTO + " = json_array(" + RunMemoryColumns.PHOTO + ")"
+                + " WHERE " + RunMemoryColumns.PHOTO + " IS NOT NULL"
+                + " AND " + RunMemoryColumns.PHOTO + " NOT LIKE '[%'");
+    }
+
+    private void downgradeFrom45to44(SQLiteDatabase db) {
+        // Keep the first photo; the single-photo build ignores the rest anyway.
+        db.execSQL("UPDATE " + RunMemoryColumns.TABLE_NAME
+                + " SET " + RunMemoryColumns.PHOTO + " = json_extract(" + RunMemoryColumns.PHOTO + ", '$[0]')"
+                + " WHERE " + RunMemoryColumns.PHOTO + " LIKE '[%'");
     }
 
     private void downgradeFrom43to42(SQLiteDatabase db) {

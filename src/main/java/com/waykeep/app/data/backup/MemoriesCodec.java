@@ -1,5 +1,6 @@
 package com.waykeep.app.data.backup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -11,9 +12,9 @@ import java.util.List;
 
 /**
  * Serializes run memories for the {@code memories.json} entry inside KMZ backups.
- * Memories are keyed by track UUID (track IDs change on import); every field except
- * the UUID is optional, and damaged JSON decodes to nothing so a broken backup
- * still imports its tracks.
+ * Memories are keyed by track UUID (track IDs change on import). Photos are an
+ * array; the pre-multi-photo format (a single {@code photo} string) is still read.
+ * Damaged JSON decodes to nothing so a broken backup still imports its tracks.
  */
 public final class MemoriesCodec {
 
@@ -22,12 +23,13 @@ public final class MemoriesCodec {
     private static final String KEY_MEMORIES = "memories";
     private static final String KEY_TRACK_UUID = "trackUuid";
     private static final String KEY_MOOD = "mood";
-    private static final String KEY_PHOTO = "photo";
+    private static final String KEY_PHOTOS = "photos";
+    private static final String KEY_PHOTO = "photo"; // pre-multi-photo format
 
     private MemoriesCodec() {
     }
 
-    public record Entry(@Nullable String trackUuid, int mood, @Nullable String photoName) {
+    public record Entry(@Nullable String trackUuid, int mood, @NonNull List<String> photoNames) {
     }
 
     public static String encode(List<Entry> memories) {
@@ -44,8 +46,12 @@ public final class MemoriesCodec {
                 if (memory.mood() >= 0) {
                     entry.put(KEY_MOOD, memory.mood());
                 }
-                if (memory.photoName() != null) {
-                    entry.put(KEY_PHOTO, memory.photoName());
+                if (!memory.photoNames().isEmpty()) {
+                    JSONArray photos = new JSONArray();
+                    for (String photo : memory.photoNames()) {
+                        photos.put(photo);
+                    }
+                    entry.put(KEY_PHOTOS, photos);
                 }
                 array.put(entry);
             }
@@ -78,11 +84,31 @@ public final class MemoriesCodec {
                     continue;
                 }
                 memories.add(new Entry(trackUuid, entry.optInt(KEY_MOOD, -1),
-                        entry.optString(KEY_PHOTO, null)));
+                        readPhotos(entry)));
             }
         } catch (JSONException ignored) {
             // Damaged payload: tracks still import, memories are simply absent.
         }
         return memories;
+    }
+
+    private static List<String> readPhotos(JSONObject entry) {
+        List<String> photoNames = new ArrayList<>();
+        JSONArray photos = entry.optJSONArray(KEY_PHOTOS);
+        if (photos != null) {
+            for (int i = 0; i < photos.length(); i++) {
+                String photo = photos.optString(i, null);
+                if (photo != null && !photo.isBlank()) {
+                    photoNames.add(photo);
+                }
+            }
+            return photoNames;
+        }
+        // Pre-multi-photo format.
+        String single = entry.optString(KEY_PHOTO, null);
+        if (single != null && !single.isBlank()) {
+            photoNames.add(single);
+        }
+        return photoNames;
     }
 }

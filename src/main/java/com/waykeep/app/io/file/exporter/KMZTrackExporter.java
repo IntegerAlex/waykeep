@@ -150,7 +150,7 @@ public class KMZTrackExporter implements TrackExporter {
     private static final String KMZ_MEMORIES_MANIFEST = "memories.json";
 
     /**
-     * Writes run memories (mood per track + optional photo) as a self-contained
+     * Writes run memories (mood per track + optional photos) as a self-contained
      * {@code memories.json} plus {@code memories/<uuid>.<ext>} files. Older app
      * versions ignore both, and old backups without them import unchanged.
      */
@@ -162,18 +162,23 @@ public class KMZTrackExporter implements TrackExporter {
             if (memory == null) {
                 continue;
             }
-            String photoName = null;
-            if (memory.photoName() != null) {
-                File photoFile = new File(FileUtils.getPhotoDir(context, track.id()), memory.photoName());
-                if (fileTrackExporter.isExportPhotos() && photoFile.isFile()) {
-                    String ext = memory.photoName().lastIndexOf('.') >= 0
-                            ? memory.photoName().substring(memory.photoName().lastIndexOf('.')) : ".jpg";
-                    String kmzPath = KMZ_MEMORIES_DIR + File.separatorChar + track.uuid() + ext;
-                    addFile(zipOutputStream, photoFile, kmzPath);
-                    photoName = kmzPath;
+            List<String> kmzPhotoPaths = new ArrayList<>();
+            if (fileTrackExporter.isExportPhotos()) {
+                File photoDir = FileUtils.getPhotoDir(context, track.id());
+                int index = 0;
+                for (String photoName : memory.photoNames()) {
+                    File photoFile = new File(photoDir, photoName);
+                    if (photoFile.isFile()) {
+                        String ext = photoName.lastIndexOf('.') >= 0
+                                ? photoName.substring(photoName.lastIndexOf('.')) : ".jpg";
+                        String kmzPath = KMZ_MEMORIES_DIR + File.separatorChar + track.uuid() + "-" + index + ext;
+                        addFile(zipOutputStream, photoFile, kmzPath);
+                        kmzPhotoPaths.add(kmzPath);
+                    }
+                    index++;
                 }
             }
-            entries.add(new MemoriesCodec.Entry(track.uuid().toString(), memory.mood(), photoName));
+            entries.add(new MemoriesCodec.Entry(track.uuid().toString(), memory.mood(), kmzPhotoPaths));
         }
 
         if (entries.isEmpty()) {

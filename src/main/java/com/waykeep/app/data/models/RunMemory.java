@@ -1,12 +1,15 @@
 package com.waykeep.app.data.models;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+
+import java.util.List;
 
 /**
- * How a recorded run felt: one mood (0 rough .. 4 great, -1 unset) and an optional
- * photo (file name inside the track's photo directory). One memory per track.
+ * How a recorded run felt: one mood (0 rough .. 4 great, -1 unset) and optional
+ * photos (file names inside the track's photo directory; first is the cover).
+ * One memory per track.
  */
-public record RunMemory(Track.Id trackId, int mood, @Nullable String photoName) {
+public record RunMemory(Track.Id trackId, int mood, @NonNull List<String> photoNames) {
 
     public static final int MOOD_UNSET = -1;
     public static final int MOOD_MIN = 0;

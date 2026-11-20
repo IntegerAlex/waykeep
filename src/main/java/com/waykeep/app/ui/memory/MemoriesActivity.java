@@ -104,8 +104,9 @@ public class MemoriesActivity extends AppCompatActivity {
 
             holder.mood.setImageResource(moodDrawable(memory != null ? memory.mood() : -1));
 
-            if (memory != null && memory.photoName() != null) {
-                File photo = new File(FileUtils.getPhotoDir(context, item.id()), memory.photoName());
+            List<String> photoNames = memory != null ? memory.photoNames() : List.of();
+            if (!photoNames.isEmpty()) {
+                File photo = new File(FileUtils.getPhotoDir(context, item.id()), photoNames.get(0));
                 if (photo.isFile()) {
                     holder.photo.setImageURI(android.net.Uri.fromFile(photo));
                     holder.photo.setVisibility(View.VISIBLE);
@@ -114,6 +115,12 @@ public class MemoriesActivity extends AppCompatActivity {
                 }
             } else {
                 holder.photo.setVisibility(View.GONE);
+            }
+            if (photoNames.size() > 1) {
+                holder.count.setVisibility(View.VISIBLE);
+                holder.count.setText(context.getString(R.string.memory_photo_count, photoNames.size()));
+            } else {
+                holder.count.setVisibility(View.GONE);
             }
 
             int side = Math.round(72 * context.getResources().getDisplayMetrics().density);
@@ -150,6 +157,7 @@ public class MemoriesActivity extends AppCompatActivity {
         final ImageView photo;
         final TextView name;
         final TextView detail;
+        final TextView count;
         final ImageView route;
 
         MemoryViewHolder(@NonNull View itemView) {
@@ -158,6 +166,7 @@ public class MemoriesActivity extends AppCompatActivity {
             photo = itemView.findViewById(R.id.memory_item_photo);
             name = itemView.findViewById(R.id.memory_item_name);
             detail = itemView.findViewById(R.id.memory_item_detail);
+            count = itemView.findViewById(R.id.memory_item_count);
             route = itemView.findViewById(R.id.memory_item_route);
         }
     }

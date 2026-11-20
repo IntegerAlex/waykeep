@@ -129,17 +129,22 @@ public class KMZTrackImporter {
                 if (track == null || memoryStore.get(track.id()) != null) {
                     continue;
                 }
-                String devicePhotoName = null;
-                byte[] photoData = entry.photoName() != null ? memoryPhotos.get(entry.photoName()) : null;
-                if (photoData != null) {
-                    String ext = entry.photoName().substring(entry.photoName().lastIndexOf('.'));
-                    devicePhotoName = "memory-" + entry.trackUuid() + ext;
-                    File photoFile = new File(FileUtils.getPhotoDir(context, track.id()), devicePhotoName);
+                List<String> devicePhotoNames = new ArrayList<>();
+                File photoDir = FileUtils.getPhotoDir(context, track.id());
+                for (String kmzPhotoPath : entry.photoNames()) {
+                    byte[] photoData = memoryPhotos.get(kmzPhotoPath);
+                    if (photoData == null) {
+                        continue;
+                    }
+                    String ext = kmzPhotoPath.substring(kmzPhotoPath.lastIndexOf('.'));
+                    String devicePhotoName = "memory-" + UUID.randomUUID() + ext;
+                    File photoFile = new File(photoDir, devicePhotoName);
                     try (OutputStream outputStream = new FileOutputStream(photoFile)) {
                         outputStream.write(photoData);
                     }
+                    devicePhotoNames.add(devicePhotoName);
                 }
-                memoryStore.save(new RunMemory(track.id(), entry.mood(), devicePhotoName));
+                memoryStore.save(new RunMemory(track.id(), entry.mood(), devicePhotoNames));
             } catch (IllegalArgumentException | IOException e) {
                 Log.e(TAG, "Could not restore a memory", e);
             }
