@@ -1,6 +1,7 @@
 package com.waykeep.app.publicapi;
 
 import com.waykeep.app.data.models.Track;
+import com.waykeep.app.io.file.backup.BackupUtils;
 import com.waykeep.app.io.file.exporter.ExportUtils;
 import com.waykeep.app.services.RecordingData;
 import com.waykeep.app.services.TrackRecordingService;
@@ -18,6 +19,7 @@ public class StopRecording extends AbstractAPIActivity {
 
         if (trackId != null) {
             ExportUtils.postWorkoutExport(this, trackId);
+            BackupUtils.postBackup(this);
         }
     }
 

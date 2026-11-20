@@ -89,6 +89,7 @@ import com.waykeep.app.diagnostics.DiagnosticsRecovery;
 import com.waykeep.app.diagnostics.DiagnosticsRecovery.RecoveryCandidate;
 import com.waykeep.app.diagnostics.DiagnosticsShare;
 import com.waykeep.app.databinding.TrackListBinding;
+import com.waykeep.app.io.file.backup.BackupUtils;
 import com.waykeep.app.io.file.importer.GpxRouteParser;
 import com.waykeep.app.io.file.importer.RoutePoint;
 import com.waykeep.app.publicapi.DataProvider;
@@ -216,6 +217,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+
+        // Daily catch-up: the worker skips when no track changed since the last backup,
+        // so this is a cheap no-op for an unchanged database.
+        BackupUtils.postBackup(this);
 
         if (savedInstanceState != null) {
             searchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY);

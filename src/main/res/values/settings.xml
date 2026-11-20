@@ -94,6 +94,10 @@
     <string name="settings_default_export_directory_key" translatable="false">settingsDefaultExportDirectory</string>
     <string name="post_workout_export_enabled_key" translatable="false">instantExportEnabled</string>
     <bool name="post_workout_export_enabled_default" translatable="false">false</bool>
+    <string name="auto_backup_enabled_key" translatable="false">autoBackupEnabled</string>
+    <bool name="auto_backup_enabled_default" translatable="false">true</bool>
+    <string name="backup_now_key" translatable="false">backupNow</string>
+    <string name="backup_last_track_state_key" translatable="false">backupLastTrackState</string>
 
     <string name="export_filename_format_key" translatable="false">instantExportFilename</string>
     <string name="export_filename_format_default" translatable="false">{date}_{time}_{name}</string>

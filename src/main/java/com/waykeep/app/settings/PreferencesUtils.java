@@ -958,6 +958,19 @@ public class PreferencesUtils {
         return getBoolean(R.string.post_workout_export_enabled_key, INSTANT_POST_WORKOUT_EXPORT_DEFAULT) && isDefaultExportDirectoryUri();
     }
 
+    public static boolean isAutoBackupEnabled() {
+        final boolean AUTO_BACKUP_ENABLED_DEFAULT = resources.getBoolean(R.bool.auto_backup_enabled_default);
+        return getBoolean(R.string.auto_backup_enabled_key, AUTO_BACKUP_ENABLED_DEFAULT);
+    }
+
+    public static String getBackupLastTrackState() {
+        return getString(R.string.backup_last_track_state_key, "");
+    }
+
+    public static void setBackupLastTrackState(String state) {
+        setString(R.string.backup_last_track_state_key, state);
+    }
+
     public static boolean shouldInstantExportToHealthConnect() {
         final boolean DEFAULT = resources.getBoolean(R.bool.post_workout_export_health_connect_enabled_default);
         return getBoolean(R.string.post_workout_export_health_connect_enabled_key, DEFAULT);

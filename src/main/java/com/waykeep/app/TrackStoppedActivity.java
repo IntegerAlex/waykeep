@@ -17,6 +17,7 @@ import com.waykeep.app.data.models.Track;
 import com.waykeep.app.data.models.TrackBuilder;
 import com.waykeep.app.databinding.TrackStoppedBinding;
 import com.waykeep.app.fragments.ChooseActivityTypeDialogFragment;
+import com.waykeep.app.io.file.backup.BackupUtils;
 import com.waykeep.app.io.file.exporter.ExportUtils;
 import com.waykeep.app.io.healthconnect.exporter.HealthConnectUtils;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
@@ -95,6 +96,7 @@ public class TrackStoppedActivity extends AbstractTrackDeleteActivity implements
             storeTrackMetaData(contentProviderUtils, track);
             ExportUtils.postWorkoutExport(this, trackId);
             HealthConnectUtils.postExportTrack(this, trackId);
+            BackupUtils.postBackup(this);
             // If the recording screen was the task root (e.g. opened from the notification after
             // the task was gone), finishing here leaves an empty task and the app closes.
             if (isTaskRoot()) {

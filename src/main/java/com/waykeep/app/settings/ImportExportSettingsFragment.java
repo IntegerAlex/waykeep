@@ -18,6 +18,7 @@ import java.util.Map;
 import com.waykeep.app.R;
 import com.waykeep.app.io.file.TrackFileFormat;
 import com.waykeep.app.io.file.TrackFilenameGenerator;
+import com.waykeep.app.io.file.backup.BackupUtils;
 import com.waykeep.app.io.file.importer.ImportActivity;
 import com.waykeep.app.io.file.importer.ImportTrust;
 import com.waykeep.app.io.healthconnect.exporter.HealthConnectUtils;
@@ -75,6 +76,17 @@ public class ImportExportSettingsFragment extends PreferenceFragmentCompat {
 
         setExportDirectorySummary();
         findPreference(getString(R.string.post_workout_export_enabled_key)).setEnabled(PreferencesUtils.isDefaultExportDirectoryUri());
+        findPreference(getString(R.string.auto_backup_enabled_key)).setEnabled(PreferencesUtils.isDefaultExportDirectoryUri());
+
+        findPreference(getString(R.string.backup_now_key)).setOnPreferenceClickListener(preference -> {
+            if (!PreferencesUtils.isDefaultExportDirectoryUri()) {
+                android.widget.Toast.makeText(requireContext(), R.string.backup_needs_directory_toast, android.widget.Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            BackupUtils.postBackupNow(requireContext());
+            android.widget.Toast.makeText(requireContext(), R.string.backup_started_toast, android.widget.Toast.LENGTH_SHORT).show();
+            return true;
+        });
 
         setHealthConnectPreference();
     }

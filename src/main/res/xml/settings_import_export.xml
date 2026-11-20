@@ -57,6 +57,18 @@
             android:defaultValue="@string/export_filename_format_default" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/settings_backup_section">
+        <SwitchPreferenceCompat
+            android:defaultValue="@bool/auto_backup_enabled_default"
+            android:key="@string/auto_backup_enabled_key"
+            android:summary="@string/auto_backup_enabled_summary"
+            android:title="@string/auto_backup_enabled_title" />
+        <Preference
+            android:key="@string/backup_now_key"
+            android:summary="@string/backup_now_summary"
+            android:title="@string/backup_now_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/settings_export_to_health_connect"
         android:key="healthConnectCategory">
