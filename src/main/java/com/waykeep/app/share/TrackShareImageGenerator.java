@@ -228,10 +228,12 @@ public class TrackShareImageGenerator {
             titlePaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
             subtitlePaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
         }
-        canvas.drawText(ellipsize(title, titlePaint, widthPx - 2 * padding), padding, y + 34 * scaledDensity, titlePaint);
+        canvas.drawText(fitText(titlePaint, title, widthPx - 2 * padding, 24 * scaledDensity),
+                padding, y + 34 * scaledDensity, titlePaint);
         y += 48 * scaledDensity;
 
-        canvas.drawText(ellipsize(subtitle, subtitlePaint, widthPx - 2 * padding), padding, y + 16 * scaledDensity, subtitlePaint);
+        canvas.drawText(fitText(subtitlePaint, subtitle, widthPx - 2 * padding, 12 * scaledDensity),
+                padding, y + 16 * scaledDensity, subtitlePaint);
         y += 40 * scaledDensity;
 
         if (!routePoints.isEmpty() || routeOnly) {
@@ -422,7 +424,9 @@ public class TrackShareImageGenerator {
             StatCard card = cards.get(i);
             float centerX = cellLeft + cellWidth / 2f;
 
-            String value = ellipsize(card.value(), valuePaint, cellWidth - 8 * density);
+            // Reset per cell: fitText shrinks the paint to fit the widest value so far.
+            valuePaint.setTextSize(26 * scaledDensity);
+            String value = fitText(valuePaint, card.value(), cellWidth - 8 * density, 16 * scaledDensity);
             float valueWidth = valuePaint.measureText(value);
             float valueBaseline = cellTop + cellHeight / 2f - 2 * density;
             canvas.drawText(value, centerX - valueWidth / 2f, valueBaseline, valuePaint);
@@ -435,6 +439,41 @@ public class TrackShareImageGenerator {
                 canvas.drawLine(dividerX, cellTop + 6 * density, dividerX, cellTop + cellHeight - 16 * density, dividerPaint);
             }
         }
+    }
+
+    /**
+     * Fits text into maxWidth by shrinking the paint's text size first, and only
+     * ellipsizes when even the floor size cannot hold the text. Keeps units and
+     * activity types readable instead of chopping them ("6:10 min/…").
+     * Mutates the paint's text size to the fitted size; call sites reset it.
+     */
+    private static String fitText(Paint paint, String text, float maxWidth, float minSize) {
+        if (text == null) {
+            return "";
+        }
+        float size = paint.getTextSize();
+        float width = paint.measureText(text);
+        if (width <= maxWidth) {
+            return text;
+        }
+        paint.setTextSize(fittedSize(size, width, maxWidth, minSize));
+        if (paint.measureText(text) <= maxWidth) {
+            return text;
+        }
+        paint.setTextSize(minSize);
+        return ellipsize(text, paint, maxWidth);
+    }
+
+    /**
+     * One-shot shrink: the largest size ≤ textSize whose linearly-scaled width fits
+     * maxWidth, never below minSize. Callers must re-measure; if the text still
+     * overflows at minSize it must be ellipsized.
+     */
+    static float fittedSize(float textSize, float measuredWidth, float maxWidth, float minSize) {
+        if (measuredWidth <= maxWidth) {
+            return textSize;
+        }
+        return Math.max(minSize, (float) Math.floor(textSize * maxWidth / measuredWidth));
     }
 
     private static String ellipsize(String text, Paint paint, float maxWidth) {
