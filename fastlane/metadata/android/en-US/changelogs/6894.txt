@@ -1,0 +1,7 @@
+Waykeep 1.1.3
+
+* Share image text shrinks to fit instead of being chopped — pace units and activity types stay readable
+* Home screen widgets: weekly goal and streak card
+* Streaks are measured by week
+* GPS: bogus network starts are dropped and mock fixes are marked
+* Diagnostics journal records assistance results from the sensor pre-warm
