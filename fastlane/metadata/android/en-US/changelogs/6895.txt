@@ -1,0 +1,10 @@
+Waykeep 1.1.4
+
+* Automatic two-copy local backup: written after every recording, survives uninstalling the app
+* Memories: tap how the run felt (five sticker moods) and attach photos — a private timeline, included in backups
+* Multiple photos per memory
+* Fixed the goal widget showing "Can't load widget"
+* Fixed a crash when relaunching the import screen (font scale, theme, split screen)
+* Removed the BRouter loop generator: it could not hit the requested distance; Follow GPX stays
+* Share image text shrinks to fit instead of being chopped
+* Goal/streak home widgets, weekly streak measurement, GPS bogus-start and mock-fix handling
