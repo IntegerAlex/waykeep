@@ -51,6 +51,7 @@ import com.waykeep.app.fragments.StatisticsRecordingFragment;
 import com.waykeep.app.sensors.GpsStatusValue;
 import com.waykeep.app.services.HeartRateAlert;
 import com.waykeep.app.services.RecordingData;
+import com.waykeep.app.services.RecordingLiveStatus;
 import com.waykeep.app.services.RecordingStatus;
 import com.waykeep.app.services.TrackRecordingService;
 import com.waykeep.app.services.TrackRecordingServiceConnection;
@@ -550,8 +551,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
     }
 
     /**
-     * The strip is the persistent home of recording state, visible on every tab. A usable signal
-     * shows its current accuracy; GPS problems and low battery get warning text.
+     * The strip is the persistent home of recording state, visible on every tab. The state line
+     * always names the actual service/GPS state; the second line carries accuracy or a warning.
      */
     private void updateStatusStrip() {
         if (!recordingStatus.isRecording()) {
@@ -560,31 +561,21 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
             return;
         }
 
-        String message = null;
-        boolean hideGpsDisabled = false;
-        if (recordingStatus.isPaused()) {
-            message = getString(R.string.track_paused_notification);
-        } else if (gpsStatus != null && gpsStatus.isSignalUnusable()) {
-            message = gpsStatusMessage();
+        RecordingLiveStatus.LiveState state = RecordingLiveStatus.liveState(recordingStatus, gpsStatus);
+        String stateText = getString(switch (state) {
+            case PAUSED -> R.string.recording_state_paused;
+            case WAITING_FOR_GPS -> R.string.recording_state_waiting_for_gps;
+            case RECORDING -> R.string.recording_status_recording;
+        });
+
+        String detail = null;
+        if (gpsStatus != null && gpsStatus.isSignalUnusable()) {
+            detail = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_DISABLED || gpsStatus == GpsStatusValue.GPS_NONE) {
-            if (!PreferencesUtils.shouldShowGpsDisabledWarning()) {
-                hideGpsDisabled = true;
-            } else {
-                message = gpsStatusMessage();
-            }
+            detail = gpsStatusMessage();
         } else if (gpsStatus == GpsStatusValue.GPS_ENABLED) {
-            message = gpsStatusMessage();
-        }
-
-        if (hideGpsDisabled && lowBatteryPercent < 0) {
-            viewBinding.recordingStatusStrip.setVisibility(View.GONE);
-            stopStatusDotPulse();
-            return;
-        }
-
-        boolean gpsProblem = message != null;
-        String detail = message;
-        if (detail == null && gpsStatus != null && gpsStatus.hasGoodSignal()) {
+            detail = gpsStatusMessage();
+        } else if (gpsStatus != null && gpsStatus.hasGoodSignal()) {
             detail = gpsAccuracyText;
         }
         if (lowBatteryPercent >= 0) {
@@ -593,16 +584,16 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                     : getString(R.string.recording_status_details, detail, batteryWarning);
         }
 
-        boolean nominal = !gpsProblem && lowBatteryPercent < 0;
+        boolean nominal = state == RecordingLiveStatus.LiveState.RECORDING && lowBatteryPercent < 0;
         viewBinding.recordingStatusStrip.setVisibility(View.VISIBLE);
-        String description = detail == null ? getString(R.string.recording_status_recording)
-                : nominal ? getString(R.string.recording_status_details,
-                getString(R.string.recording_status_recording), detail) : detail;
-        viewBinding.recordingStatusStrip.setContentDescription(description);
+        viewBinding.recordingStatusStrip.setContentDescription(detail == null
+                ? stateText : getString(R.string.recording_status_details, stateText, detail));
+        viewBinding.recordingStatusStripState.setText(stateText);
         viewBinding.recordingStatusStripText.setVisibility(detail == null ? View.GONE : View.VISIBLE);
         viewBinding.recordingStatusStripText.setText(detail);
         viewBinding.recordingStatusStripDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this,
-                nominal ? R.color.semantic_recording_red : R.color.semantic_offline_amber)));
+                state == RecordingLiveStatus.LiveState.RECORDING
+                        ? R.color.semantic_recording_red : R.color.semantic_offline_amber)));
 
         if (nominal) {
             startStatusDotPulse();

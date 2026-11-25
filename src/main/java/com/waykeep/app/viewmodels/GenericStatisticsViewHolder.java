@@ -83,8 +83,18 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
 
         private final boolean reportSpeed;
 
+        private boolean gpsSignalUsable = true;
+
         public SpeedOrPace(boolean reportSpeed) {
             this.reportSpeed = reportSpeed;
+        }
+
+        /**
+         * Drive a GPS-derived rate to an explicit unknown while the signal is gone: the last
+         * track point still carries a speed, and showing it would read as a live pace.
+         */
+        public void setGpsSignalUsable(boolean gpsSignalUsable) {
+            this.gpsSignalUsable = gpsSignalUsable;
         }
 
         @Override
@@ -103,10 +113,15 @@ public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<St
                 getBinding().statsDescriptionMain.setText(sensorDataSet.speed().sensorNameOrAddress());
             } else {
                 Speed speed = latestTrackPoint != null && latestTrackPoint.position().hasSpeed() ? latestTrackPoint.position().speed() : null;
-                valueAndUnit = localSpeedFormatter.getSpeedParts(speed);
 
                 String title = reportSpeed ? getContext().getString(R.string.stats_speed) : getContext().getString(R.string.stats_pace);
                 getBinding().statsDescriptionMain.setText(title);
+                if (!gpsSignalUsable) {
+                    getBinding().statsValue.setText(R.string.value_unknown);
+                    getBinding().statsUnit.setText("");
+                    return;
+                }
+                valueAndUnit = localSpeedFormatter.getSpeedParts(speed);
             }
 
             getBinding().statsValue.setText(valueAndUnit.first);

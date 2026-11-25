@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurfaceContainerLow"
@@ -7,9 +8,35 @@
     android:paddingHorizontal="20dp"
     android:paddingVertical="12dp">
 
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/stats_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:orientation="vertical">
+
+        <!-- Names the activity the live readings belong to, e.g. Running or Cycling. -->
+        <TextView
+            android:id="@+id/stats_activity_name"
+            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Running" />
+
+        <!--
+          Live hierarchy: rate, distance and time, one register per row. The rate register shows
+          pace for running and speed for cycling, following the preferred-rate setting.
+        -->
+        <LinearLayout
+            android:id="@+id/stats_primary_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- The rest of the selected layout stays available as compact registers. -->
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/stats_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
 </ScrollView>

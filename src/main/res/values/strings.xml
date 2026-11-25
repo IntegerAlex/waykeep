@@ -249,6 +249,8 @@ limitations under the License.
     <string name="track_stop">Stop</string>
     <string name="track_paused_notification">Paused — GPS stays on</string>
     <string name="recording_status_recording">Recording</string>
+    <string name="recording_state_paused">Paused</string>
+    <string name="recording_state_waiting_for_gps">Waiting for GPS</string>
     <string name="track_paused_hint">Paused — GPS stays on, tap to resume</string>
     <string name="track_resumed">Resumed</string>
     <string name="lap_recorded">Lap recorded</string>
