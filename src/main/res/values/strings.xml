@@ -215,6 +215,11 @@ limitations under the License.
     <string name="chart_metric_power">Power</string>
     <string name="chart_axis_time">Time</string>
     <string name="chart_axis_distance">Distance</string>
+    <string name="chart_axis_label">Horizontal axis</string>
+    <string name="chart_metric_label">Metric</string>
+    <!-- Metric name (unit), horizontal axis, data range. Kept as words so TalkBack reads it naturally. -->
+    <string name="chart_summary">%1$s (%2$s), %3$s axis, range %4$s to %5$s</string>
+    <string name="chart_summary_talkback">Chart. %1$s</string>
     <string name="chart_empty_title">No chart data yet</string>
     <string name="chart_empty_message">This track has no elevation, speed, heart rate, cadence or power data to plot.</string>
     <string name="description_total_distance">Total distance: %1$.2f km (%2$.1f mi)</string>
@@ -713,6 +718,9 @@ limitations under the License.
     <string name="unit_kilometer_per_hour">km/h</string>
     <string name="unit_meter">m</string>
     <string name="unit_mile">mi</string>
+    <string name="unit_beat_per_minute">bpm</string>
+    <string name="unit_revolution_per_minute">rpm</string>
+    <string name="unit_watt">W</string>
     <string name="unit_mile_per_hour">mph</string>
     <string name="unit_nautical_mile">NM</string>
     <string name="unit_knots">kn</string>
