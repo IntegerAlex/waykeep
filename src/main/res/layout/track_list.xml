@@ -170,6 +170,8 @@ limitations under the License.
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:singleLine="false"
                         android:text="@string/insight_week_distance_label"
                         android:textAppearance="@style/TextAppearance.OpenTracks.LaneLabel" />
 
@@ -315,13 +317,15 @@ limitations under the License.
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/track_list_fab_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/image_record"
-        android:src="@drawable/ic_baseline_record_24"
-        android:tint="@android:color/white"
+        android:contentDescription="@string/action_start_activity"
+        android:text="@string/action_start"
+        android:textColor="@android:color/white"
+        app:icon="@drawable/ic_baseline_record_24"
+        app:iconTint="@android:color/white"
         app:layout_anchor="@id/bottom_app_bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -192,9 +193,12 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         DetailTabs.bind(viewBinding.trackDetailActivityTabs,
                 viewBinding.trackDetailActivityViewPager, initialTab);
 
-        viewBinding.trackRecordingFabAction.setImageResource(R.drawable.ic_baseline_pause_24);
+        viewBinding.trackRecordingFabAction.setIconResource(R.drawable.ic_baseline_pause_24);
+        viewBinding.trackRecordingFabAction.setText(R.string.action_pause);
+        viewBinding.trackRecordingFabAction.setContentDescription(getString(R.string.action_pause_recording));
         viewBinding.trackRecordingFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.opentracks));
         viewBinding.trackRecordingFabAction.setBackgroundColor(ContextCompat.getColor(this, R.color.opentracks));
+        viewBinding.trackRecordingFabAction.setIconTint(ColorStateList.valueOf(Color.BLACK));
         viewBinding.trackRecordingFabAction.setOnLongClickListener((view) -> {
             ActivityUtils.vibrate(this, Duration.ofSeconds(1));
             trackRecordingServiceConnection.stopRecording(TrackRecordingActivity.this);
@@ -515,10 +519,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         trackDataHub.setRecordingStatus(recordingStatus);
 
-        // Tap pauses, long-press stops: the icon shows the tap action.
-        viewBinding.trackRecordingFabAction.setImageResource(status.isPaused()
-                ? R.drawable.ic_baseline_play_arrow_24
-                : R.drawable.ic_baseline_pause_24);
+        // Tap pauses/resumes, long-press stops: the label shows the tap action.
+        updateActionButton(status.isPaused());
 
         // The lap action is only offered while actively recording.
         invalidateOptionsMenu();
@@ -527,6 +529,16 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
 
         setLockscreenPolicy();
         setScreenOnPolicy();
+    }
+
+    private void updateActionButton(boolean paused) {
+        viewBinding.trackRecordingFabAction.setIconResource(paused
+                ? R.drawable.ic_baseline_play_arrow_24
+                : R.drawable.ic_baseline_pause_24);
+        viewBinding.trackRecordingFabAction.setText(paused ? R.string.action_resume : R.string.action_pause);
+        viewBinding.trackRecordingFabAction.setContentDescription(getString(paused
+                ? R.string.action_resume_recording
+                : R.string.action_pause_recording));
     }
 
     private void onGpsStatusChanged(GpsStatusValue gpsStatusValue) {

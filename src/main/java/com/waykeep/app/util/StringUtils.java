@@ -38,6 +38,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
+import java.util.Locale;
 
 import com.waykeep.app.R;
 import com.waykeep.app.data.models.Cadence;
@@ -79,6 +80,15 @@ public class StringUtils {
 
     public static String formatLocalDateTime(LocalDateTime localDateTime) {
         return localDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL));
+    }
+
+    /** Compact, locale-aware date range for period headers. */
+    public static String formatDateRange(@NonNull LocalDate from, @NonNull LocalDate to, @NonNull Locale locale) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+        if (from.equals(to)) {
+            return from.format(formatter);
+        }
+        return from.format(formatter) + " – " + to.format(formatter);
     }
 
     /**

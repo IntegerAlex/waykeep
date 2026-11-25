@@ -616,9 +616,12 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         ActivityUtils.vibrate(this, Duration.ofSeconds(1));
         updateGpsMenuItem(false, false);
         recordingStatusConnection.stopRecording(TrackListActivity.this);
-        viewBinding.trackListFabAction.setImageResource(R.drawable.ic_baseline_record_24);
+        viewBinding.trackListFabAction.setIconResource(R.drawable.ic_baseline_record_24);
+        viewBinding.trackListFabAction.setText(R.string.action_start);
+        viewBinding.trackListFabAction.setContentDescription(getString(R.string.action_start_activity));
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
-        viewBinding.trackListFabAction.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+        viewBinding.trackListFabAction.setIconTint(ColorStateList.valueOf(Color.WHITE));
+        viewBinding.trackListFabAction.setTextColor(Color.WHITE);
     }
 
     /**
@@ -744,7 +747,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
 
         int streakWeeks = summary.weeklyStreak().consecutiveWeeks();
         viewBinding.insightStreakText.setText(streakWeeks > 0
-                ? getString(R.string.insight_streak_weeks, streakWeeks)
+                ? getResources().getQuantityString(R.plurals.insight_streak_weeks_active, streakWeeks, streakWeeks)
                 : getString(summary.streakLineRes()));
 
         if (summary.hasGoal()) {
@@ -890,13 +893,30 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     }
 
     private void setFloatButton() {
-        int icon = recordingStatus.isPaused() ? R.drawable.ic_baseline_play_arrow_24
-                : recordingStatus.isRecording() ? R.drawable.ic_baseline_stop_24 : R.drawable.ic_baseline_record_24;
-        viewBinding.trackListFabAction.setImageResource(icon);
+        int icon;
+        int text;
+        int description;
+        if (recordingStatus.isPaused()) {
+            icon = R.drawable.ic_baseline_play_arrow_24;
+            text = R.string.action_resume;
+            description = R.string.action_resume_recording;
+        } else if (recordingStatus.isRecording()) {
+            icon = R.drawable.ic_baseline_stop_24;
+            text = R.string.action_stop;
+            description = R.string.action_stop_recording;
+        } else {
+            icon = R.drawable.ic_baseline_record_24;
+            text = R.string.action_start;
+            description = R.string.action_start_activity;
+        }
+        viewBinding.trackListFabAction.setIconResource(icon);
+        viewBinding.trackListFabAction.setText(text);
+        viewBinding.trackListFabAction.setContentDescription(getString(description));
         boolean recording = recordingStatus.isRecording();
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, recording ? R.color.opentracks : R.color.red_dark));
         // White on dark red, black on cyan: both states stay above the 4.5:1 floor.
-        viewBinding.trackListFabAction.setImageTintList(ColorStateList.valueOf(recording ? Color.BLACK : Color.WHITE));
+        viewBinding.trackListFabAction.setIconTint(ColorStateList.valueOf(recording ? Color.BLACK : Color.WHITE));
+        viewBinding.trackListFabAction.setTextColor(recording ? Color.BLACK : Color.WHITE);
     }
 
     private void onRecordingStatusChanged(RecordingStatus status) {

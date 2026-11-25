@@ -6,6 +6,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,18 +18,22 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.waykeep.app.AbstractActivity;
 import com.waykeep.app.R;
 import com.waykeep.app.data.TrackSelection;
 import com.waykeep.app.data.models.Track;
 import com.waykeep.app.databinding.AggregatedStatsBinding;
+import com.waykeep.app.util.StringUtils;
 
 public class AggregatedStatisticsActivity extends AbstractActivity implements FilterDialogFragment.FilterDialogListener {
 
     public static final String EXTRA_TRACK_IDS = "track_ids";
 
     static final String STATE_ARE_FILTERS_APPLIED = "areFiltersApplied";
+    private static final String STATE_PERIOD_TITLE = "periodTitle";
+    private static final String STATE_PERIOD_RANGE = "periodRange";
 
     private AggregatedStatsBinding viewBinding;
 
@@ -63,6 +69,16 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
         });
 
         setSupportActionBar(viewBinding.bottomAppBarLayout.bottomAppBar);
+
+        if (savedInstanceState != null
+                && savedInstanceState.getCharSequence(STATE_PERIOD_TITLE) != null) {
+            showPeriod(savedInstanceState.getCharSequence(STATE_PERIOD_TITLE),
+                    savedInstanceState.getCharSequence(STATE_PERIOD_RANGE));
+        } else if (trackIds != null && !trackIds.isEmpty()) {
+            showPeriod(R.string.aggregated_stats_period_selected);
+        } else {
+            showPeriod(R.string.aggregated_stats_period_all);
+        }
     }
 
     private void checkListEmpty() {
@@ -82,6 +98,8 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_ARE_FILTERS_APPLIED, areFiltersApplied);
+        outState.putCharSequence(STATE_PERIOD_TITLE, viewBinding.aggregatedStatsPeriodTitle.getText());
+        outState.putCharSequence(STATE_PERIOD_RANGE, viewBinding.aggregatedStatsPeriodRange.getText());
     }
 
     @NonNull
@@ -111,6 +129,7 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
 
         if (item.getItemId() == R.id.aggregated_statistics_clear_filter) {
             setMenuVisibility(false);
+            showPeriod(R.string.aggregated_stats_period_all);
             viewModel.clearSelection();
             return true;
         }
@@ -133,21 +152,44 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
     private void applyPeriod(int menuItemId) {
         LocalDate today = LocalDate.now();
         LocalDate from;
+        int titleRes;
         if (menuItemId == R.id.aggregated_statistics_period_day) {
             from = today;
+            titleRes = R.string.aggregated_stats_period_day;
         } else if (menuItemId == R.id.aggregated_statistics_period_week) {
             from = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+            titleRes = R.string.aggregated_stats_period_week;
         } else if (menuItemId == R.id.aggregated_statistics_period_month) {
             from = today.withDayOfMonth(1);
+            titleRes = R.string.aggregated_stats_period_month;
         } else {
             from = today.withDayOfYear(1);
+            titleRes = R.string.aggregated_stats_period_year;
         }
 
         selection.addDateRange(
                 from.atStartOfDay(ZoneId.systemDefault()).toInstant(),
                 Instant.now());
         setMenuVisibility(true);
+        showPeriod(titleRes, from, today);
         viewModel.updateSelection(selection);
+    }
+
+    private void showPeriod(@StringRes int titleRes) {
+        showPeriod(getString(titleRes), null);
+    }
+
+    private void showPeriod(@StringRes int titleRes, @Nullable LocalDate from, @Nullable LocalDate to) {
+        showPeriod(getString(titleRes), from == null || to == null
+                ? null
+                : StringUtils.formatDateRange(from, to, Locale.getDefault()));
+    }
+
+    private void showPeriod(@NonNull CharSequence title, @Nullable CharSequence range) {
+        viewBinding.aggregatedStatsPeriodTitle.setText(title);
+        boolean hasRange = range != null && range.length() > 0;
+        viewBinding.aggregatedStatsPeriodRange.setText(hasRange ? range : null);
+        viewBinding.aggregatedStatsPeriodRange.setVisibility(hasRange ? View.VISIBLE : View.GONE);
     }
 
     private void setMenuVisibility(boolean areFiltersApplied) {
@@ -161,6 +203,7 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
     @Override
     public void onFilterDone(ArrayList<FilterDialogFragment.FilterItem> filterItems, LocalDateTime from, LocalDateTime to) {
         setMenuVisibility(true);
+        showPeriod(R.string.aggregated_stats_period_custom, from.toLocalDate(), to.toLocalDate());
         selection.addDateRange(from.atZone(ZoneId.systemDefault()).toInstant(), to.atZone(ZoneId.systemDefault()).toInstant());
         filterItems.stream().filter(fi -> fi.isChecked).forEach(fi -> selection.addActivityType(fi.value));
         viewModel.updateSelection(selection);

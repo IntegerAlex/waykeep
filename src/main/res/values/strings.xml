@@ -41,7 +41,7 @@ limitations under the License.
 \n* works completely offline
 \n* show tracks on a map (see below)</string>
     <string name="help_insights_title">What does the home insight hero show?</string>
-    <string name="help_insights_content">The home hero summarizes recent activity: distance in the last 7 days, the 4-week weekly average, a neutral trend line, weekly goal progress, and a consecutive-day streak. Set the weekly goal in Settings → User Interface. All calculations use local track data only.</string>
+    <string name="help_insights_content">The home hero summarizes recent activity: distance in the last 7 days, the 4-week weekly average, a neutral trend line, 7-day distance goal progress, and a consecutive-week streak. Set the 7-day distance goal in Settings → User Interface. All calculations use local track data only.</string>
     <string name="help_track_map_title">How to show a track on a map?</string>
     <string name="help_track_map_content">
         Every track has a built-in Map tab: open a recording or a saved track and switch to it.
@@ -294,6 +294,14 @@ limitations under the License.
     <string name="image_photo_marker">Photo marker</string>
     <string name="image_record">Record</string>
     <string name="image_stop">Stop</string>
+    <string name="action_start">Start</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_start_activity">Start activity</string>
+    <string name="action_pause_recording">Pause recording</string>
+    <string name="action_resume_recording">Resume recording</string>
+    <string name="action_stop_recording">Stop recording</string>
     <string name="image_discard">Discard</string>
     <string name="image_track">Track</string>
     <!-- Import -->
@@ -375,7 +383,7 @@ limitations under the License.
     <string name="diagnostics_recovery_done">Recovered copy added to your track list.</string>
     <string name="diagnostics_recovery_failed">Could not create a recovered track copy.</string>
     <!-- Home insight hero -->
-    <string name="insight_week_distance_label">Last 7 days</string>
+    <string name="insight_week_distance_label">7 days · all activities</string>
     <string name="insight_week_average_label">4-week average</string>
     <string name="insight_no_activity">No activity yet — record a track to start your baseline</string>
     <string name="insight_trend_building">Building on recent weeks</string>
@@ -385,10 +393,14 @@ limitations under the License.
     <string name="insight_goal_progress">%1$s of %2$s in the last 7 days</string>
     <string name="insight_goal_percent">%1$d%% of %2$s</string>
     <string name="insight_average_compact">4-week avg %1$s</string>
-    <string name="insight_goal_progress_description">Weekly goal progress</string>
+    <string name="insight_goal_progress_description">7-day activity distance goal progress</string>
+    <plurals name="insight_streak_weeks_active">
+        <item quantity="one">%1$d active week in a row</item>
+        <item quantity="other">%1$d active weeks in a row</item>
+    </plurals>
     <string name="insight_streak_weeks">%1$d-week streak</string>
-    <string name="insight_streak_none">No streak yet</string>
-    <string name="insight_set_goal_hint">Set a weekly goal in Settings → User Interface</string>
+    <string name="insight_streak_none">No active weeks yet</string>
+    <string name="insight_set_goal_hint">Set a 7-day distance goal in Settings → User Interface</string>
     <string name="menu_select_layout">Select Layout</string>
     <string name="menu_show_on_map">Show on map</string>
     <string name="menu_voice_rate">Voice speed</string>
@@ -685,6 +697,9 @@ limitations under the License.
     <string name="aggregated_stats_period_week">This week</string>
     <string name="aggregated_stats_period_month">This month</string>
     <string name="aggregated_stats_period_year">This year</string>
+    <string name="aggregated_stats_period_all">All time</string>
+    <string name="aggregated_stats_period_selected">Selected activities</string>
+    <string name="aggregated_stats_period_custom">Custom range</string>
     <!-- Interval List -->
     <string name="interval_list_empty_message">There are not any interval yet</string>
     <!-- Unit -->

@@ -173,15 +173,16 @@
         app:menu="@menu/track_record"
         app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/track_recording_fab_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/image_stop"
-        android:src="@drawable/ic_baseline_record_24"
+        android:contentDescription="@string/action_pause_recording"
+        android:text="@string/action_pause"
+        android:textColor="@android:color/black"
         app:elevation="6dp"
-        app:layout_anchor="@id/bottom_app_bar"
-        app:maxImageSize="30dp"
-        app:tint="@android:color/black" />
+        app:icon="@drawable/ic_baseline_pause_24"
+        app:iconTint="@android:color/black"
+        app:layout_anchor="@id/bottom_app_bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

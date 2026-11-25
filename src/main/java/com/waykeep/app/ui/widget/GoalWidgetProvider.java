@@ -88,7 +88,7 @@ public class GoalWidgetProvider extends AppWidgetProvider {
 
         int streakWeeks = summary.weeklyStreak().consecutiveWeeks();
         views.setTextViewText(R.id.widget_goal_streak, streakWeeks > 0
-                ? context.getString(R.string.insight_streak_weeks, streakWeeks)
+                ? context.getResources().getQuantityString(R.plurals.insight_streak_weeks_active, streakWeeks, streakWeeks)
                 : context.getString(summary.streakLineRes()));
 
         if (summary.hasGoal()) {
