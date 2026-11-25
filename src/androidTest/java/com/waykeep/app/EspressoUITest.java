@@ -79,11 +79,11 @@ public class EspressoUITest {
     @Test
     public void record_move_through_tabs() {
         startRecordingFromTrackList(UI_TIMEOUT);
-        waitUntilDisplayed(withId(R.id.track_detail_activity_tablayout), UI_TIMEOUT);
+        waitUntilDisplayed(withId(R.id.track_detail_activity_tabs), UI_TIMEOUT);
         waitUntilDisplayed(withId(R.id.track_detail_activity_view_pager), UI_TIMEOUT);
         {
             // TrackRecordingActivity
-            ViewInteraction tabLayout = onView(withId(R.id.track_detail_activity_tablayout));
+            ViewInteraction tabLayout = onView(withId(R.id.track_detail_activity_tabs));
 
             tabLayout.perform(selectTabAtIndex(1));
             waitUntilTabSelectionSettlesAt(1);
@@ -128,7 +128,7 @@ public class EspressoUITest {
 
     private void waitUntilTabSelectionSettlesAt(int index) {
         waitForResumedViewCondition(
-                withId(R.id.track_detail_activity_tablayout),
+                withId(R.id.track_detail_activity_tabs),
                 view -> withSelectedTab(index).matches(view),
                 "selected tab to be " + index,
                 UI_TIMEOUT);

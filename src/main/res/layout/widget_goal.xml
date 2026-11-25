@@ -7,26 +7,27 @@
     android:background="@drawable/bg_widget"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="14dp">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/widget_goal_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:letterSpacing="0.08"
+        android:letterSpacing="0.02"
         android:maxLines="2"
-        android:text="@string/insight_week_distance_label"
+        android:singleLine="false"
+        android:text="@string/widget_goal_scope"
         android:textAllCaps="true"
         android:textColor="#B3FFFFFF"
-        android:textSize="11sp" />
+        android:textSize="9sp" />
 
     <TextView
         android:id="@+id/widget_goal_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <!-- RemoteViews whitelist has no Space; an empty TextView does the same filler job. -->
@@ -40,8 +41,8 @@
         android:id="@+id/widget_goal_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="4dp"
         android:max="100"
         android:progressTint="@color/waykeep_cyan" />
 
@@ -49,16 +50,16 @@
         android:id="@+id/widget_goal_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:textColor="#B3FFFFFF"
-        android:textSize="12sp" />
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/widget_goal_streak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:maxLines="2"
         android:textColor="#B3FFFFFF"
-        android:textSize="12sp" />
+        android:textSize="10sp" />
 
 </LinearLayout>

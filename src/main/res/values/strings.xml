@@ -414,6 +414,7 @@ limitations under the License.
     <string name="permission_recording_failed">Waykeep requires permission to access your location as well as nearby devices.</string>
     <string name="stats_widget_description">Weekly and monthly totals at a glance</string>
     <string name="goal_widget_description">Last seven days, weekly goal and streak</string>
+    <string name="widget_goal_scope">7d · all activities</string>
     <string name="stats_widget_this_week">THIS WEEK</string>
     <string name="stats_widget_week_detail">%1$d activities · %2$s</string>
     <string name="stats_widget_month_line">This month: %1$s</string>
