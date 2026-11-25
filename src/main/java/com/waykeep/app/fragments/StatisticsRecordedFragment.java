@@ -252,6 +252,7 @@ public class StatisticsRecordedFragment extends Fragment {
             Pair<String, String> pace = formatter.getSpeedParts(trackStatistics.getAverageMovingSpeed());
             viewBinding.statsStripPaceValue.setText(pace.first);
             viewBinding.statsStripMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.movingDuration()));
+            viewBinding.statsStripElapsedTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.totalDuration()));
 
             AltitudeExtremities extremities = trackStatistics.altitudeExtremities();
             if (extremities != null) {
