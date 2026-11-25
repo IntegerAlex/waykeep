@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 import com.waykeep.app.util.RouteSampler;
 
 /**
- * Fetches a small, tile-capped Esri basemap under a route and returns a fit-to-bounds bitmap
+ * Fetches a small, tile-capped CyclOSM basemap under a route and returns a fit-to-bounds bitmap
  * plus the exact transform used, so the caller draws the route in the same projection.
  * Cache-first (30 day TTL) so repeat shares are instant and already-viewed areas work offline.
  * Never throws; returns null on any failure so the caller falls back to a plain background.
@@ -33,15 +33,26 @@ public final class MapTileFetcher {
 
     private static final int TILE_SIZE = 256;
     private static final int CAP_TILES = 25;
-    // Esri World Street Map serves "Map data not yet available" placeholder tiles at z18/19
-    // in some cities (seen in Pune), with HTTP 200, so a higher zoom looks like a valid map.
-    // ponytail: cap at z17; detect placeholder tiles or switch providers if more detail is needed.
-    private static final int MAX_BASEMAP_ZOOM = 17;
+    private static final int MAX_BASEMAP_ZOOM = 19;
+    private static final String ATTRIBUTION = "© OpenStreetMap contributors, CyclOSM, OSM France";
     private static final long TILE_TTL_MS = 30L * 24 * 60 * 60 * 1000L;
     private static final int TILE_TIMEOUT_MS = 6000;
     private static final ExecutorService POOL = Executors.newFixedThreadPool(4);
 
     private MapTileFetcher() {
+    }
+
+    @NonNull
+    public static String attribution() {
+        return ATTRIBUTION;
+    }
+
+    @NonNull
+    static String tileUrl(int z, int x, int y) {
+        String[] hosts = {"a", "b", "c"};
+        String host = hosts[Math.floorMod(x + y, hosts.length)];
+        return "https://" + host + ".tile-cyclosm.openstreetmap.fr/cyclosm/"
+                + z + "/" + x + "/" + y + ".png";
     }
 
     /**
@@ -274,11 +285,12 @@ public final class MapTileFetcher {
             }
         }
         try {
-            URL url = new URL("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/" + z + "/" + y + "/" + x);
+            URL url = new URL(tileUrl(z, x, y));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(TILE_TIMEOUT_MS);
             conn.setReadTimeout(TILE_TIMEOUT_MS);
             conn.setInstanceFollowRedirects(true);
+            conn.setRequestProperty("User-Agent", context.getPackageName());
             conn.connect();
             int code = conn.getResponseCode();
             if (code != HttpURLConnection.HTTP_OK) {
@@ -300,7 +312,8 @@ public final class MapTileFetcher {
     }
 
     private static File cacheFile(Context context, int z, int x, int y) {
-        File xdir = new File(new File(new File(context.getCacheDir(), "share-map-tiles"), String.valueOf(z)), String.valueOf(x));
+        File xdir = new File(new File(new File(new File(context.getCacheDir(), "share-map-tiles"),
+                "cyclosm"), String.valueOf(z)), String.valueOf(x));
         if (!xdir.exists()) {
             xdir.mkdirs();
         }

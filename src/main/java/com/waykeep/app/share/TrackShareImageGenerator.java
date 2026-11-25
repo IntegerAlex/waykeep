@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import java.util.List;
@@ -125,7 +126,9 @@ public class TrackShareImageGenerator {
                 + "  ·  " + track.activityTypeLocalized();
         List<StatCard> cards = style == Style.STATS_CARD ? buildStats(context, track) : List.of();
         return renderCard(context, track.name(), subtitle, route.points(), cards,
-                style == Style.ROUTE_ONLY, background, widthPx, heightPx);
+                style == Style.ROUTE_ONLY, background,
+                background == Background.MAP_TINT ? MapTileFetcher.attribution() : null,
+                widthPx, heightPx);
     }
 
     /**
@@ -134,7 +137,7 @@ public class TrackShareImageGenerator {
     public static Bitmap renderStats(@NonNull Context context, @NonNull String title,
                                     @NonNull String subtitle, @NonNull List<StatCard> cards,
                                     @NonNull Background background, int widthPx, int heightPx) {
-        return renderCard(context, title, subtitle, List.of(), cards, false, background, widthPx, heightPx);
+        return renderCard(context, title, subtitle, List.of(), cards, false, background, null, widthPx, heightPx);
     }
 
     private static CardTheme themeFor(Background background) {
@@ -174,7 +177,8 @@ public class TrackShareImageGenerator {
     private static Bitmap renderCard(@NonNull Context context, @NonNull String title,
                                     @NonNull String subtitle, @NonNull List<RouteSampler.LatLon> routePoints,
                                     @NonNull List<StatCard> cards, boolean routeOnly,
-                                    @NonNull Background background, int widthPx, int heightPx) {
+                                    @NonNull Background background, @Nullable String attribution,
+                                    int widthPx, int heightPx) {
         float density = context.getResources().getDisplayMetrics().density;
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         CardTheme theme = themeFor(background);
@@ -258,6 +262,16 @@ public class TrackShareImageGenerator {
         String brand = context.getString(R.string.app_name);
         float brandWidth = brandPaint.measureText(brand);
         canvas.drawText(brand, widthPx - padding - brandWidth, heightPx - padding, brandPaint);
+
+        if (attribution != null) {
+            Paint attributionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            attributionPaint.setColor(theme.textSecondary());
+            attributionPaint.setTextSize(10 * scaledDensity);
+            if (background == Background.TRANSPARENT) {
+                attributionPaint.setShadowLayer(4 * density, 0, 2 * density, 0xCC000000);
+            }
+            canvas.drawText(attribution, padding, heightPx - padding, attributionPaint);
+        }
 
         return bitmap;
     }
