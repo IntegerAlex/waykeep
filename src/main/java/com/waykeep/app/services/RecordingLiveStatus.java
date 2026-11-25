@@ -6,12 +6,31 @@ import androidx.annotation.Nullable;
 import java.util.Locale;
 
 import com.waykeep.app.data.models.Distance;
+import com.waykeep.app.sensors.GpsStatusValue;
 
-final class RecordingLiveStatus {
+public final class RecordingLiveStatus {
 
     private static final int LOW_BATTERY_THRESHOLD_PERCENT = 15;
 
     private RecordingLiveStatus() {}
+
+    public enum LiveState {
+        RECORDING,
+        PAUSED,
+        WAITING_FOR_GPS
+    }
+
+    /**
+     * The state the user is told about comes from the service and the GPS status, never from the
+     * Pause/Resume button. Paused wins so a manual pause reads as such even when the signal is gone.
+     */
+    public static LiveState liveState(@NonNull RecordingStatus status, @Nullable GpsStatusValue gpsStatus) {
+        if (status.isPaused()) {
+            return LiveState.PAUSED;
+        }
+        boolean hasFix = gpsStatus != null && gpsStatus.hasGoodSignal();
+        return hasFix ? LiveState.RECORDING : LiveState.WAITING_FOR_GPS;
+    }
 
     @Nullable
     static String formatAccuracy(@Nullable Distance accuracy, @NonNull String format) {

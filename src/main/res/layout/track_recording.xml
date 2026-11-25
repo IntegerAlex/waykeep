@@ -2,6 +2,7 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
@@ -111,7 +112,8 @@
 
         <!--
           Recording state, screen-wide so it is visible on the Stats, Map and Chart tabs.
-          Accuracy while GPS is usable, warning text for paused, GPS problems, or low battery.
+          The state line always reads Recording, Paused or Waiting for GPS from actual service
+          and GPS state; the second line adds accuracy, a GPS warning or low battery.
           Hidden when not recording.
         -->
         <LinearLayout
@@ -136,13 +138,30 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_status_dot" />
 
-            <TextView
-                android:id="@+id/recording_status_strip_text"
-                style="@style/TextAppearance.OpenTracks.StatusStrip"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:visibility="gone" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/recording_status_strip_state"
+                    style="@style/TextAppearance.OpenTracks.StatusStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    tools:text="@string/recording_status_recording" />
+
+                <TextView
+                    android:id="@+id/recording_status_strip_text"
+                    style="@style/TextAppearance.OpenTracks.StatusStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:text="GPS accuracy ±5 m"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
