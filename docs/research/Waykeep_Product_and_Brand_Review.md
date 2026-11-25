@@ -549,3 +549,11 @@ Keep activity types, both widgets, export, announcements and detailed data. Focu
 | Paid illustration, campaign photography or a new font family | Designer/vendor budget | **Out of scope**; existing bundled faces, vectors and real captures suffice |
 
 **Release evidence required:** correct scope on website/store assets; no clipping at 200%; usable TalkBack order; short outdoor screen-off recording check; import/export round trip; tile-failure share fallback. Record pass/fail with build and device. Do not turn a passed smoke test into a claim of universal reliability.
+
+### Verification notes — 2026-11-25
+
+- **Home scope/streak:** passes at default font scale. At 2× font scale the scope wraps without clipping, but the existing route hero still pushes the lower insight row under the Start button. That vertical overlap is the excluded Home hierarchy issue.
+- **Goal widget:** the 2×2 layout fits worst-case content at the default font scale. At 2× font scale the content still overflows the 2×2 bounds; a compact fallback is required if 2× widget support is mandatory.
+- **TalkBack:** the service exposed the Start/goal labels and the widget measurement test checks the real 2×2 layout. Spoken audio output was not captured.
+- **Statistics period:** All time, This month with its date range, Custom range, clearing the filter, and rotation all showed the expected label. The test track was removed afterward.
+
