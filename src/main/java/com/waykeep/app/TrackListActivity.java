@@ -364,7 +364,9 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         View fab = viewBinding.trackListFabAction;
         list.post(() -> {
             int margin = Math.round(8 * getResources().getDisplayMetrics().density);
-            int bottom = bar.getHeight() + fab.getHeight() / 2 + margin;
+            // Keep the whole extended FAB above the list, not just its cradled half; otherwise
+            // a row can sit under the FAB and stop accepting taps near the bottom.
+            int bottom = bar.getHeight() + fab.getHeight() + margin;
             list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(), bottom);
         });
     }
