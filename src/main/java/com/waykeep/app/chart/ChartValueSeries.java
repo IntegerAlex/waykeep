@@ -53,7 +53,6 @@ abstract class ChartValueSeries {
     private final int nauticalTitleId;
     private final Paint fillPaint;
     private final Paint strokePaint;
-    private final Paint titlePaint;
     private final Paint markerPaint;
     private static final int MIN_PERCENTILE_SAMPLES = 20;
     private static final double PERCENTILE_LOW = 0.05;
@@ -73,7 +72,7 @@ abstract class ChartValueSeries {
     private boolean enabled = true;
     private boolean percentileScale = false;
 
-    ChartValueSeries(Context context, int absoluteMin, int absoluteMax, int[] intervalValues, int metricTitleId, int imperialTitleId, int nauticalTitleId, int fillColor, int strokeColor, int fontSizeSmall, int fontSizeMedium) {
+    ChartValueSeries(Context context, int absoluteMin, int absoluteMax, int[] intervalValues, int metricTitleId, int imperialTitleId, int nauticalTitleId, int fillColor, int strokeColor, int fontSizeSmall) {
         this.absoluteMin = absoluteMin;
         this.absoluteMax = absoluteMax;
         this.intervalValues = intervalValues;
@@ -90,12 +89,6 @@ abstract class ChartValueSeries {
         strokePaint.setStyle(Style.STROKE);
         strokePaint.setColor(ContextCompat.getColor(context, strokeColor));
         strokePaint.setAntiAlias(true);
-
-        // Make copies of the stroke paint with the default thickness
-        titlePaint = new Paint(strokePaint);
-        titlePaint.setTextSize(fontSizeMedium);
-        titlePaint.setTextAlign(Align.LEFT);
-        titlePaint.setStyle(Style.FILL_AND_STROKE);
 
         markerPaint = new Paint(strokePaint);
         markerPaint.setTextSize(fontSizeSmall);
@@ -149,6 +142,20 @@ abstract class ChartValueSeries {
      */
     boolean hasData() {
         return extremityMonitor.hasData();
+    }
+
+    /**
+     * Smallest value received for this series (before the axis clamps it).
+     */
+    double getDataMin() {
+        return extremityMonitor.getMin();
+    }
+
+    /**
+     * Largest value received for this series (before the axis clamps it).
+     */
+    double getDataMax() {
+        return extremityMonitor.getMax();
     }
 
     /**
@@ -308,10 +315,6 @@ abstract class ChartValueSeries {
             case IMPERIAL_FEET, IMPERIAL_METER -> imperialTitleId;
             case NAUTICAL_IMPERIAL -> nauticalTitleId;
         };
-    }
-
-    Paint getTitlePaint() {
-        return titlePaint;
     }
 
     Paint getMarkerPaint() {

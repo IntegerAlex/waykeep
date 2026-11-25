@@ -60,6 +60,8 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
 
     // Stats gathered from the received data
     private final List<ChartPoint> pendingPoints = new ArrayList<>();
+    private final List<ChartView.Metric> availableMetrics = new ArrayList<>();
+    private final List<String> shownMetricNames = new ArrayList<>();
     private String activityTypeLocalized = "";
 
     // Modes of operation
@@ -74,11 +76,8 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
                 UnitSystem unitSystem = PreferencesUtils.getUnitSystem();
                 if (unitSystem != viewBinding.chartView.getUnitSystem()) {
                     viewBinding.chartView.setUnitSystem(unitSystem);
-                    runOnUiThread(() -> {
-                        if (isResumed()) {
-                            viewBinding.chartView.requestLayout();
-                        }
-                    });
+                    refreshChart();
+                    refreshMetricControlsOnUiThread();
                 }
             }
 
@@ -87,12 +86,8 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
                 if (reportSpeed != viewBinding.chartView.getReportSpeed()) {
                     viewBinding.chartView.setReportSpeed(reportSpeed);
                     viewBinding.chartView.applyReportSpeed();
-
-                    runOnUiThread(() -> {
-                        if (isResumed()) {
-                            viewBinding.chartView.requestLayout();
-                        }
-                    });
+                    refreshChart();
+                    refreshMetricControlsOnUiThread();
                 }
             }
 
@@ -100,11 +95,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
                     || PreferencesUtils.isKey(R.string.chart_display_pace_or_speed_key, key)
                     || PreferencesUtils.isKey(R.string.chart_display_heart_rate_key, key)) {
                 refreshChart();
-                runOnUiThread(() -> {
-                    if (isResumed()) {
-                        refreshMetricChips();
-                    }
-                });
+                refreshMetricControlsOnUiThread();
             }
         }
     };
@@ -137,7 +128,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         viewBinding = ChartBinding.inflate(inflater, container, false);
         viewBinding.chartView.setChartByDistance(chartByDistance);
         setupAxisToggle();
-        setupMetricChips();
+        setupMetricDropdown();
         return viewBinding.getRoot();
     }
 
@@ -181,7 +172,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             }
             runOnUiThread(() -> {
                 if (isResumed()) {
-                    refreshMetricChips();
+                    refreshMetricControls();
                 }
             });
         }
@@ -195,7 +186,7 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             runOnUiThread(() -> {
                 if (isResumed()) {
                     viewBinding.chartView.resetScroll();
-                    refreshMetricChips();
+                    refreshMetricControls();
                 }
             });
         }
@@ -215,20 +206,24 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             viewBinding.chartView.addChartPoints(Collections.unmodifiableList(pendingPoints));
             pendingPoints.clear();
             runOnUiThread(() -> {
-                refreshMetricChips();
+                refreshMetricControls();
                 updateChart.run();
             });
         }
     }
 
     /**
-     * Checks the chart settings.
+     * Checks the chart settings. Also resyncs units and speed/pace on resume, when a preference
+     * may have changed while the fragment was not listening.
      */
     private void checkChartSettings() {
+        viewBinding.chartView.setUnitSystem(PreferencesUtils.getUnitSystem());
+        viewBinding.chartView.setReportSpeed(PreferencesUtils.isReportSpeed(activityTypeLocalized));
         boolean needUpdate = viewBinding.chartView.applyReportSpeed();
         if (needUpdate) {
             viewBinding.chartView.postInvalidate();
         }
+        refreshMetricControls();
     }
 
     /**
@@ -248,102 +243,98 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
             PreferencesUtils.setString(R.string.chart_axis_key, byDistance ? AXIS_DISTANCE : AXIS_TIME);
             viewBinding.chartView.setChartByDistance(byDistance);
             viewBinding.chartView.resetScroll();
+            updateChartSummary();
         });
     }
 
     /**
-     * Wires the metric chips. One metric is plotted at a time, so the chart always has a single
-     * Y-axis and stays readable.
+     * Wires the metric chooser. One metric is plotted at a time, so the chart always has a single
+     * Y-axis and a single unit readout.
      */
-    private void setupMetricChips() {
-        viewBinding.chartMetricGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) {
+    private void setupMetricDropdown() {
+        viewBinding.chartMetricDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            if (position < 0 || position >= availableMetrics.size()) {
                 return;
             }
-            ChartView.Metric metric = metricForChip(checkedIds.get(0));
-            if (metric != null) {
-                viewBinding.chartView.setMetric(metric);
-                PreferencesUtils.setString(R.string.chart_metric_key, metric.name());
-            }
+            ChartView.Metric metric = availableMetrics.get(position);
+            viewBinding.chartView.setMetric(metric);
+            PreferencesUtils.setString(R.string.chart_metric_key, metric.name());
+            updateMetricReadout();
         });
-        refreshMetricChips();
+        refreshMetricControls();
     }
 
     /**
-     * Shows only the metrics that are both enabled in the settings and actually have data, and
-     * keeps a valid chip selected (falling back to the first available metric).
+     * Lists the metrics that are both enabled in the settings and actually have data. The chart
+     * still decides which one to show; this only limits what can be chosen.
      */
-    private void refreshMetricChips() {
+    private List<ChartView.Metric> computeAvailableMetrics() {
+        ChartView chartView = viewBinding.chartView;
+        List<ChartView.Metric> metrics = new ArrayList<>();
+        if (PreferencesUtils.shouldShowElevation() && chartView.hasDataFor(ChartView.Metric.ELEVATION)) {
+            metrics.add(ChartView.Metric.ELEVATION);
+        }
+        if (PreferencesUtils.shouldShowPaceOrSpeed() && chartView.hasDataFor(ChartView.Metric.SPEED)) {
+            metrics.add(ChartView.Metric.SPEED);
+        }
+        if (PreferencesUtils.shouldShowHeartRate() && chartView.hasDataFor(ChartView.Metric.HEART_RATE)) {
+            metrics.add(ChartView.Metric.HEART_RATE);
+        }
+        if (chartView.hasDataFor(ChartView.Metric.CADENCE)) {
+            metrics.add(ChartView.Metric.CADENCE);
+        }
+        if (chartView.hasDataFor(ChartView.Metric.POWER)) {
+            metrics.add(ChartView.Metric.POWER);
+        }
+        return metrics;
+    }
+
+    /**
+     * Refreshes the available metric choices and keeps a valid metric selected, falling back to
+     * the first available one (speed first, as before).
+     */
+    private void refreshMetricControls() {
         if (viewBinding == null) {
             return;
         }
         ChartView chartView = viewBinding.chartView;
 
-        boolean hasElevation = PreferencesUtils.shouldShowElevation() && chartView.hasDataFor(ChartView.Metric.ELEVATION);
-        boolean hasSpeed = PreferencesUtils.shouldShowPaceOrSpeed() && chartView.hasDataFor(ChartView.Metric.SPEED);
-        boolean hasHeartRate = PreferencesUtils.shouldShowHeartRate() && chartView.hasDataFor(ChartView.Metric.HEART_RATE);
-        boolean hasCadence = chartView.hasDataFor(ChartView.Metric.CADENCE);
-        boolean hasPower = chartView.hasDataFor(ChartView.Metric.POWER);
-
-        viewBinding.chartMetricElevation.setVisibility(hasElevation ? View.VISIBLE : View.GONE);
-        viewBinding.chartMetricSpeed.setVisibility(hasSpeed ? View.VISIBLE : View.GONE);
-        viewBinding.chartMetricHeartRate.setVisibility(hasHeartRate ? View.VISIBLE : View.GONE);
-        viewBinding.chartMetricCadence.setVisibility(hasCadence ? View.VISIBLE : View.GONE);
-        viewBinding.chartMetricPower.setVisibility(hasPower ? View.VISIBLE : View.GONE);
-
-        if (hasSpeed) {
-            viewBinding.chartMetricSpeed.setText(PreferencesUtils.isReportSpeed(activityTypeLocalized)
-                    ? R.string.chart_metric_speed : R.string.chart_metric_pace);
-        }
-
-        ChartView.Metric metric = firstAvailableMetric(hasElevation, hasSpeed, hasHeartRate, hasCadence, hasPower);
-        if (metric == null) {
+        availableMetrics.clear();
+        availableMetrics.addAll(computeAvailableMetrics());
+        if (availableMetrics.isEmpty()) {
             showEmptyState();
             return;
         }
         showChart();
-        int chipId = chipIdForMetric(metric);
-        if (viewBinding.chartMetricGroup.getCheckedChipId() != chipId) {
-            viewBinding.chartMetricGroup.check(chipId);
+
+        List<String> names = new ArrayList<>(availableMetrics.size());
+        for (ChartView.Metric metric : availableMetrics) {
+            names.add(getString(metricNameId(metric)));
         }
+        // New samples arrive while recording; only rebuild the menu when its contents change, so
+        // an open chooser is not reset underneath the user.
+        if (!names.equals(shownMetricNames)) {
+            shownMetricNames.clear();
+            shownMetricNames.addAll(names);
+            viewBinding.chartMetricDropdown.setSimpleItems(names.toArray(new String[0]));
+        }
+
+        ChartView.Metric metric = selectableMetric();
         if (chartView.getMetric() != metric) {
             chartView.setMetric(metric);
         }
+        updateMetricReadout();
     }
 
-    private void showEmptyState() {
-        viewBinding.chartControlsScroll.setVisibility(View.GONE);
-        viewBinding.chartView.setVisibility(View.GONE);
-        viewBinding.chartEmptyState.setVisibility(View.VISIBLE);
-    }
-
-    private void showChart() {
-        viewBinding.chartEmptyState.setVisibility(View.GONE);
-        viewBinding.chartControlsScroll.setVisibility(View.VISIBLE);
-        viewBinding.chartView.setVisibility(View.VISIBLE);
-    }
-
-    private ChartView.Metric firstAvailableMetric(boolean elevation, boolean speed, boolean heartRate, boolean cadence, boolean power) {
+    private ChartView.Metric selectableMetric() {
         ChartView.Metric preferred = readPersistedMetric();
-        if (preferred != null && isMetricAvailable(preferred, elevation, speed, heartRate, cadence, power)) {
+        if (preferred != null && availableMetrics.contains(preferred)) {
             return preferred;
         }
-        if (speed) return ChartView.Metric.SPEED;
-        if (elevation) return ChartView.Metric.ELEVATION;
-        if (heartRate) return ChartView.Metric.HEART_RATE;
-        if (cadence) return ChartView.Metric.CADENCE;
-        if (power) return ChartView.Metric.POWER;
-        return null;
-    }
-
-    private boolean isMetricAvailable(ChartView.Metric metric, boolean elevation, boolean speed, boolean heartRate, boolean cadence, boolean power) {
-        return switch (metric) {
-            case ELEVATION -> elevation;
-            case SPEED -> speed;
-            case HEART_RATE -> heartRate;
-            case CADENCE -> cadence;
-            case POWER -> power;
-        };
+        if (availableMetrics.contains(ChartView.Metric.SPEED)) {
+            return ChartView.Metric.SPEED;
+        }
+        return availableMetrics.get(0);
     }
 
     private ChartView.Metric readPersistedMetric() {
@@ -355,23 +346,70 @@ public class ChartFragment extends Fragment implements TrackDataHub.Listener {
         }
     }
 
-    private ChartView.Metric metricForChip(int chipId) {
-        if (chipId == R.id.chart_metric_elevation) return ChartView.Metric.ELEVATION;
-        if (chipId == R.id.chart_metric_speed) return ChartView.Metric.SPEED;
-        if (chipId == R.id.chart_metric_heart_rate) return ChartView.Metric.HEART_RATE;
-        if (chipId == R.id.chart_metric_cadence) return ChartView.Metric.CADENCE;
-        if (chipId == R.id.chart_metric_power) return ChartView.Metric.POWER;
-        return null;
+    private int metricNameId(ChartView.Metric metric) {
+        if (metric == ChartView.Metric.SPEED) {
+            return PreferencesUtils.isReportSpeed(activityTypeLocalized)
+                    ? R.string.chart_metric_speed : R.string.chart_metric_pace;
+        }
+        return switch (metric) {
+            case ELEVATION -> R.string.chart_metric_elevation;
+            case HEART_RATE -> R.string.chart_metric_heart_rate;
+            case CADENCE -> R.string.chart_metric_cadence;
+            case POWER -> R.string.chart_metric_power;
+            case SPEED -> R.string.chart_metric_speed;
+        };
     }
 
-    private int chipIdForMetric(ChartView.Metric metric) {
-        return switch (metric) {
-            case ELEVATION -> R.id.chart_metric_elevation;
-            case SPEED -> R.id.chart_metric_speed;
-            case HEART_RATE -> R.id.chart_metric_heart_rate;
-            case CADENCE -> R.id.chart_metric_cadence;
-            case POWER -> R.id.chart_metric_power;
-        };
+    /**
+     * Writes the selected metric, its unit and the data summary next to the chooser. The same
+     * summary becomes the chart's TalkBack description.
+     */
+    private void updateMetricReadout() {
+        if (viewBinding == null) {
+            return;
+        }
+        ChartView chartView = viewBinding.chartView;
+        String name = getString(chartView.getSelectedMetricNameId());
+        if (!name.contentEquals(viewBinding.chartMetricDropdown.getText())) {
+            viewBinding.chartMetricDropdown.setText(name, false);
+        }
+        viewBinding.chartMetricUnit.setText(chartView.getSelectedMetricUnitId());
+        updateChartSummary();
+    }
+
+    private void updateChartSummary() {
+        if (viewBinding == null) {
+            return;
+        }
+        String summary = viewBinding.chartView.getSelectedMetricSummary();
+        if (summary == null) {
+            viewBinding.chartSummary.setVisibility(View.GONE);
+            viewBinding.chartView.setContentDescription(null);
+            return;
+        }
+        viewBinding.chartSummary.setVisibility(View.VISIBLE);
+        viewBinding.chartSummary.setText(summary);
+        viewBinding.chartView.setContentDescription(getString(R.string.chart_summary_talkback, summary));
+    }
+
+    private void refreshMetricControlsOnUiThread() {
+        runOnUiThread(() -> {
+            if (isResumed()) {
+                refreshMetricControls();
+            }
+        });
+    }
+
+    private void showEmptyState() {
+        viewBinding.chartControls.setVisibility(View.GONE);
+        viewBinding.chartView.setVisibility(View.GONE);
+        viewBinding.chartEmptyState.setVisibility(View.VISIBLE);
+    }
+
+    private void showChart() {
+        viewBinding.chartEmptyState.setVisibility(View.GONE);
+        viewBinding.chartControls.setVisibility(View.VISIBLE);
+        viewBinding.chartView.setVisibility(View.VISIBLE);
     }
 
     /**

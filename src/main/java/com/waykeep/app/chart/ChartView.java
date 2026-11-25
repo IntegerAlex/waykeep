@@ -41,7 +41,6 @@ import androidx.core.view.GestureDetectorCompat;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -128,9 +127,6 @@ public class ChartView extends View {
     private int height = 0;
     private int effectiveWidth = 0;
     private int effectiveHeight = 0;
-    private TitleDimensions titleDimensions;
-    private boolean twoLineYaxisNumbers = false;
-    private int maxYaxisNumberHeight = 0;
 
     private boolean chartByDistance = false;
     private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
@@ -210,8 +206,10 @@ public class ChartView extends View {
     public ChartView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        int fontSizeSmall = ThemeUtils.getFontSizeSmallInPx(context);
-        int fontSizeMedium = ThemeUtils.getFontSizeMediumInPx(context);
+        float density = context.getResources().getDisplayMetrics().density;
+        // Axis ticks and readouts are never smaller than 14sp, even for themes with a smaller body size.
+        int fontSizeSmall = Math.max((int) (14 * density), ThemeUtils.getFontSizeSmallInPx(context));
+        int fontSizeMedium = Math.max((int) (16 * density), ThemeUtils.getFontSizeMediumInPx(context));
 
         elevationSeries = new ChartValueSeries(context,
             Integer.MIN_VALUE,
@@ -222,8 +220,7 @@ public class ChartView extends View {
             R.string.description_altitude_imperial,
             R.color.chart_altitude_fill,
             R.color.chart_altitude_border,
-            fontSizeSmall,
-            fontSizeMedium) {
+            fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.altitude();
@@ -245,8 +242,7 @@ public class ChartView extends View {
                 R.string.description_speed_nautical,
                 R.color.chart_speed_fill,
                 R.color.chart_speed_border,
-                fontSizeSmall,
-                fontSizeMedium) {
+                fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.speed();
@@ -273,8 +269,7 @@ public class ChartView extends View {
                 R.string.description_pace_nautical,
                 R.color.chart_pace_fill,
                 R.color.chart_pace_border,
-                fontSizeSmall,
-                fontSizeMedium) {
+                fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.pace();
@@ -314,8 +309,7 @@ public class ChartView extends View {
                 R.string.description_sensor_heart_rate,
                 R.color.chart_heart_rate_fill,
                 R.color.chart_heart_rate_border,
-                fontSizeSmall,
-                fontSizeMedium) {
+                fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.heartRate();
@@ -337,8 +331,7 @@ public class ChartView extends View {
                 R.string.description_sensor_cadence,
                 R.color.chart_cadence_fill,
                 R.color.chart_cadence_border,
-                fontSizeSmall,
-                fontSizeMedium) {
+                fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.cadence();
@@ -360,8 +353,7 @@ public class ChartView extends View {
                 R.string.description_sensor_power,
                 R.color.chart_power_fill,
                 R.color.chart_power_border,
-                fontSizeSmall,
-                fontSizeMedium) {
+                fontSizeSmall) {
             @Override
             protected Double extractDataFromChartPoint(@NonNull ChartPoint chartPoint) {
                 return chartPoint.power();
@@ -375,7 +367,6 @@ public class ChartView extends View {
         seriesList.add(powerSeries);
 
         backgroundColor = ThemeUtils.getBackgroundColor(context);
-        float density = context.getResources().getDisplayMetrics().density;
 
         axisPaint = new Paint();
         axisPaint.setStyle(Style.FILL_AND_STROKE);
@@ -386,9 +377,9 @@ public class ChartView extends View {
         xAxisMarkerPaint = new Paint(axisPaint);
         xAxisMarkerPaint.setTextAlign(Align.CENTER);
 
-        // The axis unit is a title, not a tick: smaller and quieter than the tick labels.
+        // The axis unit is a title, not a tick: quieter than the tick labels, but the same size.
         xAxisTitlePaint = new Paint(axisPaint);
-        xAxisTitlePaint.setTextSize(fontSizeSmall * 0.9f);
+        xAxisTitlePaint.setTextSize(fontSizeSmall);
         xAxisTitlePaint.setColor(withAlpha(ThemeUtils.getTextColorPrimary(context), 0x99));
 
         gridPaint = new Paint();
@@ -540,6 +531,75 @@ public class ChartView extends View {
 
     public Metric getMetric() {
         return selectedMetric;
+    }
+
+    /**
+     * Name of the series actually plotted, so pace and speed labels match their unit.
+     */
+    public int getSelectedMetricNameId() {
+        ChartValueSeries series = seriesFor(selectedMetric);
+        if (series == paceSeries) {
+            return R.string.chart_metric_pace;
+        }
+        if (series == speedSeries) {
+            return R.string.chart_metric_speed;
+        }
+        return switch (selectedMetric) {
+            case ELEVATION -> R.string.chart_metric_elevation;
+            case HEART_RATE -> R.string.chart_metric_heart_rate;
+            case CADENCE -> R.string.chart_metric_cadence;
+            case POWER -> R.string.chart_metric_power;
+            case SPEED -> R.string.chart_metric_speed;
+        };
+    }
+
+    /**
+     * Unit of the series actually plotted (pace resolves to its own time-per-distance unit).
+     */
+    public int getSelectedMetricUnitId() {
+        ChartValueSeries series = seriesFor(selectedMetric);
+        if (series == paceSeries) {
+            return switch (unitSystem) {
+                case METRIC -> R.string.unit_minute_per_kilometer;
+                case IMPERIAL_FEET, IMPERIAL_METER -> R.string.unit_minute_per_mile;
+                case NAUTICAL_IMPERIAL -> R.string.unit_minute_per_nautical_mile;
+            };
+        }
+        if (series == speedSeries) {
+            return switch (unitSystem) {
+                case METRIC -> R.string.unit_kilometer_per_hour;
+                case IMPERIAL_FEET, IMPERIAL_METER -> R.string.unit_mile_per_hour;
+                case NAUTICAL_IMPERIAL -> R.string.unit_knots;
+            };
+        }
+        if (series == elevationSeries) {
+            return unitSystem == UnitSystem.METRIC ? R.string.unit_meter : R.string.unit_feet;
+        }
+        if (series == heartRateSeries) {
+            return R.string.unit_beat_per_minute;
+        }
+        if (series == cadenceSeries) {
+            return R.string.unit_revolution_per_minute;
+        }
+        return R.string.unit_watt;
+    }
+
+    /**
+     * One-line summary of the selected metric, its unit, the horizontal axis and the data range.
+     * Used for the visible readout and as the chart's TalkBack description, so no one has to
+     * explore the plot point by point to learn what it shows.
+     */
+    public String getSelectedMetricSummary() {
+        ChartValueSeries series = seriesFor(selectedMetric);
+        if (!series.hasData()) {
+            return null;
+        }
+        return getContext().getString(R.string.chart_summary,
+                getContext().getString(getSelectedMetricNameId()),
+                getContext().getString(getSelectedMetricUnitId()),
+                getContext().getString(chartByDistance ? R.string.chart_axis_distance : R.string.chart_axis_time),
+                series.formatValue(series.getDataMin()),
+                series.formatValue(series.getDataMax()));
     }
 
     /**
@@ -765,7 +825,6 @@ public class ChartView extends View {
 
             canvas.restore();
 
-            drawSeriesTitles(canvas);
             drawXAxis(canvas);
             drawYAxis(canvas);
 
@@ -799,7 +858,8 @@ public class ChartView extends View {
         for (ChartValueSeries chartValueSeries : seriesList) {
             if (chartValueSeries.isEnabled() && chartValueSeries.hasData()) {
                 chartValueSeries.updateFillGradient(topBorder, topBorder + effectiveHeight);
-                chartValueSeries.drawPath(canvas, titleDimensions.titlePositions.size() < 3);
+                // One metric is plotted at a time, so the area under it can always be filled.
+                chartValueSeries.drawPath(canvas, true);
             }
         }
         drawOutOfRangeIndicators(canvas);
@@ -864,70 +924,6 @@ public class ChartView extends View {
             int y = topBorder + yAxisOffset + (int) (percentage * range);
             canvas.drawLine(leftBorder, y, rightEdge, y, gridPaint);
         }
-    }
-
-    private record TitlePosition(
-            int line, // line number (starts at 1, top to bottom numbering)
-            int xPos // x position in points (starts at 0, left to right indexing)
-    ) {}
-
-    private record TitleDimensions(
-            int lineCount, // number of lines the titles will take
-            int lineHeight, // height of a line (all lines have the same height)
-            List<TitlePosition> titlePositions // positions of visible titles (the order corresponds to seriesList)
-    ) {}
-
-    /**
-     * Draws series titles.
-     *
-     * @param canvas the canvas
-     */
-    private void drawSeriesTitles(Canvas canvas) {
-        Iterator<TitlePosition> tpI = titleDimensions.titlePositions.iterator();
-
-        for (ChartValueSeries chartValueSeries : seriesList) {
-            if (chartValueSeries.isEnabled() && chartValueSeries.hasData() || allowIfEmpty(chartValueSeries)) {
-                String title = getContext().getString(chartValueSeries.getTitleId(unitSystem));
-                Paint paint = chartValueSeries.getTitlePaint();
-
-                // It is possible for the titlePositions to become empty temporarily, while switching between
-                // chart screens quickly.
-                if (!tpI.hasNext()) {
-                    return;
-                }
-
-                TitlePosition tp = tpI.next();
-                int y = topBorder - spacer - (titleDimensions.lineCount - tp.line) * (titleDimensions.lineHeight + spacer);
-                canvas.drawText(title, tp.xPos + getScrollX(), y, paint);
-            }
-        }
-    }
-
-    /**
-     * Gets the title dimensions.
-     * Returns an array of 2 integers, first element is the number of lines and the second element is the line height.
-     */
-    private TitleDimensions getTitleDimensions() {
-        int lineCnt = 1;
-        int lineHeight = 0;
-        List<TitlePosition> tps = new ArrayList<>();
-        int xPosInLine = spacer;
-        for (ChartValueSeries chartValueSeries : seriesList) {
-            if (chartValueSeries.isEnabled() && chartValueSeries.hasData() || allowIfEmpty(chartValueSeries)) {
-                String title = getContext().getString(chartValueSeries.getTitleId(unitSystem));
-                Rect rect = getRect(chartValueSeries.getTitlePaint(), title);
-                if (rect.height() > lineHeight) lineHeight = rect.height();
-                int xNextPosInLine = xPosInLine + rect.width() + 2*spacer;
-                // if second or later title does not fully fit on this line then print it on the next line
-                if (xPosInLine > spacer && xNextPosInLine-spacer > width) {
-                    lineCnt++;
-                    xPosInLine = spacer;
-                }
-                tps.add(new TitlePosition(lineCnt, xPosInLine));
-                xPosInLine += rect.width() + 2*spacer;
-            }
-        }
-        return new TitleDimensions(lineCnt, lineHeight, tps);
     }
 
     /**
@@ -1020,18 +1016,11 @@ public class ChartView extends View {
         final int y = topBorder;
         canvas.drawLine(x, y, x, y + effectiveHeight, axisPaint);
 
-        //TODO
         int markerXPosition = x - spacer;
-        int index = titleDimensions.titlePositions.size() - 1; // index only over the visible chart series
-        final int lastDrawn2ndLineMarkerIndex = getYmarkerCountOn1stLine();
-        for (int i = seriesList.size()-1; i>=0 ;--i) { // draw markers from the last series to achieve right alignment
-            ChartValueSeries chartValueSeries = seriesList.get(i);
+        // One metric is plotted at a time, so a single set of markers sits next to the axis.
+        for (ChartValueSeries chartValueSeries : seriesList) {
             if (chartValueSeries.isEnabled() && chartValueSeries.hasData() || allowIfEmpty(chartValueSeries)) {
-                int yOffset = !twoLineYaxisNumbers ? 0 : (spacer+maxYaxisNumberHeight)/2 * (index >= lastDrawn2ndLineMarkerIndex ? 1 : -1);
-                markerXPosition -= drawYAxisMarkers(chartValueSeries, canvas, markerXPosition, yOffset) + spacer;
-                if (twoLineYaxisNumbers && index == lastDrawn2ndLineMarkerIndex)
-                    markerXPosition = x - spacer;
-                --index;
+                drawYAxisMarkers(chartValueSeries, canvas, markerXPosition, 0);
             }
         }
     }
@@ -1377,10 +1366,6 @@ public class ChartView extends View {
         return Math.max(topBorder, Math.min(yCorner, y));
     }
 
-    /// expected number of Y-axis markers on the first line if the Y-axis markers are split to two lines
-    private int getYmarkerCountOn1stLine() {
-        return (int)Math.ceil(titleDimensions.titlePositions.size()/2.0);
-    }
     /**
      * Updates the chart dimensions.
      */
@@ -1393,32 +1378,18 @@ public class ChartView extends View {
         spacer = (int) (density * SPACER);
         yAxisOffset = (int) (density * Y_AXIS_OFFSET);
 
-        titleDimensions = getTitleDimensions();
-        topBorder = (int) (density * BORDER + titleDimensions.lineCount * (titleDimensions.lineHeight + spacer));
+        // The metric name and unit live in the controls above the plot, so the plot itself can use
+        // the full height instead of reserving a title band.
+        topBorder = (int) (density * BORDER);
         Rect xAxisLabelRect = getRect(axisPaint, getXAxisLabel());
         bottomBorder = (int) (density * BORDER + getRect(xAxisMarkerPaint, "1").height() + spacer + (xAxisLabelRect.height() / 2));
 
-        final int markerCountOn1stLine = getYmarkerCountOn1stLine();
         int allMarkerLength = 0;
-        int firstLineMarkerLength = 0;
-        int secondLineMarkerLength = 0;
-        int currentSeriesIndex = 0;
-        maxYaxisNumberHeight = 0;
         for (ChartValueSeries chartValueSeries : seriesList) {
             if (chartValueSeries.isEnabled() && chartValueSeries.hasData() || allowIfEmpty(chartValueSeries)) {
-                Rect rect = getRect(chartValueSeries.getMarkerPaint(), chartValueSeries.getLargestMarker());
-                maxYaxisNumberHeight = Math.max(maxYaxisNumberHeight, rect.height() );
-                int lengthInc = rect.width() + spacer;
-                allMarkerLength += lengthInc;
-                if (currentSeriesIndex < markerCountOn1stLine) firstLineMarkerLength += lengthInc;
-                else secondLineMarkerLength += lengthInc;
-                ++currentSeriesIndex;
+                allMarkerLength += getRect(chartValueSeries.getMarkerPaint(), chartValueSeries.getLargestMarker()).width() + spacer;
             }
         }
-        if ( currentSeriesIndex > 1 && height-topBorder-bottomBorder-spacer > (Y_AXIS_INTERVALS+1)*(spacer+maxYaxisNumberHeight*3) ) {
-            allMarkerLength = Math.max(firstLineMarkerLength, secondLineMarkerLength);
-            twoLineYaxisNumbers = true;
-        } else twoLineYaxisNumbers = false;
 
         leftBorder = (int) (density * BORDER + allMarkerLength);
         rightBorder = (int) (density * BORDER + spacer);

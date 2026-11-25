@@ -16,116 +16,108 @@ limitations under the License.
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:id="@+id/chart_controls_scroll"
+    <LinearLayout
+        android:id="@+id/chart_controls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:paddingTop="6dp"
-        android:paddingBottom="2dp"
-        android:scrollbars="none">
+        android:paddingBottom="2dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <!-- Horizontal axis: how the track is laid out from left to right. -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:text="@string/chart_axis_label"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/chart_axis_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chart_axis_time"
+                        style="@style/ChartControlButton"
+                        android:text="@string/chart_axis_time" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chart_axis_distance"
+                        style="@style/ChartControlButton"
+                        android:text="@string/chart_axis_distance" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- One metric at a time, with its unit beside the value. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/chart_axis_group"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/chart_metric_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/chart_metric_label">
+
+                <com.waykeep.app.ui.util.AutoCompleteTextViewForDropdown
+                    android:id="@+id/chart_metric_dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/chart_metric_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chart_axis_time"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="72dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:textColor="@color/tab_toggle_text"
-                    android:textSize="13sp"
-                    app:backgroundTint="@color/tab_toggle_background"
-                    app:cornerRadius="20dp"
-                    app:strokeColor="?attr/colorOutline"
-                    app:strokeWidth="1dp"
-                    android:text="@string/chart_axis_time" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chart_axis_distance"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="72dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:textColor="@color/tab_toggle_text"
-                    android:textSize="13sp"
-                    app:backgroundTint="@color/tab_toggle_background"
-                    app:cornerRadius="20dp"
-                    app:strokeColor="?attr/colorOutline"
-                    app:strokeWidth="1dp"
-                    android:text="@string/chart_axis_distance" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chart_metric_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:selectionRequired="true"
-                app:singleLine="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chart_metric_elevation"
-                    style="@style/ChartMetricChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chart_metric_elevation" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chart_metric_speed"
-                    style="@style/ChartMetricChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chart_metric_speed" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chart_metric_heart_rate"
-                    style="@style/ChartMetricChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chart_metric_heart_rate" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chart_metric_cadence"
-                    style="@style/ChartMetricChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chart_metric_cadence" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chart_metric_power"
-                    style="@style/ChartMetricChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chart_metric_power" />
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginStart="12dp"
+                android:minWidth="40dp"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                tools:text="km/h" />
         </LinearLayout>
-    </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/chart_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:importantForAccessibility="no"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="Speed (km/h), Distance axis, range 3.2 to 28.4" />
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
