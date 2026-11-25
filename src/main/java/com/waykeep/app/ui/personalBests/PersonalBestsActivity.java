@@ -32,13 +32,14 @@ import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.StringUtils;
 
 /**
- * Shows all-time personal bests (longest, fastest, most elevation) across all tracks.
+ * Shows all-time personal bests (longest, fastest, most elevation) for one sport at a time.
+ * Records from different sports are never compared with each other.
  * Everything is computed and formatted off the UI thread; each row opens the record track.
  */
 public class PersonalBestsActivity extends AbstractActivity {
 
     public record PersonalBest(
-            int labelResId,
+            @NonNull String label,
             @NonNull String value,
             @NonNull String unit,
             @NonNull Track.Id trackId,
@@ -47,13 +48,25 @@ public class PersonalBestsActivity extends AbstractActivity {
 
     private ActivityPersonalBestsBinding viewBinding;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Sport selectedSport = Sport.RUNNING;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         viewBinding.personalBestsList.setLayoutManager(new LinearLayoutManager(this));
-        loadBests();
+        viewBinding.personalBestsSportGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+            Sport sport = sportOf(checkedId);
+            if (sport == selectedSport) {
+                return;
+            }
+            selectedSport = sport;
+            loadBests(sport);
+        });
+        loadBests(selectedSport);
     }
 
     @Override
@@ -70,16 +83,26 @@ public class PersonalBestsActivity extends AbstractActivity {
         return viewBinding.getRoot();
     }
 
-    private void loadBests() {
+    private static Sport sportOf(int checkedId) {
+        if (checkedId == R.id.personal_bests_sport_cycling) {
+            return Sport.CYCLING;
+        }
+        if (checkedId == R.id.personal_bests_sport_walking) {
+            return Sport.WALKING;
+        }
+        return Sport.RUNNING;
+    }
+
+    private void loadBests(Sport sport) {
         executor.execute(() -> {
             List<PersonalBest> bests;
             try {
-                bests = computeBests(this, new ContentProviderUtils(this).getTracks());
+                bests = computeBests(this, sport, new ContentProviderUtils(this).getTracks());
             } catch (RuntimeException e) {
                 return;
             }
             runOnUiThread(() -> {
-                if (isFinishing() || isDestroyed() || viewBinding == null) {
+                if (isFinishing() || isDestroyed() || viewBinding == null || sport != selectedSport) {
                     return;
                 }
                 if (bests.isEmpty()) {
@@ -94,74 +117,59 @@ public class PersonalBestsActivity extends AbstractActivity {
         });
     }
 
-    private static List<PersonalBest> computeBests(@NonNull Context context, @NonNull List<Track> tracks) {
-        Track longest = null;
-        Track longestTime = null;
-        Track fastest = null;
-        Track mostElevation = null;
-        Track topSpeed = null;
-        for (Track track : tracks) {
-            if (longest == null || track.statistics().totalDistance().greaterThan(longest.statistics().totalDistance())) {
-                longest = track;
-            }
-            if (longestTime == null || track.statistics().movingDuration().compareTo(longestTime.statistics().movingDuration()) > 0) {
-                longestTime = track;
-            }
-            if (fastest == null || track.statistics().getAverageMovingSpeed().greaterThan(fastest.statistics().getAverageMovingSpeed())) {
-                fastest = track;
-            }
-            if (gainOf(track) != null && (mostElevation == null || gainOf(track) > gainOf(mostElevation))) {
-                mostElevation = track;
-            }
-            if (topSpeed == null || track.statistics().maxSpeed().greaterThan(topSpeed.statistics().maxSpeed())) {
-                topSpeed = track;
-            }
-        }
+    private static List<PersonalBest> computeBests(@NonNull Context context, @NonNull Sport sport, @NonNull List<Track> tracks) {
+        Sport.BestTracks best = sport.bestsIn(tracks);
 
         UnitSystem unitSystem = PreferencesUtils.getUnitSystem();
         List<PersonalBest> bests = new ArrayList<>();
-        if (longest != null) {
-            bests.add(new PersonalBest(R.string.personal_best_longest_distance,
-                    DistanceFormatter.Builder().setUnit(unitSystem).build(context).formatDistance(longest.statistics().totalDistance()),
-                    "", longest.id(), trackLine(context, longest)));
+        if (best.longestDistance() != null) {
+            Track track = best.longestDistance();
+            bests.add(new PersonalBest(label(context, sport, R.string.personal_best_longest_distance),
+                    DistanceFormatter.Builder().setUnit(unitSystem).build(context).formatDistance(track.statistics().totalDistance()),
+                    "", track.id(), trackLine(context, track)));
         }
-        if (longestTime != null) {
-            bests.add(new PersonalBest(R.string.personal_best_longest_time,
-                    StringUtils.formatElapsedTime(longestTime.statistics().movingDuration()),
-                    "", longestTime.id(), trackLine(context, longestTime)));
+        if (best.longestTime() != null) {
+            Track track = best.longestTime();
+            bests.add(new PersonalBest(label(context, sport, R.string.personal_best_longest_time),
+                    StringUtils.formatElapsedTime(track.statistics().movingDuration()),
+                    "", track.id(), trackLine(context, track)));
         }
-        if (fastest != null) {
-            bests.add(new PersonalBest(R.string.personal_best_fastest,
-                    formatSpeed(context, fastest, fastest.statistics().getAverageMovingSpeed(), unitSystem),
-                    "", fastest.id(), trackLine(context, fastest)));
+        if (best.fastestAverage() != null) {
+            Track track = best.fastestAverage();
+            bests.add(new PersonalBest(label(context, sport, R.string.personal_best_fastest),
+                    formatSpeed(context, sport, track.statistics().getAverageMovingSpeed(), unitSystem),
+                    "", track.id(), trackLine(context, track)));
         }
-        if (mostElevation != null) {
+        if (best.mostElevation() != null) {
+            Track track = best.mostElevation();
             android.util.Pair<String, String> parts = StringUtils.getAltitudeParts(context,
-                    mostElevation.statistics().altitudeGainLoss().gain_m(), unitSystem);
-            bests.add(new PersonalBest(R.string.personal_best_most_elevation,
+                    track.statistics().altitudeGainLoss().gain_m(), unitSystem);
+            bests.add(new PersonalBest(label(context, sport, R.string.personal_best_most_elevation),
                     context.getString(R.string.altitude_with_unit, parts.first, parts.second),
-                    "", mostElevation.id(), trackLine(context, mostElevation)));
+                    "", track.id(), trackLine(context, track)));
         }
-        if (topSpeed != null) {
-            bests.add(new PersonalBest(R.string.personal_best_top_speed,
-                    formatSpeed(context, topSpeed, topSpeed.statistics().maxSpeed(), unitSystem),
-                    "", topSpeed.id(), trackLine(context, topSpeed)));
+        if (best.topSpeed() != null) {
+            Track track = best.topSpeed();
+            bests.add(new PersonalBest(label(context, sport, R.string.personal_best_top_speed),
+                    formatSpeed(context, sport, track.statistics().maxSpeed(), unitSystem),
+                    "", track.id(), trackLine(context, track)));
         }
         return bests;
     }
 
-    private static String formatSpeed(Context context, Track track, Speed speed, UnitSystem unitSystem) {
-        return SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(PreferencesUtils.isReportSpeed(track))
+    private static String label(Context context, Sport sport, int recordLabelResId) {
+        return context.getString(R.string.personal_best_label_with_sport,
+                context.getString(sport.getLabelResId()), context.getString(recordLabelResId));
+    }
+
+    private static String formatSpeed(Context context, Sport sport, Speed speed, UnitSystem unitSystem) {
+        return SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(sport.prefersSpeed())
                 .build(context).formatSpeed(speed);
     }
 
     private static String trackLine(Context context, Track track) {
         return context.getString(R.string.personal_best_track, track.name(),
                 StringUtils.formatDateTimeWithOffset(track.startTime()));
-    }
-
-    private static Float gainOf(Track track) {
-        return track.statistics().altitudeGainLoss() != null ? track.statistics().altitudeGainLoss().gain_m() : null;
     }
 
     private class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
@@ -199,7 +207,7 @@ public class PersonalBestsActivity extends AbstractActivity {
 
             void bind(PersonalBest best) {
                 trackId = best.trackId();
-                binding.personalBestLabel.setText(best.labelResId());
+                binding.personalBestLabel.setText(best.label());
                 binding.personalBestValue.setText(best.value());
                 binding.personalBestUnit.setText(best.unit());
                 binding.personalBestUnit.setVisibility(best.unit().isEmpty() ? View.GONE : View.VISIBLE);
