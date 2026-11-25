@@ -29,9 +29,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.OneShotPreDrawListener;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -117,6 +119,13 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 : (getIntent().getBooleanExtra(EXTRA_OPEN_MAP_TAB, false) ? MAP_TAB_POSITION : 0);
         DetailTabs.bind(viewBinding.trackDetailActivityTabs,
                 viewBinding.trackDetailActivityViewPager, initialTab);
+        viewBinding.trackDetailActivityViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                showTab(position);
+            }
+        });
+        applyHeroArtworkVisibility(initialTab);
 
         trackRecordingServiceConnection = new TrackRecordingServiceConnection(bindCallback);
 
@@ -196,7 +205,19 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 ? time
                 : time + " · " + activity.toUpperCase(Locale.getDefault()));
 
-        viewBinding.trackDetailHeroImage.post(() -> {
+        renderHeroArtwork();
+    }
+
+    /**
+     * The route shape is drawn for the Stats tab only. The artwork is measured by its parent,
+     * so the size is read in pre-draw, after layout, and requested again whenever Stats
+     * becomes visible.
+     */
+    private void renderHeroArtwork() {
+        if (trackId == null || viewBinding.trackDetailHeroImage.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        OneShotPreDrawListener.add(viewBinding.trackDetailHeroImage, () -> {
             int width = viewBinding.trackDetailHeroImage.getWidth();
             int height = viewBinding.trackDetailHeroImage.getHeight();
             float density = getResources().getDisplayMetrics().density;
@@ -212,6 +233,18 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 }
             });
         });
+    }
+
+    /** Stats carries the route illustration; every other tab gets that height back. */
+    private void showTab(int position) {
+        applyHeroArtworkVisibility(position);
+        if (position == 0) {
+            renderHeroArtwork();
+        }
+    }
+
+    private void applyHeroArtworkVisibility(int position) {
+        viewBinding.trackDetailHeroImage.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -24,6 +24,11 @@ limitations under the License.
         android:orientation="vertical"
         android:fitsSystemWindows="true">
 
+        <!--
+          Compact summary header. The route shape is the Stats tab's illustration and is
+          hidden on the other tabs, which then gain its height (see TrackRecordedActivity).
+          Text wraps instead of clipping at large font scales.
+        -->
         <LinearLayout
             android:id="@+id/track_detail_hero"
             android:layout_width="match_parent"
@@ -34,7 +39,7 @@ limitations under the License.
             <ImageView
                 android:id="@+id/track_detail_hero_image"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="140dp"
                 android:contentDescription="@string/image_track"
                 android:scaleType="fitCenter" />
 
@@ -43,13 +48,17 @@ limitations under the License.
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="20dp"
+                android:paddingTop="8dp"
                 android:paddingEnd="20dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/track_detail_hero_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:singleLine="false"
                     android:textAppearance="@style/TextAppearance.OpenTracks.HeroLabel" />
 
                 <TextView
@@ -57,16 +66,19 @@ limitations under the License.
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="32sp"
-                    android:autoSizeMaxTextSize="64sp"
+                    android:autoSizeMinTextSize="20sp"
+                    android:autoSizeMaxTextSize="44sp"
                     android:autoSizeStepGranularity="2sp"
                     android:textAppearance="@style/TextAppearance.OpenTracks.HeroScore" />
 
                 <TextView
                     android:id="@+id/track_detail_hero_meta"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:singleLine="false"
                     android:textAppearance="@style/TextAppearance.OpenTracks.HeroMeta" />
             </LinearLayout>
         </LinearLayout>
