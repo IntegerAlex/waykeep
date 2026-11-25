@@ -33,6 +33,10 @@ public final class MapTileFetcher {
 
     private static final int TILE_SIZE = 256;
     private static final int CAP_TILES = 25;
+    // Esri World Street Map serves "Map data not yet available" placeholder tiles at z18/19
+    // in some cities (seen in Pune), with HTTP 200, so a higher zoom looks like a valid map.
+    // ponytail: cap at z17; detect placeholder tiles or switch providers if more detail is needed.
+    private static final int MAX_BASEMAP_ZOOM = 17;
     private static final long TILE_TTL_MS = 30L * 24 * 60 * 60 * 1000L;
     private static final int TILE_TIMEOUT_MS = 6000;
     private static final ExecutorService POOL = Executors.newFixedThreadPool(4);
@@ -105,7 +109,7 @@ public final class MapTileFetcher {
         if (points.size() < 2 || regionWidth <= 0 || regionHeight <= 0) {
             return null;
         }
-        for (int z = 19; z >= 1; z--) {
+        for (int z = MAX_BASEMAP_ZOOM; z >= 1; z--) {
             Bounds b = boundsFor(points, z);
             if (b == null) {
                 continue;

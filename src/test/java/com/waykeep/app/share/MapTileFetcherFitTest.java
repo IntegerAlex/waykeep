@@ -57,6 +57,22 @@ public class MapTileFetcherFitTest {
         }
     }
 
+    @Test
+    public void smallRouteStaysAtBasemapCoverageZoom() {
+        // Esri World Street Map returns "Map data not yet available" placeholder tiles at
+        // zoom 18/19 in some cities (seen in Pune).
+        List<RouteSampler.LatLon> smallRoute = List.of(
+                new RouteSampler.LatLon(18.5504, 73.9029),
+                new RouteSampler.LatLon(18.5502, 73.9036),
+                new RouteSampler.LatLon(18.5498, 73.9031),
+                new RouteSampler.LatLon(18.5501, 73.9025),
+                new RouteSampler.LatLon(18.5504, 73.9029));
+        MapTileFetcher.Fit fit = MapTileFetcher.fit(smallRoute, CANVAS_W, CANVAS_H,
+                0, REGION_TOP, CANVAS_W, REGION_HEIGHT);
+        assertNotNull(fit);
+        assertTrue("zoom " + fit.zoom + " uses placeholder basemap tiles", fit.zoom <= 17);
+    }
+
     /** Same math the fetcher uses to decide which tiles to download. */
     private static int canvasTiles(MapTileFetcher.Fit fit) {
         int maxTile = 1 << fit.zoom;
