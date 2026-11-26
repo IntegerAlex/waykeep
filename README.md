@@ -12,8 +12,7 @@ _Waykeep_ is a privacy-respecting sport tracker for Android. It is a fork of [_O
 
 <p align="center">
   <img src="screenshots-marketing/track-detail-map-cyclosm.png" width="250" alt="Track route on a CyclOSM map">
-  <img src="screenshots-marketing/aggregated-stats-month.png" width="250" alt="Aggregated statistics for the month">
-  <img src="screenshots-marketing/suggested-routes.png" width="250" alt="Suggested running loops">
+  <img src="screenshots-marketing/aggregated-stats-year.png" width="250" alt="Aggregated statistics for the month">
 </p>
 
 ## Features
@@ -36,16 +35,14 @@ _Waykeep_ is a privacy-respecting sport tracker for Android. It is a fork of [_O
   </tr>
   <tr>
     <td align="center"><img src="screenshots-marketing/track-detail-chart-pace-distance.png" width="220" alt="Interactive pace chart"><br><sub><b>Interactive charts</b></sub></td>
-    <td align="center"><img src="screenshots-marketing/track-detail-map-esri-dark.png" width="220" alt="Dark map style"><br><sub><b>Dark basemap</b></sub></td>
-    <td align="center"><img src="screenshots-marketing/insert-marker-dialog.png" width="220" alt="Insert marker"><br><sub><b>Markers</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/track-detail-map-minimal.png" width="220" alt="Dark map style"><br><sub><b>Dark basemap</b></sub></td>
   </tr>
   <tr>
     <td align="center"><img src="screenshots-marketing/personal-bests.png" width="220" alt="Personal bests"><br><sub><b>Personal bests</b></sub></td>
-    <td align="center"><img src="screenshots-marketing/recording-live-stats.png" width="220" alt="Live recording stats"><br><sub><b>Live recording</b></sub></td>
     <td align="center"><img src="screenshots-marketing/track-detail-share-sheet.png" width="220" alt="Share sheet"><br><sub><b>Export &amp; share</b></sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots-marketing/share-editor-feed-dark.png" width="220" alt="Feed-format share card"><br><sub><b>Share cards</b></sub></td>
+    <td align="center"><img src="screenshots-marketing/share-editor-portrait-dark.png" width="220" alt="Feed-format share card"><br><sub><b>Share cards</b></sub></td>
     <td align="center"><img src="screenshots-marketing/share-editor-story-clear.png" width="220" alt="Story-format share card"><br><sub><b>Story format</b></sub></td>
     <td align="center"></td>
   </tr>
