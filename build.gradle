@@ -47,8 +47,8 @@ android {
 
     defaultConfig {
         applicationId 'com.waykeep.app'
-        versionCode 6895
-        versionName "v1.1.4"
+        versionCode 6896
+        versionName "v1.2.0"
 
         buildConfigField "String", "VERSION_NAME_FULL", "\"${getVersionName()}\""
 

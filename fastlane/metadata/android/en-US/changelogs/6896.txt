@@ -1,0 +1,11 @@
+Waykeep 1.2.0
+
+A readability and review release. Everything still stays on your device.
+
+- Home: rolling seven-day summary with clearer period, goal and average wording; weekly streak on its own line.
+- Recording: active activity name, ranked live readings and state text from the recording service.
+- Review: compact saved-activity header, route artwork only on the summary tab, clearer stats labels and readable Splits rows with a Partial final split.
+- Charts: separate axis and metric controls, units beside the metric and a text summary.
+- Records: sport-specific personal bests and Activity totals with a visible period control and date range.
+- Share: Portrait, Square and Story choices with dimensions shown, separate Save image and Share image actions, and map tiles that follow paths.
+- Accessibility: sentence-case labels, larger metadata and actions, and 200% text reflow in light and dark themes.
