@@ -25,9 +25,9 @@ limitations under the License.
         android:fitsSystemWindows="true">
 
         <!--
-          Compact summary header. The route shape is the Stats tab's illustration and is
-          hidden on the other tabs, which then gain its height (see TrackRecordedActivity).
-          Text wraps instead of clipping at large font scales.
+          Compact header: one date/activity/distance line plus elapsed time. The route shape
+          is the Stats tab's illustration and is hidden on the other tabs (see
+          TrackRecordedActivity). Text reflows instead of shrinking at large font scales.
         -->
         <LinearLayout
             android:id="@+id/track_detail_hero"
@@ -56,16 +56,10 @@ limitations under the License.
                     android:id="@+id/track_detail_hero_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
+                    android:ellipsize="none"
+                    android:maxLines="6"
                     android:singleLine="false"
                     android:textAppearance="@style/TextAppearance.OpenTracks.HeroLabel" />
-
-                <TextView
-                    android:id="@+id/track_detail_hero_distance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.OpenTracks.HeroScore" />
 
                 <TextView
                     android:id="@+id/track_detail_hero_meta"

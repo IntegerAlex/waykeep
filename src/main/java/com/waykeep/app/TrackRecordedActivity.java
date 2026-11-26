@@ -195,16 +195,19 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
                 .setUnit(PreferencesUtils.getUnitSystem())
                 .setDecimalPlaces(2)
                 .build(this);
-        viewBinding.trackDetailHeroDate.setText(ListItemUtils.getDateTimeText(this,
-                track.startTime().toInstant(), track.startTime().getOffset()));
-        viewBinding.trackDetailHeroDistance.setText(formatter.formatDistance(stats.totalDistance()));
-        String time = StringUtils.formatElapsedTime(stats.totalDuration());
-        String activity = track.activityTypeLocalized();
-        viewBinding.trackDetailHeroMeta.setText(activity.isEmpty()
-                ? time
-                : time + " · " + activity);
+        String date = ListItemUtils.getDateTimeText(this,
+                track.startTime().toInstant(), track.startTime().getOffset());
+        String distance = formatter.formatDistance(stats.totalDistance());
+        viewBinding.trackDetailHeroDate.setText(formatCompactHeaderLine(date,
+                track.activityTypeLocalized(), distance));
+        viewBinding.trackDetailHeroMeta.setText(StringUtils.formatElapsedTime(stats.totalDuration()));
 
         renderHeroArtwork();
+    }
+
+    /** One compact header line: date · activity · distance, skipping empty parts. */
+    static String formatCompactHeaderLine(String date, String activity, String distance) {
+        return ListItemUtils.buildContextLine(date, activity, distance);
     }
 
     /**
