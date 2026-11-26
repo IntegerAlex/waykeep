@@ -622,7 +622,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         updateGpsMenuItem(false, false);
         recordingStatusConnection.stopRecording(TrackListActivity.this);
         viewBinding.trackListFabAction.setIconResource(R.drawable.ic_baseline_record_24);
-        viewBinding.trackListFabAction.setText(R.string.action_start);
+        viewBinding.trackListFabAction.setText(R.string.action_start_activity);
         viewBinding.trackListFabAction.setContentDescription(getString(R.string.action_start_activity));
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
         viewBinding.trackListFabAction.setIconTint(ColorStateList.valueOf(Color.WHITE));
@@ -735,6 +735,18 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         });
     }
 
+    /**
+     * Formats the goal and average lines without Android resources, so their wording and
+     * argument order can be checked on the JVM. Returns {goal line, average line}.
+     */
+    static String[] formatInsightLines(String goalFormat, String averageFormat,
+                                       String weekDistance, String goalDistance, String weeklyAverage) {
+        return new String[]{
+                String.format(goalFormat, weekDistance, goalDistance),
+                String.format(averageFormat, weeklyAverage)
+        };
+    }
+
     private void renderInsight(@Nullable InsightSummary summary) {
         if (viewBinding == null || summary == null) {
             return;
@@ -745,9 +757,15 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
                 .setDecimalPlaces(1)
                 .build(this);
         Distance weekDistance = summary.goalProgressDistance();
-        viewBinding.insightWeekDistance.setText(formatter.formatDistance(weekDistance));
-        viewBinding.insightWeekAverage.setText(getString(R.string.insight_average_compact,
-                formatter.formatDistance(summary.fourWeekWeeklyAverage())));
+        String weekDistanceText = formatter.formatDistance(weekDistance);
+        viewBinding.insightWeekDistance.setText(weekDistanceText);
+        String[] insightLines = formatInsightLines(
+                getString(R.string.insight_goal_distance),
+                getString(R.string.insight_average_full),
+                weekDistanceText,
+                formatter.formatDistance(summary.weeklyGoal()),
+                formatter.formatDistance(summary.fourWeekWeeklyAverage()));
+        viewBinding.insightWeekAverage.setText(insightLines[1]);
         viewBinding.insightTrend.setText(summary.trendLineRes());
 
         int streakWeeks = summary.weeklyStreak().consecutiveWeeks();
@@ -760,9 +778,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             viewBinding.insightSetGoalHint.setVisibility(View.GONE);
             viewBinding.insightGoalProgress.setVisibility(View.VISIBLE);
             viewBinding.insightLane.setVisibility(View.VISIBLE);
-            int percent = summary.goalPercent();
-            viewBinding.insightGoalProgress.setText(getString(R.string.insight_goal_percent,
-                    percent, formatter.formatDistance(goal)));
+            viewBinding.insightGoalProgress.setText(insightLines[0]);
             viewBinding.insightLane.setValues(weekDistance.toM(), goal.toM(),
                     summary.fourWeekWeeklyAverage().toM());
         } else {
@@ -903,15 +919,15 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         int description;
         if (recordingStatus.isPaused()) {
             icon = R.drawable.ic_baseline_play_arrow_24;
-            text = R.string.action_resume;
+            text = R.string.action_resume_recording;
             description = R.string.action_resume_recording;
         } else if (recordingStatus.isRecording()) {
             icon = R.drawable.ic_baseline_stop_24;
-            text = R.string.action_stop;
+            text = R.string.action_stop_recording;
             description = R.string.action_stop_recording;
         } else {
             icon = R.drawable.ic_baseline_record_24;
-            text = R.string.action_start;
+            text = R.string.action_start_activity;
             description = R.string.action_start_activity;
         }
         viewBinding.trackListFabAction.setIconResource(icon);

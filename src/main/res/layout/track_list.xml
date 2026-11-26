@@ -164,7 +164,7 @@ limitations under the License.
                         android:layout_height="wrap_content"
                         android:maxLines="2"
                         android:singleLine="false"
-                        android:text="@string/insight_week_distance_label"
+                        android:text="@string/insight_scope_full"
                         android:textAppearance="@style/TextAppearance.OpenTracks.LaneLabel" />
 
                     <TextView
@@ -316,7 +316,7 @@ limitations under the License.
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/action_start_activity"
-        android:text="@string/action_start"
+        android:text="@string/action_start_activity"
         android:textSize="16sp"
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_baseline_record_24"
