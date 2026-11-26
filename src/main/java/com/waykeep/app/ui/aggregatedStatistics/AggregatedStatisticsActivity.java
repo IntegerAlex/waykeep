@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,8 +172,22 @@ public class AggregatedStatisticsActivity extends AbstractActivity implements Fi
                 from.atStartOfDay(ZoneId.systemDefault()).toInstant(),
                 Instant.now());
         setMenuVisibility(true);
-        showPeriod(titleRes, from, today);
+        String title = periodTitle(today, menuItemId, Locale.getDefault());
+        showPeriod(title != null ? title : getString(titleRes),
+                StringUtils.formatDateRange(from, today, Locale.getDefault()));
         viewModel.updateSelection(selection);
+    }
+
+    /**
+     * U8: only the month period needs a concrete month/year ("November 2026");
+     * other periods keep their existing resource titles (null = use titleRes).
+     */
+    @Nullable
+    static String periodTitle(LocalDate date, int menuItemId, Locale locale) {
+        if (menuItemId == R.id.aggregated_statistics_period_month) {
+            return DateTimeFormatter.ofPattern("MMMM yyyy", locale).format(date);
+        }
+        return null;
     }
 
     private void showPeriod(@StringRes int titleRes) {

@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_statistics_24dp"
-            app:title="@string/menu_aggregated_statistics" />
+            app:title="@string/aggregated_stats_title" />
 
         <LinearLayout
             android:layout_width="match_parent"

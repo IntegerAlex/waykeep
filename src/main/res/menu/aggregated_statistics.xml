@@ -14,8 +14,8 @@
         android:title="@string/menu_filter" />
     <item
         android:id="@+id/aggregated_statistics_period"
-        app:showAsAction="never"
-        android:title="@string/aggregated_stats_period">
+        app:showAsAction="always"
+        android:title="@string/aggregated_stats_change_period">
         <menu>
             <item
                 android:id="@+id/aggregated_statistics_period_day"
