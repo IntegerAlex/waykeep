@@ -391,6 +391,9 @@ limitations under the License.
     <string name="diagnostics_recovery_failed">Could not create a recovered track copy.</string>
     <!-- Home insight hero -->
     <string name="insight_week_distance_label">7 days · all activities</string>
+    <string name="insight_scope_full">Last 7 days · all activities</string>
+    <string name="insight_goal_distance">%1$s of %2$s</string>
+    <string name="insight_average_full">4-week average: %1$s/week</string>
     <string name="insight_week_average_label">4-week average</string>
     <string name="insight_no_activity">No activity yet — record a track to start your baseline</string>
     <string name="insight_trend_building">Building on recent weeks</string>
@@ -704,6 +707,8 @@ limitations under the License.
     <!-- Aggregated Statistics -->
     <string name="aggregated_stats_empty_message">Record your first track to see aggregated statistics</string>
     <string name="aggregated_stats_filter_no_results">There are not activities for the specified filter</string>
+    <string name="aggregated_stats_title">Activity totals</string>
+    <string name="aggregated_stats_change_period">Change period</string>
     <string name="aggregated_stats_period">Period</string>
     <string name="aggregated_stats_period_day">Today</string>
     <string name="aggregated_stats_period_week">This week</string>
