@@ -316,7 +316,7 @@ limitations under the License.
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/action_start_activity"
-        android:text="@string/action_start_activity"
+        android:text="@string/action_start"
         android:textSize="16sp"
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_baseline_record_24"

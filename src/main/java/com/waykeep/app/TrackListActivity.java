@@ -622,7 +622,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         updateGpsMenuItem(false, false);
         recordingStatusConnection.stopRecording(TrackListActivity.this);
         viewBinding.trackListFabAction.setIconResource(R.drawable.ic_baseline_record_24);
-        viewBinding.trackListFabAction.setText(R.string.action_start_activity);
+        viewBinding.trackListFabAction.setText(R.string.action_start);
         viewBinding.trackListFabAction.setContentDescription(getString(R.string.action_start_activity));
         viewBinding.trackListFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_dark));
         viewBinding.trackListFabAction.setIconTint(ColorStateList.valueOf(Color.WHITE));
@@ -919,15 +919,15 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         int description;
         if (recordingStatus.isPaused()) {
             icon = R.drawable.ic_baseline_play_arrow_24;
-            text = R.string.action_resume_recording;
+            text = R.string.action_resume;
             description = R.string.action_resume_recording;
         } else if (recordingStatus.isRecording()) {
             icon = R.drawable.ic_baseline_stop_24;
-            text = R.string.action_stop_recording;
+            text = R.string.action_stop;
             description = R.string.action_stop_recording;
         } else {
             icon = R.drawable.ic_baseline_record_24;
-            text = R.string.action_start_activity;
+            text = R.string.action_start;
             description = R.string.action_start_activity;
         }
         viewBinding.trackListFabAction.setIconResource(icon);

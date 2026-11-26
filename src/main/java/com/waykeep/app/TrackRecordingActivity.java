@@ -195,7 +195,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 viewBinding.trackDetailActivityViewPager, initialTab);
 
         viewBinding.trackRecordingFabAction.setIconResource(R.drawable.ic_baseline_pause_24);
-        viewBinding.trackRecordingFabAction.setText(R.string.action_pause_recording);
+        viewBinding.trackRecordingFabAction.setText(R.string.action_pause);
         viewBinding.trackRecordingFabAction.setContentDescription(getString(R.string.action_pause_recording));
         viewBinding.trackRecordingFabAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.opentracks));
         viewBinding.trackRecordingFabAction.setBackgroundColor(ContextCompat.getColor(this, R.color.opentracks));
@@ -537,8 +537,8 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 ? R.drawable.ic_baseline_play_arrow_24
                 : R.drawable.ic_baseline_pause_24);
         viewBinding.trackRecordingFabAction.setText(paused
-                ? R.string.action_resume_recording
-                : R.string.action_pause_recording);
+                ? R.string.action_resume
+                : R.string.action_pause);
         viewBinding.trackRecordingFabAction.setContentDescription(getString(paused
                 ? R.string.action_resume_recording
                 : R.string.action_pause_recording));
