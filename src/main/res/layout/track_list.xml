@@ -89,12 +89,13 @@ limitations under the License.
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <ImageView
                 android:id="@+id/latest_route_image"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="160dp"
                 android:contentDescription="@string/image_track"
                 android:scaleType="fitCenter" />
 
@@ -116,10 +117,6 @@ limitations under the License.
                     android:id="@+id/latest_route_distance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="32sp"
-                    android:autoSizeMaxTextSize="64sp"
-                    android:autoSizeStepGranularity="2sp"
                     android:textAppearance="@style/TextAppearance.OpenTracks.HeroScore" />
 
                 <TextView
@@ -139,16 +136,16 @@ limitations under the License.
             android:background="?attr/colorSurfaceContainerLow"
             android:orientation="vertical"
             android:paddingStart="20dp"
-            android:paddingTop="12dp"
+            android:paddingTop="4dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="12dp"
-            android:visibility="gone">
+            android:paddingBottom="0dp"
+            android:visibility="gone"
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="true"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/insight_week_distance"
@@ -157,9 +154,8 @@ limitations under the License.
                     android:layout_height="wrap_content" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="end"
                     android:orientation="vertical">
 
@@ -184,25 +180,25 @@ limitations under the License.
             <com.waykeep.app.ui.insights.WeekLaneView
                 android:id="@+id/insight_lane"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="24dp"
                 android:contentDescription="@string/insight_goal_progress_description" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/insight_week_average"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAppearance="@style/TextAppearance.OpenTracks.MetaValue" />
 
                 <TextView
                     android:id="@+id/insight_streak_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="end"
                     android:textAppearance="@style/TextAppearance.OpenTracks.MetaValue" />
             </LinearLayout>
 
@@ -283,7 +279,7 @@ limitations under the License.
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:fabAlignmentMode="center"
         app:fabAnchorMode="cradle">
@@ -321,6 +317,7 @@ limitations under the License.
         android:layout_height="wrap_content"
         android:contentDescription="@string/action_start_activity"
         android:text="@string/action_start"
+        android:textSize="16sp"
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_baseline_record_24"
         app:iconTint="@android:color/white"

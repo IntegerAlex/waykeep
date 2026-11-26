@@ -16,7 +16,7 @@
         <!-- Names the activity the live readings belong to, e.g. Running or Cycling. -->
         <TextView
             android:id="@+id/stats_activity_name"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Running" />

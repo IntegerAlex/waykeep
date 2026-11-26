@@ -75,7 +75,7 @@ limitations under the License.
         If the GPS device reports inaccurate data (e.g., location, speed, elevation), Waykeep cannot do anything about it.
     </string>
     <string name="help_manual_lap_title">How do manual laps work?</string>
-    <string name="help_manual_lap_content">The Lap action closes the current lap and starts a new one without pausing the recording. The Intervals tab follows these manual laps. Automatic voice “lap length” announcements remain independent and keep using the configured distance or time.</string>
+    <string name="help_manual_lap_content">The Lap action closes the current lap and starts a new one without pausing the recording. The Splits tab follows these manual laps. Automatic voice “lap length” announcements remain independent and keep using the configured distance or time.</string>
     <string name="help_heart_rate_alerts_title">How do heart-rate alerts work?</string>
     <string name="help_heart_rate_alerts_content">Heart-rate alerts are opt-in in Settings → Sensors. The default threshold is 90%% of your maximum heart rate. The alert sounds once after 10 seconds above it and re-arms after 30 seconds below 85%%. Alerts use a toast and vibration. They are not medical advice.</string>
     <string name="help_elevation_fallback_title">What is the GPS elevation fallback?</string>
@@ -636,6 +636,8 @@ limitations under the License.
     <string name="stats_less">Less statistics</string>
     <string name="stats_total_time">Total time</string>
     <string name="stats_split_interval">Split interval</string>
+    <string name="interval_partial">Partial</string>
+    <string name="interval_gain_loss_summary">Gain %1$s · Loss %2$s</string>
     <string name="stats_sensors_heart_rate">Heart rate</string>
     <string name="stats_sensors_temperature">Temperature</string>
     <string name="stats_sensors_cadence">Cadence</string>
@@ -659,7 +661,7 @@ limitations under the License.
     <string name="track_discarding">Discarding Track</string>
     <!-- Track Detail -->
     <string name="track_detail_stats_tab">Stats</string>
-    <string name="track_detail_intervals_tab">Intervals</string>
+    <string name="track_detail_intervals_tab">Splits</string>
     <string name="track_detail_map_tab">Map</string>
     <string name="track_detail_chart_tab">Chart</string>
     <!-- Map -->
@@ -888,15 +890,17 @@ limitations under the License.
     <string name="share_image_title">Share image</string>
     <string name="share_file_title">Share file (KMZ/GPX)</string>
     <string name="share_image_preview">Share image preview</string>
-    <string name="share_image_aspect_feed">Feed (4:5)</string>
+    <string name="share_image_aspect_portrait">Portrait (4:5)</string>
     <string name="share_image_aspect_story">Story (9:16)</string>
     <string name="share_image_aspect_square">Square (1:1)</string>
+    <string name="share_image_size_dimensions">%1$d × %2$d px</string>
     <string name="share_image_style_stats">Stats card</string>
     <string name="share_image_style_route">Route only</string>
     <string name="share_image_section_size">Size</string>
     <string name="share_image_section_content">Content</string>
     <string name="share_image_section_background">Background</string>
-    <string name="share_image_download">Download</string>
+    <string name="share_image_download">Save image</string>
+    <string name="share_image_action_share">Share image</string>
     <string name="share_image_saved">Saved to gallery.</string>
     <string name="share_image_stat_elevation_gain">Elev Gain</string>
     <string name="share_image_bg_dark">Dark</string>

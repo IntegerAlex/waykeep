@@ -44,7 +44,7 @@
 
     <TextView
         android:id="@+id/aggregated_stats_type_label"
-        style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+        style="@style/TextAppearance.OpenTracks.ReadableSection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
@@ -56,7 +56,7 @@
 
     <TextView
         android:id="@+id/aggregated_stats_num_tracks"
-        style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+        style="@style/TextAppearance.OpenTracks.ReadableSection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
@@ -124,7 +124,7 @@
 
     <TextView
         android:id="@+id/aggregated_stats_avg_rate_label"
-        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        style="@style/TextAppearance.OpenTracks.ReadableMetadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constrainedWidth="true"
@@ -157,7 +157,7 @@
 
     <TextView
         android:id="@+id/aggregated_stats_max_rate_label"
-        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        style="@style/TextAppearance.OpenTracks.ReadableMetadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constrainedWidth="true"
@@ -188,7 +188,7 @@
 
     <TextView
         android:id="@+id/aggregated_stats_elevation_label"
-        style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+        style="@style/TextAppearance.OpenTracks.ReadableMetadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/guideline1"

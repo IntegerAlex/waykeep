@@ -38,8 +38,8 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     private static final int HEIGHT_1_1_PX = 1080;
     private static final int HEIGHT_9_16_PX = 1920;
 
-    private enum Aspect {
-        FEED_4_5,
+    enum Aspect {
+        PORTRAIT_4_5,
         SQUARE_1_1,
         STORY_9_16
     }
@@ -51,7 +51,7 @@ public class ShareTrackImageActivity extends AppCompatActivity {
     private Track track;
     private RouteSampler.Route route;
     private Bitmap previewBitmap;
-    private Aspect aspect = Aspect.FEED_4_5;
+    private Aspect aspect = Aspect.PORTRAIT_4_5;
     private TrackShareImageGenerator.Style style = TrackShareImageGenerator.Style.STATS_CARD;
     private TrackShareImageGenerator.Background background = TrackShareImageGenerator.Background.DARK;
 
@@ -69,7 +69,7 @@ public class ShareTrackImageActivity extends AppCompatActivity {
             return;
         }
 
-        viewBinding.shareImageAspectFeed.setOnClickListener(v -> setAspect(Aspect.FEED_4_5));
+        viewBinding.shareImageAspectFeed.setOnClickListener(v -> setAspect(Aspect.PORTRAIT_4_5));
         viewBinding.shareImageAspectSquare.setOnClickListener(v -> setAspect(Aspect.SQUARE_1_1));
         viewBinding.shareImageAspectStory.setOnClickListener(v -> setAspect(Aspect.STORY_9_16));
         viewBinding.shareImageStyleStats.setOnClickListener(v -> setStyle(TrackShareImageGenerator.Style.STATS_CARD));
@@ -82,6 +82,7 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         viewBinding.shareImageDownloadButton.setOnClickListener(v -> downloadImage());
         background = TrackShareImageGenerator.loadBackground(this);
         syncToggleGroups();
+        updateDimensions();
 
         loadTrackAsync();
     }
@@ -99,7 +100,13 @@ public class ShareTrackImageActivity extends AppCompatActivity {
 
     private void setAspect(Aspect selected) {
         aspect = selected;
+        updateDimensions();
         renderPreview();
+    }
+
+    private void updateDimensions() {
+        viewBinding.shareImageAspectDimensions.setText(
+                getString(R.string.share_image_size_dimensions, IMAGE_WIDTH_PX, heightFor(aspect)));
     }
 
     private void setStyle(TrackShareImageGenerator.Style selected) {
@@ -107,11 +114,11 @@ public class ShareTrackImageActivity extends AppCompatActivity {
         renderPreview();
     }
 
-    private static int heightFor(Aspect aspect) {
+    static int heightFor(Aspect aspect) {
         return switch (aspect) {
             case SQUARE_1_1 -> HEIGHT_1_1_PX;
             case STORY_9_16 -> HEIGHT_9_16_PX;
-            case FEED_4_5 -> HEIGHT_4_5_PX;
+            case PORTRAIT_4_5 -> HEIGHT_4_5_PX;
         };
     }
 

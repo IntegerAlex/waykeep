@@ -24,41 +24,45 @@
         android:paddingBottom="?attr/actionBarSize"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/personal_bests_sport_group"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:checkedButton="@id/personal_bests_sport_running"
-            app:selectionRequired="true"
-            app:singleSelection="true">
+            android:clipToPadding="false"
+            android:scrollbars="none">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/personal_bests_sport_running"
-                style="@style/Widget.OpenTracks.ShareImageToggle"
-                android:layout_width="0dp"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/personal_bests_sport_group"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sport_running" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:checkedButton="@id/personal_bests_sport_running"
+                app:selectionRequired="true"
+                app:singleSelection="true">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/personal_bests_sport_cycling"
-                style="@style/Widget.OpenTracks.ShareImageToggle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sport_cycling" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/personal_bests_sport_running"
+                    style="@style/Widget.OpenTracks.PersonalBestsToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sport_running" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/personal_bests_sport_walking"
-                style="@style/Widget.OpenTracks.ShareImageToggle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sport_walking" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/personal_bests_sport_cycling"
+                    style="@style/Widget.OpenTracks.PersonalBestsToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sport_cycling" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/personal_bests_sport_walking"
+                    style="@style/Widget.OpenTracks.PersonalBestsToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sport_walking" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/personal_bests_list"

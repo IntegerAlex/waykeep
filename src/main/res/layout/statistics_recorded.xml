@@ -120,10 +120,6 @@
                         style="@style/TextAppearance.OpenTracks.StripLabel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeMaxTextSize="10sp"
-                        android:autoSizeStepGranularity="1sp"
                         tools:text="Moving pace" />
 
                     <TextView
@@ -132,10 +128,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="10sp"
-                        android:autoSizeMaxTextSize="20sp"
-                        android:autoSizeStepGranularity="1sp"
                         tools:text="8:11" />
                 </LinearLayout>
 
@@ -156,10 +148,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/stats_moving_time"
                         android:textAppearance="@style/TextAppearance.OpenTracks.StripLabel"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeMaxTextSize="10sp"
-                        android:autoSizeStepGranularity="1sp" />
+ />
 
                     <TextView
                         android:id="@+id/stats_strip_moving_time_value"
@@ -167,10 +156,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="10sp"
-                        android:autoSizeMaxTextSize="20sp"
-                        android:autoSizeStepGranularity="1sp"
                         tools:text="26:29" />
                 </LinearLayout>
             </LinearLayout>
@@ -198,10 +183,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/stats_elapsed_time"
                         android:textAppearance="@style/TextAppearance.OpenTracks.StripLabel"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeMaxTextSize="10sp"
-                        android:autoSizeStepGranularity="1sp" />
+ />
 
                     <TextView
                         android:id="@+id/stats_strip_elapsed_time_value"
@@ -209,10 +191,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="10sp"
-                        android:autoSizeMaxTextSize="20sp"
-                        android:autoSizeStepGranularity="1sp"
                         tools:text="31:40" />
                 </LinearLayout>
 
@@ -233,10 +211,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/stats_elevation_range"
                         android:textAppearance="@style/TextAppearance.OpenTracks.StripLabel"
-                        android:autoSizeTextType="uniform"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeMaxTextSize="10sp"
-                        android:autoSizeStepGranularity="1sp" />
+ />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -251,10 +226,6 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:autoSizeTextType="uniform"
-                            android:autoSizeMinTextSize="10sp"
-                            android:autoSizeMaxTextSize="18sp"
-                            android:autoSizeStepGranularity="1sp"
                             tools:text="214–251" />
 
                         <TextView
@@ -289,6 +260,7 @@
             android:minHeight="48dp"
             android:paddingStart="0dp"
             android:text="@string/stats_more"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintTop_toBottomOf="@id/stats_strip_line" />
@@ -303,7 +275,7 @@
         <!-- Distance -->
         <TextView
             android:id="@+id/stats_distance_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stats_distance"
@@ -337,7 +309,7 @@
         <!-- Moving time -->
         <TextView
             android:id="@+id/stats_moving_time_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stats_moving_time"
@@ -360,7 +332,7 @@
         <!-- Total time -->
         <TextView
             android:id="@+id/stats_total_time_label"
-            style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableMetadata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stats_elapsed_time"
@@ -399,7 +371,7 @@
         <!-- Speed/Pace max -->
         <TextView
             android:id="@+id/stats_max_speed_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
@@ -433,7 +405,7 @@
         <!-- Avg. moving speed/pace -->
         <TextView
             android:id="@+id/stats_moving_speed_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
@@ -467,7 +439,7 @@
         <!-- Average speed/pace -->
         <TextView
             android:id="@+id/stats_average_speed_label"
-            style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableMetadata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
@@ -517,7 +489,7 @@
 
         <TextView
             android:id="@+id/stats_altitude_gain_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stats_gain"
@@ -550,7 +522,7 @@
 
         <TextView
             android:id="@+id/stats_altitude_loss_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stats_loss"
@@ -619,7 +591,7 @@
 
         <TextView
             android:id="@+id/stats_max_heart_rate_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_heart_rate_max"
@@ -652,7 +624,7 @@
 
         <TextView
             android:id="@+id/stats_avg_heart_rate_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_heart_rate_avg"
@@ -692,7 +664,7 @@
 
         <TextView
             android:id="@+id/stats_heart_rate_zones_value"
-            style="@style/TextAppearance.OpenTracks.SecondaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableMetadata"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -719,7 +691,7 @@
 
         <TextView
             android:id="@+id/stats_max_cadence_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_cadence_max"
@@ -752,7 +724,7 @@
 
         <TextView
             android:id="@+id/stats_avg_cadence_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_cadence_avg"
@@ -808,7 +780,7 @@
 
         <TextView
             android:id="@+id/stats_max_power_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_power_max"
@@ -841,7 +813,7 @@
 
         <TextView
             android:id="@+id/stats_avg_power_label"
-            style="@style/TextAppearance.OpenTracks.PrimaryHeader"
+            style="@style/TextAppearance.OpenTracks.ReadableSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sensor_state_power_avg"

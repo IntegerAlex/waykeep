@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.waykeep.app.data.models.Distance;
+import com.waykeep.app.data.models.AltitudeGainLoss;
 import com.waykeep.app.data.models.DistanceFormatter;
 import com.waykeep.app.data.models.SpeedFormatter;
 import com.waykeep.app.data.models.Statistics;
@@ -27,7 +29,7 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
     private final StackMode stackMode;
     private UnitSystem unitSystem;
     private boolean isReportSpeed;
-    private boolean showAltitude;
+    private Distance intervalLength;
 
     public IntervalStatisticsAdapter(Context context, StackMode stackMode, UnitSystem unitSystem, boolean isReportSpeed) {
         this.unitSystem = unitSystem;
@@ -59,22 +61,31 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
                 .build(context).formatDistance(sumDistance));
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(isReportSpeed).build(context);
+        viewHolder.viewBinding.intervalItemRateLabel.setText(
+                isReportSpeed ? com.waykeep.app.R.string.stats_speed : com.waykeep.app.R.string.stats_pace);
         viewHolder.viewBinding.intervalItemRate.setText(formatter.formatSpeed(interval.getAverageSpeed()));
+        viewHolder.viewBinding.intervalItemPartial.setVisibility(
+                isPartialFinalInterval(actualPosition, intervalList.size(), interval.totalDistance(), intervalLength)
+                        ? View.VISIBLE : View.GONE);
 
-        // A whole column of "▲ - m / ▼ - m" is noise when the recording has no gain/loss data.
-        viewHolder.viewBinding.intervalAltitudeColumn.setVisibility(showAltitude ? View.VISIBLE : View.GONE);
-        if (showAltitude) {
-            if (interval.altitudeGainLoss() != null) {
-                viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().gain_m(), unitSystem));
-                viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, interval.altitudeGainLoss().loss_m(), unitSystem));
+        if (hasAltitudeData(interval.altitudeGainLoss())) {
+            String gain = StringUtils.formatAltitude(context,
+                    interval.altitudeGainLoss().gain_m(), unitSystem);
+            String loss = StringUtils.formatAltitude(context,
+                    interval.altitudeGainLoss().loss_m(), unitSystem);
+            viewHolder.viewBinding.intervalItemGainLoss.setText(
+                    context.getString(com.waykeep.app.R.string.interval_gain_loss_summary, gain, loss));
+            viewHolder.viewBinding.intervalItemGainLoss.setVisibility(View.VISIBLE);
+            if (interval.altitudeGainLoss().source() == AltitudeGainLoss.Source.UNKNOWN) {
+                viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.GONE);
+            } else {
                 viewHolder.viewBinding.intervalItemAltitudeSource.setText(AltitudeGainLossSourceLabels.text(
                         context, interval.altitudeGainLoss().source()));
                 viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.viewBinding.intervalItemGain.setText(StringUtils.formatAltitude(context, null, unitSystem));
-                viewHolder.viewBinding.intervalItemLoss.setText(StringUtils.formatAltitude(context, null, unitSystem));
-                viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.GONE);
             }
+        } else {
+            viewHolder.viewBinding.intervalItemGainLoss.setVisibility(View.GONE);
+            viewHolder.viewBinding.intervalItemAltitudeSource.setVisibility(View.GONE);
         }
     }
 
@@ -83,11 +94,27 @@ public class IntervalStatisticsAdapter extends RecyclerView.Adapter<RecyclerView
         return intervalList.size();
     }
 
-    public void swapData(@NonNull List<Statistics> data, UnitSystem unitSystem, boolean isReportSpeed) {
+    static boolean isPartialFinalInterval(int actualPosition, int itemCount,
+                                          Distance distance, Distance intervalLength) {
+        return itemCount > 0
+                && actualPosition == itemCount - 1
+                && !distance.isZero()
+                && distance.toM() < intervalLength.toM();
+    }
+
+    static boolean hasAltitudeData(@Nullable AltitudeGainLoss altitudeGainLoss) {
+        return altitudeGainLoss != null
+                && (altitudeGainLoss.source() != AltitudeGainLoss.Source.UNKNOWN
+                || altitudeGainLoss.gain_m() != 0f
+                || altitudeGainLoss.loss_m() != 0f);
+    }
+
+    public void swapData(@NonNull List<Statistics> data, UnitSystem unitSystem,
+                         boolean isReportSpeed, @NonNull Distance intervalLength) {
         this.unitSystem = unitSystem;
         this.isReportSpeed = isReportSpeed;
+        this.intervalLength = intervalLength;
         intervalList = data;
-        showAltitude = data.stream().anyMatch(statistics -> statistics.altitudeGainLoss() != null);
 
         this.notifyDataSetChanged();
     }

@@ -69,7 +69,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -326,6 +325,10 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         });
 
         setSupportActionBar(viewBinding.trackListToolbar);
+        viewBinding.bottomAppBar.setBackgroundTint(
+                ColorStateList.valueOf(getColor(R.color.track_surface)));
+        // Match the page surface without an elevation overlay shifting the bar tint.
+        viewBinding.bottomAppBar.setElevation(0);
         adapter.setActionModeCallback(contextualActionModeCallback);
         applyBottomBarClearance();
     }
@@ -712,7 +715,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         String activity = latest.activityTypeLocalized();
         viewBinding.latestRouteMeta.setText(activity.isEmpty()
                 ? time
-                : time + " · " + activity.toUpperCase(Locale.getDefault()));
+                : time + " · " + activity);
 
         viewBinding.latestRouteImage.post(() -> {
             int width = viewBinding.latestRouteImage.getWidth();

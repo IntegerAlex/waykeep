@@ -192,12 +192,11 @@ public class IntervalsFragment extends Fragment {
             return;
         }
 
-        viewBinding.intervalRate.setText(isReportSpeed ? getString(R.string.stats_speed) : getString(R.string.stats_pace));
         LiveData<List<Statistics>> liveData = viewModel.getIntervalStats(trackId, unitSystem, selectedInterval);
         liveData.observe(getActivity(), intervalList -> {
-            boolean showAltitude = intervalList.stream().anyMatch(statistics -> statistics.altitudeGainLoss() != null);
-            viewBinding.intervalAltitude.setVisibility(showAltitude ? View.VISIBLE : View.GONE);
-            adapter.swapData(intervalList, unitSystem, isReportSpeed);
+            IntervalStatisticsModel.IntervalOption option = selectedInterval != null
+                    ? selectedInterval : IntervalStatisticsModel.IntervalOption.DEFAULT;
+            adapter.swapData(intervalList, unitSystem, isReportSpeed, option.getDistance(unitSystem));
         });
 
         setIntervalsDropdownText();

@@ -48,12 +48,12 @@
         tools:src="@drawable/ic_activity_bike_24dp" />
 
     <LinearLayout
+        android:id="@+id/track_list_item_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_thumb_card"
-        app:layout_constraintEnd_toStartOf="@id/track_list_item_numbers"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/track_list_item_thumb_card"
         app:layout_constraintTop_toTopOf="@id/track_list_item_thumb_card">
 
@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             tools:text="08 NOV 26" />
 
         <LinearLayout
@@ -97,14 +97,15 @@
 
     <LinearLayout
         android:id="@+id/track_list_item_numbers"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
         android:gravity="end"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/track_list_item_thumb_card"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/track_list_item_thumb_card">
+        app:layout_constraintStart_toEndOf="@id/track_list_item_thumb_card"
+        app:layout_constraintTop_toBottomOf="@id/track_list_item_text">
 
         <TextView
             android:id="@+id/track_list_item_distance"

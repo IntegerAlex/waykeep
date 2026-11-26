@@ -35,7 +35,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -203,7 +202,7 @@ public class TrackRecordedActivity extends AbstractTrackDeleteActivity implement
         String activity = track.activityTypeLocalized();
         viewBinding.trackDetailHeroMeta.setText(activity.isEmpty()
                 ? time
-                : time + " · " + activity.toUpperCase(Locale.getDefault()));
+                : time + " · " + activity);
 
         renderHeroArtwork();
     }
