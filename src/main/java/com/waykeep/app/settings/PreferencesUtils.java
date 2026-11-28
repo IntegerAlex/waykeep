@@ -381,7 +381,7 @@ public class PreferencesUtils {
             if (!Locale.US.equals(Locale.getDefault())) {
                 setUnit(UnitSystem.METRIC);
             } else {
-                setUnit(UnitSystem.IMPERIAL_FEET);
+                setUnit(UnitSystem.METRIC);
             }
         }
     }
@@ -507,7 +507,7 @@ public class PreferencesUtils {
     }
 
     public static boolean shouldVoiceAnnouncementIdle() {
-        return getBoolean(R.string.voice_announce_idle_key, true);
+        return getBoolean(R.string.voice_announce_idle_key, resources.getBoolean(R.bool.voice_announce_idle_default));
     }
 
     public static boolean shouldVoiceAnnounceTime() {
