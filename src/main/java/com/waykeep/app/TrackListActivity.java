@@ -60,7 +60,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.io.File;
@@ -113,6 +112,7 @@ import com.waykeep.app.ui.trackmap.TrackThumbnailLoader;
 import com.waykeep.app.ui.util.ActivityUtils;
 import com.waykeep.app.ui.util.ListItemUtils;
 import com.waykeep.app.ui.util.RecyclerViewSwipeDeleteCallback;
+import com.waykeep.app.ui.util.UiHaptics;
 import com.waykeep.app.util.IntentUtils;
 import com.waykeep.app.util.PermissionRequester;
 import com.waykeep.app.util.StringUtils;
@@ -285,6 +285,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
         viewBinding.trackListFabAction.setOnClickListener((view) -> {
             if (recordingStatus.isPaused()) {
                 // Paused -> jump back into the recording screen to resume.
+                UiHaptics.perform(view, UiHaptics.Action.START);
                 Intent resumeIntent = IntentUtils.newIntent(TrackListActivity.this, TrackRecordingActivity.class);
                 resumeIntent.putExtra(TrackRecordingActivity.EXTRA_TRACK_ID, recordingStatus.trackId());
                 startActivity(resumeIntent);
@@ -302,6 +303,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
             }
 
             // Not Recording -> Recording
+            UiHaptics.perform(view, UiHaptics.Action.START);
             Log.i(TAG, "Starting recording");
             updateGpsMenuItem(false, true);
             startSensorsOrRecording((service, connection) -> {
@@ -618,7 +620,7 @@ public class TrackListActivity extends AbstractTrackDeleteActivity implements Co
     }
 
     private void stopRecordingFromFeed() {
-        ActivityUtils.vibrate(this, Duration.ofSeconds(1));
+        UiHaptics.perform(viewBinding.trackListFabAction, UiHaptics.Action.STOP);
         updateGpsMenuItem(false, false);
         recordingStatusConnection.stopRecording(TrackListActivity.this);
         viewBinding.trackListFabAction.setIconResource(R.drawable.ic_baseline_record_24);

@@ -17,7 +17,9 @@
 package com.waykeep.app;
 
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -29,11 +31,34 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.waykeep.app.services.announcement.TTSManager;
 import com.waykeep.app.settings.PreferencesUtils;
+import com.waykeep.app.ui.util.UiHaptics;
 
 /**
  * @author Jimmy Shih
  */
 public abstract class AbstractActivity extends AppCompatActivity {
+
+    private float hapticDownX;
+    private float hapticDownY;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN) {
+            UiHaptics.beginTap();
+            hapticDownX = event.getX();
+            hapticDownY = event.getY();
+        }
+
+        boolean handled = super.dispatchTouchEvent(event);
+
+        if (action == MotionEvent.ACTION_UP && !UiHaptics.wasCustomFeedbackPlayed()
+                && UiHaptics.isTap(event.getX() - hapticDownX, event.getY() - hapticDownY,
+                event.getEventTime() - event.getDownTime(), ViewConfiguration.get(this).getScaledTouchSlop())) {
+            UiHaptics.perform(getWindow().getDecorView(), UiHaptics.Action.TAP);
+        }
+        return handled;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

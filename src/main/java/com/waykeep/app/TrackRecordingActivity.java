@@ -64,6 +64,7 @@ import com.waykeep.app.ui.markers.MarkerListActivity;
 import com.waykeep.app.ui.trackmap.TrackMapFragment;
 import com.waykeep.app.ui.util.ActivityUtils;
 import com.waykeep.app.ui.util.DetailTabs;
+import com.waykeep.app.ui.util.UiHaptics;
 import com.waykeep.app.util.IntentUtils;
 
 /**
@@ -201,7 +202,7 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
         viewBinding.trackRecordingFabAction.setBackgroundColor(ContextCompat.getColor(this, R.color.opentracks));
         viewBinding.trackRecordingFabAction.setIconTint(ColorStateList.valueOf(Color.BLACK));
         viewBinding.trackRecordingFabAction.setOnLongClickListener((view) -> {
-            ActivityUtils.vibrate(this, Duration.ofSeconds(1));
+            UiHaptics.perform(view, UiHaptics.Action.STOP);
             trackRecordingServiceConnection.stopRecording(TrackRecordingActivity.this);
             Intent newIntent = IntentUtils.newIntent(TrackRecordingActivity.this, TrackStoppedActivity.class)
                     .putExtra(TrackStoppedActivity.EXTRA_TRACK_ID, trackId);
@@ -216,9 +217,11 @@ public class TrackRecordingActivity extends AbstractActivity implements ChooseAc
                 return;
             }
             if (service.isPaused()) {
+                UiHaptics.perform(view, UiHaptics.Action.START);
                 service.resumeCurrentTrack();
                 Toast.makeText(TrackRecordingActivity.this, getString(R.string.track_resumed), Toast.LENGTH_SHORT).show();
             } else {
+                UiHaptics.perform(view, UiHaptics.Action.PAUSE);
                 service.pauseCurrentTrack();
                 Toast.makeText(TrackRecordingActivity.this, getString(R.string.track_paused_hint), Toast.LENGTH_SHORT).show();
             }
